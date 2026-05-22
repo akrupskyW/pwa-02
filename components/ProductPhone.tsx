@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { BarcodeScanner } from "./BarcodeScanner";
 import { ScoredFoodCard } from "./ScoredFoodCard";
+import { Icon } from "./Icon";
 import {
   fetchFoodByUpc,
   useDispatchHelpers,
@@ -19,9 +20,6 @@ interface Props {
   onAfterScan?: (foodId: string) => void;
 }
 
-// Scanner UI: typed UPC or live barcode scan via camera. The scanner is a
-// dynamically-imported component (BarcodeScanner) so the ~250KB zxing chunk
-// doesn't ship until the user actually opens the scanner.
 export function ProductPhone({ onAfterScan }: Props) {
   const allCodes = useCodes();
   const { state, composite } = usePreferences();
@@ -61,10 +59,6 @@ export function ProductPhone({ onAfterScan }: Props) {
 
   const handleDetected = useCallback(
     async (upc: string) => {
-      // Mirror the Blazor flow: run the lookup with the camera still open,
-      // then transition straight from the camera frame to the result card
-      // (or not-found / error state). Closing the scanner BEFORE the fetch
-      // produces a jarring flash through the empty input + Look up button.
       setUpcInput(upc);
       await handleLookup(upc);
       setScanning(false);
@@ -76,25 +70,37 @@ export function ProductPhone({ onAfterScan }: Props) {
 
   return (
     <div className="h-full flex flex-col relative">
-      <header className="bg-gradient-to-b from-stage-800 to-stage-700 text-white px-5 pt-16 pb-5 text-center">
-        <div className="text-[22px] font-extrabold tracking-tight">Scan a product</div>
-        <div className="text-[13px] text-screen-subtle mt-1">Live weighted to your codes</div>
+      <header className="px-5 pt-14 pb-3">
+        <div className="text-[11px] font-bold tracking-[0.16em] text-accent-emerald">
+          SCAN
+        </div>
+        <div className="text-[24px] font-extrabold tracking-[-0.02em] text-ink-bright leading-tight mt-0.5">
+          Find a food
+        </div>
+        <div className="text-[12px] font-medium text-ink-muted mt-1">
+          Live weighted to your code.
+        </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-4 space-y-4">
+      <div className="flex-1 px-5 pb-5 space-y-4">
+        {/* The hero "Scan" CTA — emerald gradient with a colored glow. */}
         <button
           type="button"
           onClick={() => setScanning(true)}
-          className="w-full rounded-xl bg-accent-gold text-stage-900 text-sm font-semibold py-3 flex items-center justify-center gap-2"
+          className="w-full rounded-l text-ink-soft text-[15px] font-extrabold py-4 flex items-center justify-center gap-2.5 shadow-cta-emerald"
+          style={{
+            background:
+              "linear-gradient(135deg, var(--accent-emerald) 0%, var(--accent-teal) 100%)",
+          }}
         >
-          <span aria-hidden>📷</span>
-          <span>Scan barcode</span>
+          <Icon name="camera" size={20} strokeWidth={2.4} />
+          <span>Scan a barcode</span>
         </button>
 
-        <div className="flex items-center gap-2 text-[11px] text-screen-subtle uppercase tracking-wider">
-          <div className="flex-1 h-px bg-screen-line" />
+        <div className="flex items-center gap-3 text-[10px] uppercase font-bold tracking-[0.16em] text-ink-faint">
+          <div className="flex-1 h-px bg-line" />
           <span>or enter UPC</span>
-          <div className="flex-1 h-px bg-screen-line" />
+          <div className="flex-1 h-px bg-line" />
         </div>
 
         <form
@@ -104,32 +110,38 @@ export function ProductPhone({ onAfterScan }: Props) {
           }}
           className="flex items-center gap-2"
         >
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            placeholder="0028400064057"
-            value={upcInput}
-            onChange={(e) => setUpcInput(e.target.value)}
-            className="flex-1 rounded-xl bg-screen-card border border-screen-line px-3 py-2 text-sm placeholder:text-screen-subtle"
-          />
+          <label className="flex-1 flex items-center gap-2 rounded-s bg-card border border-line px-3 py-2.5 focus-within:border-border-strong">
+            <Icon name="barcode" size={16} className="text-ink-muted" />
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="0028400064057"
+              value={upcInput}
+              onChange={(e) => setUpcInput(e.target.value)}
+              className="flex-1 bg-transparent outline-none text-[14px] font-mono tracking-[0.04em] placeholder:text-ink-faint text-ink-bright"
+            />
+          </label>
           <button
             type="submit"
             disabled={lookingUp || !upcInput.trim()}
-            className="rounded-xl bg-stage-700 text-white text-sm font-semibold px-4 py-2 disabled:opacity-50"
+            className="rounded-s bg-surface-2 border border-line text-ink-bright text-[13px] font-bold px-4 py-2.5 disabled:opacity-50 hover:bg-surface-3 transition"
           >
             {lookingUp ? "…" : "Look up"}
           </button>
         </form>
 
         {notFoundUpc && (
-          <div className="text-center text-sm text-screen-subtle py-2">
-            Barcode <strong className="text-white">{notFoundUpc}</strong> isn&apos;t in our food
-            database.
+          <div className="rounded-m bg-card border border-line p-3 text-center text-[12px] text-ink-muted">
+            Barcode{" "}
+            <strong className="text-ink-bright font-mono tracking-[0.04em]">
+              {notFoundUpc}
+            </strong>{" "}
+            isn&apos;t in our food database.
           </div>
         )}
         {error && (
-          <div className="text-center text-sm text-red-300 py-2">
+          <div className="rounded-m bg-card border border-accent-rose/40 p-3 text-center text-[13px] text-accent-rose">
             Something went wrong looking that up. Try again.
           </div>
         )}
@@ -137,12 +149,7 @@ export function ProductPhone({ onAfterScan }: Props) {
         {showInlineCard ? (
           <ScoredFoodCard composite={composite} />
         ) : (
-          <div className="text-center px-6 pt-12">
-            <div className="text-4xl mb-3">📷</div>
-            <div className="text-screen-subtle text-sm">
-              Scan a barcode, enter a UPC, or pick a food from the Browse tab.
-            </div>
-          </div>
+          <EmptyHero />
         )}
       </div>
 
@@ -152,6 +159,21 @@ export function ProductPhone({ onAfterScan }: Props) {
           onCancel={() => setScanning(false)}
         />
       )}
+    </div>
+  );
+}
+
+function EmptyHero() {
+  return (
+    <div className="text-center px-6 pt-8">
+      <div className="mx-auto w-16 h-16 rounded-l flex items-center justify-center bg-card border border-line text-ink-muted mb-3">
+        <Icon name="scan-line" size={32} strokeWidth={1.6} />
+      </div>
+      <div className="text-ink-bright font-bold text-[14px]">Point and shoot</div>
+      <div className="text-ink-muted text-[12px] mt-1 max-w-[260px] mx-auto">
+        Scan a barcode, enter a UPC, or pick a food from the Browse tab to see
+        how it scores against your code.
+      </div>
     </div>
   );
 }

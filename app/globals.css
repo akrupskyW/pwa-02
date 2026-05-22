@@ -2,26 +2,172 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
+/* Inter — variable font from Google Fonts. Pulled at the document level so
+   the design's tight letter-spacing values land on the right glyphs. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+
+:root {
+  /* Mirrors the variables in PersonalizedNutrition.pen (see DESIGN.md §1).
+     Keep these in sync with both the .pen file and tailwind.config.ts. */
+  --background: #05080f;
+  --background-deep: #02040a;
+  --surface: #0e1626;
+  --surface-2: #141e33;
+  --surface-3: #1b2742;
+  --surface-glass: rgba(26, 36, 64, 0.8);
+  --card: #111a2e;
+  --card-elevated: #172238;
+  --ink-soft: #0a1020;
+
+  --border: #1f2c47;
+  --border-subtle: #14203a;
+  --border-strong: #2a3a5e;
+
+  --track: #1b2440;
+  --track-subtle: #0f1729;
+
+  --foreground-bright: #ffffff;
+  --foreground: #f5f7fa;
+  --muted-foreground: #8794a8;
+  --faint-foreground: #5a6478;
+
+  --accent-gold: #f5c14e;
+  --accent-amber: #ff9a2a;
+  --accent-emerald: #34e5a6;
+  --accent-teal: #22d3c5;
+  --accent-rose: #ff5e92;
+  --accent-magenta: #c44cd4;
+  --accent-cyan: #5dcfff;
+  --accent-violet: #7c7cfb;
+  --accent-blue: #3b82f6;
+
+  --score-excellent: #34e5a6;
+  --score-good: #22d3c5;
+  --score-fair: #f5c14e;
+  --score-low: #ff9a2a;
+  --score-poor: #ff5e92;
+}
+
+html,
+body {
   margin: 0;
   padding: 0;
-  background: #05080f;
-  color: white;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Hide scrollbars on mobile-app-like surfaces (the phone screens). Scrolling
-   still works via touch / wheel / trackpad — the bar itself just isn't drawn,
-   matching native mobile-app conventions where scroll is implicit. */
 @layer utilities {
   .no-scrollbar {
-    scrollbar-width: none;          /* Firefox */
-    -ms-overflow-style: none;       /* IE / legacy Edge */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
   .no-scrollbar::-webkit-scrollbar {
-    display: none;                  /* Chrome / Safari / new Edge */
+    display: none;
+  }
+
+  /* The signature angular gradient ring used on the composite score. The
+     ring shape is created with a CSS mask cutting a hole in the center. */
+  .score-arc {
+    background: conic-gradient(
+      from -90deg,
+      var(--accent-emerald) 0%,
+      var(--accent-teal) 40%,
+      var(--accent-cyan) 75%,
+      var(--accent-violet) 100%
+    );
+  }
+
+  /* Universal ring mask. width = ring thickness, derived from --ring-thickness. */
+  .ring-mask {
+    --ring-thickness: 12px;
+    -webkit-mask:
+      radial-gradient(
+        farthest-side,
+        transparent calc(100% - var(--ring-thickness) - 1px),
+        #000 calc(100% - var(--ring-thickness))
+      );
+    mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - var(--ring-thickness) - 1px),
+      #000 calc(100% - var(--ring-thickness))
+    );
+  }
+
+  /* Range slider styling. Per-slot color is set via a CSS variable so the
+     same .range-track class works for every code's gradient. */
+  .range-slot {
+    --range-c1: var(--accent-emerald);
+    --range-c2: var(--accent-teal);
+    --range-pct: 50%;
+  }
+
+  .range-slot input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    background: transparent;
+    height: 14px;
+    margin: 0;
+    cursor: pointer;
+  }
+  .range-slot input[type="range"]:disabled {
+    cursor: default;
+    opacity: 0.55;
+  }
+
+  .range-slot input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 9999px;
+    background: linear-gradient(
+        90deg,
+        var(--range-c1) 0%,
+        var(--range-c2) var(--range-pct),
+        var(--track-subtle) var(--range-pct),
+        var(--track-subtle) 100%
+      );
+    box-shadow: 0 0 14px -2px rgba(255, 255, 255, 0.05);
+  }
+  .range-slot input[type="range"]::-moz-range-track {
+    height: 8px;
+    border-radius: 9999px;
+    background: linear-gradient(
+      90deg,
+      var(--range-c1) 0%,
+      var(--range-c2) var(--range-pct),
+      var(--track-subtle) var(--range-pct),
+      var(--track-subtle) 100%
+    );
+  }
+
+  .range-slot input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: var(--foreground);
+    border: 2px solid var(--range-c2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.66);
+    margin-top: -5px;
+    transition: transform 120ms ease;
+  }
+  .range-slot input[type="range"]:active::-webkit-slider-thumb {
+    transform: scale(1.12);
+  }
+  .range-slot input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 9999px;
+    background: var(--foreground);
+    border: 2px solid var(--range-c2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.66);
   }
 }

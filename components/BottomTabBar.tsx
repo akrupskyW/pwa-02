@@ -2,77 +2,102 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Icon, type IconName } from "./Icon";
 
 interface Tab {
   href: string;
   label: string;
-  // Inline SVGs keep the bundle lean — no icon-pack dependency for three icons.
-  icon: (active: boolean) => JSX.Element;
+  icon: IconName;
+  /** The screen identity color — drives the active fill/stroke. */
+  accent: "emerald" | "violet";
 }
 
-const SLIDER_ICON = (active: boolean) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.25 : 1.75}
-    strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-    <path d="M4 6h10" />
-    <path d="M18 6h2" />
-    <circle cx="16" cy="6" r="2" />
-    <path d="M4 12h4" />
-    <path d="M12 12h8" />
-    <circle cx="10" cy="12" r="2" />
-    <path d="M4 18h12" />
-    <path d="M20 18h0" />
-    <circle cx="18" cy="18" r="2" />
-  </svg>
-);
-
-const LIST_ICON = (active: boolean) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.25 : 1.75}
-    strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-    <path d="M4 6h16" />
-    <path d="M4 12h16" />
-    <path d="M4 18h10" />
-  </svg>
-);
-
-const SCAN_ICON = (active: boolean) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2.25 : 1.75}
-    strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-    <path d="M4 8V6a2 2 0 0 1 2-2h2" />
-    <path d="M16 4h2a2 2 0 0 1 2 2v2" />
-    <path d="M20 16v2a2 2 0 0 1-2 2h-2" />
-    <path d="M8 20H6a2 2 0 0 1-2-2v-2" />
-    <path d="M8 12h8" />
-  </svg>
-);
-
 const TABS: Tab[] = [
-  { href: "/", label: "Codes", icon: SLIDER_ICON },
-  { href: "/browse", label: "Browse", icon: LIST_ICON },
-  { href: "/scan", label: "Scan", icon: SCAN_ICON },
+  { href: "/", label: "CODE", icon: "sliders-horizontal", accent: "emerald" },
+  { href: "/browse", label: "BROWSE", icon: "layout-grid", accent: "violet" },
+  { href: "/scan", label: "SCAN", icon: "scan-line", accent: "emerald" },
 ];
 
+// Bottom nav rendered as a pill but anchored at the bottom of the phone
+// shell (i.e., a flex-flow sibling of the scroll area, not an overlay).
+//
+// DESIGN.md §2 originally specified a *floating* pill that hovers over
+// content via backdrop blur — pretty, but a Sticky CTA (e.g. "+ Add a
+// code") near the bottom of the page lives under the bar's translucent
+// zone, which fights the same guideline's "App content must never be
+// obscured by the Tab Bar" rule. Anchoring keeps the pill aesthetic and
+// safely clears all content above it.
+//
+//   - 12 px top padding, 21 px sides + safe-area bottom on the container.
+//   - 4 px inner padding on the pill.
+//   - Active tab: gradient fill + colored hairline stroke.
+//   - Inactive tabs: transparent, faint icon + label.
 export function BottomTabBar() {
   const pathname = usePathname();
   return (
-    <nav className="border-t border-screen-line bg-screen-bg/95 backdrop-blur supports-[backdrop-filter]:bg-screen-bg/80">
-      <ul className="grid grid-cols-3">
+    <nav
+      className="shrink-0 relative z-20 pt-3 pb-[max(21px,env(safe-area-inset-bottom))] px-[21px] bg-background"
+      // A faint top hairline + soft inset gradient sells the "lifts off the
+      // background" feel that the floating version had — without the
+      // content-bleeds-through-glass downside.
+      style={{
+        borderTop: "1px solid var(--border-subtle)",
+        background:
+          "linear-gradient(180deg, rgba(5,8,15,0.6) 0%, var(--background) 60%)",
+        backdropFilter: "blur(12px)",
+      }}
+    >
+      <div
+        className="flex h-[62px] items-stretch gap-0 rounded-pill border border-line p-1 shadow-tab-pill"
+        style={{ backgroundColor: "rgba(13,20,34,0.92)" }}
+      >
         {TABS.map((tab) => {
           const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
-          return (
-            <li key={tab.href}>
-              <Link
-                href={tab.href}
-                className={`flex flex-col items-center justify-center gap-1 py-2.5 text-[10px] font-medium tracking-wide transition ${
-                  active ? "text-accent-gold" : "text-screen-subtle hover:text-white"
-                }`}
-              >
-                {tab.icon(active)}
-                <span>{tab.label}</span>
-              </Link>
-            </li>
-          );
+          return <TabItem key={tab.href} tab={tab} active={active} />;
         })}
-      </ul>
+      </div>
     </nav>
+  );
+}
+
+function TabItem({ tab, active }: { tab: Tab; active: boolean }) {
+  const accentVar = tab.accent === "emerald" ? "--accent-emerald" : "--accent-violet";
+  return (
+    <Link
+      href={tab.href}
+      aria-current={active ? "page" : undefined}
+      className={[
+        "flex-1 flex flex-col items-center justify-center gap-[3px] rounded-[26px] transition",
+        active
+          ? "text-ink-bright"
+          : "text-ink-faint hover:text-ink/80",
+      ].join(" ")}
+      style={
+        active
+          ? {
+              background:
+                "linear-gradient(135deg, var(--surface-3) 0%, var(--card-elevated) 100%)",
+              boxShadow: `0 0 0 1px rgba(${accentVar === "--accent-emerald" ? "52,229,166" : "124,124,251"},0.35)`,
+            }
+          : undefined
+      }
+    >
+      <Icon
+        name={tab.icon}
+        size={20}
+        strokeWidth={active ? 2.2 : 1.75}
+        style={
+          active
+            ? { color: `var(${accentVar})` }
+            : undefined
+        }
+      />
+      <span
+        className="text-[10px] font-bold leading-none"
+        style={{ letterSpacing: "0.07em" }}
+      >
+        {tab.label}
+      </span>
+    </Link>
   );
 }

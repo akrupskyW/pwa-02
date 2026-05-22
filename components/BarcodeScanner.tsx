@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Icon } from "./Icon";
 
 interface Props {
   onDetected: (upc: string) => void;
@@ -103,7 +104,7 @@ export function BarcodeScanner({ onDetected, onCancel }: Props) {
   }, [onDetected]);
 
   return (
-    <div className="absolute inset-0 bg-black z-30 flex flex-col">
+    <div className="absolute inset-0 bg-black z-40 flex flex-col">
       <div className="flex-1 relative overflow-hidden">
         <video
           ref={videoRef}
@@ -113,26 +114,36 @@ export function BarcodeScanner({ onDetected, onCancel }: Props) {
           autoPlay
         />
 
+        {/* Viewfinder corners — pure decoration; the decoder reads the whole
+            frame, but the corners signal "aim here". */}
+        {status === "live" && <ViewfinderCorners />}
+
         {status === "starting" && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-black/60 rounded-xl px-4 py-3 text-sm text-screen-subtle">
+            <div className="bg-black/70 backdrop-blur rounded-m border border-line px-4 py-3 text-[13px] text-ink-muted inline-flex items-center gap-2">
+              <span
+                aria-hidden
+                className="inline-block w-3 h-3 rounded-full border-2 border-white/25 border-t-white animate-spin"
+              />
               Opening camera…
             </div>
           </div>
         )}
 
         {status === "live" && (
-          <div className="absolute inset-x-0 bottom-4 text-center text-xs text-white/70 px-6 pointer-events-none">
+          <div className="absolute inset-x-0 bottom-6 text-center text-[11px] tracking-[0.16em] uppercase font-bold text-white/80 px-6 pointer-events-none">
             Point at any barcode
           </div>
         )}
 
         {status === "error" && (
           <div className="absolute inset-0 flex items-center justify-center px-6">
-            <div className="bg-black/80 border border-screen-line rounded-2xl p-4 text-center max-w-xs">
-              <div className="text-3xl mb-2">📷</div>
-              <div className="text-sm text-white">{errorMessage}</div>
-              <div className="text-[11px] text-screen-subtle mt-2">
+            <div className="bg-black/85 backdrop-blur border border-line rounded-l p-4 text-center max-w-xs">
+              <div className="mx-auto w-12 h-12 rounded-l flex items-center justify-center bg-card border border-line text-ink-muted mb-2">
+                <Icon name="camera" size={22} />
+              </div>
+              <div className="text-[13px] text-ink-bright">{errorMessage}</div>
+              <div className="text-[11px] text-ink-muted mt-2">
                 You can still type the UPC in the field below.
               </div>
             </div>
@@ -140,14 +151,31 @@ export function BarcodeScanner({ onDetected, onCancel }: Props) {
         )}
       </div>
 
-      <div className="bg-black/95 px-4 py-3 flex justify-center">
+      <div className="bg-black/95 px-4 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] flex justify-center">
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-xl bg-stage-700 text-white text-sm font-semibold px-6 py-2"
+          className="rounded-pill bg-surface-2 border border-line text-ink-bright text-[14px] font-bold px-6 py-2.5 hover:bg-surface-3 transition"
         >
           Cancel
         </button>
+      </div>
+    </div>
+  );
+}
+
+function ViewfinderCorners() {
+  // Four L-shaped corners around a central viewfinder box. Pure decoration;
+  // the decoder reads the entire frame.
+  const cornerCls =
+    "absolute w-10 h-10 border-accent-emerald/90 [box-shadow:0_0_12px_rgba(52,229,166,0.3)]";
+  return (
+    <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+      <div className="relative w-[70%] aspect-[5/3]">
+        <div className={`${cornerCls} -top-px -left-px border-t-[3px] border-l-[3px] rounded-tl-l`} />
+        <div className={`${cornerCls} -top-px -right-px border-t-[3px] border-r-[3px] rounded-tr-l`} />
+        <div className={`${cornerCls} -bottom-px -left-px border-b-[3px] border-l-[3px] rounded-bl-l`} />
+        <div className={`${cornerCls} -bottom-px -right-px border-b-[3px] border-r-[3px] rounded-br-l`} />
       </div>
     </div>
   );
