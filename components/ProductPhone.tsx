@@ -2,21 +2,28 @@
 
 import { useCallback, useState } from "react";
 import { BarcodeScanner } from "./BarcodeScanner";
+import { ScoredFoodCard } from "./ScoredFoodCard";
 import {
   fetchFoodByUpc,
   useDispatchHelpers,
   usePreferences,
 } from "@/state/preferences-context";
-import type { SelectableExpression } from "@/lib/types";
+import { useCodes } from "@/state/codes-context";
 
 interface Props {
-  allCodes: SelectableExpression[];
+  // Routed /scan page passes a callback that navigates to /food/[id]. When
+  // set, the inline detail card is suppressed since the user is about to
+  // leave for the dedicated detail view. The demo's third phone passes
+  // nothing so the card renders inline below the scanner controls — that's
+  // the side-by-side feedback-loop story.
+  onAfterScan?: (foodId: string) => void;
 }
 
-// Lookup modes: typed UPC or live barcode scan via camera. The scanner is a
+// Scanner UI: typed UPC or live barcode scan via camera. The scanner is a
 // dynamically-imported component (BarcodeScanner) so the ~250KB zxing chunk
 // doesn't ship until the user actually opens the scanner.
-export function ProductPhone({ allCodes }: Props) {
+export function ProductPhone({ onAfterScan }: Props) {
+  const allCodes = useCodes();
   const { state, composite } = usePreferences();
   const { setCurrentFood } = useDispatchHelpers();
 
@@ -41,6 +48,7 @@ export function ProductPhone({ allCodes }: Props) {
           return;
         }
         setCurrentFood(food);
+        onAfterScan?.(food.foodId);
       } catch (err) {
         console.error(err);
         setError(true);
@@ -48,7 +56,7 @@ export function ProductPhone({ allCodes }: Props) {
         setLookingUp(false);
       }
     },
-    [allCodes, setCurrentFood],
+    [allCodes, setCurrentFood, onAfterScan],
   );
 
   const handleDetected = useCallback(
@@ -63,6 +71,8 @@ export function ProductPhone({ allCodes }: Props) {
     },
     [handleLookup],
   );
+
+  const showInlineCard = !onAfterScan && state.currentFood;
 
   return (
     <div className="h-full flex flex-col relative">
@@ -124,13 +134,13 @@ export function ProductPhone({ allCodes }: Props) {
           </div>
         )}
 
-        {state.currentFood ? (
-          <ScoredFoodCard composite={composite} allCodes={allCodes} />
+        {showInlineCard ? (
+          <ScoredFoodCard composite={composite} />
         ) : (
           <div className="text-center px-6 pt-12">
             <div className="text-4xl mb-3">📷</div>
             <div className="text-screen-subtle text-sm">
-              Scan a barcode, enter a UPC, or pick a food from the Browse list to see its score.
+              Scan a barcode, enter a UPC, or pick a food from the Browse tab.
             </div>
           </div>
         )}
@@ -142,91 +152,6 @@ export function ProductPhone({ allCodes }: Props) {
           onCancel={() => setScanning(false)}
         />
       )}
-    </div>
-  );
-}
-
-function ScoredFoodCard({
-  composite,
-  allCodes,
-}: {
-  composite: number | null;
-  allCodes: SelectableExpression[];
-}) {
-  const { state } = usePreferences();
-  const food = state.currentFood;
-  if (!food) return null;
-
-  return (
-    <div className="space-y-4">
-      <div className="bg-screen-card border border-screen-line rounded-2xl p-4 text-center">
-        <div className="w-24 h-24 mx-auto rounded-2xl bg-stage-700 overflow-hidden flex items-center justify-center mb-3">
-          {food.imageUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={food.imageUrl} alt={food.name} className="w-full h-full object-cover" />
-          ) : (
-            <span className="text-3xl">🥫</span>
-          )}
-        </div>
-        <div className="font-semibold leading-snug">{food.name}</div>
-        {food.brand && <div className="text-[12px] text-screen-subtle mt-0.5">{food.brand}</div>}
-      </div>
-
-      <div className="text-center">
-        <div className="text-[11px] uppercase tracking-wider text-screen-subtle">
-          Your personalized score
-        </div>
-        <div className="text-6xl font-extrabold tabular-nums leading-none mt-1">
-          {composite ?? "--"}
-        </div>
-        <div className="text-[11px] tracking-wider text-screen-subtle mt-1">OUT OF 100</div>
-      </div>
-
-      <div>
-        <div className="text-[11px] uppercase tracking-wider text-screen-subtle mb-2">
-          Score breakdown
-        </div>
-        <div className="space-y-1.5">
-          {state.slots
-            .map((slot, i) => ({ slot, i }))
-            .filter(({ slot }) => slot.expressionId)
-            .map(({ slot }) => {
-              const code = allCodes.find((c) => c.id === slot.expressionId);
-              if (!code) return null;
-              const entry = food.scores[slot.expressionId as string];
-              const hasScore = Boolean(entry);
-              const contribution = hasScore ? (entry!.score * slot.weight) / 100 : null;
-              return (
-                <div
-                  key={slot.expressionId as string}
-                  className="flex items-start gap-2 rounded-xl bg-screen-card/60 border border-screen-line p-3"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-sm font-medium">{code.name}</span>
-                      {hasScore && entry!.label && (
-                        <span
-                          className="text-[10px] font-semibold uppercase tracking-wide rounded px-1.5 py-0.5 text-white"
-                          style={{ background: entry!.color ?? "#475569" }}
-                        >
-                          {entry!.label}
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-[11px] text-screen-subtle mt-0.5 tabular-nums">
-                      {hasScore
-                        ? `${entry!.score} × ${slot.weight}% = ${contribution!.toFixed(1)}`
-                        : `No score on this food · ${slot.weight}% weight`}
-                    </div>
-                  </div>
-                  <div className="text-sm font-bold tabular-nums ml-2">
-                    {hasScore ? entry!.score : "—"}
-                  </div>
-                </div>
-              );
-            })}
-        </div>
-      </div>
     </div>
   );
 }

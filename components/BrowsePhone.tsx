@@ -6,15 +6,20 @@ import {
   useDispatchHelpers,
   usePreferences,
 } from "@/state/preferences-context";
-import type { BrowseFood, BrowsePage, SelectableExpression } from "@/lib/types";
+import { useCodes } from "@/state/codes-context";
+import type { BrowseFood, BrowsePage } from "@/lib/types";
 
 const PAGE_SIZE = 20;
 
 interface Props {
-  allCodes: SelectableExpression[];
+  // Called after a food is loaded into context. Used by the routed app to
+  // push to /food/[id]; left undefined in the side-by-side demo where the
+  // breakdown is already visible on the next phone.
+  onAfterSelect?: (foodId: string) => void;
 }
 
-export function BrowsePhone({ allCodes }: Props) {
+export function BrowsePhone({ onAfterSelect }: Props) {
+  const allCodes = useCodes();
   const { state, filledCount } = usePreferences();
   const { setCurrentFood } = useDispatchHelpers();
   const [items, setItems] = useState<BrowseFood[]>([]);
@@ -151,12 +156,15 @@ export function BrowsePhone({ allCodes }: Props) {
       try {
         const expressionIds = allCodes.map((c) => c.id);
         const scored = await fetchFoodById(food.foodId, expressionIds);
-        if (scored) setCurrentFood(scored);
+        if (scored) {
+          setCurrentFood(scored);
+          onAfterSelect?.(scored.foodId);
+        }
       } catch (err) {
         console.error(err);
       }
     },
-    [allCodes, setCurrentFood],
+    [allCodes, setCurrentFood, onAfterSelect],
   );
 
   const hasMore = items.length < total;

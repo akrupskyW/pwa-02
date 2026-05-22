@@ -1,89 +1,116 @@
 // Curated mapping of food_expressions.code → consumer-facing picker section.
-// Mirrors the WISEintelligence prototype's PwaCategoryMap. Codes outside this
-// map are excluded from the picker so the consumer surface stays curated.
 //
-// Adding new picker sections is just adding entries here; nothing else needs
-// to change. The picker modal groups by category automatically.
+// Faithful port of the WISEintelligence Blazor PwaCategoryMap
+// (WISEintelligence/Pwa/Services/PwaCategoryMap.cs). The display labels are
+// cleaner consumer phrasings of Blazor's category enum names; the code-to-
+// category mappings themselves are copied verbatim. Both the demo app
+// (/demo, the side-by-side 3-phone stage) and the routed mobile prototype
+// (/, with the bottom-tab navigation) consume this single source of truth
+// via CodePickerModal.
+//
+// Codes NOT present here are deliberately excluded from the picker, so the
+// consumer surface stays curated even as wisecode_app.food_expressions
+// grows. Eventually food_expressions may gain its own category column and
+// this whole map can be replaced by a join.
 
 export type PwaCategory =
-  | "Diet & Lifestyle"
-  | "Allergies & Sensitivities"
-  | "Health Goals"
-  | "Clean Eating"
-  | "Nutrient Focus"
-  | "Special Conditions"
-  | "Industry Codes"
-  | "Other";
+  | "Composite Scores"           // Blazor: PwaCategory.Top
+  | "Health Outcomes"            // Blazor: PwaCategory.Outcomes
+  | "Overall Quality"            // Blazor: PwaCategory.Quality
+  | "Nutrient Focus"             // Blazor: PwaCategory.Nutrients
+  | "Processing Level"           // Blazor: PwaCategory.Processing
+  | "Clean & Natural"            // Blazor: PwaCategory.Clean
+  | "Avoid Ingredients"          // Blazor: PwaCategory.Avoid
+  | "Allergens & Sensitivities"  // Blazor: PwaCategory.Allergen
+  | "Industry Codes";            // Blazor: PwaCategory.Industry
 
-/**
- * code → display category. Update as new codes are added to wisecode_app.food_expressions.
- */
 const MAP: Readonly<Record<string, PwaCategory>> = {
-  // Diet & Lifestyle
-  vegan: "Diet & Lifestyle",
-  vegetarian: "Diet & Lifestyle",
-  pescatarian: "Diet & Lifestyle",
-  kosher: "Diet & Lifestyle",
-  halal: "Diet & Lifestyle",
-  paleo: "Diet & Lifestyle",
-  keto: "Diet & Lifestyle",
-  mediterranean: "Diet & Lifestyle",
+  // Composite Scores — top-level synthesized scores
+  wise_score: "Composite Scores",
+  thrive_score: "Composite Scores",
 
-  // Allergies & Sensitivities
-  allergen_dairy: "Allergies & Sensitivities",
-  allergen_eggs: "Allergies & Sensitivities",
-  allergen_fish: "Allergies & Sensitivities",
-  allergen_peanuts: "Allergies & Sensitivities",
-  allergen_sesame: "Allergies & Sensitivities",
-  allergen_shellfish: "Allergies & Sensitivities",
-  allergen_soy: "Allergies & Sensitivities",
-  allergen_tree_nuts: "Allergies & Sensitivities",
-  allergen_wheat: "Allergies & Sensitivities",
-  gluten_free: "Allergies & Sensitivities",
-  dairy_free: "Allergies & Sensitivities",
+  // Health Outcomes
+  heart_healthy: "Health Outcomes",
+  diabetes_friendly: "Health Outcomes",
+  gut_health: "Health Outcomes",
+  muscle_health: "Health Outcomes",
+  anti_inflammatory: "Health Outcomes",
 
-  // Health Goals
-  heart_healthy: "Health Goals",
-  diabetic_friendly: "Health Goals",
-  low_sodium: "Health Goals",
-  weight_management: "Health Goals",
-  anti_inflammatory: "Health Goals",
-  gut_health: "Health Goals",
+  // Overall Quality
+  iq_score: "Overall Quality",
+  nq_score: "Overall Quality",
+  carb_quality: "Overall Quality",
+  fat_quality: "Overall Quality",
 
-  // Clean Eating
-  clean_label: "Clean Eating",
-  all_natural: "Clean Eating",
-  organic: "Clean Eating",
-  non_gmo: "Clean Eating",
-  artificial_color: "Clean Eating",
-  artificial_flavor: "Clean Eating",
-  artificial_sweetener: "Clean Eating",
-  preservative_free: "Clean Eating",
+  // Nutrient Focus — specific nutrients
+  protein_density: "Nutrient Focus",
+  fiber_density: "Nutrient Focus",
+  sugar_density: "Nutrient Focus",
+  calorie_quality: "Nutrient Focus",
+  eaa_9: "Nutrient Focus",
+  excellent_source: "Nutrient Focus",
 
-  // Nutrient Focus
-  high_protein: "Nutrient Focus",
-  high_fiber: "Nutrient Focus",
-  low_sugar: "Nutrient Focus",
-  whole_grain: "Nutrient Focus",
-  added_sugar: "Nutrient Focus",
+  // Processing Level
+  wisecode_upf: "Processing Level",
+  non_upf_vs_upf: "Processing Level",
+  nova_food_classification_system: "Processing Level",
+  california_ab_1264_upf: "Processing Level",
+  texas_sb_25_upf: "Processing Level",
+  tx_sb25: "Processing Level",
 
-  // Special Conditions
-  wisecode_upf: "Special Conditions",
-  ultra_processed: "Special Conditions",
+  // Clean & Natural
+  clean_label: "Clean & Natural",
+  all_natural: "Clean & Natural",
+  gras_plus: "Clean & Natural",
+  sketchy: "Clean & Natural",
+  maha: "Clean & Natural",
 
-  // Industry Codes
+  // Avoid Ingredients — negative patterns (100 = absent)
+  high_fructose_corn_syrup: "Avoid Ingredients",
+  artificial_sweetener: "Avoid Ingredients",
+  artificial_preservative: "Avoid Ingredients",
+  artificial_color: "Avoid Ingredients",
+  artificial_flavor: "Avoid Ingredients",
+  seed_oil: "Avoid Ingredients",
+  hateful_eight_seed_oil: "Avoid Ingredients",
+  emulsifier: "Avoid Ingredients",
+  watchout: "Avoid Ingredients",
+  hyperpalatability: "Avoid Ingredients",
+
+  // Allergens & Sensitivities — includes histamine sensitivity (same
+  // "avoid for sensitive individuals" framing as allergens)
+  allergen: "Allergens & Sensitivities",
+  allergen_milk: "Allergens & Sensitivities",
+  allergen_eggs: "Allergens & Sensitivities",
+  allergen_peanuts: "Allergens & Sensitivities",
+  allergen_tree_nuts: "Allergens & Sensitivities",
+  allergen_soybeans: "Allergens & Sensitivities",
+  allergen_wheat: "Allergens & Sensitivities",
+  allergen_fish: "Allergens & Sensitivities",
+  allergen_shellfish: "Allergens & Sensitivities",
+  allergen_sesame: "Allergens & Sensitivities",
+  histamine_level: "Allergens & Sensitivities",
+
+  // Industry / third-party
   guiding_stars: "Industry Codes",
+
+  // Intentionally NOT in the picker (still exists in food_expressions but
+  // not surfaced): yikes_score_sort_value — a DataEngineeringBased sort
+  // helper that duplicates wisecode_upf.
 };
 
+// Ordered consumer-most-relevant first. CodePickerModal renders sections
+// in this order, skipping any with no matching codes.
 export const PWA_CATEGORY_ORDER: readonly PwaCategory[] = [
-  "Diet & Lifestyle",
-  "Health Goals",
-  "Clean Eating",
+  "Composite Scores",
+  "Health Outcomes",
+  "Overall Quality",
   "Nutrient Focus",
-  "Allergies & Sensitivities",
-  "Special Conditions",
+  "Processing Level",
+  "Clean & Natural",
+  "Avoid Ingredients",
+  "Allergens & Sensitivities",
   "Industry Codes",
-  "Other",
 ];
 
 export function lookupCategory(code: string): PwaCategory | null {

@@ -3,17 +3,13 @@
 import { useState } from "react";
 import { CodePickerModal } from "./CodePickerModal";
 import { SlotCard } from "./SlotCard";
-import { useSeedDefaults, usePreferences } from "@/state/preferences-context";
-import type { SelectableExpression } from "@/lib/types";
+import { usePreferences } from "@/state/preferences-context";
+import { useCodes } from "@/state/codes-context";
 
-interface Props {
-  allCodes: SelectableExpression[];
-}
-
-export function PreferencesPhone({ allCodes }: Props) {
+export function PreferencesPhone() {
+  const allCodes = useCodes();
   const { state } = usePreferences();
   const [pickerSlotIdx, setPickerSlotIdx] = useState<number | null>(null);
-  useSeedDefaults(allCodes);
 
   return (
     <div className="h-full flex flex-col relative">
