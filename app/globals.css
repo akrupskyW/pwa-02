@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #05080f;
+  color: white;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Hide scrollbars on mobile-app-like surfaces (the phone screens). Scrolling
+   still works via touch / wheel / trackpad — the bar itself just isn't drawn,
+   matching native mobile-app conventions where scroll is implicit. */
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;          /* Firefox */
+    -ms-overflow-style: none;       /* IE / legacy Edge */
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;                  /* Chrome / Safari / new Edge */
+  }
+}
