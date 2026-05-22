@@ -144,10 +144,12 @@ Postgres instance.
 
 ### The derived denormalization — `wisecode_app.food_normalized_scores`
 
-A real maintained table created and refreshed by a PL/pgSQL script
-(`WISEcode.Services/Sql/FoodNormalizedScores/refresh_food_normalized_scores.sql`
-in the WISEintelligence repo). It's the wide-format counterpart of
-`food_expression_foods`:
+A real maintained table created and refreshed by a PL/pgSQL script,
+checked in at `db/refresh_food_normalized_scores.sql` in **this repo**
+(also tracked in WISEintelligence at
+`WISEcode.Services/Sql/FoodNormalizedScores/refresh_food_normalized_scores.sql`
+as the canonical source — sync from there to here if they ever drift).
+It's the wide-format counterpart of `food_expression_foods`:
 
 ```
 food_id          UUID    PK, FK → food.id ON DELETE CASCADE
@@ -368,7 +370,7 @@ prototype as follows. Cross-reference for anyone moving between the two.
 | Category map | `Pwa/Services/PwaCategoryMap.cs` | `lib/category-map.ts` |
 | Local storage | `Pwa/Services/PwaLocalStorageService.cs` | inline in `preferences-context.tsx` |
 | Connection / pool | `IDbContextFactory<WiseCodeDbContext>` (EF Core) | `lib/db.ts` (pg Pool, HMR-safe singleton) |
-| Refresh script | `WISEcode.Services/Sql/FoodNormalizedScores/refresh_food_normalized_scores.sql` | (same file — owned by WISEintelligence repo) |
+| Refresh script | `WISEcode.Services/Sql/FoodNormalizedScores/refresh_food_normalized_scores.sql` | `db/refresh_food_normalized_scores.sql` (mirrored copy) |
 
 ### Notable architectural shifts in the port
 
@@ -392,10 +394,13 @@ prototype as follows. Cross-reference for anyone moving between the two.
 
 ## 8. What lives outside this repo
 
-- **Refresh script for `food_normalized_scores`**: lives in the
-  WISEintelligence repo at
-  `WISEcode.Services/Sql/FoodNormalizedScores/refresh_food_normalized_scores.sql`.
-  Run it manually (or schedule it from the WISEintelligence app) when:
+- **Refresh script for `food_normalized_scores`**: a copy now ships
+  in-tree at `db/refresh_food_normalized_scores.sql` (see README §
+  "Database setup"). The canonical source still lives in WISEintelligence
+  at `WISEcode.Services/Sql/FoodNormalizedScores/refresh_food_normalized_scores.sql`
+  — sync from there to here if they ever drift. Run the script when:
+  - First setting up the app against a database (required — without it,
+    Browse can't sort)
   - New codes get added to `food_expressions`
   - Scores in `food_expression_foods` change materially
   - You re-seed the database

@@ -28,10 +28,14 @@ this stack choice.
 cd PersonalizedNutritionPWA
 cp .env.local.example .env.local      # then fill in DATABASE_URL
 npm install
+psql "$DATABASE_URL" -f db/refresh_food_normalized_scores.sql   # see "Database setup" — required if the wide table doesn't exist yet
 npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+The `psql` step is only needed the first time you point at a database, or
+when codes / source scores change. See **Database setup** below.
 
 ## Required schema access
 
@@ -40,20 +44,73 @@ The connecting Postgres user needs SELECT on:
 - `wisecode_app.food_expressions`
 - `wisecode_app.food_expression_foods`
 - `wisecode_app.food_expression_value_interpretations`
-- `wisecode_app.food_normalized_scores` — the denormalized wide table; created
-  and maintained by the WISEintelligence refresh script (see PROTOTYPE.md)
+- `wisecode_app.food_normalized_scores` — **the denormalized wide table this
+  app's Browse phone depends on. Created and refreshed by the SQL script in
+  `db/` (see "Database setup" below).**
 - `wisecode_gold.food`
 - `wisecode_gold.product`
 
-If `wisecode_app.food_normalized_scores` doesn't exist yet, run the refresh
-script from the WISEintelligence repo at
-`WISEcode.Services/Sql/FoodNormalizedScores/refresh_food_normalized_scores.sql`.
+## Database setup
+
+> **Required.** Without `wisecode_app.food_normalized_scores`, the Browse phone
+> can't sort foods by composite weighted score and will fail at runtime.
+
+The Browse phone's sub-second list query relies on a denormalized wide table
+`wisecode_app.food_normalized_scores` (one row per food, one REAL column per
+food expression code). This avoids the 20-second CTE-and-GROUP-BY hit that
+the naive query against `wisecode_app.food_expression_foods` would have.
+See [PROTOTYPE.md §5 — Performance journey](./PROTOTYPE.md) for the rationale.
+
+The maintenance script lives at:
+
+```
+db/refresh_food_normalized_scores.sql
+```
+
+It's idempotent and re-runnable. Running it:
+
+- Creates `wisecode_app.food_normalized_scores` if missing
+- Adds a column for each code in `wisecode_app.food_expressions` that doesn't
+  already have one (`ALTER TABLE ADD COLUMN IF NOT EXISTS`)
+- Removes rows for foods that lost `fully_parsed`; adds rows for newly
+  `fully_parsed` foods
+- For each code, refreshes the column values from `food_expression_foods`,
+  writing only the rows whose stored value actually changed
+  (`IS DISTINCT FROM` guard). Per-cell values are clamped to `[0, 100]`.
+
+When to run it:
+
+| Trigger | Run the script? |
+|---|---|
+| First time setting up the app against a database | **Yes — required.** |
+| New code added to `food_expressions` | Yes — new code → new column |
+| Foods re-scored / `food_expression_foods` materially changed | Yes — refreshes stored values |
+| Just running the app day-to-day | No — the table is read-only at request time |
+
+How to run it (psql):
+
+```bash
+psql "$DATABASE_URL" -f db/refresh_food_normalized_scores.sql
+```
+
+Expect ~6 minutes on a ~1M-foods × ~50-codes corpus for a cold first run;
+subsequent re-runs that find most cells already at the right value finish
+faster.
+
+The script is also tracked in the WISEintelligence repo at
+`WISEcode.Services/Sql/FoodNormalizedScores/refresh_food_normalized_scores.sql`
+where it's the canonical source. If the two ever drift, sync from
+WISEintelligence to here, not the other way around.
 
 ## Project layout
 
 ```
 .env.local                 — DATABASE_URL (gitignored)
 .env.local.example         — template
+db/
+  refresh_food_normalized_scores.sql — wide-table maintenance script
+                                       (idempotent, re-runnable; see
+                                       "Database setup" above)
 app/
   layout.tsx               — root layout
   page.tsx                 — SSR codes catalog, hands off to ClientStage
