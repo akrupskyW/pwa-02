@@ -8,10 +8,16 @@ import type { PwaCategory } from "./category-map";
 
 /** A code the user can pick into one of their slots. */
 export interface SelectableExpression {
-  id: string;          // food_expressions.id (UUID)
-  code: string;        // food_expressions.code — also the wide-table column name
-  name: string;        // food_expressions.name (user-visible)
+  id: string;                          // food_expressions.id (UUID)
+  code: string;                        // food_expressions.code — wide-table column name
+  name: string;                        // food_expressions.name (user-visible)
   category: PwaCategory;
+  /** A short marketing line ("Good for your heart"). Used as the LLM
+   *  prompt's per-code summary and as a future picker tooltip. */
+  shortDescription: string | null;
+  /** Full explanation, used by the LLM and for any "what does this mean?"
+   *  affordance we add later. */
+  description: string | null;
 }
 
 /** A single per-(food, code) score entry with its interpretive metadata. */

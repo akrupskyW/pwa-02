@@ -36,11 +36,13 @@ interface FoodExpressionRow {
   id: string;
   code: string | null;
   name: string | null;
+  short_description: string | null;
+  description: string | null;
 }
 
 export async function listSelectableExpressions(): Promise<SelectableExpression[]> {
   const rows = await query<FoodExpressionRow>(
-    `SELECT id, code, name
+    `SELECT id, code, name, short_description, description
      FROM   wisecode_app.food_expressions
      WHERE  active = true OR render_type IN ('TopLevel', 'Complex')`,
     [],
@@ -52,7 +54,14 @@ export async function listSelectableExpressions(): Promise<SelectableExpression[
     if (!r.code || !r.name) continue;
     const category = lookupCategory(r.code);
     if (!category) continue;       // outside the curated picker
-    out.push({ id: r.id, code: r.code, name: r.name, category });
+    out.push({
+      id: r.id,
+      code: r.code,
+      name: r.name,
+      category,
+      shortDescription: r.short_description,
+      description: r.description,
+    });
   }
   return out;
 }

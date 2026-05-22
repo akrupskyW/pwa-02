@@ -29,21 +29,45 @@ import type {
 export const MAX_SLOTS = 5;
 const STORAGE_KEY_SLOTS = "pn.slots";
 const STORAGE_KEY_FOOD_ID = "pn.foodId";
+const STORAGE_KEY_AI_TAGS = "pn.aiTags";
+
+interface AiTagsState {
+  tags: string[];
+  /** The slots signature the tags were generated against. When the current
+   *  slots produce a different signature, the tags are "stale" and the UI
+   *  shows an Ask-AI button instead of the chip row. */
+  signature: string;
+}
 
 interface State {
   slots: Slot[];
   currentFood: ScoredFood | null;
   hydrated: boolean;
+  aiTags: AiTagsState | null;
 }
 
 type Action =
-  | { type: "HYDRATE"; slots: Slot[]; currentFood: ScoredFood | null }
+  | { type: "HYDRATE"; slots: Slot[]; currentFood: ScoredFood | null; aiTags: AiTagsState | null }
   | { type: "ASSIGN_CODE"; slotIdx: number; expressionId: string }
   | { type: "REMOVE_CODE"; slotIdx: number }
   | { type: "SET_WEIGHT"; slotIdx: number; weight: number }
   | { type: "SEED_SLOT"; slotIdx: number; expressionId: string; weight: number }
+  | { type: "REPLACE_SLOTS"; slots: Slot[] }
   | { type: "SET_CURRENT_FOOD"; food: ScoredFood | null }
-  | { type: "MERGE_FOOD_SCORES"; foodId: string; scores: ScoredFood["scores"] };
+  | { type: "MERGE_FOOD_SCORES"; foodId: string; scores: ScoredFood["scores"] }
+  | { type: "SET_AI_TAGS"; tags: string[]; signature: string }
+  | { type: "CLEAR_AI_TAGS" };
+
+/** Stable signature of the user's filled slot config. Used to invalidate AI
+ *  tags whenever the underlying portfolio changes (different code OR
+ *  different weight) — the UI then shows the "Ask AI for new tags" button. */
+export function slotsSignature(slots: readonly Slot[]): string {
+  return JSON.stringify(
+    slots
+      .filter((s) => s.expressionId)
+      .map((s) => [s.expressionId, s.weight] as const),
+  );
+}
 
 const initialSlots: Slot[] = Array.from({ length: MAX_SLOTS }, () => ({
   expressionId: null,
@@ -54,12 +78,18 @@ const initialState: State = {
   slots: initialSlots,
   currentFood: null,
   hydrated: false,
+  aiTags: null,
 };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "HYDRATE":
-      return { slots: action.slots, currentFood: action.currentFood, hydrated: true };
+      return {
+        slots: action.slots,
+        currentFood: action.currentFood,
+        hydrated: true,
+        aiTags: action.aiTags,
+      };
 
     case "ASSIGN_CODE": {
       // If this code is already in another slot, do nothing.
@@ -96,6 +126,17 @@ function reducer(state: State, action: Action): State {
       return { ...state, slots: next };
     }
 
+    case "REPLACE_SLOTS": {
+      // Used by the AI compose flow: replace the entire slot config with
+      // the model's choice, padding the tail with empty slots so we keep
+      // exactly MAX_SLOTS entries.
+      const filled = action.slots.slice(0, MAX_SLOTS);
+      const padded: Slot[] = Array.from({ length: MAX_SLOTS }, (_, i) =>
+        filled[i] ?? { expressionId: null, weight: 0 },
+      );
+      return { ...state, slots: padded };
+    }
+
     case "SET_CURRENT_FOOD":
       return { ...state, currentFood: action.food };
 
@@ -108,6 +149,12 @@ function reducer(state: State, action: Action): State {
           scores: { ...state.currentFood.scores, ...action.scores },
         },
       };
+
+    case "SET_AI_TAGS":
+      return { ...state, aiTags: { tags: action.tags, signature: action.signature } };
+
+    case "CLEAR_AI_TAGS":
+      return { ...state, aiTags: null };
   }
 }
 
@@ -118,6 +165,12 @@ interface ContextValue {
   filledCount: number;
   hasEmptySlot: boolean;
   emptySlotIndex: number;
+  /** Current slot signature — recomputed on every state change so the AI
+   *  layer can compare it to the signature stored alongside the tags. */
+  currentSignature: string;
+  /** True when AI tags exist but the slot config has changed since they
+   *  were generated. The hero shows the "Ask AI for new tags" button. */
+  aiTagsStale: boolean;
 }
 
 const PreferencesContext = createContext<ContextValue | null>(null);
@@ -146,7 +199,25 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     } catch {
       // ignore malformed payloads
     }
-    dispatch({ type: "HYDRATE", slots, currentFood: null });
+
+    let aiTags: AiTagsState | null = null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY_AI_TAGS);
+      if (raw) {
+        const parsed = JSON.parse(raw) as Partial<AiTagsState>;
+        if (
+          Array.isArray(parsed.tags) &&
+          parsed.tags.every((t) => typeof t === "string") &&
+          typeof parsed.signature === "string"
+        ) {
+          aiTags = { tags: parsed.tags, signature: parsed.signature };
+        }
+      }
+    } catch {
+      // ignore malformed payloads
+    }
+
+    dispatch({ type: "HYDRATE", slots, currentFood: null, aiTags });
   }, []);
 
   // Auto-save slots to localStorage on any change after hydration.
@@ -172,6 +243,19 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     }
   }, [state.currentFood, state.hydrated]);
 
+  useEffect(() => {
+    if (!state.hydrated) return;
+    try {
+      if (state.aiTags) {
+        localStorage.setItem(STORAGE_KEY_AI_TAGS, JSON.stringify(state.aiTags));
+      } else {
+        localStorage.removeItem(STORAGE_KEY_AI_TAGS);
+      }
+    } catch {
+      // ignore
+    }
+  }, [state.aiTags, state.hydrated]);
+
   const composite = useMemo(
     () => computeComposite(state.slots, state.currentFood),
     [state.slots, state.currentFood],
@@ -187,6 +271,15 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     [state.slots],
   );
 
+  const currentSignature = useMemo(
+    () => slotsSignature(state.slots),
+    [state.slots],
+  );
+
+  const aiTagsStale = Boolean(
+    state.aiTags && state.aiTags.signature !== currentSignature,
+  );
+
   const value = useMemo<ContextValue>(
     () => ({
       state,
@@ -195,8 +288,10 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       filledCount,
       hasEmptySlot: emptySlotIndex >= 0,
       emptySlotIndex,
+      currentSignature,
+      aiTagsStale,
     }),
-    [state, composite, filledCount, emptySlotIndex],
+    [state, composite, filledCount, emptySlotIndex, currentSignature, aiTagsStale],
   );
 
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;
@@ -283,6 +378,10 @@ export function useDispatchHelpers() {
         dispatch({ type: "SET_WEIGHT", slotIdx, weight }),
       [dispatch],
     ),
+    replaceSlots: useCallback(
+      (slots: Slot[]) => dispatch({ type: "REPLACE_SLOTS", slots }),
+      [dispatch],
+    ),
     setCurrentFood: useCallback(
       (food: ScoredFood | null) => dispatch({ type: "SET_CURRENT_FOOD", food }),
       [dispatch],
@@ -292,5 +391,11 @@ export function useDispatchHelpers() {
         dispatch({ type: "MERGE_FOOD_SCORES", foodId, scores }),
       [dispatch],
     ),
+    setAiTags: useCallback(
+      (tags: string[], signature: string) =>
+        dispatch({ type: "SET_AI_TAGS", tags, signature }),
+      [dispatch],
+    ),
+    clearAiTags: useCallback(() => dispatch({ type: "CLEAR_AI_TAGS" }), [dispatch]),
   };
 }

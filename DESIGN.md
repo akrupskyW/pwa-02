@@ -350,7 +350,103 @@ A few opinions baked into every screen:
 
 ---
 
-## 6. Implementation notes
+## 6. AI-assisted composition
+
+The Preferences hero is the only AI surface in v1. Two LLM calls, three
+visual states.
+
+### Endpoints
+
+| Route | Input | Output | Used by |
+|-------|-------|--------|---------|
+| `POST /api/code/compose` | `{ description: string }` | `{ slots: [{expressionId, code, name, weight}], tags: string[], rationale: string }` | TalkToAISheet's Compose button |
+| `POST /api/code/tags` | `{ slots: [{code, weight}] }` | `{ tags: string[] }` | AITagRow's Ask-AI / refresh button |
+
+Both routes are server-rendered (`runtime = "nodejs"`), force-dynamic, and
+hit the catalog (`listSelectableExpressions`) before calling the model so
+the model always sees the current set of codes — no rebuild needed when a
+new code is added to `food_expressions`. The model works in **slugs only**;
+the compose route resolves slugs → UUIDs server-side, so the client just
+gets `expressionId` ready for a `REPLACE_SLOTS` dispatch.
+
+The compose route also **normalizes weights to exactly 100** after the
+model returns — if the model says 35/30/30/10 (sum 105) we scale to 33/29/29/9
+and add the rounding drift back to the largest slot. The model gets a clear
+instruction to sum to 100; this is just defense in depth.
+
+### Provider abstraction
+
+[lib/llm.ts](lib/llm.ts) is a thin gateway over the Vercel AI SDK.
+Provider is selected by `LLM_PROVIDER` (`openai` | `anthropic`). Defaults:
+
+- OpenAI: `gpt-5` (a reasoning model — the gateway omits `temperature`
+  unless the caller explicitly opts in, since reasoning models reject it).
+- Anthropic: `claude-opus-4-7`.
+
+Structured outputs are enforced by Zod schemas
+([lib/code-prompts.ts](lib/code-prompts.ts) §Schemas). No "parse the prose"
+fallback — invalid JSON throws and the caller renders an error state.
+
+### Three hero states (matched to the .pen variants)
+
+1. **Empty (Variant A)** — `filledCount === 0`. The hero becomes the
+   `<AIEmptyHero>`: sparkle icon, "Compose your code with AI", and a
+   gradient `Talk it through` CTA. The header right-slot hides the
+   avatar; the manual "+ Add a code" path is still visible below, but
+   the AI route is the obvious one.
+
+2. **Fresh tags (Variant B)** — `aiTags && !aiTagsStale`. Standard
+   compact hero (small ring + "In Harmony" copy) with
+   `<AITagRow>` rendering 3–4 AI tag chips below the description.
+   Provenance is signalled by a tiny `sparkles` glyph inside each chip
+   (per user preference — see DESIGN.md §5 "AI-generated tags carry
+   provenance"). The header right-slot becomes the
+   `<TalkToAIHeaderPill>` so the sheet is one tap away.
+
+3. **Stale tags (Variant C)** — `aiTags && aiTagsStale`. Same hero, but
+   the chip row collapses to a single dashed-border ghost button "Ask AI
+   for new tags". One tap fires `/api/code/tags` against the current
+   signature and the row flips back to fresh chips. This is the
+   non-destructive path: weights stay, only the tags refresh.
+
+The fourth implicit state — `filledCount > 0 && !state.aiTags` — also
+shows the dashed ghost button, labeled "Ask AI for tags". Same call,
+same destination state.
+
+### Staleness detection
+
+[state/preferences-context.tsx](state/preferences-context.tsx) keeps the
+AI tags alongside the **slot signature** they were generated against
+(`JSON.stringify(filledSlots.map(s => [expressionId, weight]))`). Any
+slot change recomputes the current signature; when it differs from the
+stored one, `aiTagsStale = true`. No debounce — staleness is immediate.
+Tags don't auto-refresh; the user always taps to spend an LLM call.
+
+### Talk-to-AI sheet
+
+`<TalkToAISheet>` is a bottom sheet (~75% height) that overlays the phone
+screen. It carries: a textarea (1200 char max), 3 example prompts that
+preload the textarea when tapped, a Cancel/Compose action row, and an
+inline error region. On Compose:
+
+1. POST `/api/code/compose`.
+2. On success: `REPLACE_SLOTS` with the model's slots, then `SET_AI_TAGS`
+   with the new tags + the new signature, then close the sheet.
+3. On failure: error message stays in the sheet; user can retry.
+
+Replacement is destructive by design (per the AI's job: compose the
+code). Undo isn't built in v1 — if you want your old config back, talk
+to AI again.
+
+### Localstorage
+
+`pn.aiTags` joins `pn.slots` and `pn.foodId` in localStorage with the
+shape `{ tags: string[], signature: string }`. So a refresh keeps the
+fresh-vs-stale status correctly.
+
+---
+
+## 7. Implementation notes
 
 - The `.pen` design file is authoritative for visual decisions. When code
   and design drift, update [PersonalizedNutrition.pen](PersonalizedNutrition.pen)

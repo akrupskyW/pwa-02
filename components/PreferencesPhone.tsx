@@ -5,6 +5,12 @@ import { CodePickerModal } from "./CodePickerModal";
 import { SlotCard } from "./SlotCard";
 import { ScoreRing } from "./ScoreRing";
 import { Icon } from "./Icon";
+import {
+  AIEmptyHero,
+  AITagRow,
+  TalkToAIHeaderPill,
+} from "./AIHero";
+import { TalkToAISheet } from "./TalkToAISheet";
 import { MAX_SLOTS, usePreferences } from "@/state/preferences-context";
 import { useCodes } from "@/state/codes-context";
 
@@ -13,6 +19,7 @@ export function PreferencesPhone() {
   const allCodes = useCodes();
   const { state, filledCount } = usePreferences();
   const [pickerSlotIdx, setPickerSlotIdx] = useState<number | null>(null);
+  const [aiSheetOpen, setAiSheetOpen] = useState(false);
 
   // The "weight allocation" displayed on the hero. We always rebalance to 100
   // among filled slots, but show the integer sum to be transparent about it.
@@ -25,14 +32,21 @@ export function PreferencesPhone() {
 
   return (
     <div className="h-full flex flex-col relative">
-      <ScreenHeader />
+      <ScreenHeader
+        filledCount={filledCount}
+        onTalkToAI={() => setAiSheetOpen(true)}
+      />
 
       <div className="flex-1 px-5 pb-5 space-y-4">
-        <HeroCard
-          filledCount={filledCount}
-          weightSum={weightSum}
-          inHarmony={inHarmony}
-        />
+        {filledCount === 0 ? (
+          <AIEmptyHero onTalkToAI={() => setAiSheetOpen(true)} />
+        ) : (
+          <HeroCard
+            filledCount={filledCount}
+            weightSum={weightSum}
+            inHarmony={inHarmony}
+          />
+        )}
 
         <SectionHeader filledCount={filledCount} />
 
@@ -57,11 +71,19 @@ export function PreferencesPhone() {
           onClose={() => setPickerSlotIdx(null)}
         />
       )}
+
+      {aiSheetOpen && <TalkToAISheet onClose={() => setAiSheetOpen(false)} />}
     </div>
   );
 }
 
-function ScreenHeader() {
+function ScreenHeader({
+  filledCount,
+  onTalkToAI,
+}: {
+  filledCount: number;
+  onTalkToAI: () => void;
+}) {
   return (
     <header className="px-5 pt-14 pb-3 flex items-start justify-between">
       <div>
@@ -72,16 +94,23 @@ function ScreenHeader() {
           Personal Rubric
         </div>
       </div>
-      <div
-        className="w-[38px] h-[38px] rounded-pill flex items-center justify-center text-[15px] font-extrabold text-ink-soft"
-        style={{
-          background:
-            "linear-gradient(135deg, var(--accent-violet) 0%, var(--accent-emerald) 100%)",
-        }}
-        aria-hidden
-      >
-        T
-      </div>
+      {/* Once the user has any codes, the header's right slot becomes the
+          always-available "Talk to AI" entry point. Empty state hides it —
+          AIEmptyHero is the obvious entry point there. */}
+      {filledCount > 0 ? (
+        <TalkToAIHeaderPill onClick={onTalkToAI} />
+      ) : (
+        <div
+          className="w-[38px] h-[38px] rounded-pill flex items-center justify-center text-[15px] font-extrabold text-ink-soft"
+          style={{
+            background:
+              "linear-gradient(135deg, var(--accent-violet) 0%, var(--accent-emerald) 100%)",
+          }}
+          aria-hidden
+        >
+          T
+        </div>
+      )}
     </header>
   );
 }
@@ -95,15 +124,8 @@ function HeroCard({
   weightSum: number;
   inHarmony: boolean;
 }) {
-  const title = filledCount === 0
-    ? "Start your code"
-    : inHarmony
-    ? "In Harmony"
-    : "Composing…";
-
-  const subtitle = filledCount === 0
-    ? "Pick a code below to begin. Up to five — weighted to 100."
-    : `${filledCount} of ${MAX_SLOTS} slots filled — weight totals ${weightSum} of 100.`;
+  const title = inHarmony ? "In Harmony" : "Composing…";
+  const subtitle = `${filledCount} of ${MAX_SLOTS} slots filled — weight totals ${weightSum} of 100.`;
 
   return (
     <section
@@ -120,7 +142,6 @@ function HeroCard({
         thicknessRatio={0.18}
         numberSize={32}
         label="OF 100"
-        noHalo={filledCount === 0}
       />
       <div className="flex-1 min-w-0">
         <div className="text-[18px] font-bold text-ink-bright leading-tight">
@@ -128,6 +149,9 @@ function HeroCard({
         </div>
         <div className="text-[12px] font-medium text-ink-muted leading-snug mt-1.5">
           {subtitle}
+        </div>
+        <div className="mt-2.5">
+          <AITagRow />
         </div>
       </div>
     </section>
