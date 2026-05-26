@@ -10,6 +10,13 @@
 
 import { query } from "./db";
 import { lookupCategory } from "./category-map";
+import {
+  mockBrowseFoods,
+  mockListSelectableExpressions,
+  mockScoreFoodById,
+  mockScoreFoodByUpc,
+} from "./mock-data";
+import { isMockMode } from "./mock-mode";
 import type { BrowsePage, ScoredFood, SelectableExpression, SlotScore } from "./types";
 
 /** Postgres double-quote identifier quoting; doubles embedded `"`. */
@@ -36,6 +43,7 @@ interface FoodExpressionRow {
 }
 
 export const listSelectableExpressions = async (): Promise<SelectableExpression[]> => {
+  if (isMockMode()) return mockListSelectableExpressions();
   const rows = await query<FoodExpressionRow>(
     `SELECT id, code, name, short_description, description
      FROM   wisecode_app.food_expressions
@@ -81,6 +89,7 @@ export const scoreFoodById = async (
   foodId: string,
   expressionIds: readonly string[],
 ): Promise<ScoredFood | null> => {
+  if (isMockMode()) return mockScoreFoodById(foodId, expressionIds);
   const foodRows = await query<FoodRow>(
     `SELECT id, name, brand, product_image_url
      FROM   wisecode_gold.food
@@ -109,6 +118,7 @@ export const scoreFoodByUpc = async (
   upc: string,
   expressionIds: readonly string[],
 ): Promise<ScoredFood | null> => {
+  if (isMockMode()) return mockScoreFoodByUpc(upc, expressionIds);
   if (!upc.trim()) return null;
 
   let resolved = await resolveByUpc(upc);
@@ -206,6 +216,7 @@ export const browseFoods = async (
   offset: number,
   limit: number,
 ): Promise<BrowsePage> => {
+  if (isMockMode()) return mockBrowseFoods(slots, offset, limit);
   const positiveSlots = slots.filter((s) => s.weight > 0);
   if (positiveSlots.length === 0) {
     return { items: [], total: 0 };

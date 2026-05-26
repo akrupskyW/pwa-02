@@ -32,12 +32,46 @@
 - `yarn lint` — ESLint flat config
 - `yarn format` — Prettier write across the repo
 
+### "Run the app" — preferred entrypoint
+
+When a user (or future Claude session) asks to "run the app", the path of
+least friction is `corepack enable && corepack yarn install && corepack
+yarn dev`. The dev server binds http://localhost:3000.
+
+If `.env.local` doesn't exist and `DATABASE_URL` isn't otherwise in the
+environment, the app auto-enters **mock mode** (see below) — boots with
+captured fixtures, no Postgres needed. No setup question to ask the user;
+just start the server.
+
+## Mock mode
+
+- The data layer (`lib/queries.ts`) and AI route handlers
+  (`app/api/code/{compose,tags}/route.ts`) gate on `isMockMode()` from
+  `lib/mock-mode.ts`.
+- Mock mode is **on** when `PN_MOCK_DATA=1` OR when `DATABASE_URL` is unset.
+  Mock mode is **off** when `PN_MOCK_DATA=0` OR when `DATABASE_URL` is set.
+- Fixtures live in `lib/mock-data/`:
+  - `expressions.json` — 40 curated codes (same as the real catalog).
+  - `foods.json` — 400 foods spanning the score distribution, each with
+    full per-expression `SlotScore` maps so browse re-sorts live as the
+    user adjusts slot weights.
+  - `upcs.json` — 183 real UPCs → foodId, so the scan flow resolves for
+    any of those barcodes.
+  - `llm.ts` — keyword-matched compose response + canned tags response.
+- Regenerate fixtures with `scripts/capture-mock-data.sh` after pulling
+  fresh DB data. Requires a live DB and a running prod server.
+- Mock mode is intended for fresh-clone "see the app work" demos and for
+  smoke tests. It is **not** intended to mirror prod data — fixtures
+  drift; assume they're stale.
+
 ## Secrets
 
 - `DATABASE_URL` lives in `.env.local` (gitignored). Template is
   `.env.local.example`. Mirrors the WISEintelligence repo's
   `ConnectionStrings:DefaultConnection` user secret. Update both when
   credentials rotate.
+- The app falls back to mock mode without it (see above), so setting
+  `DATABASE_URL` is only needed when running against the real DB.
 
 ## Design doc
 

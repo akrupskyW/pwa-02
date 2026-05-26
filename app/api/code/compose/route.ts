@@ -12,6 +12,8 @@
 import { NextResponse } from "next/server";
 import { listSelectableExpressions } from "@/lib/queries";
 import { generateJson } from "@/lib/llm";
+import { mockCompose } from "@/lib/mock-data/llm";
+import { isMockMode } from "@/lib/mock-mode";
 import {
   composeResponseSchema,
   composeSystemPrompt,
@@ -43,6 +45,10 @@ export const POST = async (req: Request) => {
       { status: 400 },
     );
   }
+
+  // Mock mode short-circuit: skip the LLM round trip and return a canned
+  // rubric chosen by keyword match on the description.
+  if (isMockMode()) return NextResponse.json(mockCompose(description));
 
   const codes = await listSelectableExpressions();
   if (codes.length === 0) {

@@ -1,0 +1,322 @@
+[
+  {
+    "id": "89ab364d-b8f7-4363-b71e-8b70bbeff65a",
+    "code": "carb_quality",
+    "name": "Carbohydrate Quality",
+    "category": "Overall Quality",
+    "shortDescription": "This code carbohydrate Quality rates a food by how many of its carbs are fiber, subtracting points for added sugars and starch, and adding a small boost when whole grains, fruit, or vegetables are among the first ingredients, so you can compare carb quality quickly and confidently.",
+    "description": "### Carbohydrate Quality\n\nThis code carbohydrate Quality rates a food by how many of its carbs are fiber, subtracting points for added sugars and starch, and adding a small boost when whole grains, fruit, or vegetables are among the first ingredients, so you can compare carb quality quickly and confidently.\n\n**What this code looks for**\n- Whether the carbohydrates in a food come mainly from whole foods (grains, legumes, fruits, vegetables) versus refined starches.\n- Fiber levels, resistant starch, and overall carbohydrate complexity that influence how quickly carbs are digested and absorbed.\n\n**Why it matters**\n- Higher-quality carbohydrates can support more stable blood sugar, better energy, and longer-lasting fullness.\n- Lower-quality carbohydrates digest quickly, driving blood sugar spikes and contributing fewer beneficial nutrients.\n\n**How to use it**\n- Use this code to choose foods with higher carbohydrate quality when comparing cereals, breads, snacks, or prepared meals.\n- Especially helpful if you are aiming for more stable energy, better metabolic health, or a more whole-food-based diet."
+  },
+  {
+    "id": "a248888e-49e7-4f88-a558-1c6f3b48eb97",
+    "code": "calorie_quality",
+    "name": "Calorie Quality",
+    "category": "Nutrient Focus",
+    "shortDescription": "This code the Calorie Quality Code shows how many essential nutrients a food provides for every 100 calories, helping identify options that give you more nutrition for less energy.",
+    "description": "### Calorie Quality\n\nThis code the Calorie Quality Code shows how many essential nutrients a food provides for every 100 calories, helping identify options that give you more nutrition for less energy. It rewards foods that are naturally nutrient rich in vitamins, minerals, and beneficial compounds, gives a small boost for those with polyphenol-rich ingredients like whole grains, fruits, vegetables, tea, and coffee, and lowers scores for highly processed foods. The result highlights foods that make calories count by being nutrient rich rather than energy heavy.\n\n**What this code looks for**\n- How many beneficial nutrients (such as protein, fiber, and key vitamins or minerals) are delivered per calorie.\n- Whether calories mostly come from whole, nutrient-dense ingredients or from sugars, refined starches, and added fats with little nutritional value.\n\n**Why it matters**\n- Higher-quality calories provide more of what your body needs to function well, not just energy.\n- Lower-quality calories can crowd out more nourishing foods and make it harder to meet your nutritional needs.\n\n**How to use it**\n- Use this code to identify foods that give you more nutrition per bite, especially when calories are similar between choices.\n- Helpful when comparing snacks, grain products, or prepared meals that may look alike on the surface."
+  },
+  {
+    "id": "a4b42e75-f995-4c92-960b-3e63125fa4eb",
+    "code": "fat_quality",
+    "name": "Fat Quality",
+    "category": "Overall Quality",
+    "shortDescription": "This code fat Quality rates a food's fats.",
+    "description": "### Fat Quality\n\nThis code fat Quality rates a food's fats. It favors more monounsaturated fat and a better omega_6 to omega_3 balance. It gives a small boost for high_phenolic oils such as extra_virgin olive oil and penalizes ultra_processed oils and palm, coconut, and shortening. This helps you compare heart_healthy fat quality.\n\n**What this code looks for**\n- Whether fats come from whole-food sources such as nuts, seeds, olives, avocado, or fish versus refined or heavily processed oils.\n- The balance of healthier unsaturated fats compared with saturated fats and industrially processed fats.\n\n**Why it matters**\n- Higher-quality fats can support heart, brain, and metabolic health when used in the context of an overall balanced diet.\n- Lower-quality fats, especially certain refined seed oils and highly processed fats, may promote inflammation and oxidative stress when eaten frequently.\n\n**How to use it**\n- Use this code to lean toward foods made with better-quality fats, particularly in snacks, dressings, sauces, and prepared meals.\n- Helpful when you want to reduce reliance on ultra-processed fats without eliminating fat from your diet."
+  },
+  {
+    "id": "212dde5b-4444-42a5-bfa7-4393bafce7d5",
+    "code": "artificial_sweetener",
+    "name": "Artificial Sweeteners",
+    "category": "Avoid Ingredients",
+    "shortDescription": "This code identifies products that contain synthetic sweeteners with debated potential effects.",
+    "description": "### Artificial Sweeteners\n\nThis code identifies products that contain synthetic sweeteners with debated potential effects.\n\n**What this code looks for**\n- Non-nutritive sweeteners such as aspartame, sucralose, saccharin, acesulfame potassium (Ace-K), and similar ingredients.\n- Blends of artificial sweeteners used to create intense sweetness with little or no sugar.\n\n**Why it matters**\n- Artificial sweeteners can help reduce sugar and calories, but not everyone tolerates them well or wants them in daily foods.\n- Some people notice taste preferences, digestive responses, or appetite changes when they consume large amounts.\n\n**How to use it**\n- Use this code to identify foods and drinks that rely on artificial sweeteners instead of sugar.\n- Especially helpful when choosing diet beverages, “sugar-free” products, protein snacks, and desserts."
+  },
+  {
+    "id": "3867953d-0dfe-4a33-8954-e7a757b926cd",
+    "code": "sugar_density",
+    "name": "Sugar Density",
+    "category": "Nutrient Focus",
+    "shortDescription": "This code scores the amount of sugar per 100 kilocalories (kcal), normalized to a 0Ð100 scale so you can easily compare foods for sugar density.",
+    "description": "### Sugar Density\n\nThis code scores the amount of sugar per 100 kilocalories (kcal), normalized to a 0Ð100 scale so you can easily compare foods for sugar density.\n\n**What this code looks for**\n- How concentrated added sugars are in a food relative to its calories.\n- Added sugars that may appear under different names, such as cane sugar, fructose, dextrose, corn syrup, brown rice syrup, and similar sweeteners.\n\n**Why it matters**\n- Foods with high sugar density can contribute to rapid energy spikes, cravings, and metabolic stress when eaten often.\n- Choosing options with lower added sugar can support more stable energy and appetite over the course of the day.\n\n**How to use it**\n- Use this code to identify foods where added sugar makes up a large share of the calories, especially in drinks, yogurts, cereals, and snacks.\n- Helpful if you are trying to reduce added sugar without having to cut out sweetness entirely."
+  },
+  {
+    "id": "ba458934-55b5-4780-b2f7-6f636835899d",
+    "code": "iq_score",
+    "name": "Ingredient Quality (IQ)",
+    "category": "Overall Quality",
+    "shortDescription": "This code evaluates how real, recognizable, and minimally processed the ingredients in a food are, giving you a clear picture of overall ingredient integrity.",
+    "description": "### Ingredient Quality (IQ)\n\nThis code evaluates how real, recognizable, and minimally processed the ingredients in a food are, giving you a clear picture of overall ingredient integrity.\n\n**What this code looks for**\n- Whether ingredients come from whole-food, kitchen-style sources rather than industrial formulations.\n- The presence of artificial colors, flavors, sweeteners, preservatives, or other synthetic additives.\n- Use of refined or industrial seed oils, stabilizers, emulsifiers, thickeners, or highly engineered processing aids.\n- The overall simplicity, transparency, and expectedness of the ingredient list.\n\n**Why it matters**\n- Ingredient quality plays a major role in how nourishing, trustworthy, and minimally processed a food truly is.\n- Many products rely heavily on additives and engineered ingredients that can make foods more shelf-stable, hyper-palatable, or cosmetically appealing—but not necessarily better for you.\n- This score helps you quickly see whether a food is made from real, recognizable components or leans heavily on ultra-processed building blocks.\n\n**How to use it**\n- Use this code to compare foods with similar nutrient profiles and choose options with higher-quality, more natural ingredient foundations.\n- Especially helpful when evaluating snacks, condiments, sauces, baked goods, and everyday staples where ingredient processing varies widely."
+  },
+  {
+    "id": "400a4087-d284-45f4-92b9-3dd33f3c1325",
+    "code": "allergen_fish",
+    "name": "Allergens - Fish",
+    "category": "Allergens & Sensitivities",
+    "shortDescription": "This code flags foods that may contain fish.",
+    "description": "### Allergens - Fish\n\nThis code flags foods that may contain fish. If you have a severe allergy, always check labels and consult the manufacturer.\n\n\n\n**What this code looks for**\n- Direct mentions of fish and obvious fish-containing ingredients in the ingredient list.\n- Ingredients derived from fish used for flavor, texture, or processing.\n- Hidden or less obvious names fish can appear under, such as anchovy, bonito, cod, pollock, fish sauce, isinglass.  \n  This helps you catch fish even when labels use technical or unfamiliar names.\n\n**Why it matters**\n- For people with a fish allergy or sensitivity, even small amounts can trigger symptoms.\n- Fish can appear across many packaged foods, sauces, snacks, and prepared dishes, making it easy to miss without careful label reading.\n\n**How to use it**\n- Use this code to scan ingredient lists for both obvious and less obvious sources of fish.\n- Especially helpful when you or someone in your household needs to avoid fish in everyday foods.\n\nIf you have a food allergy or medical condition, always follow your healthcare provider’s guidance when deciding whether a product is safe for you."
+  },
+  {
+    "id": "f5e725a0-ad02-4b89-ba70-8a8750b99d90",
+    "code": "protein_density",
+    "name": "Protein Density",
+    "category": "Nutrient Focus",
+    "shortDescription": "This score calculates the percentage of a food's calories that come from protein.",
+    "description": "### Protein Density\n\nThis score calculates the percentage of a food's calories that come from protein.\n\n**What this code looks for**\n- How much protein a food delivers relative to its calories.\n- Whether protein comes from more nutrient-rich sources such as legumes, dairy, fish, eggs, or meat, or from more heavily processed protein ingredients.\n\n**Why it matters**\n- Protein helps support muscle maintenance, satiety, and overall metabolic health.\n- Foods with higher protein density can help you feel fuller for longer and may support healthy body composition.\n\n**How to use it**\n- Use this code to compare meals, snacks, or dairy products and choose options that offer more protein per calorie.\n- Especially helpful if you are active, managing weight, or focused on maintaining muscle as you age."
+  },
+  {
+    "id": "5026f03e-f7ca-4a7e-a64f-ae0de9ddd62c",
+    "code": "allergen_wheat",
+    "name": "Allergens - Wheat",
+    "category": "Allergens & Sensitivities",
+    "shortDescription": "This code flags foods that may contain wheat.",
+    "description": "### Allergens - Wheat\n\nThis code flags foods that may contain wheat. If you have a severe allergy, always check labels and consult the manufacturer.\n\n\n\n**What this code looks for**\n- Direct mentions of wheat and obvious wheat-containing ingredients in the ingredient list.\n- Ingredients derived from wheat used for flavor, texture, or processing.\n- Hidden or less obvious names wheat can appear under, such as semolina, durum, farina, malt extract, modified food starch (wheat-based), textured vegetable protein, maltodextrin, glucose syrup.  \n  This helps you catch wheat even when labels use technical or unfamiliar names.\n\n**Why it matters**\n- For people with a wheat allergy or sensitivity, even small amounts can trigger symptoms.\n- Wheat can appear across many packaged foods, sauces, snacks, and prepared dishes, making it easy to miss without careful label reading.\n\n**How to use it**\n- Use this code to scan ingredient lists for both obvious and less obvious sources of wheat.\n- Especially helpful when you or someone in your household needs to avoid wheat in everyday foods.\n\nIf you have a food allergy or medical condition, always follow your healthcare provider’s guidance when deciding whether a product is safe for you."
+  },
+  {
+    "id": "518d3f93-5778-4b93-8900-4b8421ecc1cc",
+    "code": "allergen_tree_nuts",
+    "name": "Allergens - Tree Nuts",
+    "category": "Allergens & Sensitivities",
+    "shortDescription": "This code flags foods that may contain tree nuts.",
+    "description": "### Allergens - Tree Nuts\n\nThis code flags foods that may contain tree nuts. If you have a severe allergy, always check labels and consult the manufacturer.\n\n\n\n**What this code looks for**\n- Direct mentions of tree nuts and obvious tree nuts-containing ingredients in the ingredient list.\n- Ingredients derived from tree nuts used for flavor, texture, or processing.\n- Hidden or less obvious names tree nuts can appear under, such as almond, walnut, cashew, pecan, hazelnut, pistachio, macadamia nuts.  \n  This helps you catch tree nuts even when labels use technical or unfamiliar names.\n\n**Why it matters**\n- For people with a tree nuts allergy or sensitivity, even small amounts can trigger symptoms.\n- Tree Nuts can appear across many packaged foods, sauces, snacks, and prepared dishes, making it easy to miss without careful label reading.\n\n**How to use it**\n- Use this code to scan ingredient lists for both obvious and less obvious sources of tree nuts.\n- Especially helpful when you or someone in your household needs to avoid tree nuts in everyday foods.\n\nIf you have a food allergy or medical condition, always follow your healthcare provider’s guidance when deciding whether a product is safe for you."
+  },
+  {
+    "id": "4e5b3183-4d4e-4de3-8857-ad690a4bf098",
+    "code": "hateful_eight_seed_oil",
+    "name": "\"Hateful Eight\" Seed Oils",
+    "category": "Avoid Ingredients",
+    "shortDescription": "This code flags foods with the \"Hateful Eight\"-the most concerning seed oils due to processing and omega-6 content.",
+    "description": "### \"Hateful Eight\" Seed Oils\n\nThis code flags foods with the \"Hateful Eight\"-the most concerning seed oils due to processing and omega-6 content.\n\n**What this code looks for**\n- The “Hateful Eight” industrial seed oils, such as soybean, corn, cottonseed, canola, safflower, sunflower, grapeseed, and rice bran oils.\n- These oils when used in highly refined, ultra-processed forms as primary fats in a product.\n\n**Why it matters**\n- Highly refined seed oils are widely used in packaged foods and restaurant items, often in large amounts.\n- When eaten frequently, they can contribute to an imbalance of fatty acids and may be associated with increased oxidative and inflammatory stress.\n\n**How to use it**\n- Use this code to spot foods that rely heavily on the “Hateful Eight” seed oils as their main fat source.\n- Especially helpful when choosing snacks, fried foods, dressings, sauces, and packaged meals."
+  },
+  {
+    "id": "4b9d3ca0-a1b8-4cae-a63b-17e39a390cb1",
+    "code": "wise_score",
+    "name": "WISEscore™",
+    "category": "Composite Scores",
+    "shortDescription": "This code combines ingredient quality, nutrient value, and health impact into one simple food quality score.",
+    "description": "### WISEscoreª\n\nThis code combines ingredient quality, nutrient value, and health impact into one simple food quality score.\n\nWISE Score ranges from 0 to 100 and is calculated using information from your code choices in 3 different code categories. The WISE Score v1 (introduced in 2025) algorithm considers the three main categories, each with its own weight:\n\n**Ingredient Quality Score (Default value: 50%)**\nLeading with ingredient quality is wise because, for most consumers, the integrity, safety, and transparency of what's actually in a food is both the top trust signal and a major health driver. The recent wave of public and regulatory scrutiny on additives, processing, and clean labels makes this a consumer-first approach, ensuring WISEcode stands out as a transparency and food system watchdog.\n\n**Nutrient Quality Score (Default value: 50%)**\nNutrition density and balance is the next logical pillar-supporting both \"eat better\" messaging and practical, day-to-day health optimization. While ingredients speak to the \"what,\" nutrients address the \"how much and how good,\" rounding out the healthfulness picture in a way that is both actionable and evidence-driven.\n\n**Health Quality Score (Coming Soon)**\nBy factoring in condition-specific or outcome-based codes, you ensure that the WISE Score isn't just about what's in a food or its nutritional stats, but how it translates into real-world impact for users' most important health concerns. Giving HQS equal footing with nutrients is forward-thinking, as consumer demand for personalization and health targeting will only increase."
+  },
+  {
+    "id": "c2117384-edf3-49a2-bc91-6518024c0e6b",
+    "code": "sketchy",
+    "name": "Sketchy Ingredients",
+    "category": "Clean & Natural",
+    "shortDescription": "This code is the result of our most rigorous analysis yet, combining processed level, banned or unsafe ingredients, emulsifiers and clean label into one powerful rating.",
+    "description": "### Sketchy Ingredients\n\nThis code is the result of our most rigorous analysis yet, combining processed level, banned or unsafe ingredients, emulsifiers and clean label into one powerful rating. It's designed to give you the clearest picture of a product's overall quality.\n\nWISEcode has created a blended code to help you quickly determine whether a packaged food contains questionable ingredients.\n\nThis blended code is thoughtfully composed of the following subcodes:\n\n**Clean Label:** The WISEcode Clean Labelª ensures your food is free from artificial additives by detecting harmful sweeteners, preservatives, colors, and flavors. This gives you a clear path to truly wholesome eating, making it easier to choose pure, natural foods.\n\n**Emulsifiers:** Emulsifiers are hidden additives used in processed foods to improve texture, consistency, and shelf life. However, they may negatively impact gut health and contribute to inflammation, chronic diseases, and allergies. The WISEcode Emulsifiersª subcode identifies these additives, helping you make informed choices that align with your health goals.\n\n**Processed Level:** WISEcode analyzes and categorizes over 5,000 processed ingredients to provide clarity on the level of processing in foods-helping you spot ultra-processed foods (UPFs) at a glance.    \n\n**Banned/Unsafe Ingredients:** Our app flags 83 hidden ingredients that are banned in other countries or known to be unsafe for your consumption.\n\nWith WISEcode, you get transparent, science-backed insights to make healthier food choices effortlessly."
+  },
+  {
+    "id": "41758745-db38-5e4a-bcfb-b14cb7acfeed",
+    "code": "non_upf_vs_upf",
+    "name": "Non-UPF vs UPF",
+    "category": "Processing Level",
+    "shortDescription": "This code provides insight into the level of processing a product has undergone, helping users choose minimally processed options for better health.",
+    "description": "### Processed Level\n\nThis code provides insight into the level of processing a product has undergone, helping users choose minimally processed options for better health.\n\n**What this code looks for**\n- Signals that a food is highly processed or ultra-processed, such as long ingredient lists, many additives, and heavily refined components.\n- Patterns that distinguish minimally processed foods from those that are more engineered.\n\n**Why it matters**\n- Diets high in ultra-processed foods are increasingly linked with a range of negative health outcomes.\n- This code helps you quickly see where a product sits on the processing spectrum so you are not relying only on front-of-pack marketing.\n\n**How to use it**\n- Use this code as a quick “processing alert” when comparing similar products.\n- Especially useful when choosing everyday staples, snacks, or convenience foods and you want to lean toward less processed options."
+  },
+  {
+    "id": "31c810f6-faa9-4732-add4-0abe3f701266",
+    "code": "maha",
+    "name": "Make America Healthy Again",
+    "category": "Clean & Natural",
+    "shortDescription": "This code helps you find packaged foods that avoid certain high‑concern ingredients, nudging everyday choices toward a healthier pattern.",
+    "description": "### Make America Healthy Again\n\nThis code helps you find packaged foods that avoid certain high‑concern ingredients, nudging everyday choices toward a healthier pattern.\n\n**What this code looks for**\n- Ingredients that have been banned, restricted, or strongly discouraged in some regions due to safety or health concerns.\n- High fructose corn syrup and other highly processed sweeteners that contribute excess added sugar.\n- Processed industrial seed oils that may promote inflammation when eaten frequently.\n- Synthetic colors used mainly for appearance rather than nutrition or quality.\n\n**Why it matters**\n- Many common packaged foods include combinations of ingredients that are convenient but not aligned with long‑term health goals.\n- This code focuses on a small set of higher‑concern ingredient categories so you can quickly see when a food relies on them.\n- By making these patterns more visible, it supports more informed choices without requiring you to memorize long lists of names.\n\n**How to use it**\n- Use this code as a quick scan for products that may be worth a closer look or that you prefer to limit in your routine.\n- Especially helpful when choosing snacks, drinks, and family staples where you want to reduce exposure to higher‑concern ingredients while still enjoying convenience."
+  },
+  {
+    "id": "dade6cbc-e280-4616-b823-81ceaf053a7e",
+    "code": "thrive_score",
+    "name": "Outcomes Score",
+    "category": "Composite Scores",
+    "shortDescription": "This code the Outcomes Score is your overall wellness indicator; a simple average of five core health Codes (Heart, Diabetes, Muscle, Gut, and Inflammation), showing how your food supports total body health and performance.",
+    "description": "### Outcomes Score\n\nThis code the Outcomes Score is your overall wellness indicator; a simple average of five core health Codes (Heart, Diabetes, Muscle, Gut, and Inflammation), showing how your food supports total body health and performance.\n\nThe Outcomes Score is your overall wellness indicator; a simple average of five core health Codes (Heart, Diabetes, Muscle, Gut, and Inflammation), showing how your food supports total body health and performance."
+  },
+  {
+    "id": "2b95559a-5d1f-4fcb-8a4e-9ba1aeee543d",
+    "code": "gut_health",
+    "name": "Gut Health",
+    "category": "Health Outcomes",
+    "shortDescription": "This code the Gut Code identifies foods that support the microbiome and gut barrier-foundations of healthy digestion, immunity, metabolism, and mental well-being-rewarding fermented foods, fiber-rich carbs, polyphenols, omega-3s, and key micronutrients (vitamin B12, zinc, selenium), while penalizing refined carbs, nitrates, and ultra-processed ingredients.",
+    "description": "### Gut Health\n\nThis code the Gut Code identifies foods that support the microbiome and gut barrier-foundations of healthy digestion, immunity, metabolism, and mental well-being-rewarding fermented foods, fiber-rich carbs, polyphenols, omega-3s, and key micronutrients (vitamin B12, zinc, selenium), while penalizing refined carbs, nitrates, and ultra-processed ingredients.\n\n**What this code looks for**\n- Components that support a healthy gut environment, such as fiber, prebiotic ingredients, and plant diversity.\n- Fermented foods or ingredients that may contribute beneficial compounds for the microbiome.\n\n**Why it matters**\n- Gut health is connected to digestion, immunity, mood, and overall metabolic function.\n- Many packaged foods contain little that actively supports the gut, even if they are convenient.\n\n**How to use it**\n- Use this code to highlight foods that bring more gut-supportive elements into your routine.\n- Especially useful when choosing breads, cereals, snacks, and meals where you want more fiber and plant variety."
+  },
+  {
+    "id": "675f9991-c1fe-4657-abd1-19ec922b2e41",
+    "code": "seed_oil",
+    "name": "Seed Oils",
+    "category": "Avoid Ingredients",
+    "shortDescription": "This code helps you flag foods that contain seed oils linked to inflammation, imbalanced omega-6 to omega-3 ratios, and commonly used in highly processed foods.",
+    "description": "### Seed Oils\n\nThis code helps you flag foods that contain seed oils linked to inflammation, imbalanced omega-6 to omega-3 ratios, and commonly used in highly processed foods.\n\n**What this code looks for**\n- Common industrial seed and vegetable oils such as soybean, corn, canola, cottonseed, safflower, sunflower, and similar oils.\n- Products where these oils appear high on the ingredient list or as primary added fats.\n\n**Why it matters**\n- Seed oils are widely used in modern food manufacturing and restaurant cooking.\n- Some people prefer to limit these oils and choose fats from more traditional whole-food sources instead.\n\n**How to use it**\n- Use this code to identify foods that rely on seed oils so you can balance them with other fat sources in your overall eating pattern.\n- Especially helpful when choosing snacks, fried foods, packaged meals, and dressings."
+  },
+  {
+    "id": "4f31183e-0b8d-4e8c-8b92-96cd48077147",
+    "code": "muscle_health",
+    "name": "Muscle Health",
+    "category": "Health Outcomes",
+    "shortDescription": "This code the Muscle Code identifies foods that support muscle strength, recovery, and overall health-rewarding protein density and quality, leucine, omega-3s, magnesium, vitamin D, and high-quality calories, while penalizing added sugars, low-quality carbs and calories.",
+    "description": "### Muscle Health\n\nThis code the Muscle Code identifies foods that support muscle strength, recovery, and overall health-rewarding protein density and quality, leucine, omega-3s, magnesium, vitamin D, and high-quality calories, while penalizing added sugars, low-quality carbs and calories.\n\n**What this code looks for**\n- Protein density and quality, along with supporting nutrients that help maintain and repair muscle tissue.\n- Whether a food’s overall profile fits a pattern that supports strength, recovery, and healthy aging.\n\n**Why it matters**\n- Maintaining muscle is important for mobility, metabolic health, balance, and resilience as you age.\n- Foods that better support muscle health can help you stay active and feel stronger over time.\n\n**How to use it**\n- Use this code to choose foods that fit well around activity, training, or an overall strength-focused lifestyle.\n- Especially helpful when selecting meals and snacks that you want to be both satisfying and supportive of long-term muscle health."
+  },
+  {
+    "id": "5c36621e-316a-4993-8508-1f7e754457c8",
+    "code": "anti_inflammatory",
+    "name": "Anti Inflammatory",
+    "category": "Health Outcomes",
+    "shortDescription": "This code the Anti-Inflammatory Code identifies foods that help reduce inflammation-a root cause of metabolic syndrome and many chronic diseases-rewarding those rich in omega-3s, polyphenols, fiber, high-quality carbs, healthy oils and calories, and antioxidant micronutrients (vitamins C, D, E, magnesium, selenium, and zinc), while penalizing excess omega-6 fats, added sugars, low-quality carbs and calories, ultra-processed ingredients, trans fats, and fried foods.",
+    "description": "### Anti Inflammatory\n\nThis code the Anti-Inflammatory Code identifies foods that help reduce inflammation-a root cause of metabolic syndrome and many chronic diseases-rewarding those rich in omega-3s, polyphenols, fiber, high-quality carbs, healthy oils and calories, and antioxidant micronutrients (vitamins C, D, E, magnesium, selenium, and zinc), while penalizing excess omega-6 fats, added sugars, low-quality carbs and calories, ultra-processed ingredients, trans fats, and fried foods.\n\n**What this code looks for**\n- Ingredients and nutrients that are associated with anti-inflammatory effects, such as certain plant compounds, omega-3 fats, and colorful fruits and vegetables.\n- A lower presence of ingredients that may promote inflammation when eaten frequently, such as some refined oils, excess added sugars, and certain ultra-processed components.\n\n**Why it matters**\n- Chronic, low-grade inflammation is linked to many long-term health concerns.\n- Choosing more foods with anti-inflammatory characteristics can support overall wellbeing as part of a balanced eating pattern.\n\n**How to use it**\n- Use this code to lean toward foods that may fit better into an anti-inflammatory lifestyle.\n- Especially helpful when choosing everyday staples, snacks, and prepared meals you eat regularly."
+  },
+  {
+    "id": "11e0447e-df52-4b25-abae-268a830afbef",
+    "code": "tx_sb25",
+    "name": "TX SB25 Ingredients",
+    "category": "Processing Level",
+    "shortDescription": "This code flags foods containing any of 44 artificial colors or additives that are banned in the EU, UK, or Canada and require a warning label under Texas SB25.",
+    "description": "### TX SB25 Ingredients\n\nThis code flags foods containing any of 44 artificial colors or additives that are banned in the EU, UK, or Canada and require a warning label under Texas SB25.\n\n**What this code looks for**\n- Ingredients that appear on a list of artificial colors, preservatives, and sweeteners highlighted in Texas SB25 guidance.\n- These include certain synthetic additives of concern in products marketed to or served to children.\n\n**Why it matters**\n- Some states and organizations are reviewing specific additives for potential behavioral or health-related concerns in children.\n- This code helps surface products that contain those flagged ingredients so families can make more informed choices.\n\n**How to use it**\n- Use this code to identify foods and drinks that include additives highlighted in Texas SB25-related discussions.\n- Especially helpful when choosing products for children or for everyday family use."
+  },
+  {
+    "id": "021e3170-cb5c-4314-aefa-299ab99efaa5",
+    "code": "nq_score",
+    "name": "Nutrient Quality (NQ)",
+    "category": "Overall Quality",
+    "shortDescription": "This code provides a high-level score of nutritional value, factoring in carbs, sugars, fiber, protein, and fat quality.",
+    "description": "### Nutrient Quality (NQ)\n\nThis code provides a high-level score of nutritional value, factoring in carbs, sugars, fiber, protein, and fat quality.\n\nThe WISEcode Nutrient Quality Score (NQ Score or NQS) combines 5 of WISEcode's nutrient-based codes into a 0Ð100 composite score. Each code (that is available for a given food) contributes equally to provide a balanced view of nutritional quality.  \n\n**Carb Quality Code**\nCarbohydrates form the foundation of most diets, and their quality has a major impact on blood sugar stability, metabolic health, and chronic disease risk. This code reflects the importance of unrefined, complex sources over ultra-processed, rapidly absorbed ones.\n\n**Sugar Density Code**\nConcentrated or added sugars are a central culprit in obesity, diabetes, and many diet-driven conditions. This code penalizes foods that pack in excess sweetness-a leading issue for public health in nearly all populations.\n\n**Fiber Density Code**\nFiber is perennially under-consumed, yet it's fundamental for gut health, satiety, blood sugar regulation, and even mental well-being. This code rewards foods that deliver meaningful fiber, helping consumers bridge one of the most stubborn nutrition gaps.\n\n**Protein Density Code**\nMost people meet minimum protein needs, but the density of protein per calorie/serving becomes especially relevant for satiety, muscle maintenance, and overall food quality. Including this code ensures the score favors foods that help maintain strength, structure, and healthy aging. (When available, Protein Quality-reflecting amino acid completeness-will make this measure even more robust.)\n\n**Fat Quality Code**\nThe type of fat-more than the quantity-affects cardiovascular and metabolic risk. This code ensures that foods rich in healthier fats (like unsaturated and omega-3s) are recognized, while not over-penalizing moderate fat intake from quality sources."
+  },
+  {
+    "id": "c0c7c944-71d2-4deb-a7a7-f2b87b3b072f",
+    "code": "all_natural",
+    "name": "All Natural",
+    "category": "Clean & Natural",
+    "shortDescription": "This code helps you identify foods with no synthetic ingredients, refined seed oils, emulsifiers, or potentially toxic additives.",
+    "description": "### All Natural\n\nThis code helps you identify foods with no synthetic ingredients, refined seed oils, emulsifiers, or potentially toxic additives. Just real food from nature.\n\n**What this code looks for**\n- Ingredient lists for obvious synthetic additives such as artificial colors, flavors, sweeteners, and preservatives.\n- Markers of heavily refined or industrial fats and texture agents, such as certain seed oils and emulsifiers, when they appear as primary added ingredients.\n- Overall simplicity of the ingredient list, favoring recognizable, kitchen-style ingredients over long, highly engineered formulations.\n\n**Why it matters**\n- Many products use the word “natural” on the front of the package even when they still contain lab-created additives or ultra-processed components.\n- This code helps you quickly see when a food better matches a common-sense understanding of “all natural” based on its ingredient list, not just marketing language.\n\n**How to use it**\n- Use this code to highlight foods made mostly from whole or minimally processed ingredients you might reasonably cook with at home.\n- Especially helpful when you want to reduce synthetic additives and choose products that feel closer to real food."
+  },
+  {
+    "id": "54705618-aef0-485b-9100-53b305d330c9",
+    "code": "eaa_9",
+    "name": "Essential Amino Acids",
+    "category": "Nutrient Focus",
+    "shortDescription": "This code the EAA-9 protein quality score indicates the percentage of essential amino acids in a protein relative to the amount needed to meet daily recommended intake.",
+    "description": "### Essential Amino Acids (EAA-9)\n\nThis code the EAA-9 protein quality score indicates the percentage of essential amino acids in a protein relative to the amount needed to meet daily recommended intake. A score of 100% ensures that the protein provides the necessary EAA to fulfill daily requirements.\n\n**What this code looks for**\n- The presence and balance of all nine essential amino acids in a food’s protein.\n- Whether the amino acid profile supports muscle maintenance, recovery, and metabolic health.\n- The completeness of the protein relative to its calorie content.\n\n**Why it matters**\n- Essential amino acids (EAAs) are required for muscle repair, enzyme production, immune function, and overall metabolic resilience.\n- Foods with stronger EAA profiles generally deliver higher-quality protein per calorie.\n- This code helps highlight protein sources that are more nutritionally efficient and supportive of active or healthy-aging lifestyles.\n\n**How to use it**\n- Use this code to compare protein-rich foods and choose options with more complete amino acid profiles.\n- Especially helpful if you care about muscle preservation, exercise recovery, or general metabolic health.\n- Combine with other WISEcodes™ for a fuller view of overall nutrient density."
+  },
+  {
+    "id": "56b8728e-c300-48ec-8594-2058309f1f66",
+    "code": "allergen_eggs",
+    "name": "Allergens - Eggs",
+    "category": "Allergens & Sensitivities",
+    "shortDescription": "This code flags foods that may contain eggs.",
+    "description": "### Allergens - Eggs\n\nThis code flags foods that may contain eggs. If you have a severe allergy, always check labels and consult the manufacturer.\n\n\n\n**What this code looks for**\n- Direct mentions of eggs and obvious eggs-containing ingredients in the ingredient list.\n- Ingredients derived from eggs used for flavor, texture, or processing.\n- Hidden or less obvious names eggs can appear under, such as albumin, egg whites, egg yolk, lysozyme.  \n  This helps you catch eggs even when labels use technical or unfamiliar names.\n\n**Why it matters**\n- For people with a eggs allergy or sensitivity, even small amounts can trigger symptoms.\n- Eggs can appear across many packaged foods, sauces, snacks, and prepared dishes, making it easy to miss without careful label reading.\n\n**How to use it**\n- Use this code to scan ingredient lists for both obvious and less obvious sources of eggs.\n- Especially helpful when you or someone in your household needs to avoid eggs in everyday foods.\n\nIf you have a food allergy or medical condition, always follow your healthcare provider’s guidance when deciding whether a product is safe for you."
+  },
+  {
+    "id": "59c4066e-ca0a-48c7-b91b-add7bd82891b",
+    "code": "allergen_peanuts",
+    "name": "Allergens - Peanuts",
+    "category": "Allergens & Sensitivities",
+    "shortDescription": "This code flags foods that may contain peanuts.",
+    "description": "### Allergens - Peanuts\n\nThis code flags foods that may contain peanuts. If you have a severe allergy, always check labels and consult the manufacturer.\n\n\n\n**What this code looks for**\n- Direct mentions of peanuts and obvious peanuts-containing ingredients in the ingredient list.\n- Ingredients derived from peanuts used for flavor, texture, or processing.\n- Hidden or less obvious names peanuts can appear under, such as groundnut, peanut oil, arachis oil, hydrolyzed peanut protein.  \n  This helps you catch peanuts even when labels use technical or unfamiliar names.\n\n**Why it matters**\n- For people with a peanuts allergy or sensitivity, even small amounts can trigger symptoms.\n- Peanuts can appear across many packaged foods, sauces, snacks, and prepared dishes, making it easy to miss without careful label reading.\n\n**How to use it**\n- Use this code to scan ingredient lists for both obvious and less obvious sources of peanuts.\n- Especially helpful when you or someone in your household needs to avoid peanuts in everyday foods.\n\nIf you have a food allergy or medical condition, always follow your healthcare provider’s guidance when deciding whether a product is safe for you."
+  },
+  {
+    "id": "75bec1e9-1dfc-40ad-a81d-25ddbadba77e",
+    "code": "allergen_soybeans",
+    "name": "Allergens - Soybeans",
+    "category": "Allergens & Sensitivities",
+    "shortDescription": "This code flags foods that may contain soy.",
+    "description": "### Allergens - Soybeans\n\nThis code flags foods that may contain soy. If you have a severe allergy, always check labels and consult the manufacturer.\n\n\n\n**What this code looks for**\n- Direct mentions of soybeans and obvious soybeans-containing ingredients in the ingredient list.\n- Ingredients derived from soybeans used for flavor, texture, or processing.\n- Hidden or less obvious names soybeans can appear under, such as soy, soy lecithin, soybean oil, textured soy protein, soy protein isolate, HVP (soy).  \n  This helps you catch soybeans even when labels use technical or unfamiliar names.\n\n**Why it matters**\n- For people with a soybeans allergy or sensitivity, even small amounts can trigger symptoms.\n- Soybeans can appear across many packaged foods, sauces, snacks, and prepared dishes, making it easy to miss without careful label reading.\n\n**How to use it**\n- Use this code to scan ingredient lists for both obvious and less obvious sources of soybeans.\n- Especially helpful when you or someone in your household needs to avoid soybeans in everyday foods.\n\nIf you have a food allergy or medical condition, always follow your healthcare provider’s guidance when deciding whether a product is safe for you."
+  },
+  {
+    "id": "8459a75e-13d4-4d29-8fda-8d9bda73221c",
+    "code": "artificial_preservative",
+    "name": "Artificial Preservatives",
+    "category": "Avoid Ingredients",
+    "shortDescription": "This code identifies products that contain synthetic preservatives like BHA, BHT, and sodium benzoate.",
+    "description": "### Artificial Preservatives\n\nThis code identifies products that contain synthetic preservatives like BHA, BHT, and sodium benzoate. These additives are often used to extend shelf life but may harm your health in the long term.\n\n**What this code looks for**\n- Common synthetic preservatives used to extend shelf life, such as BHA, BHT, TBHQ, sodium benzoate, and similar compounds.\n- Preservative systems added primarily to stabilize ultra-processed foods over long storage times.\n\n**Why it matters**\n- Artificial preservatives are widely used in packaged foods, even when refrigeration is available.\n- Some people prefer to limit these additives and choose products that rely more on handling, packaging, or simpler preservation methods.\n\n**How to use it**\n- Use this code to find foods that contain synthetic preservatives so you can decide whether they fit your preferences.\n- Particularly useful for selecting shelf-stable snacks, baked goods, processed meats, and ready-made meals."
+  },
+  {
+    "id": "865bd8c3-f056-4de2-810b-3881ee595b73",
+    "code": "histamine_level",
+    "name": "Histamine Level",
+    "category": "Allergens & Sensitivities",
+    "shortDescription": "This code indicates the level of histamine in your food.",
+    "description": "### Histamine Level\n\nThis code indicates the level of histamine in your food. If you are highly sensitive, always check labels and consult your healthcare provider.\n\n**What this code looks for**\n- Ingredients and patterns associated with higher histamine content or histamine release potential in foods.\n- Foods and components that commonly appear on histamine-aware or low-histamine eating plans.\n\n**Why it matters**\n- Some people are sensitive to histamine in foods and may experience symptoms when intake is high.\n- While histamine tolerance varies widely between individuals, being aware of higher-histamine foods can help those who are monitoring their intake.\n\n**How to use it**\n- Use this code to quickly flag foods that may have higher histamine potential so you can decide whether they fit your personal tolerance.\n- Especially helpful if you are exploring histamine awareness with the support of a qualified healthcare professional."
+  },
+  {
+    "id": "95777f6e-e3f8-4f9e-98f8-9f926eff809b",
+    "code": "artificial_flavor",
+    "name": "Artificial Flavors",
+    "category": "Avoid Ingredients",
+    "shortDescription": "This code helps you spot lab-created flavors that replace real food ingredients, empowering users to avoid these additives and choose foods with natural flavors.",
+    "description": "### Artificial Flavors\n\nThis code helps you spot lab-created flavors that replace real food ingredients, empowering users to avoid these additives and choose foods with natural flavors.\n\n**What this code looks for**\n- Ingredients labeled as “artificial flavor” or specific named artificial flavors.\n- Flavor systems designed to mimic natural tastes without using the corresponding whole-food ingredients.\n\n**Why it matters**\n- Artificial flavors are highly engineered and can make ultra-processed foods more appealing and easier to overeat.\n- They also reduce transparency—labels may not reveal exactly what is in a given flavor blend.\n\n**How to use it**\n- Use this code to highlight foods that lean heavily on artificial flavors rather than real, recognizable ingredients.\n- Especially helpful when choosing snacks, desserts, drinks, and packaged convenience foods."
+  },
+  {
+    "id": "98f32e28-33cf-48af-87d3-6bde401c8f94",
+    "code": "high_fructose_corn_syrup",
+    "name": "High Fructose Corn Syrup",
+    "category": "Avoid Ingredients",
+    "shortDescription": "This code identifies products that contain High-Fructose Corn Syrup, a sweetener linked to obesity, diabetes, and other health issues.",
+    "description": "### High Fructose Corn Syrup\n\nThis code identifies products that contain High-Fructose Corn Syrup, a sweetener linked to obesity, diabetes, and other health issues.\n\n**What this code looks for**\n- High fructose corn syrup (HFCS) and closely related corn-based liquid sweeteners.\n- HFCS used alone or in combination with other added sugars in foods and beverages.\n\n**Why it matters**\n- HFCS is a concentrated source of added sugar and contributes calories without other beneficial nutrients.\n- Many people prefer to limit HFCS along with other added sugars to support metabolic and dental health.\n\n**How to use it**\n- Use this code to identify products that contain HFCS so you can choose alternatives if you are trying to reduce added sugar.\n- Especially useful for sodas, sweetened drinks, condiments, baked goods, and packaged snacks."
+  },
+  {
+    "id": "06144974-de3c-4a20-834b-660ff34eec89",
+    "code": "allergen_shellfish",
+    "name": "Allergens - Shellfish",
+    "category": "Allergens & Sensitivities",
+    "shortDescription": "This code flags foods that may contain shellfish.",
+    "description": "### Allergens - Shellfish\n\nThis code flags foods that may contain shellfish. If you have a severe allergy, always check labels and consult the manufacturer.\n\n\n\n**What this code looks for**\n- Direct mentions of shellfish and obvious shellfish-containing ingredients in the ingredient list.\n- Ingredients derived from shellfish used for flavor, texture, or processing.\n- Hidden or less obvious names shellfish can appear under, such as shrimp, crab, lobster, prawn, krill, shellfish extract.  \n  This helps you catch shellfish even when labels use technical or unfamiliar names.\n\n**Why it matters**\n- For people with a shellfish allergy or sensitivity, even small amounts can trigger symptoms.\n- Shellfish can appear across many packaged foods, sauces, snacks, and prepared dishes, making it easy to miss without careful label reading.\n\n**How to use it**\n- Use this code to scan ingredient lists for both obvious and less obvious sources of shellfish.\n- Especially helpful when you or someone in your household needs to avoid shellfish in everyday foods.\n\nIf you have a food allergy or medical condition, always follow your healthcare provider’s guidance when deciding whether a product is safe for you."
+  },
+  {
+    "id": "7f184954-dbe0-4941-9db8-443f9c5a6b73",
+    "code": "allergen_sesame",
+    "name": "Allergens - Sesame",
+    "category": "Allergens & Sensitivities",
+    "shortDescription": "This code flags foods that may contain sesame.",
+    "description": "### Allergens - Sesame\n\nThis code flags foods that may contain sesame. If you have a severe allergy, always check labels and consult the manufacturer.\n\n\n\n**What this code looks for**\n- Direct mentions of sesame and obvious sesame-containing ingredients in the ingredient list.\n- Ingredients derived from sesame used for flavor, texture, or processing.\n- Hidden or less obvious names sesame can appear under, such as tahini, benne, benne seed, gingelly oil, halvah, sesamol.  \n  This helps you catch sesame even when labels use technical or unfamiliar names.\n\n**Why it matters**\n- For people with a sesame allergy or sensitivity, even small amounts can trigger symptoms.\n- Sesame can appear across many packaged foods, sauces, snacks, and prepared dishes, making it easy to miss without careful label reading.\n\n**How to use it**\n- Use this code to scan ingredient lists for both obvious and less obvious sources of sesame.\n- Especially helpful when you or someone in your household needs to avoid sesame in everyday foods.\n\nIf you have a food allergy or medical condition, always follow your healthcare provider’s guidance when deciding whether a product is safe for you."
+  },
+  {
+    "id": "9cda10a4-27c5-4a5e-8cbb-f62d58ad251b",
+    "code": "watchout",
+    "name": "Banned/Unsafe Ingredients",
+    "category": "Avoid Ingredients",
+    "shortDescription": "This code helps you identify foods with ingredients that are banned in some countries or known to be unsafe for your consumption.",
+    "description": "### Banned/Unsafe Ingredients\n\nThis code helps you identify foods with ingredients that are banned in some countries or known to be unsafe for your consumption.\n\n**What this code looks for**\n- Ingredients that have been banned, restricted, or strongly discouraged by one or more major health or regulatory bodies.\n- Compounds that raise a higher level of concern than typical everyday additives.\n\n**Why it matters**\n- Some ingredients have enough safety or health concerns that they are no longer allowed or are tightly limited in certain regions.\n- This code helps you quickly see when a food contains these higher-concern ingredients so you can decide how comfortable you are with them.\n\n**How to use it**\n- Use this code as a “red flag” indicator to take a closer look at the ingredient list.\n- Especially helpful when scanning new or highly processed products where you want to be cautious."
+  },
+  {
+    "id": "a8612dd9-bf53-4e73-810d-053cafdc36ba",
+    "code": "clean_label",
+    "name": "Clean Label",
+    "category": "Clean & Natural",
+    "shortDescription": "This code helps you spot foods made with simple, kitchen-style ingredients and fewer synthetic additives, so you can more easily choose products that feel closer to real food.",
+    "description": "### Clean Label\n\nThis code helps you identify foods made with simple, recognizable ingredients rather than highly engineered additives or industrial processing aids.\n\n**What this code looks for**\n- Straightforward, kitchen-style ingredients you could reasonably use at home.\n- Limited use of artificial colors, flavors, sweeteners, preservatives, and synthetic processing aids.\n- Shorter, more transparent ingredient lists without long strings of chemical-sounding components.\n- Reliance on whole foods and basic natural ingredients over complex formulations.\n\n**Why it matters**\n- Many packaged foods appear “clean” on the front but still contain additives or processing agents that most shoppers would not consider simple or natural.\n- Clean label products often feel easier to trust and evaluate because the ingredients are more familiar and minimally manipulated.\n- This code helps cut through marketing language and highlights whether a product is truly made with straightforward components.\n\n**How to use it**\n- Use this code to prioritize foods with simpler ingredient lists and fewer artificial additives.\n- Especially helpful when choosing pantry staples, snacks, sauces, or items marketed as “natural” or “real food,” so you can confirm they match your expectations."
+  },
+  {
+    "id": "b802eb47-1b81-440b-84f9-1db470e0893f",
+    "code": "allergen_milk",
+    "name": "Allergens - Milk",
+    "category": "Allergens & Sensitivities",
+    "shortDescription": "This code flags foods that may contain milk.",
+    "description": "### Allergens - Milk\n\nThis code flags foods that may contain milk. If you have a severe allergy, always check labels and consult the manufacturer.\n\n\n\n**What this code looks for**\n- Direct mentions of milk and obvious milk-containing ingredients in the ingredient list.\n- Ingredients derived from milk used for flavor, texture, or processing.\n- Hidden or less obvious names milk can appear under, such as casein, whey, milk solids, lactose, ghee.  \n  This helps you catch milk even when labels use technical or unfamiliar names.\n\n**Why it matters**\n- For people with a milk allergy or sensitivity, even small amounts can trigger symptoms.\n- Milk can appear across many packaged foods, sauces, snacks, and prepared dishes, making it easy to miss without careful label reading.\n\n**How to use it**\n- Use this code to scan ingredient lists for both obvious and less obvious sources of milk.\n- Especially helpful when you or someone in your household needs to avoid milk in everyday foods.\n\nIf you have a food allergy or medical condition, always follow your healthcare provider’s guidance when deciding whether a product is safe for you."
+  },
+  {
+    "id": "ba6cdea7-f223-4acd-a776-cd7cb814f50a",
+    "code": "artificial_color",
+    "name": "Artificial Colors",
+    "category": "Avoid Ingredients",
+    "shortDescription": "This code helps you identify foods with synthetic colorings that artificially make food more appealing, offer no nutritional value and may cause harm, especially to children.",
+    "description": "### Artificial Colors\n\nThis code helps you identify foods with synthetic colorings that artificially make food more appealing, offer no nutritional value and may cause harm, especially to children.\n\n**What this code looks for**\n- Synthetic color additives such as Red 40, Yellow 5, Yellow 6, Blue 1, Blue 2, and similar dyes.\n- Artificial color blends used to make foods appear more vibrant or uniform than they would naturally.\n\n**Why it matters**\n- Artificial colors add no nutritional value and are used purely for appearance.\n- Some people prefer to limit these additives, especially in foods marketed to children or in products eaten frequently.\n\n**How to use it**\n- Use this code to quickly identify foods that rely on synthetic dyes instead of natural colors.\n- Especially useful for evaluating cereals, candies, drinks, desserts, and brightly colored snacks."
+  },
+  {
+    "id": "d511efd4-16a3-4320-ab71-3c8ef28bc674",
+    "code": "emulsifier",
+    "name": "Emulsifiers",
+    "category": "Avoid Ingredients",
+    "shortDescription": "This code flags products that contain emulsifiers like carboxymethylcellulose and polysorbate 80 that improve texture and shelf life but may have negative effects on your gut health.",
+    "description": "### Emulsifiers\n\nThis code flags products that contain emulsifiers like carboxymethylcellulose and polysorbate 80 that improve texture and shelf life but may have negative effects on your gut health.\n\n**What this code looks for**\n- Emulsifying ingredients such as mono- and diglycerides, polysorbates, carrageenan, and similar compounds that help oil and water stay mixed.\n- Emulsifier systems used to stabilize texture in ice cream, sauces, dressings, and many ultra-processed foods.\n\n**Why it matters**\n- Emulsifiers can change the texture and shelf life of foods but do not add nutritional value.\n- Some emerging research suggests that certain emulsifiers may affect the gut environment in sensitive individuals when eaten frequently.\n\n**How to use it**\n- Use this code to spot foods that depend on emulsifiers for texture and stability.\n- Especially helpful when evaluating frozen desserts, coffee creamers, sauces, dressings, and processed snacks."
+  },
+  {
+    "id": "d30c733e-9807-4ae8-8162-1808143ab163",
+    "code": "fiber_density",
+    "name": "Fiber Density",
+    "category": "Nutrient Focus",
+    "shortDescription": "This code scores the amount of fiber per 100 kilocalories (kcal), normalized to a 0Ð100 scale to help you choose foods that support healthy digestion.",
+    "description": "### Fiber Density\n\nThis code scores the amount of fiber per 100 kilocalories (kcal), normalized to a 0Ð100 scale to help you choose foods that support healthy digestion.\n\n**What this code looks for**\n- How much fiber a food provides relative to its calories.\n- Whether fiber comes primarily from whole foods rather than only from isolated or highly processed fiber additives.\n\n**Why it matters**\n- Fiber supports digestion, gut health, blood-sugar balance, and feelings of fullness.\n- Many packaged foods appear “healthy” yet deliver very little fiber compared with their calorie content.\n\n**How to use it**\n- Use this code to prioritize higher-fiber options when selecting cereals, breads, snacks, or main dishes.\n- Especially useful if you are working on improving gut health or increasing your daily fiber intake."
+  },
+  {
+    "id": "c1de2b3d-246d-4c07-8bf1-3f02d7a9d972",
+    "code": "heart_healthy",
+    "name": "Heart Health",
+    "category": "Health Outcomes",
+    "shortDescription": "This code the Heart Code identifies foods that support cardiovascular wellness-rewarding those rich in fiber, omega-3s, polyphenols, potassium, magnesium, and antioxidants, while penalizing excess sodium, added sugar, saturated fat, and ultra-processed ingredients.",
+    "description": "### Heart Health\n\nThis code the Heart Code identifies foods that support cardiovascular wellness-rewarding those rich in fiber, omega-3s, polyphenols, potassium, magnesium, and antioxidants, while penalizing excess sodium, added sugar, saturated fat, and ultra-processed ingredients.\n\n**What this code looks for**\n- Nutrients and ingredients associated with heart health, such as healthier fats, fiber, and certain vitamins and minerals.\n- Lower levels of factors that may challenge heart health when eaten often, such as excess sodium, added sugar, and some refined fats.\n\n**Why it matters**\n- Everyday food choices play a major role in supporting healthy blood pressure, cholesterol, and overall cardiovascular health.\n- Focusing more on heart-supportive foods can be an important part of long-term wellbeing.\n\n**How to use it**\n- Use this code to prioritize options that align better with heart-healthy eating patterns.\n- Especially helpful when comparing snacks, sauces, frozen meals, or pantry staples you eat frequently."
+  }
+]

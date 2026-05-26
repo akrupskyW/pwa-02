@@ -41,9 +41,27 @@ this stack choice.
 
 ## Local setup
 
+### Quickstart: no database needed (mock mode)
+
+Fresh clone, want to see the app run? Skip Postgres entirely — the data
+layer auto-falls back to fixtures in `lib/mock-data/` when `DATABASE_URL`
+isn't set:
+
 ```bash
 cd PersonalizedNutritionPWA
-corepack enable                                                  # one-time: enables Yarn 4
+corepack enable    # one-time: provisions Yarn 4
+yarn install
+yarn dev
+```
+
+Open `http://localhost:3000`. The browse list, code picker, AI compose
+(keyword-matched, no API key needed), and barcode lookup (183 real UPCs)
+all work against captured fixtures. See **Mock mode** below for detail.
+
+### Against the real database
+
+```bash
+corepack enable
 cp .env.local.example .env.local                                 # then fill in DATABASE_URL
 yarn install
 psql "$DATABASE_URL" -f db/refresh_food_normalized_scores.sql    # see "Database setup" — required if the wide table doesn't exist yet
@@ -51,6 +69,39 @@ yarn dev
 ```
 
 Open `http://localhost:3000`.
+
+## Mock mode
+
+Lets a fresh clone boot the full app — browse list, code picker, scan
+flow, AI compose + tags — without any Postgres connection or LLM API key.
+
+**When it activates** (`lib/mock-mode.ts`):
+
+| `PN_MOCK_DATA` | `DATABASE_URL` | Result |
+|----------------|----------------|--------|
+| `1` / `true`   | (any)          | Mock mode |
+| `0` / `false`  | (any)          | Real DB path (errors helpfully if no `DATABASE_URL`) |
+| (unset)        | (set)          | Real DB path |
+| (unset)        | (unset)        | Mock mode (fresh-clone default) |
+
+**Fixtures** in `lib/mock-data/`:
+
+- `expressions.json` — 40 curated codes.
+- `foods.json` — 400 foods carrying their full per-expression `SlotScore`
+  maps, so browse re-sorts live when slot weights change.
+- `upcs.json` — 183 real UPCs → foodId, so the scan flow resolves for
+  any of those barcodes.
+- `llm.ts` — keyword-matched compose response + canned tags response.
+
+**Regenerate** after schema or catalog changes:
+
+```bash
+# Requires a live Postgres + a running prod server (yarn build && yarn start)
+./scripts/capture-mock-data.sh
+```
+
+Fixtures aren't pinned to the prod DB — assume they drift. Mock mode is
+for demos and smoke tests, not for parity testing.
 
 ### VS Code / Cursor (per-environment debug)
 

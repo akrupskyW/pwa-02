@@ -10,6 +10,8 @@
 import { NextResponse } from "next/server";
 import { listSelectableExpressions } from "@/lib/queries";
 import { generateJson } from "@/lib/llm";
+import { mockTags } from "@/lib/mock-data/llm";
+import { isMockMode } from "@/lib/mock-mode";
 import {
   tagsResponseSchema,
   tagsSystemPrompt,
@@ -40,6 +42,9 @@ export const POST = async (req: Request) => {
   if (incoming.length === 0) {
     return NextResponse.json({ error: "Provide at least one slot" }, { status: 400 });
   }
+
+  // Mock mode short-circuit: no LLM round trip, canned tags.
+  if (isMockMode()) return NextResponse.json(mockTags());
 
   const codes = await listSelectableExpressions();
   const bySlug = new Map(codes.map((c) => [c.code, c]));
