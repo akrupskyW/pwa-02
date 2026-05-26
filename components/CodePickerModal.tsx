@@ -101,7 +101,7 @@ export const CodePickerModal = ({ slotIdx, allCodes, onClose }: Props) => {
                         "rounded-m flex w-full items-center gap-3 border p-3 text-left transition",
                         taken
                           ? "border-line/40 bg-card/30 cursor-not-allowed opacity-55"
-                          : "border-line bg-card hover:bg-card-elevated hover:border-border-strong",
+                          : "border-line bg-card hover:bg-card-elevated hover:border-line-strong",
                       ].join(" ")}
                     >
                       <span

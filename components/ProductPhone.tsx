@@ -108,7 +108,7 @@ export const ProductPhone = ({ onAfterScan }: Props) => {
           }}
           className="flex items-center gap-2"
         >
-          <label className="bg-card border-line focus-within:border-border-strong flex flex-1 items-center gap-2 rounded-s border px-3 py-2.5">
+          <label className="bg-card border-line focus-within:border-line-strong flex flex-1 items-center gap-2 rounded-s border px-3 py-2.5">
             <Icon name="barcode" size={16} className="text-ink-muted" />
             <input
               type="text"

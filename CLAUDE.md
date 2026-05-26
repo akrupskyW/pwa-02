@@ -19,8 +19,10 @@
 ## Package manager
 
 - Yarn Berry 4 (`nodeLinker: node-modules`). Use `yarn`, not `npm`.
-- Lockfile is `yarn.lock`. The Yarn release binary is checked in under
-  `.yarn/releases/` via Corepack.
+- Lockfile is `yarn.lock`. The Yarn version is pinned via
+  `"packageManager": "yarn@4.5.0"` in `package.json` and provisioned by
+  Corepack — run `corepack enable` once, then `yarn install`. No release
+  binary is checked in under `.yarn/releases/`.
 
 ## Local development
 
