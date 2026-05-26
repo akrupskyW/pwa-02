@@ -5,19 +5,19 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ScoredFoodCard } from "@/components/ScoredFoodCard";
 import { Icon, type IconName } from "@/components/Icon";
-import { useCodes } from "@/state/codes-context";
 import {
   fetchFoodById,
+  useCodes,
   useDispatchHelpers,
   usePreferences,
-} from "@/state/preferences-context";
+} from "@/store/preferences-hooks";
 
 type Status = "loading" | "ready" | "not-found" | "error";
 
 // Deep-linkable food detail page. Composes the breakdown card and frames it
 // with the screen header (SCAN RESULT / Product Detail) per DESIGN.md §3,
 // Phone 3.
-export default function FoodDetailPage() {
+const FoodDetailPage = () => {
   const params = useParams<{ id: string }>();
   const id = params?.id;
   const router = useRouter();
@@ -59,22 +59,22 @@ export default function FoodDetailPage() {
   }, [id, allCodes, state.currentFood?.foodId, setCurrentFood]);
 
   return (
-    <div className="h-full flex flex-col">
-      <header className="px-5 pt-14 pb-3 flex items-center justify-between">
+    <div className="flex h-full flex-col">
+      <header className="flex items-center justify-between px-5 pt-14 pb-3">
         <div className="flex items-center gap-2.5">
           <button
             type="button"
             onClick={() => router.back()}
             aria-label="Back"
-            className="w-9 h-9 rounded-s bg-surface-2 border border-line flex items-center justify-center text-ink hover:text-ink-bright"
+            className="bg-surface-2 border-line text-ink hover:text-ink-bright flex h-9 w-9 items-center justify-center rounded-s border"
           >
             <Icon name="arrow-left" size={16} strokeWidth={2.2} />
           </button>
           <div>
-            <div className="text-[10px] font-bold tracking-[0.16em] text-accent-emerald">
+            <div className="text-accent-emerald text-[10px] font-bold tracking-[0.16em]">
               SCAN RESULT
             </div>
-            <div className="text-[14px] font-bold text-ink-bright leading-tight">
+            <div className="text-ink-bright text-[14px] leading-tight font-bold">
               Product Detail
             </div>
           </div>
@@ -83,14 +83,14 @@ export default function FoodDetailPage() {
           <button
             type="button"
             aria-label="Share"
-            className="w-9 h-9 rounded-s bg-surface-2 border border-line flex items-center justify-center text-ink hover:text-ink-bright"
+            className="bg-surface-2 border-line text-ink hover:text-ink-bright flex h-9 w-9 items-center justify-center rounded-s border"
           >
             <Icon name="share" size={15} />
           </button>
           <button
             type="button"
             aria-label="Bookmark"
-            className="w-9 h-9 rounded-s bg-surface-2 border border-line flex items-center justify-center text-ink hover:text-ink-bright"
+            className="bg-surface-2 border-line text-ink hover:text-ink-bright flex h-9 w-9 items-center justify-center rounded-s border"
           >
             <Icon name="bookmark" size={15} />
           </button>
@@ -99,10 +99,10 @@ export default function FoodDetailPage() {
 
       <div className="flex-1 px-5 pb-5">
         {status === "loading" && (
-          <div className="text-center px-6 pt-16 text-ink-muted text-sm inline-flex items-center justify-center gap-2 w-full">
+          <div className="text-ink-muted inline-flex w-full items-center justify-center gap-2 px-6 pt-16 text-center text-sm">
             <span
               aria-hidden
-              className="inline-block w-3 h-3 rounded-full border-2 border-white/25 border-t-white animate-spin"
+              className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-white/25 border-t-white"
             />
             <span>Loading food…</span>
           </div>
@@ -128,37 +128,31 @@ export default function FoodDetailPage() {
       </div>
     </div>
   );
-}
+};
 
-function EmptyState({
-  icon,
-  title,
-  body,
-}: {
-  icon: IconName;
-  title: string;
-  body: string;
-}) {
+export default FoodDetailPage;
+
+const EmptyState = ({ icon, title, body }: { icon: IconName; title: string; body: string }) => {
   return (
-    <div className="text-center px-6 pt-12">
-      <div className="mx-auto w-14 h-14 rounded-l flex items-center justify-center bg-card border border-line text-ink-muted mb-3">
+    <div className="px-6 pt-12 text-center">
+      <div className="bg-card border-line text-ink-muted mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-l border">
         <Icon name={icon} size={28} />
       </div>
-      <div className="text-ink-bright font-bold text-[15px]">{title}</div>
-      <div className="text-ink-muted text-[13px] mt-1">{body}</div>
-      <div className="mt-5 flex gap-2 justify-center">
+      <div className="text-ink-bright text-[15px] font-bold">{title}</div>
+      <div className="text-ink-muted mt-1 text-[13px]">{body}</div>
+      <div className="mt-5 flex justify-center gap-2">
         <Link
           href="/browse"
-          className="rounded-pill bg-surface-2 border border-line text-ink text-[13px] font-bold px-4 py-2 hover:bg-surface-3 transition"
+          className="rounded-pill bg-surface-2 border-line text-ink hover:bg-surface-3 border px-4 py-2 text-[13px] font-bold transition"
         >
           Browse foods
         </Link>
         <Link
           href="/scan"
-          className="rounded-pill text-ink-soft text-[13px] font-extrabold px-4 py-2 shadow-cta-emerald"
+          className="rounded-pill text-ink-soft shadow-cta-emerald px-4 py-2 text-[13px] font-extrabold"
           style={{
             background:
-              "linear-gradient(135deg, var(--accent-emerald) 0%, var(--accent-teal) 100%)",
+              "linear-gradient(135deg, var(--color-accent-emerald) 0%, var(--color-accent-teal) 100%)",
           }}
         >
           Scan a barcode
@@ -166,4 +160,4 @@ function EmptyState({
       </div>
     </div>
   );
-}
+};

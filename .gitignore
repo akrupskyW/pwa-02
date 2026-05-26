@@ -15,6 +15,12 @@
 /.next/
 /out/
 
+# serwist — service worker is generated at build time
+/public/sw.js
+/public/sw.js.map
+/public/swe-worker-*.js
+/public/swe-worker-*.js.map
+
 # production
 /build
 
@@ -36,6 +42,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# editor
-.vscode/
+# editor — commit shared launch config; keep personal settings local
+.vscode
+!.vscode/launch.json
 .idea/
+*.code-workspace

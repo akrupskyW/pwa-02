@@ -29,7 +29,7 @@ interface Body {
 
 const MAX_DESCRIPTION_LENGTH = 1200;
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   let body: Body;
   try {
     body = (await req.json()) as Body;
@@ -61,10 +61,7 @@ export async function POST(req: Request) {
     });
   } catch (err) {
     console.error("[/api/code/compose] LLM call failed:", err);
-    return NextResponse.json(
-      { error: "Couldn't reach the model. Try again." },
-      { status: 502 },
-    );
+    return NextResponse.json({ error: "Couldn't reach the model. Try again." }, { status: 502 });
   }
 
   // Validate + normalize weights server-side, since the model can drift by
@@ -72,7 +69,7 @@ export async function POST(req: Request) {
   const bySlug = new Map(codes.map((c) => [c.code, c]));
   const resolved = composed.slots
     .map((s) => ({ raw: s, code: bySlug.get(s.code) }))
-    .filter((x): x is { raw: typeof composed.slots[number]; code: NonNullable<typeof x.code> } =>
+    .filter((x): x is { raw: (typeof composed.slots)[number]; code: NonNullable<typeof x.code> } =>
       Boolean(x.code),
     );
 
@@ -89,7 +86,7 @@ export async function POST(req: Request) {
   // Rebalance to exactly 100 by scaling, then fix any rounding drift on
   // the largest slot.
   let adjusted = weights.map((w) => Math.round((w / sum) * 100));
-  let drift = 100 - adjusted.reduce((a, b) => a + b, 0);
+  const drift = 100 - adjusted.reduce((a, b) => a + b, 0);
   if (drift !== 0) {
     const maxIdx = adjusted.indexOf(Math.max(...adjusted));
     adjusted = adjusted.map((w, i) => (i === maxIdx ? w + drift : w));
@@ -105,4 +102,4 @@ export async function POST(req: Request) {
     tags: composed.tags,
     rationale: composed.rationale,
   });
-}
+};

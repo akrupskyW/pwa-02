@@ -9,7 +9,7 @@ interface BrowseBody {
   limit?: number;
 }
 
-export async function POST(req: NextRequest) {
+export const POST = async (req: NextRequest) => {
   let body: BrowseBody;
   try {
     body = (await req.json()) as BrowseBody;
@@ -28,4 +28,4 @@ export async function POST(req: NextRequest) {
     console.error("[api/browse] failed:", err);
     return NextResponse.json({ error: "Failed to load browse page" }, { status: 500 });
   }
-}
+};

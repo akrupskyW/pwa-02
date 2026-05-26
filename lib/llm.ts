@@ -16,33 +16,29 @@ import type { z } from "zod";
 
 export type LlmProvider = "openai" | "anthropic";
 
-function provider(): LlmProvider {
+const provider = (): LlmProvider => {
   const raw = (process.env.LLM_PROVIDER ?? "openai").toLowerCase();
   if (raw === "anthropic") return "anthropic";
   return "openai";
-}
+};
 
-async function resolveModel(): Promise<LanguageModel> {
+const resolveModel = async (): Promise<LanguageModel> => {
   const which = provider();
   if (which === "anthropic") {
     if (!process.env.ANTHROPIC_API_KEY) {
-      throw new Error(
-        "LLM_PROVIDER=anthropic but ANTHROPIC_API_KEY is not set in .env.local.",
-      );
+      throw new Error("LLM_PROVIDER=anthropic but ANTHROPIC_API_KEY is not set in .env.local.");
     }
     const { anthropic } = await import("@ai-sdk/anthropic");
     const modelId = process.env.ANTHROPIC_MODEL ?? "claude-opus-4-7";
     return anthropic(modelId);
   }
   if (!process.env.OPENAI_API_KEY) {
-    throw new Error(
-      "LLM_PROVIDER=openai but OPENAI_API_KEY is not set in .env.local.",
-    );
+    throw new Error("LLM_PROVIDER=openai but OPENAI_API_KEY is not set in .env.local.");
   }
   const { openai } = await import("@ai-sdk/openai");
   const modelId = process.env.OPENAI_MODEL ?? "gpt-5";
   return openai(modelId);
-}
+};
 
 interface CallArgs<T> {
   /** System / role prompt — the constant context. */
@@ -62,7 +58,7 @@ interface CallArgs<T> {
 
 /** Single entry point for the rest of the app. Returns validated JSON
  *  matching the schema, or throws (caller renders an error state). */
-export async function generateJson<T>(args: CallArgs<T>): Promise<T> {
+export const generateJson = async <T>(args: CallArgs<T>): Promise<T> => {
   const model = await resolveModel();
   const result = await generateObject({
     model,
@@ -80,10 +76,10 @@ export async function generateJson<T>(args: CallArgs<T>): Promise<T> {
     output: "object",
   });
   return result.object as T;
-}
+};
 
 /** Exposed for log lines / route handlers that want to surface which
  *  provider was used (e.g. for cost telemetry). */
-export function currentProvider(): LlmProvider {
+export const currentProvider = (): LlmProvider => {
   return provider();
-}
+};

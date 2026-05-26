@@ -1,0 +1,8 @@
+.next
+.yarn
+node_modules
+public
+*.tsbuildinfo
+next-env.d.ts
+package-lock.json
+yarn.lock

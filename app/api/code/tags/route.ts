@@ -29,7 +29,7 @@ interface Body {
   slots?: IncomingSlot[];
 }
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   let body: Body;
   try {
     body = (await req.json()) as Body;
@@ -69,9 +69,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ tags: out.tags });
   } catch (err) {
     console.error("[/api/code/tags] LLM call failed:", err);
-    return NextResponse.json(
-      { error: "Couldn't reach the model. Try again." },
-      { status: 502 },
-    );
+    return NextResponse.json({ error: "Couldn't reach the model. Try again." }, { status: 502 });
   }
-}
+};

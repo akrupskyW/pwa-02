@@ -1,14 +1,13 @@
 "use client";
 
-import { useCodes } from "@/state/codes-context";
-import { usePreferences } from "@/state/preferences-context";
+import { useCodes, usePreferences } from "@/store/preferences-hooks";
 import { identityForCode, tierColor } from "@/lib/code-identity";
 import { ScoreRing } from "./ScoreRing";
 import { Icon, type IconName } from "./Icon";
 
 // Per-food breakdown — DESIGN.md §3, Phone 3 ("Product Detail").
 // The composite is computed once at the page level and passed in here.
-export function ScoredFoodCard({ composite }: { composite: number | null }) {
+export const ScoredFoodCard = ({ composite }: { composite: number | null }) => {
   const allCodes = useCodes();
   const { state } = usePreferences();
   const food = state.currentFood;
@@ -25,52 +24,64 @@ export function ScoredFoodCard({ composite }: { composite: number | null }) {
   // there's redundant signal.
   const verdict =
     composite == null
-      ? { label: "No data yet", icon: "frown", color: "var(--muted-foreground)" }
+      ? { label: "No data yet", icon: "frown", color: "var(--color-ink-muted)" }
       : composite >= 90
-      ? { label: "Excellent match for your code", icon: "check-circle", color: "var(--score-excellent)" }
-      : composite >= 75
-      ? { label: "Good match for your code", icon: "check-circle", color: "var(--score-good)" }
-      : composite >= 60
-      ? { label: "Fair match for your code", icon: "check", color: "var(--score-fair)" }
-      : { label: "Below your code's bar", icon: "alert-triangle", color: "var(--score-low)" };
+        ? {
+            label: "Excellent match for your code",
+            icon: "check-circle",
+            color: "var(--color-score-excellent)",
+          }
+        : composite >= 75
+          ? {
+              label: "Good match for your code",
+              icon: "check-circle",
+              color: "var(--color-score-good)",
+            }
+          : composite >= 60
+            ? { label: "Fair match for your code", icon: "check", color: "var(--color-score-fair)" }
+            : {
+                label: "Below your code's bar",
+                icon: "alert-triangle",
+                color: "var(--color-score-low)",
+              };
 
   return (
     <div className="space-y-3">
       <section
-        className="rounded-l p-4 space-y-4"
+        className="space-y-4 rounded-l p-4"
         style={{
           background:
-            "linear-gradient(135deg, var(--card-elevated) 0%, var(--card) 100%)",
-          border: "1px solid var(--border)",
+            "linear-gradient(135deg, var(--color-card-elevated) 0%, var(--color-card) 100%)",
+          border: "1px solid var(--color-line)",
           boxShadow: "0 12px 32px -8px rgba(52,229,166,0.22)",
         }}
       >
         <div className="flex items-center gap-3.5">
           <div
-            className="w-[72px] h-[72px] rounded-m flex items-center justify-center overflow-hidden flex-shrink-0"
+            className="rounded-m flex h-[72px] w-[72px] flex-shrink-0 items-center justify-center overflow-hidden"
             style={
               food.imageUrl
                 ? undefined
                 : topId
-                ? { background: `linear-gradient(135deg, ${topId.c1} 0%, ${topId.c2} 100%)` }
-                : { background: "linear-gradient(135deg, #5DCFFF, #7C7CFB)" }
+                  ? { background: `linear-gradient(135deg, ${topId.c1} 0%, ${topId.c2} 100%)` }
+                  : { background: "linear-gradient(135deg, #5DCFFF, #7C7CFB)" }
             }
           >
             {food.imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={food.imageUrl} alt={food.name} className="w-full h-full object-cover" />
+              <img src={food.imageUrl} alt={food.name} className="h-full w-full object-cover" />
             ) : topId ? (
               <span className="text-ink-soft">
                 <Icon name={topId.icon as IconName} size={30} strokeWidth={2.2} />
               </span>
             ) : null}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-[16px] font-extrabold text-ink-bright leading-tight tracking-[-0.01em] line-clamp-2">
+          <div className="min-w-0 flex-1">
+            <div className="text-ink-bright line-clamp-2 text-[16px] leading-tight font-extrabold tracking-[-0.01em]">
               {food.name}
             </div>
             {food.brand && (
-              <div className="text-[11px] font-medium text-ink-muted mt-0.5 truncate">
+              <div className="text-ink-muted mt-0.5 truncate text-[11px] font-medium">
                 {food.brand}
               </div>
             )}
@@ -87,7 +98,7 @@ export function ScoredFoodCard({ composite }: { composite: number | null }) {
             label="COMPOSITE"
           />
           <div
-            className="inline-flex items-center gap-2 mt-3 text-[12px] font-bold"
+            className="mt-3 inline-flex items-center gap-2 text-[12px] font-bold"
             style={{ color: verdict.color }}
           >
             <Icon name={verdict.icon as IconName} size={14} strokeWidth={2.4} />
@@ -97,10 +108,8 @@ export function ScoredFoodCard({ composite }: { composite: number | null }) {
       </section>
 
       <div className="flex items-center justify-between px-0.5 pt-1">
-        <div className="text-[11px] font-bold tracking-[0.14em] text-ink-muted">
-          THE MATH
-        </div>
-        <div className="text-[10px] font-medium tracking-[0.03em] text-ink-faint">
+        <div className="text-ink-muted text-[11px] font-bold tracking-[0.14em]">THE MATH</div>
+        <div className="text-ink-faint text-[10px] font-medium tracking-[0.03em]">
           score × weight = contribution
         </div>
       </div>
@@ -119,29 +128,29 @@ export function ScoredFoodCard({ composite }: { composite: number | null }) {
             return (
               <div
                 key={slot.expressionId as string}
-                className="rounded-m p-3 space-y-2"
+                className="rounded-m space-y-2 p-3"
                 style={{
                   background: "rgba(15,23,41,0.9)",
-                  border: "1px solid var(--border)",
+                  border: "1px solid var(--color-line)",
                 }}
               >
                 <div className="flex items-center gap-2.5">
                   <span
-                    className="w-[30px] h-[30px] rounded-s flex items-center justify-center text-ink-soft flex-shrink-0"
+                    className="text-ink-soft flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-s"
                     style={{
                       background: `linear-gradient(135deg, ${id.c1} 0%, ${id.c2} 100%)`,
                     }}
                   >
                     <Icon name={id.icon as IconName} size={14} strokeWidth={2.4} />
                   </span>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[12px] font-bold text-ink-bright truncate">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="text-ink-bright truncate text-[12px] font-bold">
                         {code.name}
                       </span>
                       {hasScore && entry!.label && (
                         <span
-                          className="text-[8px] font-extrabold uppercase tracking-[0.06em] rounded-pill px-1.5 py-[2px]"
+                          className="rounded-pill px-1.5 py-[2px] text-[8px] font-extrabold tracking-[0.06em] uppercase"
                           style={{
                             background: `linear-gradient(90deg, ${id.c1}33 0%, ${id.c2}33 100%)`,
                             color: id.c1,
@@ -152,24 +161,24 @@ export function ScoredFoodCard({ composite }: { composite: number | null }) {
                         </span>
                       )}
                     </div>
-                    <div className="text-[10px] font-semibold text-ink-muted tabular-nums mt-0.5">
+                    <div className="text-ink-muted mt-0.5 text-[10px] font-semibold tabular-nums">
                       {hasScore
                         ? `${entry!.score} × ${slot.weight}% = ${contribution!.toFixed(1)}`
                         : `No score on this food · ${slot.weight}% weight`}
                     </div>
                   </div>
                   <div
-                    className="text-[22px] font-extrabold tabular-nums tracking-[-0.02em] leading-none"
-                    style={{ color: hasScore ? tierColor(entry!.score) : "var(--faint-foreground)" }}
+                    className="text-[22px] leading-none font-extrabold tracking-[-0.02em] tabular-nums"
+                    style={{ color: hasScore ? tierColor(entry!.score) : "var(--color-ink-faint)" }}
                   >
                     {hasScore ? entry!.score : "—"}
                   </div>
                 </div>
 
-                <div className="h-1.5 rounded-pill bg-track-subtle overflow-hidden">
+                <div className="rounded-pill bg-track-subtle h-1.5 overflow-hidden">
                   {hasScore && (
                     <div
-                      className="h-full rounded-pill"
+                      className="rounded-pill h-full"
                       style={{
                         width: `${entry!.score}%`,
                         background: `linear-gradient(90deg, ${id.c1} 0%, ${id.c2} 100%)`,
@@ -184,4 +193,4 @@ export function ScoredFoodCard({ composite }: { composite: number | null }) {
       </div>
     </div>
   );
-}
+};

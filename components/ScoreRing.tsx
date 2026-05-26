@@ -25,7 +25,7 @@ interface Props {
 const GRADIENT_ID = "score-arc-gradient";
 const HALO_ID = "score-arc-halo";
 
-export function ScoreRing({
+export const ScoreRing = ({
   value,
   size = 220,
   thicknessRatio = 0.14,
@@ -33,7 +33,7 @@ export function ScoreRing({
   display,
   noHalo,
   numberSize,
-}: Props) {
+}: Props) => {
   const clamped = Math.max(0, Math.min(100, Math.round(value)));
   const r = size / 2;
   const thickness = r * thicknessRatio;
@@ -59,10 +59,9 @@ export function ScoreRing({
       {!noHalo && (
         <div
           aria-hidden
-          className="absolute inset-0 rounded-pill blur-2xl opacity-70 pointer-events-none"
+          className="rounded-pill pointer-events-none absolute inset-0 opacity-70 blur-2xl"
           style={{
-            background:
-              "radial-gradient(closest-side, rgba(52,229,166,0.45), transparent 75%)",
+            background: "radial-gradient(closest-side, rgba(52,229,166,0.45), transparent 75%)",
           }}
         />
       )}
@@ -92,7 +91,7 @@ export function ScoreRing({
           cy={r}
           r={innerR}
           fill="none"
-          stroke="var(--track)"
+          stroke="var(--color-track)"
           strokeWidth={thickness}
         />
 
@@ -125,9 +124,9 @@ export function ScoreRing({
         )}
       </svg>
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
         <div
-          className="font-extrabold text-ink-bright leading-none tabular-nums"
+          className="text-ink-bright leading-none font-extrabold tabular-nums"
           style={{
             fontSize: ns,
             letterSpacing: `${Math.round(-ns * 0.04)}px`,
@@ -136,11 +135,9 @@ export function ScoreRing({
           {number}
         </div>
         {label && (
-          <div className="mt-1 text-[10px] font-bold tracking-[0.18em] text-ink-muted">
-            {label}
-          </div>
+          <div className="text-ink-muted mt-1 text-[10px] font-bold tracking-[0.18em]">{label}</div>
         )}
       </div>
     </div>
   );
-}
+};

@@ -6,10 +6,10 @@ import { ScoredFoodCard } from "./ScoredFoodCard";
 import { Icon } from "./Icon";
 import {
   fetchFoodByUpc,
+  useCodes,
   useDispatchHelpers,
   usePreferences,
-} from "@/state/preferences-context";
-import { useCodes } from "@/state/codes-context";
+} from "@/store/preferences-hooks";
 
 interface Props {
   // Routed /scan page passes a callback that navigates to /food/[id]. When
@@ -20,7 +20,7 @@ interface Props {
   onAfterScan?: (foodId: string) => void;
 }
 
-export function ProductPhone({ onAfterScan }: Props) {
+export const ProductPhone = ({ onAfterScan }: Props) => {
   const allCodes = useCodes();
   const { state, composite } = usePreferences();
   const { setCurrentFood } = useDispatchHelpers();
@@ -69,38 +69,36 @@ export function ProductPhone({ onAfterScan }: Props) {
   const showInlineCard = !onAfterScan && state.currentFood;
 
   return (
-    <div className="h-full flex flex-col relative">
+    <div className="relative flex h-full flex-col">
       <header className="px-5 pt-14 pb-3">
-        <div className="text-[11px] font-bold tracking-[0.16em] text-accent-emerald">
-          SCAN
-        </div>
-        <div className="text-[24px] font-extrabold tracking-[-0.02em] text-ink-bright leading-tight mt-0.5">
+        <div className="text-accent-emerald text-[11px] font-bold tracking-[0.16em]">SCAN</div>
+        <div className="text-ink-bright mt-0.5 text-[24px] leading-tight font-extrabold tracking-[-0.02em]">
           Find a food
         </div>
-        <div className="text-[12px] font-medium text-ink-muted mt-1">
+        <div className="text-ink-muted mt-1 text-[12px] font-medium">
           Live weighted to your code.
         </div>
       </header>
 
-      <div className="flex-1 px-5 pb-5 space-y-4">
+      <div className="flex-1 space-y-4 px-5 pb-5">
         {/* The hero "Scan" CTA — emerald gradient with a colored glow. */}
         <button
           type="button"
           onClick={() => setScanning(true)}
-          className="w-full rounded-l text-ink-soft text-[15px] font-extrabold py-4 flex items-center justify-center gap-2.5 shadow-cta-emerald"
+          className="text-ink-soft shadow-cta-emerald flex w-full items-center justify-center gap-2.5 rounded-l py-4 text-[15px] font-extrabold"
           style={{
             background:
-              "linear-gradient(135deg, var(--accent-emerald) 0%, var(--accent-teal) 100%)",
+              "linear-gradient(135deg, var(--color-accent-emerald) 0%, var(--color-accent-teal) 100%)",
           }}
         >
           <Icon name="camera" size={20} strokeWidth={2.4} />
           <span>Scan a barcode</span>
         </button>
 
-        <div className="flex items-center gap-3 text-[10px] uppercase font-bold tracking-[0.16em] text-ink-faint">
-          <div className="flex-1 h-px bg-line" />
+        <div className="text-ink-faint flex items-center gap-3 text-[10px] font-bold tracking-[0.16em] uppercase">
+          <div className="bg-line h-px flex-1" />
           <span>or enter UPC</span>
-          <div className="flex-1 h-px bg-line" />
+          <div className="bg-line h-px flex-1" />
         </div>
 
         <form
@@ -110,7 +108,7 @@ export function ProductPhone({ onAfterScan }: Props) {
           }}
           className="flex items-center gap-2"
         >
-          <label className="flex-1 flex items-center gap-2 rounded-s bg-card border border-line px-3 py-2.5 focus-within:border-border-strong">
+          <label className="bg-card border-line focus-within:border-border-strong flex flex-1 items-center gap-2 rounded-s border px-3 py-2.5">
             <Icon name="barcode" size={16} className="text-ink-muted" />
             <input
               type="text"
@@ -119,61 +117,52 @@ export function ProductPhone({ onAfterScan }: Props) {
               placeholder="0028400064057"
               value={upcInput}
               onChange={(e) => setUpcInput(e.target.value)}
-              className="flex-1 bg-transparent outline-none text-[14px] font-mono tracking-[0.04em] placeholder:text-ink-faint text-ink-bright"
+              className="placeholder:text-ink-faint text-ink-bright flex-1 bg-transparent font-mono text-[14px] tracking-[0.04em] outline-none"
             />
           </label>
           <button
             type="submit"
             disabled={lookingUp || !upcInput.trim()}
-            className="rounded-s bg-surface-2 border border-line text-ink-bright text-[13px] font-bold px-4 py-2.5 disabled:opacity-50 hover:bg-surface-3 transition"
+            className="bg-surface-2 border-line text-ink-bright hover:bg-surface-3 rounded-s border px-4 py-2.5 text-[13px] font-bold transition disabled:opacity-50"
           >
             {lookingUp ? "…" : "Look up"}
           </button>
         </form>
 
         {notFoundUpc && (
-          <div className="rounded-m bg-card border border-line p-3 text-center text-[12px] text-ink-muted">
+          <div className="rounded-m bg-card border-line text-ink-muted border p-3 text-center text-[12px]">
             Barcode{" "}
-            <strong className="text-ink-bright font-mono tracking-[0.04em]">
-              {notFoundUpc}
-            </strong>{" "}
+            <strong className="text-ink-bright font-mono tracking-[0.04em]">{notFoundUpc}</strong>{" "}
             isn&apos;t in our food database.
           </div>
         )}
         {error && (
-          <div className="rounded-m bg-card border border-accent-rose/40 p-3 text-center text-[13px] text-accent-rose">
+          <div className="rounded-m bg-card border-accent-rose/40 text-accent-rose border p-3 text-center text-[13px]">
             Something went wrong looking that up. Try again.
           </div>
         )}
 
-        {showInlineCard ? (
-          <ScoredFoodCard composite={composite} />
-        ) : (
-          <EmptyHero />
-        )}
+        {showInlineCard ? <ScoredFoodCard composite={composite} /> : <EmptyHero />}
       </div>
 
       {scanning && (
-        <BarcodeScanner
-          onDetected={handleDetected}
-          onCancel={() => setScanning(false)}
-        />
+        <BarcodeScanner onDetected={handleDetected} onCancel={() => setScanning(false)} />
       )}
     </div>
   );
-}
+};
 
-function EmptyHero() {
+const EmptyHero = () => {
   return (
-    <div className="text-center px-6 pt-8">
-      <div className="mx-auto w-16 h-16 rounded-l flex items-center justify-center bg-card border border-line text-ink-muted mb-3">
+    <div className="px-6 pt-8 text-center">
+      <div className="bg-card border-line text-ink-muted mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-l border">
         <Icon name="scan-line" size={32} strokeWidth={1.6} />
       </div>
-      <div className="text-ink-bright font-bold text-[14px]">Point and shoot</div>
-      <div className="text-ink-muted text-[12px] mt-1 max-w-[260px] mx-auto">
-        Scan a barcode, enter a UPC, or pick a food from the Browse tab to see
-        how it scores against your code.
+      <div className="text-ink-bright text-[14px] font-bold">Point and shoot</div>
+      <div className="text-ink-muted mx-auto mt-1 max-w-[260px] text-[12px]">
+        Scan a barcode, enter a UPC, or pick a food from the Browse tab to see how it scores against
+        your code.
       </div>
     </div>
   );
-}
+};

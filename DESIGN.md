@@ -3,7 +3,7 @@
 This document captures the visual design choices made for the consumer PWA, as
 expressed in [PersonalizedNutrition.pen](PersonalizedNutrition.pen). Read this
 alongside [PROTOTYPE.md](PROTOTYPE.md), which explains the data model and the
-3-phone UX rationale; this doc covers *how it looks and feels*.
+3-phone UX rationale; this doc covers _how it looks and feels_.
 
 The design is deliberately **dark-luxe wellness**: deep midnight backgrounds,
 glowing organic shapes, vibrant gradient accents, and per-code color identity.
@@ -19,49 +19,49 @@ re-exported as CSS variables for the web app.
 
 ### Colors — surfaces
 
-| Token | Hex | Usage |
-|-------|-----|-------|
-| `--background` | `#05080F` | Page background — true midnight |
-| `--background-deep` | `#02040A` | Edge fades, deepest layer |
-| `--surface` | `#0E1626` | Default surface |
-| `--surface-2` | `#141E33` | Elevated surface |
-| `--surface-3` | `#1B2742` | Hover/active surface |
-| `--surface-glass` | `#1A2440CC` | Translucent glass (with backdrop-blur) |
-| `--card` | `#111A2E` | Card body |
-| `--card-elevated` | `#172238` | Card with subtle lift |
-| `--ink-soft` | `#0A1020` | Recessed wells inside cards |
+| Token               | Hex         | Usage                                  |
+| ------------------- | ----------- | -------------------------------------- |
+| `--background`      | `#05080F`   | Page background — true midnight        |
+| `--background-deep` | `#02040A`   | Edge fades, deepest layer              |
+| `--surface`         | `#0E1626`   | Default surface                        |
+| `--surface-2`       | `#141E33`   | Elevated surface                       |
+| `--surface-3`       | `#1B2742`   | Hover/active surface                   |
+| `--surface-glass`   | `#1A2440CC` | Translucent glass (with backdrop-blur) |
+| `--card`            | `#111A2E`   | Card body                              |
+| `--card-elevated`   | `#172238`   | Card with subtle lift                  |
+| `--ink-soft`        | `#0A1020`   | Recessed wells inside cards            |
 
 ### Colors — borders & tracks
 
-| Token | Hex | Usage |
-|-------|-----|-------|
-| `--border-subtle` | `#14203A` | Hairline dividers |
-| `--border` | `#1F2C47` | Default card borders |
-| `--border-strong` | `#2A3A5E` | Emphasized borders |
-| `--track` | `#1B2440` | Slider/progress bar tracks |
-| `--track-subtle` | `#0F1729` | Inner well for progress |
+| Token             | Hex       | Usage                      |
+| ----------------- | --------- | -------------------------- |
+| `--border-subtle` | `#14203A` | Hairline dividers          |
+| `--border`        | `#1F2C47` | Default card borders       |
+| `--border-strong` | `#2A3A5E` | Emphasized borders         |
+| `--track`         | `#1B2440` | Slider/progress bar tracks |
+| `--track-subtle`  | `#0F1729` | Inner well for progress    |
 
 ### Colors — text
 
-| Token | Hex | Usage |
-|-------|-----|-------|
+| Token                 | Hex       | Usage                  |
+| --------------------- | --------- | ---------------------- |
 | `--foreground-bright` | `#FFFFFF` | Big numbers, hero text |
-| `--foreground` | `#F5F7FA` | Default body text |
-| `--muted-foreground` | `#8794A8` | Secondary/labels |
-| `--faint-foreground` | `#5A6478` | Tertiary, inactive |
+| `--foreground`        | `#F5F7FA` | Default body text      |
+| `--muted-foreground`  | `#8794A8` | Secondary/labels       |
+| `--faint-foreground`  | `#5A6478` | Tertiary, inactive     |
 
 ### Colors — accent gradients
 
 Always used as **2-stop linear gradients**, not solid colors. The gradient is
 the brand. Per-code color identity comes from these pairings:
 
-| Identity | Start (c1) | End (c2) | Codes / Use |
-|----------|------------|----------|--------------|
-| Vital (rose→amber) | `--accent-rose` `#FF5E92` | `--accent-amber` `#FF9A2A` | Heart Healthy, "vitality" |
-| Clean (emerald→teal) | `--accent-emerald` `#34E5A6` | `--accent-teal` `#22D3C5` | Clean Label, "pure" |
-| Plant (violet→magenta) | `--accent-violet` `#7C7CFB` | `--accent-magenta` `#C44CD4` | No UPF, plant-forward |
-| Macro (gold→amber) | `--accent-gold` `#F5C14E` | `--accent-amber` `#FF9A2A` | High Protein, macros |
-| Hydro (cyan→blue) | `--accent-cyan` `#5DCFFF` | `--accent-blue` `#3B82F6` | Cold/aqua reserve |
+| Identity               | Start (c1)                   | End (c2)                     | Codes / Use               |
+| ---------------------- | ---------------------------- | ---------------------------- | ------------------------- |
+| Vital (rose→amber)     | `--accent-rose` `#FF5E92`    | `--accent-amber` `#FF9A2A`   | Heart Healthy, "vitality" |
+| Clean (emerald→teal)   | `--accent-emerald` `#34E5A6` | `--accent-teal` `#22D3C5`    | Clean Label, "pure"       |
+| Plant (violet→magenta) | `--accent-violet` `#7C7CFB`  | `--accent-magenta` `#C44CD4` | No UPF, plant-forward     |
+| Macro (gold→amber)     | `--accent-gold` `#F5C14E`    | `--accent-amber` `#FF9A2A`   | High Protein, macros      |
+| Hydro (cyan→blue)      | `--accent-cyan` `#5DCFFF`    | `--accent-blue` `#3B82F6`    | Cold/aqua reserve         |
 
 Brand-level gradient: emerald → teal → cyan → violet (used on the composite
 score ring as an angular gradient — see ScoreRing component).
@@ -70,13 +70,13 @@ score ring as an angular gradient — see ScoreRing component).
 
 The displayed composite color depends on the value:
 
-| Tier | Range | Color |
-|------|-------|-------|
-| Excellent | 90+ | `--score-excellent` `#34E5A6` |
-| Good | 75–89 | `--score-good` `#22D3C5` |
-| Fair | 60–74 | `--score-fair` `#F5C14E` |
-| Low | 40–59 | `--score-low` `#FF9A2A` |
-| Poor | <40 | `--score-poor` `#FF5E92` |
+| Tier      | Range | Color                         |
+| --------- | ----- | ----------------------------- |
+| Excellent | 90+   | `--score-excellent` `#34E5A6` |
+| Good      | 75–89 | `--score-good` `#22D3C5`      |
+| Fair      | 60–74 | `--score-fair` `#F5C14E`      |
+| Low       | 40–59 | `--score-low` `#FF9A2A`       |
+| Poor      | <40   | `--score-poor` `#FF5E92`      |
 
 ### Typography
 
@@ -86,19 +86,20 @@ The displayed composite color depends on the value:
 
 Type scale used in the design:
 
-| Role | Size | Weight | Letter-spacing |
-|------|-----:|-------:|---------------:|
-| Hero display | 64 | 800 | -2 |
-| Screen title (H1) | 24 | 800 | -0.6 |
-| Composite headline | 78 | 800 | -3 |
-| Composite small | 32 | 800 | -1 |
-| Big number (row) | 22–26 | 800 | -0.4 |
-| Card title | 14–16 | 700 | 0 → -0.3 |
-| Body | 12–13 | 500–600 | 0 |
-| Label / overline | 9–11 | 700 | 0.5 → 1.8 |
-| Tab label (uppercase) | 10 | 700 | 0.7 |
+| Role                  |  Size |  Weight | Letter-spacing |
+| --------------------- | ----: | ------: | -------------: |
+| Hero display          |    64 |     800 |             -2 |
+| Screen title (H1)     |    24 |     800 |           -0.6 |
+| Composite headline    |    78 |     800 |             -3 |
+| Composite small       |    32 |     800 |             -1 |
+| Big number (row)      | 22–26 |     800 |           -0.4 |
+| Card title            | 14–16 |     700 |       0 → -0.3 |
+| Body                  | 12–13 | 500–600 |              0 |
+| Label / overline      |  9–11 |     700 |      0.5 → 1.8 |
+| Tab label (uppercase) |    10 |     700 |            0.7 |
 
 **Rules:**
+
 - Title font-size is consistent across all screens (24 / 800 / -0.6).
 - Big numbers use the **tier color**, not white, so the ranking is readable
   before you read the number itself.
@@ -107,14 +108,14 @@ Type scale used in the design:
 
 ### Radii
 
-| Token | Value | Usage |
-|-------|------:|-------|
-| `--radius-xs` | 8 | Inline badges |
-| `--radius-s` | 12 | Small buttons, icon tiles |
-| `--radius-m` | 18 | Slot/food cards |
-| `--radius-l` | 24 | Hero cards |
-| `--radius-xl` | 32 | Large hero containers |
-| `--radius-pill` | 999 | Pills, chips, tab bar items, sliders |
+| Token           | Value | Usage                                |
+| --------------- | ----: | ------------------------------------ |
+| `--radius-xs`   |     8 | Inline badges                        |
+| `--radius-s`    |    12 | Small buttons, icon tiles            |
+| `--radius-m`    |    18 | Slot/food cards                      |
+| `--radius-l`    |    24 | Hero cards                           |
+| `--radius-xl`   |    32 | Large hero containers                |
+| `--radius-pill` |   999 | Pills, chips, tab bar items, sliders |
 
 The interior screen of the iPhone bezel uses a 48 corner radius; the outer
 bezel uses 54 — these are bezel-specific and not in the radius scale.
@@ -124,13 +125,13 @@ bezel uses 54 — these are bezel-specific and not in the radius scale.
 Wrapper padding inside a phone screen: **`[0, 20, 20, 20]`** (no top — status
 bar sits flush).
 
-| Context | Gap |
-|---------|----:|
+| Context                        |   Gap |
+| ------------------------------ | ----: |
 | Major sections inside a screen | 16–20 |
-| Items within a section | 8–12 |
-| Inside cards | 10–14 |
-| Between icon + label | 6–10 |
-| Inside button | 8 |
+| Items within a section         |  8–12 |
+| Inside cards                   | 10–14 |
+| Between icon + label           |  6–10 |
+| Inside button                  |     8 |
 
 Tab bar floats absolutely at `y: 758` (24 from screen bottom edge) with `x: 24`
 and width 330 inside the 378-wide screen.
@@ -214,7 +215,7 @@ The signature component — a glowing angular-gradient ring around a number.
 
 **Placement — anchored, not floating.** The mobile-app guideline calls for
 a floating pill that hovers over the scroll area with backdrop blur. We
-ship the pill *anchored* at the bottom of the phone shell as a flex-flow
+ship the pill _anchored_ at the bottom of the phone shell as a flex-flow
 sibling of the scroll area, with a solid-enough background that no content
 peeks through. Rationale: the same guideline's rule that "App content must
 never be obscured by the Tab Bar" is hard to keep when an interactive
@@ -258,12 +259,12 @@ Tab bar (absolute, y:758, x:24, width 330)
 
 Per-code gradient mapping shown:
 
-| Code | c1 | c2 | Icon |
-|------|----|----|------|
-| Heart Healthy | `#FF5E92` | `#FF9A2A` | `heart-pulse` |
-| Clean Label | `#34E5A6` | `#22D3C5` | `sparkles` |
-| No Ultra-Processed | `#7C7CFB` | `#C44CD4` | `leaf` |
-| High Protein | `#F5C14E` | `#FF9A2A` | `dumbbell` |
+| Code               | c1        | c2        | Icon          |
+| ------------------ | --------- | --------- | ------------- |
+| Heart Healthy      | `#FF5E92` | `#FF9A2A` | `heart-pulse` |
+| Clean Label        | `#34E5A6` | `#22D3C5` | `sparkles`    |
+| No Ultra-Processed | `#7C7CFB` | `#C44CD4` | `leaf`        |
+| High Protein       | `#F5C14E` | `#FF9A2A` | `dumbbell`    |
 
 ### Phone 2 — "Top Matches" (Browse)
 
@@ -357,10 +358,10 @@ visual states.
 
 ### Endpoints
 
-| Route | Input | Output | Used by |
-|-------|-------|--------|---------|
-| `POST /api/code/compose` | `{ description: string }` | `{ slots: [{expressionId, code, name, weight}], tags: string[], rationale: string }` | TalkToAISheet's Compose button |
-| `POST /api/code/tags` | `{ slots: [{code, weight}] }` | `{ tags: string[] }` | AITagRow's Ask-AI / refresh button |
+| Route                    | Input                         | Output                                                                               | Used by                            |
+| ------------------------ | ----------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------- |
+| `POST /api/code/compose` | `{ description: string }`     | `{ slots: [{expressionId, code, name, weight}], tags: string[], rationale: string }` | TalkToAISheet's Compose button     |
+| `POST /api/code/tags`    | `{ slots: [{code, weight}] }` | `{ tags: string[] }`                                                                 | AITagRow's Ask-AI / refresh button |
 
 Both routes are server-rendered (`runtime = "nodejs"`), force-dynamic, and
 hit the catalog (`listSelectableExpressions`) before calling the model so
@@ -450,7 +451,7 @@ fresh-vs-stale status correctly.
 
 - The `.pen` design file is authoritative for visual decisions. When code
   and design drift, update [PersonalizedNutrition.pen](PersonalizedNutrition.pen)
-  *and* the corresponding Tailwind tokens together.
+  _and_ the corresponding Tailwind tokens together.
 - Tailwind config ([tailwind.config.ts](tailwind.config.ts)) should mirror
   the variables in section 1. Currently it has a smaller `stage` / `screen`
   / `accent` palette — extend it with the full token set.

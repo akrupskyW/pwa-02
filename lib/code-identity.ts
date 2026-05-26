@@ -109,26 +109,26 @@ const CATEGORY_DEFAULT: Readonly<Record<PwaCategory, CodeIdentity>> = {
   "Industry Codes": CLEAN,
 };
 
-export function identityForCode(code: string): CodeIdentity {
+export const identityForCode = (code: string): CodeIdentity => {
   const override = CODE_OVERRIDES[code];
   if (override) return override;
   const category = lookupCategory(code);
   if (category) return CATEGORY_DEFAULT[category];
   return CLEAN;
-}
+};
 
 // Pure-CSS conic angular gradient between c1 and c2 — used on the small
 // per-slot mini-rings on the food card.
-export function arcGradient(id: CodeIdentity): string {
+export const arcGradient = (id: CodeIdentity): string => {
   return `linear-gradient(135deg, ${id.c1} 0%, ${id.c2} 100%)`;
-}
+};
 
 // Returns the tier color name for the per-row score readout. The displayed
 // composite is colored by tier — see DESIGN.md §1 "Score tiers".
-export function tierColor(score: number): string {
-  if (score >= 90) return "var(--score-excellent)";
-  if (score >= 75) return "var(--score-good)";
-  if (score >= 60) return "var(--score-fair)";
-  if (score >= 40) return "var(--score-low)";
-  return "var(--score-poor)";
-}
+export const tierColor = (score: number): string => {
+  if (score >= 90) return "var(--color-score-excellent)";
+  if (score >= 75) return "var(--color-score-good)";
+  if (score >= 60) return "var(--color-score-fair)";
+  if (score >= 40) return "var(--color-score-low)";
+  return "var(--color-score-poor)";
+};

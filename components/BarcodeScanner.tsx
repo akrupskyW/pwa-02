@@ -24,7 +24,7 @@ interface Props {
 // The video fills the screen. The decoder reads the whole frame — there is
 // no "aim inside the box" constraint. Hold the camera anywhere over the
 // barcode and it will decode as soon as enough detail is visible.
-export function BarcodeScanner({ onDetected, onCancel }: Props) {
+export const BarcodeScanner = ({ onDetected, onCancel }: Props) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<{ stop: () => void } | null>(null);
   const detectedRef = useRef(false);
@@ -36,11 +36,9 @@ export function BarcodeScanner({ onDetected, onCancel }: Props) {
 
     (async () => {
       try {
-        const [{ BrowserMultiFormatReader }, { DecodeHintType, BarcodeFormat }] =
-          await Promise.all([
-            import("@zxing/browser"),
-            import("@zxing/library"),
-          ]);
+        const [{ BrowserMultiFormatReader }, { DecodeHintType, BarcodeFormat }] = await Promise.all(
+          [import("@zxing/browser"), import("@zxing/library")],
+        );
         if (cancelled) return;
         if (!videoRef.current) return;
 
@@ -104,11 +102,11 @@ export function BarcodeScanner({ onDetected, onCancel }: Props) {
   }, [onDetected]);
 
   return (
-    <div className="absolute inset-0 bg-black z-40 flex flex-col">
-      <div className="flex-1 relative overflow-hidden">
+    <div className="absolute inset-0 z-40 flex flex-col bg-black">
+      <div className="relative flex-1 overflow-hidden">
         <video
           ref={videoRef}
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
           playsInline
           muted
           autoPlay
@@ -120,10 +118,10 @@ export function BarcodeScanner({ onDetected, onCancel }: Props) {
 
         {status === "starting" && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-black/70 backdrop-blur rounded-m border border-line px-4 py-3 text-[13px] text-ink-muted inline-flex items-center gap-2">
+            <div className="rounded-m border-line text-ink-muted inline-flex items-center gap-2 border bg-black/70 px-4 py-3 text-[13px] backdrop-blur">
               <span
                 aria-hidden
-                className="inline-block w-3 h-3 rounded-full border-2 border-white/25 border-t-white animate-spin"
+                className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-white/25 border-t-white"
               />
               Opening camera…
             </div>
@@ -131,19 +129,19 @@ export function BarcodeScanner({ onDetected, onCancel }: Props) {
         )}
 
         {status === "live" && (
-          <div className="absolute inset-x-0 bottom-6 text-center text-[11px] tracking-[0.16em] uppercase font-bold text-white/80 px-6 pointer-events-none">
+          <div className="pointer-events-none absolute inset-x-0 bottom-6 px-6 text-center text-[11px] font-bold tracking-[0.16em] text-white/80 uppercase">
             Point at any barcode
           </div>
         )}
 
         {status === "error" && (
           <div className="absolute inset-0 flex items-center justify-center px-6">
-            <div className="bg-black/85 backdrop-blur border border-line rounded-l p-4 text-center max-w-xs">
-              <div className="mx-auto w-12 h-12 rounded-l flex items-center justify-center bg-card border border-line text-ink-muted mb-2">
+            <div className="border-line max-w-xs rounded-l border bg-black/85 p-4 text-center backdrop-blur">
+              <div className="bg-card border-line text-ink-muted mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-l border">
                 <Icon name="camera" size={22} />
               </div>
-              <div className="text-[13px] text-ink-bright">{errorMessage}</div>
-              <div className="text-[11px] text-ink-muted mt-2">
+              <div className="text-ink-bright text-[13px]">{errorMessage}</div>
+              <div className="text-ink-muted mt-2 text-[11px]">
                 You can still type the UPC in the field below.
               </div>
             </div>
@@ -151,37 +149,45 @@ export function BarcodeScanner({ onDetected, onCancel }: Props) {
         )}
       </div>
 
-      <div className="bg-black/95 px-4 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] flex justify-center">
+      <div className="flex justify-center bg-black/95 px-4 pt-3 pb-[max(16px,env(safe-area-inset-bottom))]">
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-pill bg-surface-2 border border-line text-ink-bright text-[14px] font-bold px-6 py-2.5 hover:bg-surface-3 transition"
+          className="rounded-pill bg-surface-2 border-line text-ink-bright hover:bg-surface-3 border px-6 py-2.5 text-[14px] font-bold transition"
         >
           Cancel
         </button>
       </div>
     </div>
   );
-}
+};
 
-function ViewfinderCorners() {
+const ViewfinderCorners = () => {
   // Four L-shaped corners around a central viewfinder box. Pure decoration;
   // the decoder reads the entire frame.
   const cornerCls =
     "absolute w-10 h-10 border-accent-emerald/90 [box-shadow:0_0_12px_rgba(52,229,166,0.3)]";
   return (
     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-      <div className="relative w-[70%] aspect-[5/3]">
-        <div className={`${cornerCls} -top-px -left-px border-t-[3px] border-l-[3px] rounded-tl-l`} />
-        <div className={`${cornerCls} -top-px -right-px border-t-[3px] border-r-[3px] rounded-tr-l`} />
-        <div className={`${cornerCls} -bottom-px -left-px border-b-[3px] border-l-[3px] rounded-bl-l`} />
-        <div className={`${cornerCls} -bottom-px -right-px border-b-[3px] border-r-[3px] rounded-br-l`} />
+      <div className="relative aspect-[5/3] w-[70%]">
+        <div
+          className={`${cornerCls} rounded-tl-l -top-px -left-px border-t-[3px] border-l-[3px]`}
+        />
+        <div
+          className={`${cornerCls} rounded-tr-l -top-px -right-px border-t-[3px] border-r-[3px]`}
+        />
+        <div
+          className={`${cornerCls} rounded-bl-l -bottom-px -left-px border-b-[3px] border-l-[3px]`}
+        />
+        <div
+          className={`${cornerCls} rounded-br-l -right-px -bottom-px border-r-[3px] border-b-[3px]`}
+        />
       </div>
     </div>
   );
-}
+};
 
-function friendlyCameraError(err: unknown): string {
+const friendlyCameraError = (err: unknown): string => {
   if (err instanceof DOMException) {
     switch (err.name) {
       case "NotAllowedError":
@@ -197,4 +203,4 @@ function friendlyCameraError(err: unknown): string {
     }
   }
   return "Couldn't start the camera. Please try again or type the UPC.";
-}
+};

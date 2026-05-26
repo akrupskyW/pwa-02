@@ -3,10 +3,7 @@ import { scoreFoodByUpc } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ upc: string }> },
-) {
+export const GET = async (req: NextRequest, { params }: { params: Promise<{ upc: string }> }) => {
   const { upc } = await params;
   const expressionIds = req.nextUrl.searchParams.getAll("expressionId");
 
@@ -18,4 +15,4 @@ export async function GET(
     console.error("[api/food/by-upc] failed:", err);
     return NextResponse.json({ error: "Failed to look up UPC" }, { status: 500 });
   }
-}
+};

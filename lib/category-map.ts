@@ -14,15 +14,15 @@
 // this whole map can be replaced by a join.
 
 export type PwaCategory =
-  | "Composite Scores"           // Blazor: PwaCategory.Top
-  | "Health Outcomes"            // Blazor: PwaCategory.Outcomes
-  | "Overall Quality"            // Blazor: PwaCategory.Quality
-  | "Nutrient Focus"             // Blazor: PwaCategory.Nutrients
-  | "Processing Level"           // Blazor: PwaCategory.Processing
-  | "Clean & Natural"            // Blazor: PwaCategory.Clean
-  | "Avoid Ingredients"          // Blazor: PwaCategory.Avoid
-  | "Allergens & Sensitivities"  // Blazor: PwaCategory.Allergen
-  | "Industry Codes";            // Blazor: PwaCategory.Industry
+  | "Composite Scores" // Blazor: PwaCategory.Top
+  | "Health Outcomes" // Blazor: PwaCategory.Outcomes
+  | "Overall Quality" // Blazor: PwaCategory.Quality
+  | "Nutrient Focus" // Blazor: PwaCategory.Nutrients
+  | "Processing Level" // Blazor: PwaCategory.Processing
+  | "Clean & Natural" // Blazor: PwaCategory.Clean
+  | "Avoid Ingredients" // Blazor: PwaCategory.Avoid
+  | "Allergens & Sensitivities" // Blazor: PwaCategory.Allergen
+  | "Industry Codes"; // Blazor: PwaCategory.Industry
 
 const MAP: Readonly<Record<string, PwaCategory>> = {
   // Composite Scores — top-level synthesized scores
@@ -113,6 +113,6 @@ export const PWA_CATEGORY_ORDER: readonly PwaCategory[] = [
   "Industry Codes",
 ];
 
-export function lookupCategory(code: string): PwaCategory | null {
+export const lookupCategory = (code: string): PwaCategory | null => {
   return MAP[code] ?? null;
-}
+};

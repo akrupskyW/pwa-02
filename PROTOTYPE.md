@@ -18,7 +18,7 @@ nutrition consumer experience, including:
    onto this Next.js repo
 
 It is intentionally exhaustive. A new contributor should be able to read this
-top to bottom and understand both the *what* and the *why* without needing
+top to bottom and understand both the _what_ and the _why_ without needing
 to dig into the source first.
 
 ---
@@ -57,7 +57,7 @@ doesn't share any of their priorities.
 
 The personalized-nutrition idea: **the consumer brings the rubric.** The
 platform brings the data and the math. The score is meaningful because it
-was assembled out of *this consumer's* choices.
+was assembled out of _this consumer's_ choices.
 
 ---
 
@@ -101,7 +101,7 @@ together makes the feedback loop the protagonist of the UI.
 - **Proportional rebalance** when dragging a slider: the delta is taken
   from (or given to) the other filled slots in proportion to their
   current weights, so the visible integers always sum to exactly 100.
-  Edge case: if all others are at 0 and the user *decreases* this slot,
+  Edge case: if all others are at 0 and the user _decreases_ this slot,
   the freed weight splits evenly across the other filled slots.
 
 ### Phone 2 — Browse
@@ -134,13 +134,13 @@ together makes the feedback loop the protagonist of the UI.
 All under `wisecode_app` and `wisecode_gold` schemas in the WISEcode
 Postgres instance.
 
-| Table | What it holds |
-|-------|---------------|
-| `wisecode_gold.food` | One row per food (id UUID, name, brand, product_image_url, **fully_parsed** boolean, …). ~2M rows; ~1M `fully_parsed = true`. |
-| `wisecode_gold.product` | One row per UPC; `food_id` FK → food. UPCs live in a `text[]` column on this table. |
-| `wisecode_app.food_expressions` | Catalog of codes (id UUID, code slug, name, active, render_type, …). ~50-100 codes. |
-| `wisecode_app.food_expression_foods` | Normalized per-(food, code) score. `(food_expression_id, food_id)` PK, plus `normalized_score numeric`, `food_expression_value_interpretation_id` FK. ~67M rows. |
-| `wisecode_app.food_expression_value_interpretations` | Per-(code, score-bucket) interpretation metadata: label ("Good", "Excellent"), color (hex), sentiment. |
+| Table                                                | What it holds                                                                                                                                                    |
+| ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `wisecode_gold.food`                                 | One row per food (id UUID, name, brand, product_image_url, **fully_parsed** boolean, …). ~2M rows; ~1M `fully_parsed = true`.                                    |
+| `wisecode_gold.product`                              | One row per UPC; `food_id` FK → food. UPCs live in a `text[]` column on this table.                                                                              |
+| `wisecode_app.food_expressions`                      | Catalog of codes (id UUID, code slug, name, active, render_type, …). ~50-100 codes.                                                                              |
+| `wisecode_app.food_expression_foods`                 | Normalized per-(food, code) score. `(food_expression_id, food_id)` PK, plus `normalized_score numeric`, `food_expression_value_interpretation_id` FK. ~67M rows. |
+| `wisecode_app.food_expression_value_interpretations` | Per-(code, score-bucket) interpretation metadata: label ("Good", "Excellent"), color (hex), sentiment.                                                           |
 
 ### The derived denormalization — `wisecode_app.food_normalized_scores`
 
@@ -200,7 +200,7 @@ composite = SUM(score_i × weight_i) / SUM(weight_i where score_i is not null)
 
 - `score_i` ∈ [0, 100] is the food's score on slot i's code
 - `weight_i` is the slot's weight (sums to 100 across filled slots)
-- The denominator only includes weights for slots that *have* a score on
+- The denominator only includes weights for slots that _have_ a score on
   the food — see "missing-score policy" below
 - The whole expression is computed in REAL/decimal precision and rounded
   to an integer at display time
@@ -328,7 +328,7 @@ column-store later if consumer scale demands it.
   already indexed, already fast enough at this scale.
 - **Next.js + pg** in a single Node process. Simple, debuggable.
 - **No caching layer** — every browse request hits the wide table fresh.
-  This is *fine* at low concurrency.
+  This is _fine_ at low concurrency.
 
 ### Later (10K+ concurrent consumer reads)
 
@@ -345,7 +345,7 @@ becomes real:
   / signal.
 - **CDN-cached precomputed pages** for popular preset slot configs.
 
-These are options for *later* — none of them are blocked by anything in
+These are options for _later_ — none of them are blocked by anything in
 this foundation. The wide-table shape works in all of them.
 
 ---
@@ -355,22 +355,22 @@ this foundation. The wide-table shape works in all of them.
 This Next.js repo's structure corresponds to the WISEintelligence Blazor
 prototype as follows. Cross-reference for anyone moving between the two.
 
-| Concern | Blazor prototype | This Next.js repo |
-|---------|------------------|--------------------|
-| Page | `WISEintelligence/Pwa/Pages/PersonalPwa.razor` | `app/page.tsx` + `app/client-stage.tsx` |
-| Preferences screen | `Pwa/Components/PreferencesScreen.razor` | `components/PreferencesPhone.tsx` |
-| Slot card | `Pwa/Components/SlotCard.razor` | `components/SlotCard.tsx` |
-| Code picker modal | `Pwa/Components/CodePickerModal.razor` | `components/CodePickerModal.tsx` |
-| Browse screen | `Pwa/Components/BrowseScreen.razor` | `components/BrowsePhone.tsx` |
-| Product/scan screen | `Pwa/Components/ProductScreen.razor` | `components/ProductPhone.tsx` |
-| Phone frame | `Pwa/Components/PhoneFrame.razor` | `components/PhoneFrame.tsx` |
-| State holder | `Pwa/Services/PwaPreferenceState.cs` | `state/preferences-context.tsx` |
-| Math helpers | inline in `PwaPreferenceState` | `lib/composite.ts` |
-| DB queries | `Pwa/Services/PwaScoringService.cs` | `lib/queries.ts` |
-| Category map | `Pwa/Services/PwaCategoryMap.cs` | `lib/category-map.ts` |
-| Local storage | `Pwa/Services/PwaLocalStorageService.cs` | inline in `preferences-context.tsx` |
-| Connection / pool | `IDbContextFactory<WiseCodeDbContext>` (EF Core) | `lib/db.ts` (pg Pool, HMR-safe singleton) |
-| Refresh script | `WISEcode.Services/Sql/FoodNormalizedScores/refresh_food_normalized_scores.sql` | `db/refresh_food_normalized_scores.sql` (mirrored copy) |
+| Concern             | Blazor prototype                                                                | This Next.js repo                                       |
+| ------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Page                | `WISEintelligence/Pwa/Pages/PersonalPwa.razor`                                  | `app/page.tsx` + `app/client-stage.tsx`                 |
+| Preferences screen  | `Pwa/Components/PreferencesScreen.razor`                                        | `components/PreferencesPhone.tsx`                       |
+| Slot card           | `Pwa/Components/SlotCard.razor`                                                 | `components/SlotCard.tsx`                               |
+| Code picker modal   | `Pwa/Components/CodePickerModal.razor`                                          | `components/CodePickerModal.tsx`                        |
+| Browse screen       | `Pwa/Components/BrowseScreen.razor`                                             | `components/BrowsePhone.tsx`                            |
+| Product/scan screen | `Pwa/Components/ProductScreen.razor`                                            | `components/ProductPhone.tsx`                           |
+| Phone frame         | `Pwa/Components/PhoneFrame.razor`                                               | `components/PhoneFrame.tsx`                             |
+| State holder        | `Pwa/Services/PwaPreferenceState.cs`                                            | `state/preferences-context.tsx`                         |
+| Math helpers        | inline in `PwaPreferenceState`                                                  | `lib/composite.ts`                                      |
+| DB queries          | `Pwa/Services/PwaScoringService.cs`                                             | `lib/queries.ts`                                        |
+| Category map        | `Pwa/Services/PwaCategoryMap.cs`                                                | `lib/category-map.ts`                                   |
+| Local storage       | `Pwa/Services/PwaLocalStorageService.cs`                                        | inline in `preferences-context.tsx`                     |
+| Connection / pool   | `IDbContextFactory<WiseCodeDbContext>` (EF Core)                                | `lib/db.ts` (pg Pool, HMR-safe singleton)               |
+| Refresh script      | `WISEcode.Services/Sql/FoodNormalizedScores/refresh_food_normalized_scores.sql` | `db/refresh_food_normalized_scores.sql` (mirrored copy) |
 
 ### Notable architectural shifts in the port
 

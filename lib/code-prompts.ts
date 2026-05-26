@@ -39,9 +39,7 @@ export const composeResponseSchema = z.object({
     .array(aiSlotSchema)
     .min(1)
     .max(MAX_SLOTS)
-    .describe(
-      `Up to ${MAX_SLOTS} slots chosen from the catalog. Weights MUST sum to exactly 100.`,
-    ),
+    .describe(`Up to ${MAX_SLOTS} slots chosen from the catalog. Weights MUST sum to exactly 100.`),
   tags: z
     .array(aiTagSchema)
     .min(3)
@@ -74,7 +72,7 @@ export interface CatalogEntry {
   description: string | null;
 }
 
-export function toCatalog(codes: readonly SelectableExpression[]): CatalogEntry[] {
+export const toCatalog = (codes: readonly SelectableExpression[]): CatalogEntry[] => {
   return codes.map((c) => ({
     code: c.code,
     name: c.name,
@@ -82,7 +80,7 @@ export function toCatalog(codes: readonly SelectableExpression[]): CatalogEntry[
     shortDescription: c.shortDescription,
     description: c.description,
   }));
-}
+};
 
 // ─── Prompts ──────────────────────────────────────────────────────────────
 
@@ -95,7 +93,7 @@ You will be given the full catalog of available codes (slug, name, category, sho
 Tags you generate describe the *personality* of the resulting code in 1–2 words each — they are pills shown above the user's slot list. Examples of good tags: "Whole foods", "Heart-aware", "Plant-forward", "Lean", "Clean label", "Macro-tuned". Bad tags: full sentences, single letters, generic words ("Healthy"), brand names.`;
 
 /** Build the system prompt for /api/code/compose. */
-export function composeSystemPrompt(): string {
+export const composeSystemPrompt = (): string => {
   return `${SYSTEM_PRELUDE}
 
 Your task right now: read the user's free-text description of what matters to them, then pick up to ${MAX_SLOTS} slots from the catalog that best express their priorities, assign integer weights that sum to 100, write 3–4 short tags, and a one-sentence rationale.
@@ -105,35 +103,32 @@ Selection rules:
 - Weights should reflect relative importance the user implied (or stated). A passing mention is ~10–15. A clearly emphasized priority is 25+.
 - If the user expresses conflicting goals, pick the dominant intent and explain in the rationale.
 - If the user's text is empty, unclear, or off-topic, pick a sensible "balanced default": heart_healthy 40, clean_label 30, wisecode_upf 30, with tags like "Balanced", "Heart-aware", "Clean".`;
-}
+};
 
 /** Build the user-turn prompt for /api/code/compose. */
-export function composeUserPrompt(
-  description: string,
-  catalog: CatalogEntry[],
-): string {
+export const composeUserPrompt = (description: string, catalog: CatalogEntry[]): string => {
   return `# User description
 ${description.trim() || "(no description provided)"}
 
 # Catalog
 ${JSON.stringify(catalog, null, 2)}`;
-}
+};
 
 /** Build the system prompt for /api/code/tags. */
-export function tagsSystemPrompt(): string {
+export const tagsSystemPrompt = (): string => {
   return `${SYSTEM_PRELUDE}
 
 Your task right now: given the user's CURRENT slot configuration (codes + weights that already sum to 100), produce 3–4 short tags that capture the personality of this portfolio. You are NOT changing the slots — only labeling them.`;
-}
+};
 
 /** Build the user-turn prompt for /api/code/tags. */
-export function tagsUserPrompt(
+export const tagsUserPrompt = (
   slots: { code: string; name: string; category: string; weight: number }[],
   catalog: CatalogEntry[],
-): string {
+): string => {
   return `# Current slots
 ${JSON.stringify(slots, null, 2)}
 
 # Catalog (for context on what each code means)
 ${JSON.stringify(catalog, null, 2)}`;
-}
+};

@@ -3,10 +3,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   fetchFoodById,
+  useCodes,
   useDispatchHelpers,
   usePreferences,
-} from "@/state/preferences-context";
-import { useCodes } from "@/state/codes-context";
+} from "@/store/preferences-hooks";
 import { identityForCode, tierColor } from "@/lib/code-identity";
 import { Icon, type IconName } from "./Icon";
 import type { BrowseFood, BrowsePage, SelectableExpression } from "@/lib/types";
@@ -20,7 +20,7 @@ interface Props {
   onAfterSelect?: (foodId: string) => void;
 }
 
-export function BrowsePhone({ onAfterSelect }: Props) {
+export const BrowsePhone = ({ onAfterSelect }: Props) => {
   const allCodes = useCodes();
   const { state, filledCount } = usePreferences();
   const { setCurrentFood } = useDispatchHelpers();
@@ -160,16 +160,16 @@ export function BrowsePhone({ onAfterSelect }: Props) {
   const rest = items.slice(1);
 
   return (
-    <div ref={scrollRef} className="h-full overflow-y-auto no-scrollbar">
+    <div ref={scrollRef} className="no-scrollbar h-full overflow-y-auto">
       <ScreenHeader loading={loadingInitial} />
 
-      <div className="px-5 pb-5 space-y-4">
+      <div className="space-y-4 px-5 pb-5">
         <ActiveCodesChips />
 
         {filledCount === 0 && <EmptyConfig />}
 
         {filledCount > 0 && error && (
-          <div className="rounded-m bg-card border border-line p-3 text-center text-[13px] text-accent-rose">
+          <div className="rounded-m bg-card border-line text-accent-rose border p-3 text-center text-[13px]">
             {error}
           </div>
         )}
@@ -187,10 +187,10 @@ export function BrowsePhone({ onAfterSelect }: Props) {
         {filledCount > 0 && rest.length > 0 && (
           <div>
             <div className="flex items-end justify-between px-0.5 pb-2">
-              <div className="text-[11px] font-bold tracking-[0.14em] text-ink-muted">
+              <div className="text-ink-muted text-[11px] font-bold tracking-[0.14em]">
                 ALL RESULTS · {total.toLocaleString()}
               </div>
-              <div className="flex items-center gap-1 text-[10px] font-bold tracking-[0.06em] text-ink">
+              <div className="text-ink flex items-center gap-1 text-[10px] font-bold tracking-[0.06em]">
                 Best Match
                 <Icon name="chevron-down" size={11} strokeWidth={2.2} />
               </div>
@@ -214,13 +214,13 @@ export function BrowsePhone({ onAfterSelect }: Props) {
         {filledCount > 0 && hasMore && (
           <div
             ref={sentinelRef}
-            className="py-3 flex items-center justify-center text-ink-faint text-xs"
+            className="text-ink-faint flex items-center justify-center py-3 text-xs"
           >
             {loadingMore ? (
               <span className="inline-flex items-center gap-2">
                 <span
                   aria-hidden
-                  className="inline-block w-2.5 h-2.5 rounded-full border-2 border-white/25 border-t-white animate-spin"
+                  className="inline-block h-2.5 w-2.5 animate-spin rounded-full border-2 border-white/25 border-t-white"
                 />
                 Loading more…
               </span>
@@ -231,29 +231,29 @@ export function BrowsePhone({ onAfterSelect }: Props) {
         )}
 
         {filledCount > 0 && items.length > 0 && !hasMore && (
-          <div className="py-3 text-center text-ink-faint text-[11px] tracking-[0.06em]">
+          <div className="text-ink-faint py-3 text-center text-[11px] tracking-[0.06em]">
             End of list
           </div>
         )}
       </div>
     </div>
   );
-}
+};
 
-function ScreenHeader({ loading }: { loading: boolean }) {
+const ScreenHeader = ({ loading }: { loading: boolean }) => {
   return (
-    <header className="px-5 pt-14 pb-3 flex items-start justify-between">
+    <header className="flex items-start justify-between px-5 pt-14 pb-3">
       <div>
-        <div className="text-[11px] font-bold tracking-[0.16em] text-accent-violet inline-flex items-center gap-2">
+        <div className="text-accent-violet inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.16em]">
           BROWSE
           {loading && (
             <span
               aria-hidden
-              className="inline-block w-2 h-2 rounded-full bg-accent-violet animate-pulse-dot"
+              className="bg-accent-violet animate-pulse-dot inline-block h-2 w-2 rounded-full"
             />
           )}
         </div>
-        <div className="text-[24px] font-extrabold tracking-[-0.02em] text-ink-bright leading-tight mt-0.5">
+        <div className="text-ink-bright mt-0.5 text-[24px] leading-tight font-extrabold tracking-[-0.02em]">
           Top Matches
         </div>
       </div>
@@ -261,29 +261,29 @@ function ScreenHeader({ loading }: { loading: boolean }) {
         <button
           type="button"
           aria-label="Search"
-          className="w-[38px] h-[38px] rounded-s bg-surface-2 border border-line flex items-center justify-center text-ink hover:text-ink-bright"
+          className="bg-surface-2 border-line text-ink hover:text-ink-bright flex h-[38px] w-[38px] items-center justify-center rounded-s border"
         >
           <Icon name="search" size={18} strokeWidth={2} />
         </button>
         <button
           type="button"
           aria-label="Filter"
-          className="w-[38px] h-[38px] rounded-s bg-surface-2 border border-line flex items-center justify-center text-ink hover:text-ink-bright"
+          className="bg-surface-2 border-line text-ink hover:text-ink-bright flex h-[38px] w-[38px] items-center justify-center rounded-s border"
         >
           <Icon name="sliders-horizontal" size={18} strokeWidth={2} />
         </button>
       </div>
     </header>
   );
-}
+};
 
-function ActiveCodesChips() {
+const ActiveCodesChips = () => {
   const { state } = usePreferences();
   const allCodes = useCodes();
   const filled = state.slots.filter((s) => s.expressionId);
   if (filled.length === 0) return null;
   return (
-    <div className="flex gap-1.5 flex-wrap">
+    <div className="flex flex-wrap gap-1.5">
       {filled.map((slot) => {
         const code = allCodes.find((c) => c.id === slot.expressionId);
         if (!code) return null;
@@ -291,10 +291,10 @@ function ActiveCodesChips() {
         return (
           <span
             key={slot.expressionId}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-pill bg-surface border border-line text-ink text-[10px] font-bold tracking-[0.04em]"
+            className="rounded-pill bg-surface border-line text-ink inline-flex items-center gap-1.5 border px-2.5 py-1 text-[10px] font-bold tracking-[0.04em]"
           >
             <span
-              className="w-1.5 h-1.5 rounded-full"
+              className="h-1.5 w-1.5 rounded-full"
               style={{ background: id.c1, boxShadow: `0 0 6px ${id.c1}AA` }}
             />
             {shortName(code.name)} {slot.weight}
@@ -303,26 +303,26 @@ function ActiveCodesChips() {
       })}
     </div>
   );
-}
+};
 
-function shortName(name: string) {
+const shortName = (name: string) => {
   // Trim multi-word names down for the chip row.
   return name.split(" ").slice(0, 2).join(" ");
-}
+};
 
-function EmptyConfig() {
+const EmptyConfig = () => {
   return (
-    <div className="text-center px-6 pt-12">
-      <div className="mx-auto w-14 h-14 rounded-l flex items-center justify-center bg-card border border-line mb-3 text-ink-muted">
+    <div className="px-6 pt-12 text-center">
+      <div className="bg-card border-line text-ink-muted mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-l border">
         <Icon name="puzzle" size={28} />
       </div>
-      <div className="text-ink font-bold text-[14px]">No code yet</div>
-      <div className="text-ink-muted text-[12px] mt-1">
+      <div className="text-ink text-[14px] font-bold">No code yet</div>
+      <div className="text-ink-muted mt-1 text-[12px]">
         Add at least one code on the Code tab to see ranked foods here.
       </div>
     </div>
   );
-}
+};
 
 interface RowProps {
   food: BrowseFood;
@@ -332,7 +332,7 @@ interface RowProps {
   onClick: () => void;
 }
 
-function FeaturedCard({ food, slots, allCodes, isCurrent, onClick }: RowProps) {
+const FeaturedCard = ({ food, slots, allCodes, isCurrent, onClick }: RowProps) => {
   const composite = Math.min(100, food.composite);
   const filled = slots.filter((s) => s.expressionId);
 
@@ -345,32 +345,27 @@ function FeaturedCard({ food, slots, allCodes, isCurrent, onClick }: RowProps) {
     <button
       type="button"
       onClick={onClick}
-      className="w-full text-left rounded-l p-4 space-y-3 transition"
+      className="w-full space-y-3 rounded-l p-4 text-left transition"
       style={{
-        background:
-          "linear-gradient(135deg, var(--surface-2) 0%, var(--card) 100%)",
+        background: "linear-gradient(135deg, var(--color-surface-2) 0%, var(--color-card) 100%)",
         border: `1px solid ${isCurrent ? "rgba(52,229,166,0.55)" : "rgba(52,229,166,0.35)"}`,
         boxShadow: "0 12px 32px -8px rgba(52,229,166,0.22)",
       }}
     >
       <div className="flex items-center gap-3.5">
         <div
-          className="w-[84px] h-[84px] rounded-l flex items-center justify-center overflow-hidden flex-shrink-0"
+          className="flex h-[84px] w-[84px] flex-shrink-0 items-center justify-center overflow-hidden rounded-l"
           style={
             food.imageUrl
               ? undefined
               : topId
-              ? { background: `linear-gradient(135deg, ${topId.c1} 0%, ${topId.c2} 100%)` }
-              : { background: "linear-gradient(135deg, #34E5A6, #22D3C5)" }
+                ? { background: `linear-gradient(135deg, ${topId.c1} 0%, ${topId.c2} 100%)` }
+                : { background: "linear-gradient(135deg, #34E5A6, #22D3C5)" }
           }
         >
           {food.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={food.imageUrl}
-              alt={food.name}
-              className="w-full h-full object-cover"
-            />
+            <img src={food.imageUrl} alt={food.name} className="h-full w-full object-cover" />
           ) : topId ? (
             <span className="text-ink-soft">
               <Icon name={topId.icon as IconName} size={34} strokeWidth={2.2} />
@@ -378,16 +373,16 @@ function FeaturedCard({ food, slots, allCodes, isCurrent, onClick }: RowProps) {
           ) : null}
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-pill bg-accent-emerald text-ink-soft text-[9px] font-extrabold tracking-[0.08em]">
+        <div className="min-w-0 flex-1">
+          <div className="rounded-pill bg-accent-emerald text-ink-soft inline-flex items-center gap-1 px-2 py-0.5 text-[9px] font-extrabold tracking-[0.08em]">
             <Icon name="crown" size={10} strokeWidth={2.4} />
             TOP MATCH
           </div>
-          <div className="text-[15px] font-bold text-ink-bright leading-tight mt-1.5 line-clamp-2">
+          <div className="text-ink-bright mt-1.5 line-clamp-2 text-[15px] leading-tight font-bold">
             {food.name}
           </div>
           {food.brand && (
-            <div className="text-[11px] font-medium text-ink-muted truncate mt-0.5">
+            <div className="text-ink-muted mt-0.5 truncate text-[11px] font-medium">
               {food.brand}
             </div>
           )}
@@ -396,23 +391,19 @@ function FeaturedCard({ food, slots, allCodes, isCurrent, onClick }: RowProps) {
         <MiniRing value={composite} />
       </div>
 
-      <ContributionMeter
-        food={food}
-        slots={filled}
-        allCodes={allCodes}
-      />
+      <ContributionMeter food={food} slots={filled} allCodes={allCodes} />
     </button>
   );
-}
+};
 
-function MiniRing({ value }: { value: number }) {
+const MiniRing = ({ value }: { value: number }) => {
   const r = 24;
   const c = 2 * Math.PI * r;
   const pct = Math.max(0, Math.min(100, value)) / 100;
   const arc = c * 0.97 * pct;
   const gap = c - arc;
   return (
-    <div className="relative w-16 h-16 flex-shrink-0">
+    <div className="relative h-16 w-16 flex-shrink-0">
       <svg viewBox="0 0 64 64" width={64} height={64} aria-hidden>
         <defs>
           <linearGradient id="featured-ring" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -421,7 +412,7 @@ function MiniRing({ value }: { value: number }) {
             <stop offset="100%" stopColor="#5DCFFF" />
           </linearGradient>
         </defs>
-        <circle cx={32} cy={32} r={r} fill="none" stroke="var(--track)" strokeWidth={6} />
+        <circle cx={32} cy={32} r={r} fill="none" stroke="var(--color-track)" strokeWidth={6} />
         <circle
           cx={32}
           cy={32}
@@ -434,14 +425,14 @@ function MiniRing({ value }: { value: number }) {
           transform={`rotate(-90 32 32)`}
         />
       </svg>
-      <div className="absolute inset-0 flex items-center justify-center text-[22px] font-extrabold tabular-nums tracking-[-0.02em] text-ink-bright">
+      <div className="text-ink-bright absolute inset-0 flex items-center justify-center text-[22px] font-extrabold tracking-[-0.02em] tabular-nums">
         {Math.round(value)}
       </div>
     </div>
   );
-}
+};
 
-function ContributionMeter({
+const ContributionMeter = ({
   food,
   slots,
   allCodes,
@@ -449,7 +440,7 @@ function ContributionMeter({
   food: BrowseFood;
   slots: { expressionId: string | null; weight: number }[];
   allCodes: SelectableExpression[];
-}) {
+}) => {
   const totalWeight = slots.reduce((acc, s) => acc + s.weight, 0) || 1;
   return (
     <div className="flex gap-1">
@@ -462,26 +453,24 @@ function ContributionMeter({
         return (
           <div
             key={slot.expressionId as string}
-            className="flex flex-col gap-1 items-center"
+            className="flex flex-col items-center gap-1"
             style={{ flex: `${fraction} ${fraction} 0%` }}
           >
             <div
-              className="h-1.5 w-full rounded-pill"
+              className="rounded-pill h-1.5 w-full"
               style={{
                 background: `linear-gradient(90deg, ${id.c1} 0%, ${id.c2} 100%)`,
               }}
             />
-            <div className="text-[10px] font-bold tabular-nums text-ink-muted">
-              {score ?? "—"}
-            </div>
+            <div className="text-ink-muted text-[10px] font-bold tabular-nums">{score ?? "—"}</div>
           </div>
         );
       })}
     </div>
   );
-}
+};
 
-function FoodRow({ food, slots, allCodes, isCurrent, onClick }: RowProps) {
+const FoodRow = ({ food, slots, allCodes, isCurrent, onClick }: RowProps) => {
   const composite = Math.min(100, food.composite);
   const filled = slots.filter((s) => s.expressionId);
   const topSlot = [...filled].sort((a, b) => b.weight - a.weight)[0];
@@ -500,25 +489,25 @@ function FoodRow({ food, slots, allCodes, isCurrent, onClick }: RowProps) {
         type="button"
         onClick={onClick}
         className={[
-          "w-full flex items-center gap-3 rounded-m p-3 text-left transition",
+          "rounded-m flex w-full items-center gap-3 p-3 text-left transition",
           isCurrent
-            ? "bg-card-elevated border border-accent-emerald/50"
-            : "bg-card border border-line hover:bg-card-elevated",
+            ? "bg-card-elevated border-accent-emerald/50 border"
+            : "bg-card border-line hover:bg-card-elevated border",
         ].join(" ")}
       >
         <div
-          className="w-[54px] h-[54px] rounded-s flex items-center justify-center overflow-hidden flex-shrink-0"
+          className="flex h-[54px] w-[54px] flex-shrink-0 items-center justify-center overflow-hidden rounded-s"
           style={
             food.imageUrl
               ? undefined
               : topId
-              ? { background: `linear-gradient(135deg, ${topId.c1} 0%, ${topId.c2} 100%)` }
-              : { background: "linear-gradient(135deg, #22D3C5, #5DCFFF)" }
+                ? { background: `linear-gradient(135deg, ${topId.c1} 0%, ${topId.c2} 100%)` }
+                : { background: "linear-gradient(135deg, #22D3C5, #5DCFFF)" }
           }
         >
           {food.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={food.imageUrl} alt={food.name} className="w-full h-full object-cover" />
+            <img src={food.imageUrl} alt={food.name} className="h-full w-full object-cover" />
           ) : topId ? (
             <span className="text-ink-soft">
               <Icon name={topId.icon as IconName} size={24} strokeWidth={2.2} />
@@ -526,16 +515,16 @@ function FoodRow({ food, slots, allCodes, isCurrent, onClick }: RowProps) {
           ) : null}
         </div>
 
-        <div className="flex-1 min-w-0">
-          <div className="text-[13px] font-bold text-ink-bright truncate leading-tight">
+        <div className="min-w-0 flex-1">
+          <div className="text-ink-bright truncate text-[13px] leading-tight font-bold">
             {food.name}
           </div>
           {food.brand && (
-            <div className="text-[10px] font-medium text-ink-muted truncate mt-0.5">
+            <div className="text-ink-muted mt-0.5 truncate text-[10px] font-medium">
               {food.brand}
             </div>
           )}
-          <div className="flex items-center gap-1 mt-1">
+          <div className="mt-1 flex items-center gap-1">
             {filled.slice(0, 5).map((slot) => {
               const code = allCodes.find((c) => c.id === slot.expressionId);
               if (!code) return null;
@@ -543,30 +532,35 @@ function FoodRow({ food, slots, allCodes, isCurrent, onClick }: RowProps) {
               return (
                 <span
                   key={slot.expressionId as string}
-                  className="w-[5px] h-[5px] rounded-full"
+                  className="h-[5px] w-[5px] rounded-full"
                   style={{ background: id.c1 }}
                 />
               );
             })}
-            <span className="text-[9px] font-semibold text-ink-faint ml-1">
+            <span className="text-ink-faint ml-1 text-[9px] font-semibold">
               {presentCount} codes match
             </span>
           </div>
         </div>
 
-        <div className="flex flex-col items-end gap-1 flex-shrink-0">
+        <div className="flex flex-shrink-0 flex-col items-end gap-1">
           <div
-            className="text-[26px] font-extrabold tabular-nums tracking-[-0.02em] leading-none"
+            className="text-[26px] leading-none font-extrabold tracking-[-0.02em] tabular-nums"
             style={{ color: tierColor(composite) }}
           >
             {composite}
           </div>
-          <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-pill bg-ink-soft border border-line text-[8px] font-bold tracking-[0.04em] text-ink-muted">
-            <Icon name="check-check" size={9} strokeWidth={2.4} style={{ color: tierColor(composite) }} />
+          <div className="rounded-pill bg-ink-soft border-line text-ink-muted inline-flex items-center gap-1 border px-1.5 py-0.5 text-[8px] font-bold tracking-[0.04em]">
+            <Icon
+              name="check-check"
+              size={9}
+              strokeWidth={2.4}
+              style={{ color: tierColor(composite) }}
+            />
             {presentCount}/{filled.length}
           </div>
         </div>
       </button>
     </li>
   );
-}
+};

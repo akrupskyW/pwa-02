@@ -1,10 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  slotsSignature,
-  useDispatchHelpers,
-} from "@/state/preferences-context";
+import { slotsSignature, useDispatchHelpers } from "@/store/preferences-hooks";
 import { Icon } from "./Icon";
 
 interface Props {
@@ -27,7 +24,7 @@ const EXAMPLE_PROMPTS = [
 // types what matters to them in food; we POST to /api/code/compose; the
 // model returns chosen slots + descriptive tags; we replace the entire
 // slot config and store the AI tags against the new signature.
-export function TalkToAISheet({ onClose }: Props) {
+export const TalkToAISheet = ({ onClose }: Props) => {
   const { replaceSlots, setAiTags } = useDispatchHelpers();
   const [text, setText] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -98,38 +95,38 @@ export function TalkToAISheet({ onClose }: Props) {
 
       {/* The sheet — 75% of phone height, slides up from the bottom. */}
       <div
-        className="relative w-full max-h-[75%] rounded-t-[28px] flex flex-col"
+        className="relative flex max-h-[75%] w-full flex-col rounded-t-[28px]"
         style={{
           background:
-            "linear-gradient(180deg, var(--card-elevated) 0%, var(--card) 100%)",
-          border: "1px solid var(--border)",
+            "linear-gradient(180deg, var(--color-card-elevated) 0%, var(--color-card) 100%)",
+          border: "1px solid var(--color-line)",
           borderBottom: "none",
           boxShadow: "0 -20px 60px -10px rgba(0,0,0,0.66)",
         }}
       >
         {/* Grabber. */}
         <div className="flex justify-center pt-3 pb-1">
-          <span className="block w-10 h-1.5 rounded-pill bg-line-strong" />
+          <span className="rounded-pill bg-line-strong block h-1.5 w-10" />
         </div>
 
-        <div className="px-5 pt-2 pb-3 flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-3 px-5 pt-2 pb-3">
           <div className="flex items-center gap-2.5">
             <span
-              className="w-9 h-9 rounded-s flex items-center justify-center text-ink-soft"
+              className="text-ink-soft flex h-9 w-9 items-center justify-center rounded-s"
               style={{
                 background:
-                  "linear-gradient(135deg, var(--accent-violet) 0%, var(--accent-emerald) 100%)",
+                  "linear-gradient(135deg, var(--color-accent-violet) 0%, var(--color-accent-emerald) 100%)",
               }}
             >
               <Icon name="sparkles" size={18} strokeWidth={2.4} />
             </span>
             <div className="flex-1">
-              <div className="text-[10px] font-bold tracking-[0.16em] text-accent-violet">
+              <div className="text-accent-violet text-[10px] font-bold tracking-[0.16em]">
                 COMPOSE WITH AI
               </div>
               <div
                 id="talk-to-ai-title"
-                className="text-[18px] font-extrabold text-ink-bright tracking-[-0.01em]"
+                className="text-ink-bright text-[18px] font-extrabold tracking-[-0.01em]"
               >
                 What matters to you?
               </div>
@@ -139,13 +136,13 @@ export function TalkToAISheet({ onClose }: Props) {
             type="button"
             aria-label="Close"
             onClick={onClose}
-            className="w-9 h-9 rounded-s flex items-center justify-center text-ink hover:text-ink-bright bg-surface-2 border border-line shrink-0"
+            className="text-ink hover:text-ink-bright bg-surface-2 border-line flex h-9 w-9 shrink-0 items-center justify-center rounded-s border"
           >
             <Icon name="x" size={16} strokeWidth={2.2} />
           </button>
         </div>
 
-        <div className="px-5 pb-5 space-y-3 overflow-y-auto no-scrollbar">
+        <div className="no-scrollbar space-y-3 overflow-y-auto px-5 pb-5">
           <textarea
             ref={taRef}
             value={text}
@@ -153,12 +150,12 @@ export function TalkToAISheet({ onClose }: Props) {
             maxLength={1200}
             rows={4}
             placeholder="e.g. I want to eat clean, get more protein, and avoid ultra-processed foods."
-            className="w-full resize-none rounded-m bg-ink-soft border border-line p-3.5 text-[14px] leading-relaxed text-ink-bright placeholder:text-ink-faint outline-none focus:border-accent-violet/60 transition"
+            className="rounded-m bg-ink-soft border-line text-ink-bright placeholder:text-ink-faint focus:border-accent-violet/60 w-full resize-none border p-3.5 text-[14px] leading-relaxed transition outline-none"
           />
 
           {!text && (
             <div className="space-y-1.5">
-              <div className="text-[10px] font-bold tracking-[0.14em] text-ink-faint">
+              <div className="text-ink-faint text-[10px] font-bold tracking-[0.14em]">
                 NEED A STARTING POINT?
               </div>
               <div className="space-y-1.5">
@@ -167,7 +164,7 @@ export function TalkToAISheet({ onClose }: Props) {
                     key={p}
                     type="button"
                     onClick={() => setText(p)}
-                    className="w-full text-left text-[12px] leading-snug px-3 py-2 rounded-s bg-card border border-line hover:bg-card-elevated hover:border-line-strong text-ink transition"
+                    className="bg-card border-line hover:bg-card-elevated hover:border-line-strong text-ink w-full rounded-s border px-3 py-2 text-left text-[12px] leading-snug transition"
                   >
                     &ldquo;{p}&rdquo;
                   </button>
@@ -177,7 +174,7 @@ export function TalkToAISheet({ onClose }: Props) {
           )}
 
           {error && (
-            <div className="rounded-m bg-card border border-accent-rose/40 p-3 text-[12px] text-accent-rose">
+            <div className="rounded-m bg-card border-accent-rose/40 text-accent-rose border p-3 text-[12px]">
               {error}
             </div>
           )}
@@ -186,7 +183,7 @@ export function TalkToAISheet({ onClose }: Props) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-pill bg-surface-2 border border-line text-ink-bright text-[13px] font-bold py-3 hover:bg-surface-3 transition"
+              className="rounded-pill bg-surface-2 border-line text-ink-bright hover:bg-surface-3 flex-1 border py-3 text-[13px] font-bold transition"
             >
               Cancel
             </button>
@@ -194,17 +191,17 @@ export function TalkToAISheet({ onClose }: Props) {
               type="button"
               onClick={submit}
               disabled={submitting || !text.trim()}
-              className="flex-[2] rounded-pill text-ink-soft text-[14px] font-extrabold py-3 inline-flex items-center justify-center gap-2 disabled:opacity-50 shadow-cta-emerald"
+              className="rounded-pill text-ink-soft shadow-cta-emerald inline-flex flex-[2] items-center justify-center gap-2 py-3 text-[14px] font-extrabold disabled:opacity-50"
               style={{
                 background:
-                  "linear-gradient(135deg, var(--accent-emerald) 0%, var(--accent-teal) 100%)",
+                  "linear-gradient(135deg, var(--color-accent-emerald) 0%, var(--color-accent-teal) 100%)",
               }}
             >
               {submitting ? (
                 <>
                   <span
                     aria-hidden
-                    className="inline-block w-3 h-3 rounded-full border-2 border-ink-soft/40 border-t-ink-soft animate-spin"
+                    className="border-ink-soft/40 border-t-ink-soft inline-block h-3 w-3 animate-spin rounded-full border-2"
                   />
                   Composing…
                 </>
@@ -220,4 +217,4 @@ export function TalkToAISheet({ onClose }: Props) {
       </div>
     </div>
   );
-}
+};

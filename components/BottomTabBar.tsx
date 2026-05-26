@@ -32,23 +32,22 @@ const TABS: Tab[] = [
 //   - 4 px inner padding on the pill.
 //   - Active tab: gradient fill + colored hairline stroke.
 //   - Inactive tabs: transparent, faint icon + label.
-export function BottomTabBar() {
+export const BottomTabBar = () => {
   const pathname = usePathname();
   return (
     <nav
-      className="shrink-0 relative z-20 pt-3 pb-[max(21px,env(safe-area-inset-bottom))] px-[21px] bg-background"
+      className="bg-background relative z-20 shrink-0 px-[21px] pt-3 pb-[max(21px,env(safe-area-inset-bottom))]"
       // A faint top hairline + soft inset gradient sells the "lifts off the
       // background" feel that the floating version had — without the
       // content-bleeds-through-glass downside.
       style={{
-        borderTop: "1px solid var(--border-subtle)",
-        background:
-          "linear-gradient(180deg, rgba(5,8,15,0.6) 0%, var(--background) 60%)",
+        borderTop: "1px solid var(--color-line-subtle)",
+        background: "linear-gradient(180deg, rgba(5,8,15,0.6) 0%, var(--color-background) 60%)",
         backdropFilter: "blur(12px)",
       }}
     >
       <div
-        className="flex h-[62px] items-stretch gap-0 rounded-pill border border-line p-1 shadow-tab-pill"
+        className="rounded-pill border-line shadow-tab-pill flex h-[62px] items-stretch gap-0 border p-1"
         style={{ backgroundColor: "rgba(13,20,34,0.92)" }}
       >
         {TABS.map((tab) => {
@@ -58,26 +57,24 @@ export function BottomTabBar() {
       </div>
     </nav>
   );
-}
+};
 
-function TabItem({ tab, active }: { tab: Tab; active: boolean }) {
-  const accentVar = tab.accent === "emerald" ? "--accent-emerald" : "--accent-violet";
+const TabItem = ({ tab, active }: { tab: Tab; active: boolean }) => {
+  const accentVar = tab.accent === "emerald" ? "--color-accent-emerald" : "--color-accent-violet";
   return (
     <Link
       href={tab.href}
       aria-current={active ? "page" : undefined}
       className={[
-        "flex-1 flex flex-col items-center justify-center gap-[3px] rounded-[26px] transition",
-        active
-          ? "text-ink-bright"
-          : "text-ink-faint hover:text-ink/80",
+        "flex flex-1 flex-col items-center justify-center gap-[3px] rounded-[26px] transition",
+        active ? "text-ink-bright" : "text-ink-faint hover:text-ink/80",
       ].join(" ")}
       style={
         active
           ? {
               background:
-                "linear-gradient(135deg, var(--surface-3) 0%, var(--card-elevated) 100%)",
-              boxShadow: `0 0 0 1px rgba(${accentVar === "--accent-emerald" ? "52,229,166" : "124,124,251"},0.35)`,
+                "linear-gradient(135deg, var(--color-surface-3) 0%, var(--color-card-elevated) 100%)",
+              boxShadow: `0 0 0 1px rgba(${accentVar === "--color-accent-emerald" ? "52,229,166" : "124,124,251"},0.35)`,
             }
           : undefined
       }
@@ -86,18 +83,11 @@ function TabItem({ tab, active }: { tab: Tab; active: boolean }) {
         name={tab.icon}
         size={20}
         strokeWidth={active ? 2.2 : 1.75}
-        style={
-          active
-            ? { color: `var(${accentVar})` }
-            : undefined
-        }
+        style={active ? { color: `var(${accentVar})` } : undefined}
       />
-      <span
-        className="text-[10px] font-bold leading-none"
-        style={{ letterSpacing: "0.07em" }}
-      >
+      <span className="text-[10px] leading-none font-bold" style={{ letterSpacing: "0.07em" }}>
         {tab.label}
       </span>
     </Link>
   );
-}
+};

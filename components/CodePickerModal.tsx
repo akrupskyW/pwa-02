@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { PWA_CATEGORY_ORDER } from "@/lib/category-map";
 import { identityForCode } from "@/lib/code-identity";
-import { usePreferences, useDispatchHelpers } from "@/state/preferences-context";
+import { useDispatchHelpers, usePreferences } from "@/store/preferences-hooks";
 import { Icon, type IconName } from "./Icon";
 import type { SelectableExpression } from "@/lib/types";
 
@@ -13,7 +13,7 @@ interface Props {
   onClose: () => void;
 }
 
-export function CodePickerModal({ slotIdx, allCodes, onClose }: Props) {
+export const CodePickerModal = ({ slotIdx, allCodes, onClose }: Props) => {
   const { state } = usePreferences();
   const { assignCode } = useDispatchHelpers();
 
@@ -50,38 +50,38 @@ export function CodePickerModal({ slotIdx, allCodes, onClose }: Props) {
       aria-modal="true"
     >
       <div
-        className="absolute inset-x-3 top-8 bottom-8 rounded-xl p-4 flex flex-col"
+        className="absolute inset-x-3 top-8 bottom-8 flex flex-col rounded-xl p-4"
         style={{
           background:
-            "linear-gradient(180deg, var(--card-elevated) 0%, var(--card) 100%)",
-          border: "1px solid var(--border)",
+            "linear-gradient(180deg, var(--color-card-elevated) 0%, var(--color-card) 100%)",
+          border: "1px solid var(--color-line)",
           boxShadow: "0 30px 60px -10px rgba(0,0,0,0.66)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3 flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-bold tracking-[0.16em] text-accent-emerald">
+            <div className="text-accent-emerald text-[10px] font-bold tracking-[0.16em]">
               ADD TO YOUR CODE
             </div>
-            <div className="text-[18px] font-extrabold text-ink-bright tracking-[-0.01em] mt-0.5">
+            <div className="text-ink-bright mt-0.5 text-[18px] font-extrabold tracking-[-0.01em]">
               Pick a code
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-s flex items-center justify-center text-ink hover:text-ink-bright bg-surface-2 border border-line"
+            className="text-ink hover:text-ink-bright bg-surface-2 border-line flex h-9 w-9 items-center justify-center rounded-s border"
             aria-label="Close picker"
           >
             <Icon name="x" size={16} strokeWidth={2.2} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto no-scrollbar space-y-5 pr-1">
+        <div className="no-scrollbar flex-1 space-y-5 overflow-y-auto pr-1">
           {grouped.map(({ category, codes }) => (
             <section key={category}>
-              <div className="text-[10px] uppercase tracking-[0.14em] font-bold text-ink-muted mb-2">
+              <div className="text-ink-muted mb-2 text-[10px] font-bold tracking-[0.14em] uppercase">
                 {category}
               </div>
               <div className="space-y-1.5">
@@ -98,31 +98,29 @@ export function CodePickerModal({ slotIdx, allCodes, onClose }: Props) {
                         onClose();
                       }}
                       className={[
-                        "w-full text-left rounded-m p-3 flex items-center gap-3 border transition",
+                        "rounded-m flex w-full items-center gap-3 border p-3 text-left transition",
                         taken
                           ? "border-line/40 bg-card/30 cursor-not-allowed opacity-55"
                           : "border-line bg-card hover:bg-card-elevated hover:border-border-strong",
                       ].join(" ")}
                     >
                       <span
-                        className="w-9 h-9 rounded-s flex items-center justify-center text-ink-soft flex-shrink-0"
+                        className="text-ink-soft flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-s"
                         style={{
                           background: `linear-gradient(135deg, ${id.c1} 0%, ${id.c2} 100%)`,
                         }}
                       >
                         <Icon name={id.icon as IconName} size={16} strokeWidth={2.2} />
                       </span>
-                      <span className="flex-1 min-w-0">
-                        <span className="block text-[14px] font-bold text-ink-bright truncate">
+                      <span className="min-w-0 flex-1">
+                        <span className="text-ink-bright block truncate text-[14px] font-bold">
                           {code.name}
                         </span>
-                        <span className="block text-[10px] font-semibold tracking-[0.04em] uppercase text-ink-muted truncate">
+                        <span className="text-ink-muted block truncate text-[10px] font-semibold tracking-[0.04em] uppercase">
                           {taken ? "Already in your code" : code.category}
                         </span>
                       </span>
-                      {!taken && (
-                        <Icon name="arrow-right" size={14} className="text-ink-faint" />
-                      )}
+                      {!taken && <Icon name="arrow-right" size={14} className="text-ink-faint" />}
                     </button>
                   );
                 })}
@@ -133,4 +131,4 @@ export function CodePickerModal({ slotIdx, allCodes, onClose }: Props) {
       </div>
     </div>
   );
-}
+};

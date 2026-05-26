@@ -16,50 +16,49 @@
 import { useCallback, useState } from "react";
 import {
   slotsSignature,
+  useCodes,
   useDispatchHelpers,
   usePreferences,
-} from "@/state/preferences-context";
-import { useCodes } from "@/state/codes-context";
+} from "@/store/preferences-hooks";
 import { Icon } from "./Icon";
 
 // ─── Empty-state hero (Variant A) ─────────────────────────────────────────
 
-export function AIEmptyHero({ onTalkToAI }: { onTalkToAI: () => void }) {
+export const AIEmptyHero = ({ onTalkToAI }: { onTalkToAI: () => void }) => {
   return (
     <section
-      className="rounded-l p-5 flex flex-col items-center gap-3 text-center"
+      className="flex flex-col items-center gap-3 rounded-l p-5 text-center"
       style={{
         background:
-          "linear-gradient(135deg, var(--card-elevated) 0%, var(--card) 100%)",
+          "linear-gradient(135deg, var(--color-card-elevated) 0%, var(--color-card) 100%)",
         border: "1px solid rgba(52,229,166,0.35)",
         boxShadow: "0 12px 32px -8px rgba(52,229,166,0.22)",
       }}
     >
       <span
-        className="w-[54px] h-[54px] rounded-l flex items-center justify-center text-ink-soft"
+        className="text-ink-soft flex h-[54px] w-[54px] items-center justify-center rounded-l"
         style={{
           background:
-            "linear-gradient(135deg, var(--accent-violet) 0%, var(--accent-emerald) 100%)",
+            "linear-gradient(135deg, var(--color-accent-violet) 0%, var(--color-accent-emerald) 100%)",
         }}
       >
         <Icon name="sparkles" size={26} strokeWidth={2.4} />
       </span>
       <div>
-        <div className="text-[18px] font-extrabold text-ink-bright tracking-[-0.01em]">
+        <div className="text-ink-bright text-[18px] font-extrabold tracking-[-0.01em]">
           Compose your code with AI
         </div>
-        <div className="text-[12px] font-medium text-ink-muted mt-1.5 leading-snug max-w-[260px]">
-          Tell us what matters about your food, and we&apos;ll set up your
-          slots and weights.
+        <div className="text-ink-muted mt-1.5 max-w-[260px] text-[12px] leading-snug font-medium">
+          Tell us what matters about your food, and we&apos;ll set up your slots and weights.
         </div>
       </div>
       <button
         type="button"
         onClick={onTalkToAI}
-        className="rounded-pill text-ink-soft text-[14px] font-extrabold px-5 py-2.5 inline-flex items-center gap-2 shadow-cta-emerald"
+        className="rounded-pill text-ink-soft shadow-cta-emerald inline-flex items-center gap-2 px-5 py-2.5 text-[14px] font-extrabold"
         style={{
           background:
-            "linear-gradient(135deg, var(--accent-emerald) 0%, var(--accent-teal) 100%)",
+            "linear-gradient(135deg, var(--color-accent-emerald) 0%, var(--color-accent-teal) 100%)",
         }}
       >
         <Icon name="sparkles" size={14} strokeWidth={2.6} />
@@ -67,11 +66,11 @@ export function AIEmptyHero({ onTalkToAI }: { onTalkToAI: () => void }) {
       </button>
     </section>
   );
-}
+};
 
 // ─── Tag row + stale Ask-AI button (Variants B + C) ───────────────────────
 
-export function AITagRow() {
+export const AITagRow = () => {
   const { state, aiTagsStale, currentSignature, filledCount } = usePreferences();
   const { setAiTags } = useDispatchHelpers();
   const allCodes = useCodes();
@@ -119,7 +118,7 @@ export function AITagRow() {
         type="button"
         onClick={refresh}
         disabled={refreshing}
-        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-pill bg-ink-soft text-[10px] font-bold tracking-[0.06em] text-ink hover:bg-card-elevated transition disabled:opacity-50"
+        className="rounded-pill bg-ink-soft text-ink hover:bg-card-elevated inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-[0.06em] transition disabled:opacity-50"
         style={{
           border: "1.2px dashed rgba(124,124,251,0.55)",
         }}
@@ -128,7 +127,7 @@ export function AITagRow() {
           <>
             <span
               aria-hidden
-              className="inline-block w-2.5 h-2.5 rounded-full border-2 border-accent-violet/40 border-t-accent-violet animate-spin"
+              className="border-accent-violet/40 border-t-accent-violet inline-block h-2.5 w-2.5 animate-spin rounded-full border-2"
             />
             Asking AI…
           </>
@@ -150,7 +149,7 @@ export function AITagRow() {
         type="button"
         onClick={refresh}
         disabled={refreshing}
-        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-pill bg-ink-soft text-[10px] font-bold tracking-[0.06em] text-ink hover:bg-card-elevated transition disabled:opacity-50"
+        className="rounded-pill bg-ink-soft text-ink hover:bg-card-elevated inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-[0.06em] transition disabled:opacity-50"
         style={{
           border: "1.2px dashed rgba(124,124,251,0.55)",
         }}
@@ -159,7 +158,7 @@ export function AITagRow() {
           <>
             <span
               aria-hidden
-              className="inline-block w-2.5 h-2.5 rounded-full border-2 border-accent-violet/40 border-t-accent-violet animate-spin"
+              className="border-accent-violet/40 border-t-accent-violet inline-block h-2.5 w-2.5 animate-spin rounded-full border-2"
             />
             Refreshing…
           </>
@@ -176,43 +175,37 @@ export function AITagRow() {
   // Fresh tags — render the chip row. The "in sync" provenance is the
   // small sparkle dot inside each chip.
   return (
-    <div className="flex gap-1.5 flex-wrap">
+    <div className="flex flex-wrap gap-1.5">
       {state.aiTags.tags.map((t, i) => (
         <span
           key={`${t}-${i}`}
-          className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-pill bg-surface border border-line text-[9px] font-bold tracking-[0.04em] text-ink"
+          className="rounded-pill bg-surface border-line text-ink inline-flex items-center gap-1.5 border px-2 py-0.5 text-[9px] font-bold tracking-[0.04em]"
         >
           <Icon name="sparkles" size={8} strokeWidth={2.6} className="text-accent-violet" />
           {t}
         </span>
       ))}
-      {error && (
-        <span className="text-[9px] font-semibold text-accent-rose">
-          Refresh failed
-        </span>
-      )}
+      {error && <span className="text-accent-rose text-[9px] font-semibold">Refresh failed</span>}
     </div>
   );
-}
+};
 
 // ─── Header pill (always-available Talk-to-AI entry point) ────────────────
 
-export function TalkToAIHeaderPill({ onClick }: { onClick: () => void }) {
+export const TalkToAIHeaderPill = ({ onClick }: { onClick: () => void }) => {
   return (
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-pill bg-surface-2 hover:bg-surface-3 transition"
+      className="rounded-pill bg-surface-2 hover:bg-surface-3 inline-flex items-center gap-1.5 px-3 py-1.5 transition"
       style={{
         border: "1px solid rgba(124,124,251,0.45)",
       }}
     >
       <Icon name="sparkles" size={12} strokeWidth={2.4} className="text-accent-violet" />
-      <span className="text-[11px] font-bold tracking-[0.02em] text-ink-bright">
-        Talk to AI
-      </span>
+      <span className="text-ink-bright text-[11px] font-bold tracking-[0.02em]">Talk to AI</span>
     </button>
   );
-}
+};
 
 export { slotsSignature };

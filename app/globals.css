@@ -1,63 +1,138 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /* Inter — variable font from Google Fonts. Pulled at the document level so
    the design's tight letter-spacing values land on the right glyphs. */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap");
+@import "tailwindcss";
 
-:root {
+/* Tell Tailwind 4 which files to scan for class usage. */
+@source "../app";
+@source "../components";
+@source "../store";
+@source "../lib";
+
+@theme {
   /* Mirrors the variables in PersonalizedNutrition.pen (see DESIGN.md §1).
-     Keep these in sync with both the .pen file and tailwind.config.ts. */
-  --background: #05080f;
-  --background-deep: #02040a;
-  --surface: #0e1626;
-  --surface-2: #141e33;
-  --surface-3: #1b2742;
-  --surface-glass: rgba(26, 36, 64, 0.8);
-  --card: #111a2e;
-  --card-elevated: #172238;
-  --ink-soft: #0a1020;
+     Tailwind 4 maps these into utility classes (e.g. `bg-surface-2`,
+     `text-ink-muted`, `rounded-m`, `shadow-bezel`). */
+  --color-background: #05080f;
+  --color-background-deep: #02040a;
 
-  --border: #1f2c47;
-  --border-subtle: #14203a;
-  --border-strong: #2a3a5e;
+  --color-surface: #0e1626;
+  --color-surface-2: #141e33;
+  --color-surface-3: #1b2742;
+  --color-surface-glass: rgba(26, 36, 64, 0.8);
 
-  --track: #1b2440;
-  --track-subtle: #0f1729;
+  --color-card: #111a2e;
+  --color-card-elevated: #172238;
 
-  --foreground-bright: #ffffff;
-  --foreground: #f5f7fa;
-  --muted-foreground: #8794a8;
-  --faint-foreground: #5a6478;
+  --color-line: #1f2c47;
+  --color-line-subtle: #14203a;
+  --color-line-strong: #2a3a5e;
 
-  --accent-gold: #f5c14e;
-  --accent-amber: #ff9a2a;
-  --accent-emerald: #34e5a6;
-  --accent-teal: #22d3c5;
-  --accent-rose: #ff5e92;
-  --accent-magenta: #c44cd4;
-  --accent-cyan: #5dcfff;
-  --accent-violet: #7c7cfb;
-  --accent-blue: #3b82f6;
+  --color-track: #1b2440;
+  --color-track-subtle: #0f1729;
 
-  --score-excellent: #34e5a6;
-  --score-good: #22d3c5;
-  --score-fair: #f5c14e;
-  --score-low: #ff9a2a;
-  --score-poor: #ff5e92;
+  --color-ink: #f5f7fa;
+  --color-ink-bright: #ffffff;
+  --color-ink-muted: #8794a8;
+  --color-ink-faint: #5a6478;
+  --color-ink-soft: #0a1020;
+
+  --color-accent-gold: #f5c14e;
+  --color-accent-amber: #ff9a2a;
+  --color-accent-emerald: #34e5a6;
+  --color-accent-teal: #22d3c5;
+  --color-accent-rose: #ff5e92;
+  --color-accent-magenta: #c44cd4;
+  --color-accent-cyan: #5dcfff;
+  --color-accent-violet: #7c7cfb;
+  --color-accent-blue: #3b82f6;
+
+  --color-score-excellent: #34e5a6;
+  --color-score-good: #22d3c5;
+  --color-score-fair: #f5c14e;
+  --color-score-low: #ff9a2a;
+  --color-score-poor: #ff5e92;
+
+  /* Legacy aliases — keep existing class references compiling while
+     components are migrated. New code should use the tokens above. */
+  --color-stage-900: #05080f;
+  --color-stage-800: #0e1626;
+  --color-stage-700: #141e33;
+  --color-screen-bg: #05080f;
+  --color-screen-card: #111a2e;
+  --color-screen-subtle: #8794a8;
+  --color-screen-line: #1f2c47;
+
+  --radius-xs: 8px;
+  --radius-s: 12px;
+  --radius-m: 18px;
+  --radius-l: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 9999px;
+
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --font-display: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Colored shadows used on hero cards in DESIGN.md §1. */
+  --shadow-card-emerald:
+    0 12px 32px -8px rgba(52, 229, 166, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  --shadow-card-violet:
+    0 12px 32px -8px rgba(124, 124, 251, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  --shadow-card-rose:
+    0 12px 32px -8px rgba(255, 94, 146, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  --shadow-tab-pill:
+    0 12px 32px -6px rgba(0, 0, 0, 0.66), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  --shadow-cta-emerald: 0 10px 28px -6px rgba(52, 229, 166, 0.53);
+  --shadow-bezel: 0 30px 60px -10px rgba(0, 0, 0, 0.66), 0 0 0 1px rgba(255, 255, 255, 0.04);
+
+  --animate-pulse-dot: pulse-dot 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
+}
+
+/* Brand-level angular gradient used on the composite ring + halo. Exposed as
+   a Tailwind utility (`bg-score-arc`) via @utility below. */
+@utility bg-score-arc {
+  background-image: conic-gradient(
+    from -90deg,
+    #34e5a6 0deg,
+    #22d3c5 144deg,
+    #5dcfff 270deg,
+    #7c7cfb 360deg
+  );
 }
 
 html,
 body {
   margin: 0;
   padding: 0;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+  background: var(--color-background);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Standalone (installed PWA) safe-area handling. */
+@media (display-mode: standalone) {
+  html,
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 * {
@@ -78,22 +153,21 @@ body {
   .score-arc {
     background: conic-gradient(
       from -90deg,
-      var(--accent-emerald) 0%,
-      var(--accent-teal) 40%,
-      var(--accent-cyan) 75%,
-      var(--accent-violet) 100%
+      var(--color-accent-emerald) 0%,
+      var(--color-accent-teal) 40%,
+      var(--color-accent-cyan) 75%,
+      var(--color-accent-violet) 100%
     );
   }
 
   /* Universal ring mask. width = ring thickness, derived from --ring-thickness. */
   .ring-mask {
     --ring-thickness: 12px;
-    -webkit-mask:
-      radial-gradient(
-        farthest-side,
-        transparent calc(100% - var(--ring-thickness) - 1px),
-        #000 calc(100% - var(--ring-thickness))
-      );
+    -webkit-mask: radial-gradient(
+      farthest-side,
+      transparent calc(100% - var(--ring-thickness) - 1px),
+      #000 calc(100% - var(--ring-thickness))
+    );
     mask: radial-gradient(
       farthest-side,
       transparent calc(100% - var(--ring-thickness) - 1px),
@@ -104,8 +178,8 @@ body {
   /* Range slider styling. Per-slot color is set via a CSS variable so the
      same .range-track class works for every code's gradient. */
   .range-slot {
-    --range-c1: var(--accent-emerald);
-    --range-c2: var(--accent-teal);
+    --range-c1: var(--color-accent-emerald);
+    --range-c2: var(--color-accent-teal);
     --range-pct: 50%;
   }
 
@@ -127,12 +201,12 @@ body {
     height: 8px;
     border-radius: 9999px;
     background: linear-gradient(
-        90deg,
-        var(--range-c1) 0%,
-        var(--range-c2) var(--range-pct),
-        var(--track-subtle) var(--range-pct),
-        var(--track-subtle) 100%
-      );
+      90deg,
+      var(--range-c1) 0%,
+      var(--range-c2) var(--range-pct),
+      var(--color-track-subtle) var(--range-pct),
+      var(--color-track-subtle) 100%
+    );
     box-shadow: 0 0 14px -2px rgba(255, 255, 255, 0.05);
   }
   .range-slot input[type="range"]::-moz-range-track {
@@ -142,8 +216,8 @@ body {
       90deg,
       var(--range-c1) 0%,
       var(--range-c2) var(--range-pct),
-      var(--track-subtle) var(--range-pct),
-      var(--track-subtle) 100%
+      var(--color-track-subtle) var(--range-pct),
+      var(--color-track-subtle) 100%
     );
   }
 
@@ -153,7 +227,7 @@ body {
     width: 18px;
     height: 18px;
     border-radius: 9999px;
-    background: var(--foreground);
+    background: var(--color-ink);
     border: 2px solid var(--range-c2);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.66);
     margin-top: -5px;
@@ -166,7 +240,7 @@ body {
     width: 18px;
     height: 18px;
     border-radius: 9999px;
-    background: var(--foreground);
+    background: var(--color-ink);
     border: 2px solid var(--range-c2);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.66);
   }

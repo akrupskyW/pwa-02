@@ -1,6 +1,6 @@
 "use client";
 
-import { useDispatchHelpers, usePreferences } from "@/state/preferences-context";
+import { useDispatchHelpers, usePreferences } from "@/store/preferences-hooks";
 import { identityForCode } from "@/lib/code-identity";
 import { Icon, type IconName } from "./Icon";
 import type { SelectableExpression, Slot } from "@/lib/types";
@@ -16,7 +16,7 @@ interface Props {
 }
 
 // One slot card. See DESIGN.md §3 "Phone 1 — slot cards".
-export function SlotCard({ slot, slotIdx, allCodes, onOpenPicker, compact }: Props) {
+export const SlotCard = ({ slot, slotIdx, allCodes, onOpenPicker, compact }: Props) => {
   const { filledCount } = usePreferences();
   const { removeCode, setWeight } = useDispatchHelpers();
 
@@ -28,10 +28,10 @@ export function SlotCard({ slot, slotIdx, allCodes, onOpenPicker, compact }: Pro
       <button
         type="button"
         onClick={() => onOpenPicker(slotIdx)}
-        className="w-full rounded-m px-4 py-3.5 flex items-center justify-center gap-2 text-ink hover:text-ink-bright transition"
+        className="rounded-m text-ink hover:text-ink-bright flex w-full items-center justify-center gap-2 px-4 py-3.5 transition"
         style={{
-          background: "var(--ink-soft)",
-          border: "1.5px dashed var(--border)",
+          background: "var(--color-ink-soft)",
+          border: "1.5px dashed var(--color-line)",
         }}
       >
         <Icon name="plus" size={18} strokeWidth={2.2} className="text-accent-emerald" />
@@ -47,10 +47,10 @@ export function SlotCard({ slot, slotIdx, allCodes, onOpenPicker, compact }: Pro
 
   return (
     <div
-      className="range-slot w-full rounded-m p-3.5 group"
+      className="range-slot rounded-m group w-full p-3.5"
       style={{
         background: "rgba(15,23,41,0.9)",
-        border: "1px solid var(--border)",
+        border: "1px solid var(--color-line)",
         // Wire the gradient + percent into the .range-slot CSS so the slider
         // track renders the code's identity gradient.
         ["--range-c1" as string]: identity.c1,
@@ -63,38 +63,36 @@ export function SlotCard({ slot, slotIdx, allCodes, onOpenPicker, compact }: Pro
           type="button"
           onClick={() => onOpenPicker(slotIdx)}
           aria-label={`Change code ${code.name}`}
-          className="w-[38px] h-[38px] rounded-s flex items-center justify-center text-ink-soft flex-shrink-0 transition active:scale-95"
+          className="text-ink-soft flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-s transition active:scale-95"
           style={{
             background: `linear-gradient(135deg, ${identity.c1} 0%, ${identity.c2} 100%)`,
           }}
         >
           <Icon name={identity.icon as IconName} size={18} strokeWidth={2.2} />
         </button>
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <button
             type="button"
             onClick={() => onOpenPicker(slotIdx)}
-            className="block text-left w-full"
+            className="block w-full text-left"
           >
-            <div className="text-[14px] font-bold text-ink-bright truncate">
-              {code.name}
-            </div>
-            <div className="text-[10px] font-semibold tracking-[0.04em] text-ink-muted uppercase truncate">
+            <div className="text-ink-bright truncate text-[14px] font-bold">{code.name}</div>
+            <div className="text-ink-muted truncate text-[10px] font-semibold tracking-[0.04em] uppercase">
               {code.category}
             </div>
           </button>
         </div>
-        <div className="flex items-baseline gap-0.5 mr-1">
-          <span className="text-[22px] font-extrabold tabular-nums text-ink-bright leading-none">
+        <div className="mr-1 flex items-baseline gap-0.5">
+          <span className="text-ink-bright text-[22px] leading-none font-extrabold tabular-nums">
             {slot.weight}
           </span>
-          <span className="text-[11px] font-bold text-ink-muted">%</span>
+          <span className="text-ink-muted text-[11px] font-bold">%</span>
         </div>
         <button
           type="button"
           onClick={() => removeCode(slotIdx)}
           aria-label="Remove code"
-          className="ml-0.5 w-7 h-7 rounded-full flex items-center justify-center text-ink-faint hover:text-ink-bright hover:bg-surface-3 transition"
+          className="text-ink-faint hover:text-ink-bright hover:bg-surface-3 ml-0.5 flex h-7 w-7 items-center justify-center rounded-full transition"
         >
           <Icon name="x" size={14} strokeWidth={2.2} />
         </button>
@@ -114,4 +112,4 @@ export function SlotCard({ slot, slotIdx, allCodes, onOpenPicker, compact }: Pro
       </div>
     </div>
   );
-}
+};

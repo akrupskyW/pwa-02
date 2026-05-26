@@ -3,7 +3,7 @@ import { listSelectableExpressions } from "@/lib/queries";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export const GET = async () => {
   try {
     const codes = await listSelectableExpressions();
     return NextResponse.json({ codes });
@@ -11,4 +11,4 @@ export async function GET() {
     console.error("[api/codes] failed:", err);
     return NextResponse.json({ error: "Failed to load codes" }, { status: 500 });
   }
-}
+};

@@ -1,5 +1,7 @@
 import { PreferencesPhone } from "@/components/PreferencesPhone";
 
-export default function CodesPage() {
+const CodesPage = () => {
   return <PreferencesPhone />;
-}
+};
+
+export default CodesPage;
