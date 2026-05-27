@@ -206,9 +206,16 @@
       }
       .scroll {
         flex: 1;
-        overflow: hidden; /* static page; no actual scrolling */
+        overflow-y: auto;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
         padding-top: 56px; /* status-bar safe area */
+        /* Hide the inner scrollbar — mirrors the .no-scrollbar utility
+           in app/globals.css. Content still scrolls; just no visible bar. */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
       }
+      .scroll::-webkit-scrollbar { display: none; }
       .scroll-clip { position: relative; }
 
       /* ─── Status bar ────────────────────────────────────────────────── */
