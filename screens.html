@@ -439,22 +439,30 @@
         display: inline-flex; align-items: center; justify-content: center;
         color: var(--fg-faint); border: none; background: transparent;
       }
+      /* Mirrors the .range-slot rules in globals.css.
+         Track: 8px tall, fully rounded; left side renders the c1→c2
+         gradient up to the current %, right side falls back to
+         var(--track-subtle) (the inner-well navy).
+         Thumb: 18×18 white circle with a 2px stroke in the slot's c2 color
+         and a soft drop shadow — sits ON the track, not inside a clip. */
       .slot-track {
         position: relative;
         height: 8px;
         background: var(--track-subtle);
         border-radius: 999px;
-        margin-top: 12px;
-        overflow: hidden;
+        margin-top: 16px;
+        margin-bottom: 4px;
       }
       .slot-fill {
         position: absolute; left: 0; top: 0; bottom: 0;
         border-radius: 999px;
+        box-shadow: 0 0 14px -2px rgba(255,255,255,0.05);
       }
       .slot-thumb {
         position: absolute; top: 50%;
-        width: 14px; height: 14px; border-radius: 50%;
-        background: white;
+        width: 18px; height: 18px; border-radius: 50%;
+        background: var(--fg);
+        border: 2px solid white; /* per-slot c2 set inline by JS at end of body */
         transform: translate(-50%, -50%);
         box-shadow: 0 2px 6px rgba(0,0,0,0.66);
       }
@@ -514,8 +522,13 @@
       }
       .ai-chip i.icon { color: var(--violet); width: 10px; height: 10px; }
 
-      /* Score ring (220 default, but variable). Implemented as a conic
-         gradient masked to a ring shape — close enough to the real SVG arc. */
+      /* Score ring — pure-SVG implementation that mirrors
+         components/ScoreRing.tsx exactly:
+         - linearGradient(135°ish via x1 0 0 → x2 100% 100%) painted as the
+           stroke of a circle;
+         - 0.97 visible-fraction so a "100" reads as a near-closed ring;
+         - rounded stroke caps;
+         - separate halo + tip-glow circles. */
       .ring-wrap { position: relative; flex-shrink: 0; }
       .ring-halo {
         position: absolute; inset: 0;
@@ -523,42 +536,18 @@
         filter: blur(20px); opacity: 0.7;
         border-radius: 50%; pointer-events: none;
       }
+      .ring-svg { position: relative; display: block; }
       .ring-num {
         position: absolute; inset: 0;
         display: flex; flex-direction: column; align-items: center; justify-content: center;
         color: var(--fg-bright); font-weight: 800; line-height: 1;
         font-variant-numeric: tabular-nums;
+        pointer-events: none;
       }
       .ring-num .lbl {
         margin-top: 4px;
         color: var(--fg-muted);
         font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
-      }
-      .ring {
-        position: relative;
-        border-radius: 50%;
-        --end: 97%;
-        --thickness: 14%;
-        background:
-          conic-gradient(
-            from -90deg,
-            #34E5A6 0%,
-            #22D3C5 calc(var(--end) * 0.4),
-            #5DCFFF calc(var(--end) * 0.75),
-            #7C7CFB var(--end),
-            #1B2440 var(--end),
-            #1B2440 100%
-          );
-        -webkit-mask: radial-gradient(circle, transparent calc(50% - var(--thickness)), black calc(50% - var(--thickness) + 1px));
-        mask: radial-gradient(circle, transparent calc(50% - var(--thickness)), black calc(50% - var(--thickness) + 1px));
-      }
-      .ring-tip {
-        position: absolute;
-        width: 14px; height: 14px;
-        border-radius: 50%;
-        background: var(--emerald);
-        box-shadow: 0 0 14px rgba(52,229,166,0.8);
-        transform: translate(-50%, -50%);
       }
 
       /* Browse: featured, list rows */
@@ -938,6 +927,20 @@
     <!-- Lucide icons via CDN. The icons replace any <i data-lucide="…"> -->
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
+    <!-- Shared SVG <defs> reused by every ScoreRing instance below. The real
+         ScoreRing component duplicates this gradient inside each SVG; we
+         centralize it here since the markup is repeated 5× on this page. -->
+    <svg width="0" height="0" style="position:absolute;width:0;height:0;overflow:hidden;" aria-hidden="true">
+      <defs>
+        <linearGradient id="score-arc-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#34E5A6" />
+          <stop offset="40%" stop-color="#22D3C5" />
+          <stop offset="75%" stop-color="#5DCFFF" />
+          <stop offset="100%" stop-color="#7C7CFB" />
+        </linearGradient>
+      </defs>
+    </svg>
+
     <main class="stage">
       <header>
         <div class="eyebrow">Personalized Nutrition · Screen Catalog</div>
@@ -1042,8 +1045,12 @@
           <section class="hero">
             <div class="ring-wrap" style="width:104px;height:104px;">
               <div class="ring-halo"></div>
-              <div class="ring" style="width:104px;height:104px;--end:97%;--thickness:18%;"></div>
-              <div class="ring-tip" style="left:43px;top:6px;width:11px;height:11px;"></div>
+              <svg viewBox="0 0 104 104" width="104" height="104" class="ring-svg" aria-hidden="true">
+                <circle cx="52" cy="52" r="47.32" fill="none" stroke="var(--track)" stroke-width="9.36" />
+                <circle cx="52" cy="52" r="47.32" fill="none" stroke="url(#score-arc-gradient)" stroke-width="9.36" stroke-linecap="round" stroke-dasharray="288.40 8.92" transform="rotate(-90 52 52)" />
+                <circle cx="43.15" cy="5.53" r="6.55" fill="#34E5A6" opacity="0.35" style="filter:blur(6px);" />
+                <circle cx="43.15" cy="5.53" r="5.15" fill="#34E5A6" />
+              </svg>
               <div class="ring-num" style="font-size:32px;letter-spacing:-1px;">100<div class="lbl" style="font-size:9px;letter-spacing:0.18em;">OF 100</div></div>
             </div>
             <div class="copy">
@@ -1172,7 +1179,12 @@
           <section class="hero">
             <div class="ring-wrap" style="width:104px;height:104px;">
               <div class="ring-halo"></div>
-              <div class="ring" style="width:104px;height:104px;--end:97%;--thickness:18%;"></div>
+              <svg viewBox="0 0 104 104" width="104" height="104" class="ring-svg" aria-hidden="true">
+                <circle cx="52" cy="52" r="47.32" fill="none" stroke="var(--track)" stroke-width="9.36" />
+                <circle cx="52" cy="52" r="47.32" fill="none" stroke="url(#score-arc-gradient)" stroke-width="9.36" stroke-linecap="round" stroke-dasharray="288.40 8.92" transform="rotate(-90 52 52)" />
+                <circle cx="43.15" cy="5.53" r="6.55" fill="#34E5A6" opacity="0.35" style="filter:blur(6px);" />
+                <circle cx="43.15" cy="5.53" r="5.15" fill="#34E5A6" />
+              </svg>
               <div class="ring-num" style="font-size:32px;letter-spacing:-1px;">100<div class="lbl" style="font-size:9px;letter-spacing:0.18em;">OF 100</div></div>
             </div>
             <div class="copy">
@@ -1279,7 +1291,12 @@
           <section class="hero">
             <div class="ring-wrap" style="width:104px;height:104px;">
               <div class="ring-halo"></div>
-              <div class="ring" style="width:104px;height:104px;--end:97%;--thickness:18%;"></div>
+              <svg viewBox="0 0 104 104" width="104" height="104" class="ring-svg" aria-hidden="true">
+                <circle cx="52" cy="52" r="47.32" fill="none" stroke="var(--track)" stroke-width="9.36" />
+                <circle cx="52" cy="52" r="47.32" fill="none" stroke="url(#score-arc-gradient)" stroke-width="9.36" stroke-linecap="round" stroke-dasharray="288.40 8.92" transform="rotate(-90 52 52)" />
+                <circle cx="43.15" cy="5.53" r="6.55" fill="#34E5A6" opacity="0.35" style="filter:blur(6px);" />
+                <circle cx="43.15" cy="5.53" r="5.15" fill="#34E5A6" />
+              </svg>
               <div class="ring-num" style="font-size:32px;letter-spacing:-1px;">100<div class="lbl" style="font-size:9px;letter-spacing:0.18em;">OF 100</div></div>
             </div>
             <div class="copy">
@@ -1629,10 +1646,22 @@
                 <div class="food-name">Wild Atlantic Salmon Fillet</div>
                 <div class="food-brand">Vital Choice</div>
               </div>
-              <!-- Mini ring -->
+              <!-- MiniRing (BrowsePhone.tsx) — separate component from the
+                   ScoreRing: hardcoded radius 24, strokeWidth 6, and a
+                   3-stop emerald→teal→cyan gradient (no violet). No halo. -->
               <div class="ring-wrap" style="width:64px;height:64px;flex-shrink:0;">
-                <div class="ring" style="width:64px;height:64px;--end:91.18%;--thickness:18%;"></div>
-                <div class="ring-num" style="font-size:22px;letter-spacing:-0.02em;"><span>94</span></div>
+                <svg viewBox="0 0 64 64" width="64" height="64" class="ring-svg" aria-hidden="true">
+                  <defs>
+                    <linearGradient id="featured-ring" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#34E5A6" />
+                      <stop offset="50%" stop-color="#22D3C5" />
+                      <stop offset="100%" stop-color="#5DCFFF" />
+                    </linearGradient>
+                  </defs>
+                  <circle cx="32" cy="32" r="24" fill="none" stroke="var(--track)" stroke-width="6" />
+                  <circle cx="32" cy="32" r="24" fill="none" stroke="url(#featured-ring)" stroke-width="6" stroke-linecap="round" stroke-dasharray="137.50 13.30" transform="rotate(-90 32 32)" />
+                </svg>
+                <div class="ring-num" style="font-size:22px;letter-spacing:-0.02em;">94</div>
               </div>
             </div>
             <div class="featured-meter">
@@ -1939,9 +1968,13 @@
             <div style="display:flex;flex-direction:column;align-items:center;margin-top:16px;">
               <div class="ring-wrap" style="width:200px;height:200px;">
                 <div class="ring-halo"></div>
-                <div class="ring" style="width:200px;height:200px;--end:91.18%;--thickness:14%;"></div>
-                <div class="ring-tip" style="left:51px;top:21px;"></div>
-                <div class="ring-num" style="font-size:78px;letter-spacing:-3px;">94<div class="lbl" style="color:var(--emerald);font-size:10px;letter-spacing:0.18em;">COMPOSITE</div></div>
+                <svg viewBox="0 0 200 200" width="200" height="200" class="ring-svg" aria-hidden="true">
+                  <circle cx="100" cy="100" r="93" fill="none" stroke="var(--track)" stroke-width="14" />
+                  <circle cx="100" cy="100" r="93" fill="none" stroke="url(#score-arc-gradient)" stroke-width="14" stroke-linecap="round" stroke-dasharray="532.79 51.55" transform="rotate(-90 100 100)" />
+                  <circle cx="50.99" cy="20.95" r="9.80" fill="#34E5A6" opacity="0.35" style="filter:blur(6px);" />
+                  <circle cx="50.99" cy="20.95" r="7.70" fill="#34E5A6" />
+                </svg>
+                <div class="ring-num" style="font-size:78px;letter-spacing:-3px;">94<div class="lbl">COMPOSITE</div></div>
               </div>
               <div class="verdict" style="color:var(--score-excellent);">
                 <i data-lucide="check-circle" style="width:14px;height:14px;"></i>Excellent match for your code
@@ -2183,6 +2216,22 @@
           if (window.lucide) lucide.createIcons();
         });
       }
+
+      // Paint each slot-thumb's stroke with that slot's c2 color, mirroring
+      // ::-webkit-slider-thumb { border: 2px solid var(--range-c2); } from
+      // app/globals.css — so the thumb reads as part of the gradient track.
+      // We pull the second hex stop out of the preceding slot-fill's
+      // background gradient instead of duplicating colors per thumb in the
+      // markup.
+      document.querySelectorAll(".slot-thumb").forEach(function (thumb) {
+        var fill = thumb.previousElementSibling;
+        if (!fill) return;
+        var bg = fill.style.background || fill.style.backgroundImage;
+        var hexes = bg && bg.match(/#[0-9A-Fa-f]{6}/g);
+        if (hexes && hexes.length >= 2) {
+          thumb.style.borderColor = hexes[1];
+        }
+      });
     </script>
   </body>
 </html>
