@@ -1,0 +1,2188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Personalized Nutrition — Every screen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ─── Design tokens (mirrors DESIGN.md §1) ───────────────────────── */
+      :root {
+        --bg: #05080F;
+        --bg-deep: #02040A;
+        --surface: #0E1626;
+        --surface-2: #141E33;
+        --surface-3: #1B2742;
+        --card: #111A2E;
+        --card-elev: #172238;
+        --ink-soft: #0A1020;
+
+        --line-subtle: #14203A;
+        --line: #1F2C47;
+        --line-strong: #2A3A5E;
+        --track: #1B2440;
+        --track-subtle: #0F1729;
+
+        --fg-bright: #FFFFFF;
+        --fg: #F5F7FA;
+        --fg-muted: #8794A8;
+        --fg-faint: #5A6478;
+
+        --rose: #FF5E92;
+        --amber: #FF9A2A;
+        --emerald: #34E5A6;
+        --teal: #22D3C5;
+        --violet: #7C7CFB;
+        --magenta: #C44CD4;
+        --gold: #F5C14E;
+        --cyan: #5DCFFF;
+        --blue: #3B82F6;
+
+        --score-excellent: #34E5A6;
+        --score-good: #22D3C5;
+        --score-fair: #F5C14E;
+        --score-low: #FF9A2A;
+        --score-poor: #FF5E92;
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+
+      .stage {
+        position: relative;
+        min-height: 100vh;
+        padding: 64px 0 96px;
+        background:
+          radial-gradient(700px 700px at -200px -200px, rgba(52,229,166,0.18), transparent 60%),
+          radial-gradient(700px 700px at calc(100% + 200px) calc(100% + 200px), rgba(124,124,251,0.18), transparent 60%),
+          linear-gradient(180deg, #05080F 0%, #0A1426 50%, #05080F 100%);
+      }
+      .stage > header { padding: 0 32px; }
+
+      .stage > header {
+        max-width: 1200px;
+        margin: 0 auto 48px;
+        text-align: center;
+      }
+      .stage > header .eyebrow {
+        color: var(--emerald);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+      }
+      .stage > header h1 {
+        font-size: 56px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin: 16px 0 12px;
+        color: var(--fg-bright);
+        line-height: 1.05;
+      }
+      .stage > header p {
+        max-width: 680px;
+        margin: 0 auto;
+        color: var(--fg-muted);
+        font-size: 16px;
+        line-height: 1.55;
+      }
+
+      /* ─── Section header above each row of phones ───────────────────── */
+      .section { max-width: 1480px; margin: 0 auto 64px; }
+      .section h2 {
+        color: var(--fg-bright);
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        margin: 0 0 4px;
+      }
+      .section .lead {
+        color: var(--fg-muted);
+        font-size: 13px;
+        margin: 0 0 24px;
+        max-width: 720px;
+        line-height: 1.6;
+      }
+      .section .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 36px;
+        justify-content: center;
+        align-items: flex-start;
+      }
+
+      /* ─── Phone shell (390 × 844 iPhone bezel) ──────────────────────── */
+      .phone-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 390px;
+        flex: 0 0 390px;
+      }
+      .phone-label {
+        color: var(--fg-muted);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+      .phone-label.violet { color: var(--violet); }
+      .phone-caption { display: none; }
+      .phone {
+        position: relative;
+        width: 390px;
+        height: 844px;
+        border-radius: 54px;
+        background: var(--bg);
+        border: 3px solid var(--surface-3);
+        box-shadow:
+          0 30px 60px -10px rgba(0,0,0,0.66),
+          inset 0 0 0 1px rgba(255,255,255,0.06);
+        overflow: hidden;
+      }
+      .island {
+        position: absolute;
+        top: 14px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 34px;
+        background: #000;
+        border-radius: 999px;
+        z-index: 30;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 12px;
+      }
+      .island::after {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--teal);
+        box-shadow: 0 0 8px rgba(34,211,197,0.85);
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+      @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+      .phone .glow-l, .phone .glow-r {
+        position: absolute;
+        z-index: 0;
+        border-radius: 50%;
+        opacity: 0.7;
+        filter: blur(48px);
+        pointer-events: none;
+      }
+      .phone .glow-l {
+        top: -160px; left: -96px;
+        width: 420px; height: 420px;
+        background: radial-gradient(closest-side, rgba(52,229,166,0.30), transparent 70%);
+      }
+      .phone .glow-r {
+        top: -128px; right: -96px;
+        width: 360px; height: 360px;
+        background: radial-gradient(closest-side, rgba(93,207,255,0.30), transparent 70%);
+      }
+      .screen {
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+      }
+      .scroll {
+        flex: 1;
+        overflow: hidden; /* static page; no actual scrolling */
+        padding-top: 56px; /* status-bar safe area */
+      }
+      .scroll-clip { position: relative; }
+
+      /* ─── Status bar ────────────────────────────────────────────────── */
+      .status-bar {
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 56px;
+        z-index: 20;
+        display: flex; align-items: flex-end; justify-content: space-between;
+        padding: 0 28px 8px;
+        font-size: 15px; font-weight: 600; color: white;
+        pointer-events: none;
+      }
+      .status-bar .right { display: flex; align-items: center; gap: 6px; }
+      .status-bar .bars { display: flex; gap: 2px; align-items: flex-end; }
+      .status-bar .bars span {
+        width: 3px; background: white; border-radius: 1px;
+      }
+      .status-bar .bars span:nth-child(1) { height: 4px; }
+      .status-bar .bars span:nth-child(2) { height: 6px; }
+      .status-bar .bars span:nth-child(3) { height: 8px; }
+      .status-bar .bars span:nth-child(4) { height: 10px; }
+      .status-bar .battery {
+        width: 26px; height: 13px;
+        border: 1px solid rgba(255,255,255,0.85);
+        border-radius: 3px;
+        position: relative;
+        padding: 1px;
+      }
+      .status-bar .battery::after {
+        content: ""; position: absolute; top: 3px; right: -3px;
+        width: 2px; height: 5px; background: rgba(255,255,255,0.85); border-radius: 0 1px 1px 0;
+      }
+      .status-bar .battery i {
+        display: block; height: 100%; width: 75%;
+        background: white; border-radius: 1px;
+      }
+
+      /* ─── Bottom tab bar (anchored pill) ─────────────────────────────── */
+      .tab-bar {
+        position: relative; z-index: 20; flex-shrink: 0;
+        padding: 12px 21px max(21px, env(safe-area-inset-bottom));
+        border-top: 1px solid var(--line-subtle);
+        background: linear-gradient(180deg, rgba(5,8,15,0.6) 0%, var(--bg) 60%);
+        backdrop-filter: blur(12px);
+      }
+      .tab-pill {
+        height: 62px;
+        display: flex; align-items: stretch; gap: 0;
+        background: rgba(13,20,34,0.92);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px;
+        box-shadow: 0 8px 24px -8px rgba(0,0,0,0.6);
+      }
+      .tab {
+        flex: 1; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 3px;
+        border-radius: 26px;
+        color: var(--fg-faint);
+        font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+      }
+      .tab.active {
+        color: var(--fg-bright);
+        background: linear-gradient(135deg, var(--surface-3) 0%, var(--card-elev) 100%);
+        box-shadow: 0 0 0 1px rgba(52,229,166,0.35);
+      }
+      .tab.active.violet { box-shadow: 0 0 0 1px rgba(124,124,251,0.35); }
+      .tab.active i.icon { color: var(--emerald); }
+      .tab.active.violet i.icon { color: var(--violet); }
+      .tab i.icon { width: 20px; height: 20px; }
+
+      /* ─── Generic helpers ──────────────────────────────────────────── */
+      .px { padding-left: 20px; padding-right: 20px; }
+      .pb { padding-bottom: 20px; }
+      .pt-hdr { padding-top: 4px; }
+      .stack > * + * { margin-top: 16px; }
+      .stack-sm > * + * { margin-top: 10px; }
+      .row-flex { display: flex; align-items: center; }
+      .between { display: flex; align-items: center; justify-content: space-between; }
+      .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+      .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+      /* Header (overline + title) */
+      .scr-hdr {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        padding: 0 20px 12px;
+      }
+      .scr-hdr .ovl {
+        font-size: 11px; font-weight: 800; letter-spacing: 0.16em;
+        color: var(--emerald);
+      }
+      .scr-hdr .ovl.violet { color: var(--violet); }
+      .scr-hdr .ovl .dot {
+        display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+        background: var(--violet); margin-left: 6px; vertical-align: 2px;
+        animation: pulse 1.4s ease-in-out infinite;
+      }
+      .scr-hdr h1 {
+        margin: 2px 0 0;
+        color: var(--fg-bright);
+        font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1;
+      }
+      .scr-hdr .sub {
+        color: var(--fg-muted); font-size: 12px; font-weight: 500; margin-top: 4px;
+      }
+
+      /* Icon pill button (38×38) used in headers */
+      .icon-btn {
+        height: 38px; width: 38px; border-radius: 12px;
+        background: var(--surface-2); border: 1px solid var(--line);
+        color: var(--fg);
+        display: inline-flex; align-items: center; justify-content: center;
+        flex-shrink: 0;
+      }
+      .icon-btn-row { display: inline-flex; gap: 8px; }
+
+      /* Cards */
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+      }
+      .card.elev {
+        background: linear-gradient(135deg, var(--surface-2) 0%, var(--card) 100%);
+        border-radius: 24px;
+      }
+      .card.green-shadow { box-shadow: 0 12px 32px -8px rgba(52,229,166,0.22); }
+      .card.violet-shadow { box-shadow: 0 12px 32px -8px rgba(124,124,251,0.22); }
+      .pad-l { padding: 16px; }
+      .pad-m { padding: 14px; }
+
+      /* Pill */
+      .pill {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--fg);
+        padding: 4px 10px;
+        font-size: 10px; font-weight: 700; letter-spacing: 0.04em;
+      }
+      .pill.solid {
+        background: var(--surface-2);
+        padding: 4px 8px;
+      }
+      .pill.dashed {
+        background: var(--ink-soft);
+        border: 1.2px dashed rgba(124,124,251,0.55);
+      }
+      .pill .dot {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--emerald);
+      }
+
+      /* CTA emerald gradient */
+      .cta-emerald {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        background: linear-gradient(135deg, var(--emerald) 0%, var(--teal) 100%);
+        color: var(--ink-soft);
+        border-radius: 999px;
+        padding: 12px 20px;
+        font-size: 14px; font-weight: 800;
+        box-shadow: 0 10px 28px -6px rgba(52,229,166,0.55);
+        border: none;
+      }
+
+      .cta-violet {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--surface-2);
+        border: 1px solid rgba(124,124,251,0.45);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font-size: 11px; font-weight: 700;
+        color: var(--fg-bright);
+      }
+
+      /* Section overline used inside the screens */
+      .ovl-row {
+        display: flex; align-items: flex-end; justify-content: space-between;
+        padding: 4px 2px 0;
+      }
+      .ovl-row .lbl {
+        font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
+        color: var(--fg-muted);
+      }
+      .ovl-row .lbl.right {
+        font-size: 10px; letter-spacing: 0.06em;
+        color: var(--fg);
+        display: inline-flex; align-items: center; gap: 4px;
+      }
+      .reset-btn {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: var(--surface-2); border: 1px solid var(--line);
+        color: var(--fg); border-radius: 999px;
+        font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+        padding: 4px 10px;
+      }
+
+      /* Slot card (preferences) */
+      .slot {
+        background: rgba(15,23,41,0.9);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 14px;
+      }
+      .slot-row { display: flex; align-items: center; gap: 12px; }
+      .slot-icon {
+        width: 38px; height: 38px; border-radius: 12px;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: var(--ink-soft); flex-shrink: 0;
+      }
+      .slot-name { color: var(--fg-bright); font-size: 14px; font-weight: 700; }
+      .slot-cat {
+        color: var(--fg-muted);
+        font-size: 10px; font-weight: 600; letter-spacing: 0.04em;
+        text-transform: uppercase; margin-top: 2px;
+      }
+      .slot-num {
+        display: inline-flex; align-items: baseline; gap: 2px; margin-right: 4px;
+      }
+      .slot-num b {
+        color: var(--fg-bright); font-size: 22px; font-weight: 800;
+        font-variant-numeric: tabular-nums; line-height: 1;
+      }
+      .slot-num span { color: var(--fg-muted); font-size: 11px; font-weight: 700; }
+      .slot-x {
+        width: 28px; height: 28px; border-radius: 50%;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: var(--fg-faint); border: none; background: transparent;
+      }
+      .slot-track {
+        position: relative;
+        height: 8px;
+        background: var(--track-subtle);
+        border-radius: 999px;
+        margin-top: 12px;
+        overflow: hidden;
+      }
+      .slot-fill {
+        position: absolute; left: 0; top: 0; bottom: 0;
+        border-radius: 999px;
+      }
+      .slot-thumb {
+        position: absolute; top: 50%;
+        width: 14px; height: 14px; border-radius: 50%;
+        background: white;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.66);
+      }
+
+      /* Empty (dashed) slot */
+      .slot-empty {
+        background: var(--ink-soft);
+        border: 1.5px dashed var(--line);
+        border-radius: 18px;
+        padding: 14px;
+        display: flex; align-items: center; justify-content: center; gap: 8px;
+        color: var(--fg);
+        font-size: 14px; font-weight: 700;
+      }
+      .slot-empty i.icon { color: var(--emerald); }
+
+      /* Sparkle icon tile (for AI hero) */
+      .ai-tile {
+        width: 54px; height: 54px; border-radius: 24px;
+        background: linear-gradient(135deg, var(--violet) 0%, var(--emerald) 100%);
+        color: var(--ink-soft);
+        display: inline-flex; align-items: center; justify-content: center;
+      }
+
+      .ai-hero {
+        display: flex; flex-direction: column; align-items: center; gap: 12px;
+        padding: 20px;
+        background: linear-gradient(135deg, var(--card-elev) 0%, var(--card) 100%);
+        border: 1px solid rgba(52,229,166,0.35);
+        border-radius: 24px;
+        box-shadow: 0 12px 32px -8px rgba(52,229,166,0.22);
+        text-align: center;
+      }
+      .ai-hero h3 { margin: 0; color: var(--fg-bright); font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+      .ai-hero p { margin: 6px 0 0; color: var(--fg-muted); font-size: 12px; max-width: 260px; line-height: 1.4; }
+
+      /* Hero row card (with mini ring + AI tags) */
+      .hero {
+        display: flex; align-items: center; gap: 14px;
+        padding: 16px;
+        background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface) 100%);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+      }
+      .hero .copy { flex: 1; min-width: 0; }
+      .hero .copy h3 { margin: 0; color: var(--fg-bright); font-size: 18px; font-weight: 700; line-height: 1.15; }
+      .hero .copy p { margin: 6px 0 10px; color: var(--fg-muted); font-size: 12px; font-weight: 500; line-height: 1.35; }
+      .ai-chip {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 9px; font-weight: 700; letter-spacing: 0.04em;
+        color: var(--fg);
+        margin: 0 4px 4px 0;
+      }
+      .ai-chip i.icon { color: var(--violet); width: 10px; height: 10px; }
+
+      /* Score ring (220 default, but variable). Implemented as a conic
+         gradient masked to a ring shape — close enough to the real SVG arc. */
+      .ring-wrap { position: relative; flex-shrink: 0; }
+      .ring-halo {
+        position: absolute; inset: 0;
+        background: radial-gradient(closest-side, rgba(52,229,166,0.45), transparent 75%);
+        filter: blur(20px); opacity: 0.7;
+        border-radius: 50%; pointer-events: none;
+      }
+      .ring-num {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        color: var(--fg-bright); font-weight: 800; line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .ring-num .lbl {
+        margin-top: 4px;
+        color: var(--fg-muted);
+        font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+      }
+      .ring {
+        position: relative;
+        border-radius: 50%;
+        --end: 97%;
+        --thickness: 14%;
+        background:
+          conic-gradient(
+            from -90deg,
+            #34E5A6 0%,
+            #22D3C5 calc(var(--end) * 0.4),
+            #5DCFFF calc(var(--end) * 0.75),
+            #7C7CFB var(--end),
+            #1B2440 var(--end),
+            #1B2440 100%
+          );
+        -webkit-mask: radial-gradient(circle, transparent calc(50% - var(--thickness)), black calc(50% - var(--thickness) + 1px));
+        mask: radial-gradient(circle, transparent calc(50% - var(--thickness)), black calc(50% - var(--thickness) + 1px));
+      }
+      .ring-tip {
+        position: absolute;
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        background: var(--emerald);
+        box-shadow: 0 0 14px rgba(52,229,166,0.8);
+        transform: translate(-50%, -50%);
+      }
+
+      /* Browse: featured, list rows */
+      .featured {
+        width: 100%;
+        background: linear-gradient(135deg, var(--surface-2) 0%, var(--card) 100%);
+        border: 1px solid rgba(52,229,166,0.35);
+        border-radius: 24px;
+        padding: 16px;
+        box-shadow: 0 12px 32px -8px rgba(52,229,166,0.22);
+      }
+      .featured-row { display: flex; align-items: center; gap: 14px; }
+      .thumb-l {
+        width: 84px; height: 84px; border-radius: 24px; flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: var(--ink-soft);
+      }
+      .thumb-m {
+        width: 54px; height: 54px; border-radius: 12px; flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: var(--ink-soft);
+      }
+      .thumb-s {
+        width: 72px; height: 72px; border-radius: 18px; flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: var(--ink-soft);
+      }
+      .top-match-pill {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: var(--emerald);
+        color: var(--ink-soft);
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 9px; font-weight: 800; letter-spacing: 0.08em;
+      }
+      .food-name {
+        color: var(--fg-bright); font-size: 15px; font-weight: 700;
+        line-height: 1.15; margin-top: 6px;
+      }
+      .food-brand { color: var(--fg-muted); font-size: 11px; font-weight: 500; margin-top: 2px; }
+      .featured-meter {
+        display: flex; gap: 4px; margin-top: 12px;
+      }
+      .meter-col {
+        display: flex; flex-direction: column; align-items: center; gap: 4px;
+      }
+      .meter-bar {
+        width: 100%; height: 6px; border-radius: 999px;
+      }
+      .meter-num { color: var(--fg-muted); font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+      .row-card {
+        display: flex; align-items: center; gap: 12px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 12px;
+      }
+      .row-meta { flex: 1; min-width: 0; }
+      .row-meta .name { color: var(--fg-bright); font-size: 13px; font-weight: 700; line-height: 1.15; }
+      .row-meta .brand { color: var(--fg-muted); font-size: 10px; font-weight: 500; margin-top: 2px; }
+      .row-meta .codes { display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+      .row-meta .codes .dot { width: 5px; height: 5px; border-radius: 50%; }
+      .row-meta .codes .lbl { color: var(--fg-faint); font-size: 9px; font-weight: 600; margin-left: 4px; }
+      .row-score { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+      .row-score .num {
+        font-size: 26px; font-weight: 800; letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums; line-height: 1;
+      }
+      .row-score .check {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: var(--ink-soft);
+        border: 1px solid var(--line);
+        color: var(--fg-muted);
+        border-radius: 999px;
+        padding: 2px 6px;
+        font-size: 8px; font-weight: 700; letter-spacing: 0.04em;
+      }
+
+      /* Scan / product detail breakdown */
+      .verdict {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-size: 12px; font-weight: 700; margin-top: 12px;
+      }
+      .math-row {
+        background: rgba(15,23,41,0.9);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 12px;
+      }
+      .math-row + .math-row { margin-top: 8px; }
+      .math-row .top { display: flex; align-items: center; gap: 10px; }
+      .math-icon {
+        width: 30px; height: 30px; border-radius: 12px;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: var(--ink-soft); flex-shrink: 0;
+      }
+      .tier-badge {
+        display: inline-flex; align-items: center;
+        border-radius: 999px;
+        padding: 2px 6px;
+        font-size: 8px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+      }
+      .math-line { color: var(--fg-muted); font-size: 10px; font-weight: 600; font-variant-numeric: tabular-nums; margin-top: 2px; }
+      .math-num {
+        font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums; line-height: 1;
+      }
+      .math-bar {
+        height: 6px; border-radius: 999px; background: var(--track-subtle);
+        margin-top: 10px; overflow: hidden;
+      }
+      .math-bar > i {
+        display: block; height: 100%; border-radius: 999px;
+      }
+
+      /* Modal / sheet overlays */
+      .modal-overlay {
+        position: absolute; inset: 0; z-index: 40;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(10px);
+      }
+      .modal-card {
+        position: absolute;
+        left: 12px; right: 12px; top: 32px; bottom: 32px;
+        background: linear-gradient(180deg, var(--card-elev) 0%, var(--card) 100%);
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        box-shadow: 0 30px 60px -10px rgba(0,0,0,0.66);
+        display: flex; flex-direction: column;
+        padding: 16px;
+      }
+      .picker-cat {
+        color: var(--fg-muted); font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+        text-transform: uppercase; margin: 0 0 8px;
+      }
+      .picker-row {
+        display: flex; align-items: center; gap: 12px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 12px;
+      }
+      .picker-row + .picker-row { margin-top: 6px; }
+      .picker-row.taken { opacity: 0.55; }
+      .picker-row .name { color: var(--fg-bright); font-size: 14px; font-weight: 700; }
+      .picker-row .sub {
+        color: var(--fg-muted);
+        font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+        margin-top: 2px;
+      }
+
+      .sheet {
+        position: absolute; left: 0; right: 0; bottom: 0;
+        max-height: 75%;
+        background: linear-gradient(180deg, var(--card-elev) 0%, var(--card) 100%);
+        border: 1px solid var(--line);
+        border-bottom: none;
+        border-top-left-radius: 28px;
+        border-top-right-radius: 28px;
+        box-shadow: 0 -20px 60px -10px rgba(0,0,0,0.66);
+        padding: 12px 20px 20px;
+      }
+      .grabber {
+        width: 40px; height: 6px; border-radius: 999px; background: var(--line-strong);
+        margin: 0 auto 8px;
+      }
+
+      /* Generic textarea look */
+      .ta-card {
+        background: var(--ink-soft);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 14px;
+        color: var(--fg-bright);
+        font-size: 14px; line-height: 1.5;
+        min-height: 96px;
+      }
+      .example-btn {
+        display: block; width: 100%;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        color: var(--fg);
+        padding: 8px 12px;
+        font-size: 12px; line-height: 1.35; text-align: left;
+      }
+      .example-btn + .example-btn { margin-top: 6px; }
+
+      /* Setup error screen */
+      .setup-card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 24px;
+      }
+      .setup-card h1 { margin: 12px 0 0; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--fg-bright); line-height: 1.15; }
+      .setup-card p { color: var(--fg-muted); font-size: 13px; line-height: 1.55; margin: 12px 0 0; }
+      .setup-card pre {
+        background: var(--ink-soft);
+        border: 1px solid var(--line-subtle);
+        border-radius: 12px;
+        padding: 12px;
+        margin: 16px 0 0;
+        color: var(--fg);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 12px;
+        overflow-x: auto;
+      }
+      .setup-card .footnote { color: var(--fg-faint); font-size: 12px; margin-top: 12px; line-height: 1.55; }
+      .setup-card .bullets { margin-top: 12px; padding-left: 0; list-style: none; }
+      .setup-card .bullets li {
+        display: flex; gap: 8px; align-items: flex-start;
+        color: var(--fg-muted); font-size: 13px; line-height: 1.55;
+        margin-top: 8px;
+      }
+      .setup-card .bullets li::before {
+        content: ""; width: 6px; height: 6px; border-radius: 50%;
+        background: var(--amber); flex-shrink: 0; margin-top: 8px;
+      }
+      .eyebrow-amber { color: var(--amber); font-size: 12px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; }
+      .eyebrow-rose { color: var(--rose); font-size: 12px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; }
+
+      /* Camera screen */
+      .camera-bg {
+        position: absolute; inset: 0;
+        background:
+          radial-gradient(70% 50% at 50% 50%, rgba(40,55,55,0.85), rgba(8,11,15,0.95)),
+          repeating-linear-gradient(0deg, rgba(255,255,255,0.04) 0 1px, transparent 1px 6px);
+      }
+      .barcode-mock {
+        position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+        width: 220px; height: 90px;
+        background:
+          repeating-linear-gradient(90deg,
+            #0d0d0d 0 3px, transparent 3px 5px,
+            #0d0d0d 5px 8px, transparent 8px 12px,
+            #0d0d0d 12px 14px, transparent 14px 18px);
+        background-color: white;
+        border-radius: 4px;
+        opacity: 0.92;
+      }
+      .vf-corner {
+        position: absolute;
+        width: 40px; height: 40px;
+        border-color: rgba(52,229,166,0.9);
+        box-shadow: 0 0 12px rgba(52,229,166,0.3);
+      }
+      .vf-tl { top: 30%; left: 12%; border-top: 3px solid var(--emerald); border-left: 3px solid var(--emerald); border-top-left-radius: 18px; }
+      .vf-tr { top: 30%; right: 12%; border-top: 3px solid var(--emerald); border-right: 3px solid var(--emerald); border-top-right-radius: 18px; }
+      .vf-bl { bottom: 30%; left: 12%; border-bottom: 3px solid var(--emerald); border-left: 3px solid var(--emerald); border-bottom-left-radius: 18px; }
+      .vf-br { bottom: 30%; right: 12%; border-bottom: 3px solid var(--emerald); border-right: 3px solid var(--emerald); border-bottom-right-radius: 18px; }
+      .vf-hint {
+        position: absolute; left: 0; right: 0; bottom: 110px;
+        text-align: center;
+        color: rgba(255,255,255,0.8);
+        font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+      }
+      .camera-cancel {
+        position: absolute; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.95);
+        padding: 12px 20px max(20px, env(safe-area-inset-bottom));
+        display: flex; justify-content: center;
+      }
+      .scan-status {
+        position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.7);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 10px 16px;
+        color: var(--fg-muted);
+        font-size: 13px;
+        display: inline-flex; align-items: center; gap: 8px;
+        backdrop-filter: blur(8px);
+      }
+      .spinner {
+        width: 12px; height: 12px; border-radius: 50%;
+        border: 2px solid rgba(255,255,255,0.25);
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+
+      /* Scoped icon helpers */
+      .icon { width: 16px; height: 16px; stroke-width: 2; }
+
+      /* Layout: caption strip below each phone */
+      .legend {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        max-width: 1480px;
+        margin: 32px auto 0;
+        padding: 32px;
+        border-top: 1px solid var(--line-subtle);
+      }
+      .legend h4 {
+        color: var(--emerald); font-size: 11px; font-weight: 800;
+        letter-spacing: 0.16em; text-transform: uppercase; margin: 0 0 6px;
+      }
+      .legend p { color: var(--fg-muted); font-size: 13px; line-height: 1.6; margin: 0; }
+
+      /* ─── Single carousel rail ─────────────────────────────────────── */
+      .rail {
+        position: relative;
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        gap: 32px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: 48px;
+        padding: 12px 48px 32px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+        scrollbar-color: var(--surface-3) transparent;
+      }
+      .rail::-webkit-scrollbar { height: 10px; }
+      .rail::-webkit-scrollbar-thumb {
+        background: var(--surface-3);
+        border-radius: 999px;
+      }
+      .rail::-webkit-scrollbar-thumb:hover { background: var(--line-strong); }
+      .rail::-webkit-scrollbar-track { background: transparent; }
+
+      .rail .phone-wrap {
+        scroll-snap-align: center;
+        flex-shrink: 0;
+      }
+
+      /* Edge fades hint at horizontal scrollability. */
+      .rail-frame {
+        position: relative;
+        margin: 0 auto 48px;
+      }
+      .rail-frame::before,
+      .rail-frame::after {
+        content: "";
+        position: absolute;
+        top: 0; bottom: 24px;
+        width: 56px;
+        z-index: 5;
+        pointer-events: none;
+      }
+      .rail-frame::before {
+        left: 0;
+        background: linear-gradient(90deg, var(--bg) 0%, transparent 100%);
+      }
+      .rail-frame::after {
+        right: 0;
+        background: linear-gradient(270deg, var(--bg) 0%, transparent 100%);
+      }
+      .rail-hint {
+        margin: 24px auto 8px;
+        max-width: 1480px;
+        padding: 0 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: var(--fg-faint);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .rail-hint .arrows {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--fg-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Lucide icons via CDN. The icons replace any <i data-lucide="…"> -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <main class="stage">
+      <header>
+        <div class="eyebrow">Personalized Nutrition · Screen Catalog</div>
+        <h1>Every screen, framed.</h1>
+        <p>
+          Code, Browse, Scan, the AI sheet, the code picker, the live camera, and
+          the setup-error fallbacks — every screen state, side-by-side in one rail.
+        </p>
+      </header>
+
+      <div class="rail-hint">
+        <span>15 frames</span>
+        <span class="arrows"><i data-lucide="arrow-right" class="icon" style="width:14px;height:14px;"></i> Drag, scroll, or use arrow keys</span>
+      </div>
+      <div class="rail-frame">
+        <div class="rail" tabindex="0" aria-label="Screen catalog carousel">
+
+
+<!-- ─── Phone 1A: Empty AI hero ─────────────────────────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Code · Empty</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl">YOUR CODE</div>
+            <h1>Personal Rubric</h1>
+          </div>
+          <div class="ai-tile" style="width:38px;height:38px;border-radius:999px;font-weight:800;font-size:15px;">T</div>
+        </div>
+        <div class="px stack">
+          <section class="ai-hero">
+            <span class="ai-tile"><i data-lucide="sparkles" style="width:26px;height:26px;"></i></span>
+            <div>
+              <h3>Compose your code with AI</h3>
+              <p>Tell us what matters about your food, and we'll set up your slots and weights.</p>
+            </div>
+            <button class="cta-emerald"><i data-lucide="sparkles" style="width:14px;height:14px;"></i>Talk it through</button>
+          </section>
+
+          <div class="ovl-row">
+            <div class="lbl">YOUR CODES · 0 / 5</div>
+            <button class="reset-btn"><i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i>Reset</button>
+          </div>
+
+          <div class="stack-sm">
+            <button class="slot-empty"><i data-lucide="plus" class="icon" style="color:var(--emerald);"></i>Add a code</button>
+            <button class="slot-empty"><i data-lucide="plus" class="icon" style="color:var(--emerald);"></i>Add a code</button>
+            <button class="slot-empty"><i data-lucide="plus" class="icon" style="color:var(--emerald);"></i>Add a code</button>
+            <button class="slot-empty"><i data-lucide="plus" class="icon" style="color:var(--emerald);"></i>Add a code</button>
+            <button class="slot-empty"><i data-lucide="plus" class="icon" style="color:var(--emerald);"></i>Add a code</button>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab active"><i data-lucide="sliders-horizontal" class="icon"></i><span>CODE</span></a>
+          <a class="tab"><i data-lucide="layout-grid" class="icon"></i><span>BROWSE</span></a>
+          <a class="tab"><i data-lucide="scan-line" class="icon"></i><span>SCAN</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">No codes yet. The AI co-pilot is the obvious entry point; manual "+ Add a code" stays available below.</div>
+</div>
+
+<!-- ─── Phone 1B: Filled, in harmony, fresh AI tags ──────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Code · In Harmony</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl">YOUR CODE</div>
+            <h1>Personal Rubric</h1>
+          </div>
+          <button class="cta-violet"><i data-lucide="sparkles" style="width:12px;height:12px;color:var(--violet);"></i>Talk to AI</button>
+        </div>
+        <div class="px stack">
+          <section class="hero">
+            <div class="ring-wrap" style="width:104px;height:104px;">
+              <div class="ring-halo"></div>
+              <div class="ring" style="width:104px;height:104px;--end:97%;--thickness:18%;"></div>
+              <div class="ring-tip" style="left:43px;top:6px;width:11px;height:11px;"></div>
+              <div class="ring-num" style="font-size:32px;letter-spacing:-1px;">100<div class="lbl" style="font-size:9px;letter-spacing:0.18em;">OF 100</div></div>
+            </div>
+            <div class="copy">
+              <h3>In Harmony</h3>
+              <p>4 of 5 slots filled — weight totals 100 of 100.</p>
+              <div>
+                <span class="ai-chip"><i data-lucide="sparkles" class="icon"></i>WHOLE</span>
+                <span class="ai-chip"><i data-lucide="sparkles" class="icon"></i>PLANT-FORWARD</span>
+                <span class="ai-chip"><i data-lucide="sparkles" class="icon"></i>LEAN</span>
+                <span class="ai-chip"><i data-lucide="sparkles" class="icon"></i>HEART</span>
+              </div>
+            </div>
+          </section>
+
+          <div class="ovl-row">
+            <div class="lbl">YOUR CODES · 4 / 5</div>
+            <button class="reset-btn"><i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i>Reset</button>
+          </div>
+
+          <div class="stack-sm">
+            <!-- Heart Healthy 35% -->
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#FF5E92,#FF9A2A);"><i data-lucide="heart-pulse" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;">
+                  <div class="slot-name truncate">Heart Healthy</div>
+                  <div class="slot-cat">Cardiovascular</div>
+                </div>
+                <span class="slot-num"><b>35</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:35%;background:linear-gradient(90deg,#FF5E92,#FF9A2A);"></div>
+                <div class="slot-thumb" style="left:35%;"></div>
+              </div>
+            </div>
+            <!-- Clean Label 28% -->
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#34E5A6,#22D3C5);"><i data-lucide="sparkles" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;">
+                  <div class="slot-name truncate">Clean Label</div>
+                  <div class="slot-cat">Ingredients</div>
+                </div>
+                <span class="slot-num"><b>28</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:28%;background:linear-gradient(90deg,#34E5A6,#22D3C5);"></div>
+                <div class="slot-thumb" style="left:28%;"></div>
+              </div>
+            </div>
+            <!-- No UPF 22% -->
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#7C7CFB,#C44CD4);"><i data-lucide="leaf" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;">
+                  <div class="slot-name truncate">No Ultra-Processed</div>
+                  <div class="slot-cat">Processing</div>
+                </div>
+                <span class="slot-num"><b>22</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:22%;background:linear-gradient(90deg,#7C7CFB,#C44CD4);"></div>
+                <div class="slot-thumb" style="left:22%;"></div>
+              </div>
+            </div>
+            <!-- High Protein 15% -->
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#F5C14E,#FF9A2A);"><i data-lucide="dumbbell" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;">
+                  <div class="slot-name truncate">High Protein</div>
+                  <div class="slot-cat">Macros</div>
+                </div>
+                <span class="slot-num"><b>15</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:15%;background:linear-gradient(90deg,#F5C14E,#FF9A2A);"></div>
+                <div class="slot-thumb" style="left:15%;"></div>
+              </div>
+            </div>
+            <!-- empty +Add -->
+            <button class="slot-empty"><i data-lucide="plus" class="icon" style="color:var(--emerald);"></i>Add a code</button>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab active"><i data-lucide="sliders-horizontal" class="icon"></i><span>CODE</span></a>
+          <a class="tab"><i data-lucide="layout-grid" class="icon"></i><span>BROWSE</span></a>
+          <a class="tab"><i data-lucide="scan-line" class="icon"></i><span>SCAN</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Hero shows the weight allocation ring + AI tag chips with the sparkle provenance glyph. Header carries the always-on "Talk to AI" pill.</div>
+</div>
+
+<!-- ─── Phone 1C: Stale tags (Ask AI for new tags) ──────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Code · Stale tags</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl">YOUR CODE</div>
+            <h1>Personal Rubric</h1>
+          </div>
+          <button class="cta-violet"><i data-lucide="sparkles" style="width:12px;height:12px;color:var(--violet);"></i>Talk to AI</button>
+        </div>
+        <div class="px stack">
+          <section class="hero">
+            <div class="ring-wrap" style="width:104px;height:104px;">
+              <div class="ring-halo"></div>
+              <div class="ring" style="width:104px;height:104px;--end:97%;--thickness:18%;"></div>
+              <div class="ring-num" style="font-size:32px;letter-spacing:-1px;">100<div class="lbl" style="font-size:9px;letter-spacing:0.18em;">OF 100</div></div>
+            </div>
+            <div class="copy">
+              <h3>In Harmony</h3>
+              <p>4 of 5 slots filled — weight totals 100 of 100.</p>
+              <button class="pill dashed"><i data-lucide="sparkles" style="width:10px;height:10px;color:var(--violet);"></i>Ask AI for new tags</button>
+            </div>
+          </section>
+
+          <div class="ovl-row">
+            <div class="lbl">YOUR CODES · 4 / 5</div>
+            <button class="reset-btn"><i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i>Reset</button>
+          </div>
+
+          <div class="stack-sm">
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#FF5E92,#FF9A2A);"><i data-lucide="heart-pulse" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;"><div class="slot-name truncate">Heart Healthy</div><div class="slot-cat">Cardiovascular</div></div>
+                <span class="slot-num"><b>40</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:40%;background:linear-gradient(90deg,#FF5E92,#FF9A2A);"></div>
+                <div class="slot-thumb" style="left:40%;"></div>
+              </div>
+            </div>
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#34E5A6,#22D3C5);"><i data-lucide="sparkles" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;"><div class="slot-name truncate">Clean Label</div><div class="slot-cat">Ingredients</div></div>
+                <span class="slot-num"><b>23</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:23%;background:linear-gradient(90deg,#34E5A6,#22D3C5);"></div>
+                <div class="slot-thumb" style="left:23%;"></div>
+              </div>
+            </div>
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#7C7CFB,#C44CD4);"><i data-lucide="leaf" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;"><div class="slot-name truncate">No Ultra-Processed</div><div class="slot-cat">Processing</div></div>
+                <span class="slot-num"><b>22</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:22%;background:linear-gradient(90deg,#7C7CFB,#C44CD4);"></div>
+                <div class="slot-thumb" style="left:22%;"></div>
+              </div>
+            </div>
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#F5C14E,#FF9A2A);"><i data-lucide="dumbbell" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;"><div class="slot-name truncate">High Protein</div><div class="slot-cat">Macros</div></div>
+                <span class="slot-num"><b>15</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:15%;background:linear-gradient(90deg,#F5C14E,#FF9A2A);"></div>
+                <div class="slot-thumb" style="left:15%;"></div>
+              </div>
+            </div>
+            <button class="slot-empty"><i data-lucide="plus" class="icon" style="color:var(--emerald);"></i>Add a code</button>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab active"><i data-lucide="sliders-horizontal" class="icon"></i><span>CODE</span></a>
+          <a class="tab"><i data-lucide="layout-grid" class="icon"></i><span>BROWSE</span></a>
+          <a class="tab"><i data-lucide="scan-line" class="icon"></i><span>SCAN</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">User dragged a slider — tags are stale. Chip row collapses to a dashed ghost button. One tap re-runs /api/code/tags against the new signature.</div>
+</div>
+
+<!-- ─── Phone 1D: 5/5 filled (compact, no dashed +Add) ──────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Code · 5 / 5</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl">YOUR CODE</div>
+            <h1>Personal Rubric</h1>
+          </div>
+          <button class="cta-violet"><i data-lucide="sparkles" style="width:12px;height:12px;color:var(--violet);"></i>Talk to AI</button>
+        </div>
+        <div class="px stack">
+          <section class="hero">
+            <div class="ring-wrap" style="width:104px;height:104px;">
+              <div class="ring-halo"></div>
+              <div class="ring" style="width:104px;height:104px;--end:97%;--thickness:18%;"></div>
+              <div class="ring-num" style="font-size:32px;letter-spacing:-1px;">100<div class="lbl" style="font-size:9px;letter-spacing:0.18em;">OF 100</div></div>
+            </div>
+            <div class="copy">
+              <h3>In Harmony</h3>
+              <p>5 of 5 slots filled — weight totals 100 of 100.</p>
+              <div>
+                <span class="ai-chip"><i data-lucide="sparkles" class="icon"></i>BALANCED</span>
+                <span class="ai-chip"><i data-lucide="sparkles" class="icon"></i>WHOLE</span>
+                <span class="ai-chip"><i data-lucide="sparkles" class="icon"></i>VITAL</span>
+              </div>
+            </div>
+          </section>
+          <div class="ovl-row">
+            <div class="lbl">YOUR CODES · 5 / 5</div>
+            <button class="reset-btn"><i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i>Reset</button>
+          </div>
+          <div class="stack-sm">
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#FF5E92,#FF9A2A);"><i data-lucide="heart-pulse" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;"><div class="slot-name truncate">Heart Healthy</div><div class="slot-cat">Cardiovascular</div></div>
+                <span class="slot-num"><b>30</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:30%;background:linear-gradient(90deg,#FF5E92,#FF9A2A);"></div>
+                <div class="slot-thumb" style="left:30%;"></div>
+              </div>
+            </div>
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#34E5A6,#22D3C5);"><i data-lucide="sparkles" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;"><div class="slot-name truncate">Clean Label</div><div class="slot-cat">Ingredients</div></div>
+                <span class="slot-num"><b>22</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:22%;background:linear-gradient(90deg,#34E5A6,#22D3C5);"></div>
+                <div class="slot-thumb" style="left:22%;"></div>
+              </div>
+            </div>
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#7C7CFB,#C44CD4);"><i data-lucide="leaf" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;"><div class="slot-name truncate">No Ultra-Processed</div><div class="slot-cat">Processing</div></div>
+                <span class="slot-num"><b>20</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:20%;background:linear-gradient(90deg,#7C7CFB,#C44CD4);"></div>
+                <div class="slot-thumb" style="left:20%;"></div>
+              </div>
+            </div>
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#F5C14E,#FF9A2A);"><i data-lucide="dumbbell" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;"><div class="slot-name truncate">High Protein</div><div class="slot-cat">Macros</div></div>
+                <span class="slot-num"><b>16</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:16%;background:linear-gradient(90deg,#F5C14E,#FF9A2A);"></div>
+                <div class="slot-thumb" style="left:16%;"></div>
+              </div>
+            </div>
+            <div class="slot">
+              <div class="slot-row">
+                <span class="slot-icon" style="background:linear-gradient(135deg,#5DCFFF,#3B82F6);"><i data-lucide="droplet" class="icon" style="width:18px;height:18px;"></i></span>
+                <div style="flex:1;min-width:0;"><div class="slot-name truncate">Low Sugar</div><div class="slot-cat">Macros</div></div>
+                <span class="slot-num"><b>12</b><span>%</span></span>
+                <button class="slot-x"><i data-lucide="x" class="icon" style="width:14px;height:14px;"></i></button>
+              </div>
+              <div class="slot-track">
+                <div class="slot-fill" style="width:12%;background:linear-gradient(90deg,#5DCFFF,#3B82F6);"></div>
+                <div class="slot-thumb" style="left:12%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab active"><i data-lucide="sliders-horizontal" class="icon"></i><span>CODE</span></a>
+          <a class="tab"><i data-lucide="layout-grid" class="icon"></i><span>BROWSE</span></a>
+          <a class="tab"><i data-lucide="scan-line" class="icon"></i><span>SCAN</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">All slots taken. The dashed "+ Add a code" tile drops away — empty SlotCard returns null when filledCount === MAX_SLOTS.</div>
+</div>
+
+
+
+<!-- ─── 2A: Code Picker Modal ───────────────────────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Code · Picker</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll" style="filter:blur(0.5px);opacity:0.55;">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl">YOUR CODE</div>
+            <h1>Personal Rubric</h1>
+          </div>
+        </div>
+        <div class="px"><div class="hero" style="opacity:0.7;"><div style="width:104px;height:104px;background:var(--track);border-radius:50%;"></div><div class="copy"><h3>Composing…</h3><p>Pick a code to fill this slot.</p></div></div></div>
+      </div>
+
+      <div class="modal-overlay">
+        <div class="modal-card">
+          <div class="between" style="margin-bottom:14px;">
+            <div>
+              <div class="ovl" style="font-size:10px;letter-spacing:0.16em;color:var(--emerald);font-weight:800;">ADD TO YOUR CODE</div>
+              <h1 style="margin:2px 0 0;font-size:18px;font-weight:800;letter-spacing:-0.01em;color:var(--fg-bright);">Pick a code</h1>
+            </div>
+            <button class="icon-btn" style="width:36px;height:36px;"><i data-lucide="x" class="icon"></i></button>
+          </div>
+
+          <div style="overflow:hidden;flex:1;">
+            <p class="picker-cat">Cardiovascular</p>
+            <div class="picker-row">
+              <span class="slot-icon" style="background:linear-gradient(135deg,#FF5E92,#FF9A2A);width:36px;height:36px;border-radius:12px;"><i data-lucide="heart-pulse" class="icon"></i></span>
+              <div style="flex:1;min-width:0;">
+                <div class="name">Heart Healthy</div>
+                <div class="sub">Cardiovascular</div>
+              </div>
+              <i data-lucide="arrow-right" class="icon" style="color:var(--fg-faint);width:14px;height:14px;"></i>
+            </div>
+            <div class="picker-row taken">
+              <span class="slot-icon" style="background:linear-gradient(135deg,#FF5E92,#FF9A2A);width:36px;height:36px;border-radius:12px;"><i data-lucide="droplet" class="icon"></i></span>
+              <div style="flex:1;min-width:0;">
+                <div class="name">Low Cholesterol</div>
+                <div class="sub">Already in your code</div>
+              </div>
+            </div>
+
+            <p class="picker-cat" style="margin-top:18px;">Ingredients</p>
+            <div class="picker-row">
+              <span class="slot-icon" style="background:linear-gradient(135deg,#34E5A6,#22D3C5);width:36px;height:36px;border-radius:12px;"><i data-lucide="sparkles" class="icon"></i></span>
+              <div style="flex:1;min-width:0;">
+                <div class="name">Clean Label</div>
+                <div class="sub">Ingredients</div>
+              </div>
+              <i data-lucide="arrow-right" class="icon" style="color:var(--fg-faint);width:14px;height:14px;"></i>
+            </div>
+            <div class="picker-row">
+              <span class="slot-icon" style="background:linear-gradient(135deg,#34E5A6,#22D3C5);width:36px;height:36px;border-radius:12px;"><i data-lucide="seedling" class="icon"></i></span>
+              <div style="flex:1;min-width:0;">
+                <div class="name">Organic</div>
+                <div class="sub">Ingredients</div>
+              </div>
+              <i data-lucide="arrow-right" class="icon" style="color:var(--fg-faint);width:14px;height:14px;"></i>
+            </div>
+
+            <p class="picker-cat" style="margin-top:18px;">Processing</p>
+            <div class="picker-row">
+              <span class="slot-icon" style="background:linear-gradient(135deg,#7C7CFB,#C44CD4);width:36px;height:36px;border-radius:12px;"><i data-lucide="leaf" class="icon"></i></span>
+              <div style="flex:1;min-width:0;">
+                <div class="name">No Ultra-Processed</div>
+                <div class="sub">Processing</div>
+              </div>
+              <i data-lucide="arrow-right" class="icon" style="color:var(--fg-faint);width:14px;height:14px;"></i>
+            </div>
+
+            <p class="picker-cat" style="margin-top:18px;">Macros</p>
+            <div class="picker-row">
+              <span class="slot-icon" style="background:linear-gradient(135deg,#F5C14E,#FF9A2A);width:36px;height:36px;border-radius:12px;"><i data-lucide="dumbbell" class="icon"></i></span>
+              <div style="flex:1;min-width:0;">
+                <div class="name">High Protein</div>
+                <div class="sub">Macros</div>
+              </div>
+              <i data-lucide="arrow-right" class="icon" style="color:var(--fg-faint);width:14px;height:14px;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="phone-caption">Backdrop dims the screen; codes already in OTHER slots are disabled with the "Already in your code" caption.</div>
+</div>
+
+<!-- ─── 2B: Talk-to-AI Sheet ────────────────────────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Code · Talk to AI</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll" style="filter:blur(0.5px);opacity:0.55;">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl">YOUR CODE</div>
+            <h1>Personal Rubric</h1>
+          </div>
+        </div>
+        <div class="px"><div class="ai-hero" style="opacity:0.85;"><span class="ai-tile"><i data-lucide="sparkles" style="width:26px;height:26px;"></i></span><div><h3>Compose your code with AI</h3><p>Tell us what matters about your food.</p></div></div></div>
+      </div>
+
+      <div class="modal-overlay" style="background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);"></div>
+      <div class="sheet">
+        <div class="grabber"></div>
+        <div class="between" style="gap:12px;align-items:flex-start;padding-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="slot-icon" style="width:36px;height:36px;background:linear-gradient(135deg,var(--violet),var(--emerald));border-radius:12px;"><i data-lucide="sparkles" class="icon" style="width:18px;height:18px;"></i></span>
+            <div>
+              <div class="ovl" style="color:var(--violet);font-size:10px;letter-spacing:0.16em;font-weight:800;">COMPOSE WITH AI</div>
+              <div style="margin-top:2px;color:var(--fg-bright);font-size:18px;font-weight:800;letter-spacing:-0.01em;">What matters to you?</div>
+            </div>
+          </div>
+          <button class="icon-btn" style="width:36px;height:36px;"><i data-lucide="x" class="icon"></i></button>
+        </div>
+
+        <div class="ta-card">
+          I'm a runner who needs protein but also wants to keep an eye on sugar and avoid ultra-processed snacks.
+        </div>
+
+        <div style="margin-top:12px;">
+          <div style="color:var(--fg-faint);font-size:10px;font-weight:800;letter-spacing:0.14em;margin-bottom:6px;">NEED A STARTING POINT?</div>
+          <button class="example-btn">"I want to eat clean and avoid processed food."</button>
+          <button class="example-btn">"I'm a runner who needs protein but also watches sugar."</button>
+          <button class="example-btn">"Heart health is my top priority, then plant-forward eating."</button>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:14px;">
+          <button class="pill solid" style="flex:1;padding:12px 16px;justify-content:center;font-size:13px;color:var(--fg-bright);font-weight:700;">Cancel</button>
+          <button class="cta-emerald" style="flex:2;padding:12px 16px;font-size:14px;"><i data-lucide="sparkles" style="width:14px;height:14px;"></i>Compose</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="phone-caption">Bottom sheet (~75% height) with autofocused textarea, three example prompts, and the gradient Compose CTA. Posts to /api/code/compose.</div>
+</div>
+
+
+
+<!-- ─── 3A: Browse — empty (no code yet) ────────────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label violet">Browse · Empty</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l" style="background:radial-gradient(closest-side, rgba(124,124,251,0.25), transparent 70%);"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl violet">BROWSE</div>
+            <h1>Top Matches</h1>
+          </div>
+          <div class="icon-btn-row">
+            <button class="icon-btn"><i data-lucide="search" class="icon" style="width:18px;height:18px;"></i></button>
+            <button class="icon-btn"><i data-lucide="sliders-horizontal" class="icon" style="width:18px;height:18px;"></i></button>
+          </div>
+        </div>
+
+        <div class="px stack">
+          <div style="text-align:center;padding:48px 24px 0;">
+            <div style="width:56px;height:56px;border-radius:24px;background:var(--card);border:1px solid var(--line);color:var(--fg-muted);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+              <i data-lucide="puzzle" style="width:28px;height:28px;"></i>
+            </div>
+            <div style="color:var(--fg);font-size:14px;font-weight:700;">No code yet</div>
+            <div style="color:var(--fg-muted);font-size:12px;margin-top:6px;">Add at least one code on the Code tab to see ranked foods here.</div>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab"><i data-lucide="sliders-horizontal" class="icon"></i><span>CODE</span></a>
+          <a class="tab active violet"><i data-lucide="layout-grid" class="icon"></i><span>BROWSE</span></a>
+          <a class="tab"><i data-lucide="scan-line" class="icon"></i><span>SCAN</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Browse can't rank without a rubric. Header search/filter buttons stay so the surface looks lived-in.</div>
+</div>
+
+<!-- ─── 3B: Browse — populated ──────────────────────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label violet">Browse · Top Matches</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l" style="background:radial-gradient(closest-side, rgba(124,124,251,0.25), transparent 70%);"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl violet">BROWSE</div>
+            <h1>Top Matches</h1>
+          </div>
+          <div class="icon-btn-row">
+            <button class="icon-btn"><i data-lucide="search" class="icon" style="width:18px;height:18px;"></i></button>
+            <button class="icon-btn"><i data-lucide="sliders-horizontal" class="icon" style="width:18px;height:18px;"></i></button>
+          </div>
+        </div>
+        <div class="px stack">
+          <!-- Active codes chips -->
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            <span class="pill"><span class="dot" style="background:#FF5E92;box-shadow:0 0 6px #FF5E92AA;"></span>Heart 35</span>
+            <span class="pill"><span class="dot" style="background:#34E5A6;box-shadow:0 0 6px #34E5A6AA;"></span>Clean 28</span>
+            <span class="pill"><span class="dot" style="background:#7C7CFB;box-shadow:0 0 6px #7C7CFBAA;"></span>UPF 22</span>
+            <span class="pill"><span class="dot" style="background:#F5C14E;box-shadow:0 0 6px #F5C14EAA;"></span>Protein 15</span>
+          </div>
+
+          <!-- Featured -->
+          <button class="featured">
+            <div class="featured-row">
+              <div class="thumb-l" style="background:linear-gradient(135deg,#FF5E92,#FF9A2A);">
+                <i data-lucide="heart-pulse" style="width:34px;height:34px;"></i>
+              </div>
+              <div style="flex:1;min-width:0;text-align:left;">
+                <span class="top-match-pill"><i data-lucide="crown" style="width:10px;height:10px;"></i>TOP MATCH</span>
+                <div class="food-name">Wild Atlantic Salmon Fillet</div>
+                <div class="food-brand">Vital Choice</div>
+              </div>
+              <!-- Mini ring -->
+              <div class="ring-wrap" style="width:64px;height:64px;flex-shrink:0;">
+                <div class="ring" style="width:64px;height:64px;--end:91.18%;--thickness:18%;"></div>
+                <div class="ring-num" style="font-size:22px;letter-spacing:-0.02em;"><span>94</span></div>
+              </div>
+            </div>
+            <div class="featured-meter">
+              <div class="meter-col" style="flex:35;">
+                <div class="meter-bar" style="background:linear-gradient(90deg,#FF5E92,#FF9A2A);"></div>
+                <div class="meter-num">96</div>
+              </div>
+              <div class="meter-col" style="flex:28;">
+                <div class="meter-bar" style="background:linear-gradient(90deg,#34E5A6,#22D3C5);"></div>
+                <div class="meter-num">91</div>
+              </div>
+              <div class="meter-col" style="flex:22;">
+                <div class="meter-bar" style="background:linear-gradient(90deg,#7C7CFB,#C44CD4);"></div>
+                <div class="meter-num">98</div>
+              </div>
+              <div class="meter-col" style="flex:15;">
+                <div class="meter-bar" style="background:linear-gradient(90deg,#F5C14E,#FF9A2A);"></div>
+                <div class="meter-num">87</div>
+              </div>
+            </div>
+          </button>
+
+          <div>
+            <div class="ovl-row" style="padding-bottom:8px;">
+              <div class="lbl">ALL RESULTS · 12,847</div>
+              <div class="lbl right">Best Match <i data-lucide="chevron-down" style="width:11px;height:11px;"></i></div>
+            </div>
+
+            <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px;">
+              <li class="row-card">
+                <div class="thumb-m" style="background:linear-gradient(135deg,#34E5A6,#22D3C5);"><i data-lucide="sparkles" style="width:24px;height:24px;"></i></div>
+                <div class="row-meta">
+                  <div class="name truncate">Organic Steel-Cut Oats</div>
+                  <div class="brand truncate">Bob's Red Mill</div>
+                  <div class="codes">
+                    <span class="dot" style="background:#FF5E92;"></span>
+                    <span class="dot" style="background:#34E5A6;"></span>
+                    <span class="dot" style="background:#7C7CFB;"></span>
+                    <span class="dot" style="background:#F5C14E;"></span>
+                    <span class="lbl">4 codes match</span>
+                  </div>
+                </div>
+                <div class="row-score">
+                  <div class="num" style="color:var(--score-excellent);">92</div>
+                  <div class="check"><i data-lucide="check-check" style="width:9px;height:9px;color:var(--score-excellent);"></i>4/4</div>
+                </div>
+              </li>
+              <li class="row-card">
+                <div class="thumb-m" style="background:linear-gradient(135deg,#7C7CFB,#C44CD4);"><i data-lucide="leaf" style="width:24px;height:24px;"></i></div>
+                <div class="row-meta">
+                  <div class="name truncate">Lentil + Quinoa Bowl</div>
+                  <div class="brand truncate">Sweetgreen</div>
+                  <div class="codes">
+                    <span class="dot" style="background:#FF5E92;"></span>
+                    <span class="dot" style="background:#34E5A6;"></span>
+                    <span class="dot" style="background:#7C7CFB;"></span>
+                    <span class="dot" style="background:#F5C14E;"></span>
+                    <span class="lbl">4 codes match</span>
+                  </div>
+                </div>
+                <div class="row-score">
+                  <div class="num" style="color:var(--score-good);">86</div>
+                  <div class="check"><i data-lucide="check-check" style="width:9px;height:9px;color:var(--score-good);"></i>4/4</div>
+                </div>
+              </li>
+              <li class="row-card">
+                <div class="thumb-m" style="background:linear-gradient(135deg,#F5C14E,#FF9A2A);"><i data-lucide="dumbbell" style="width:24px;height:24px;"></i></div>
+                <div class="row-meta">
+                  <div class="name truncate">Greek Yogurt 0% Plain</div>
+                  <div class="brand truncate">Fage</div>
+                  <div class="codes">
+                    <span class="dot" style="background:#FF5E92;"></span>
+                    <span class="dot" style="background:#34E5A6;"></span>
+                    <span class="dot" style="background:#7C7CFB;"></span>
+                    <span class="dot" style="background:#F5C14E;"></span>
+                    <span class="lbl">4 codes match</span>
+                  </div>
+                </div>
+                <div class="row-score">
+                  <div class="num" style="color:var(--score-good);">81</div>
+                  <div class="check"><i data-lucide="check-check" style="width:9px;height:9px;color:var(--score-good);"></i>4/4</div>
+                </div>
+              </li>
+              <li class="row-card">
+                <div class="thumb-m" style="background:linear-gradient(135deg,#FF5E92,#FF9A2A);"><i data-lucide="heart-pulse" style="width:24px;height:24px;"></i></div>
+                <div class="row-meta">
+                  <div class="name truncate">Avocado, Hass</div>
+                  <div class="brand truncate">Whole Foods</div>
+                  <div class="codes">
+                    <span class="dot" style="background:#FF5E92;"></span>
+                    <span class="dot" style="background:#34E5A6;"></span>
+                    <span class="dot" style="background:#7C7CFB;"></span>
+                    <span class="lbl">3 codes match</span>
+                  </div>
+                </div>
+                <div class="row-score">
+                  <div class="num" style="color:var(--score-fair);">74</div>
+                  <div class="check"><i data-lucide="check-check" style="width:9px;height:9px;color:var(--score-fair);"></i>3/4</div>
+                </div>
+              </li>
+              <li class="row-card">
+                <div class="thumb-m" style="background:linear-gradient(135deg,#34E5A6,#22D3C5);"><i data-lucide="sparkles" style="width:24px;height:24px;"></i></div>
+                <div class="row-meta">
+                  <div class="name truncate">Almond Butter, Crunchy</div>
+                  <div class="brand truncate">Justin's</div>
+                  <div class="codes">
+                    <span class="dot" style="background:#FF5E92;"></span>
+                    <span class="dot" style="background:#34E5A6;"></span>
+                    <span class="dot" style="background:#7C7CFB;"></span>
+                    <span class="dot" style="background:#F5C14E;"></span>
+                    <span class="lbl">4 codes match</span>
+                  </div>
+                </div>
+                <div class="row-score">
+                  <div class="num" style="color:var(--score-fair);">68</div>
+                  <div class="check"><i data-lucide="check-check" style="width:9px;height:9px;color:var(--score-fair);"></i>4/4</div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab"><i data-lucide="sliders-horizontal" class="icon"></i><span>CODE</span></a>
+          <a class="tab active violet"><i data-lucide="layout-grid" class="icon"></i><span>BROWSE</span></a>
+          <a class="tab"><i data-lucide="scan-line" class="icon"></i><span>SCAN</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Active-codes chip row, gradient Top Match card with per-slot contribution bars, then 12k+ ranked rows with tier-colored composites.</div>
+</div>
+
+
+
+<!-- ─── 4A: Scan — Empty hero ───────────────────────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Scan · Empty</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl">SCAN</div>
+            <h1>Find a food</h1>
+            <div class="sub">Live weighted to your code.</div>
+          </div>
+        </div>
+        <div class="px stack">
+          <button class="cta-emerald" style="width:100%;padding:16px;font-size:15px;border-radius:24px;">
+            <i data-lucide="camera" style="width:20px;height:20px;"></i>Scan a barcode
+          </button>
+
+          <div style="display:flex;align-items:center;gap:12px;color:var(--fg-faint);font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;">
+            <div style="flex:1;height:1px;background:var(--line);"></div>
+            <span>or enter UPC</span>
+            <div style="flex:1;height:1px;background:var(--line);"></div>
+          </div>
+
+          <form style="display:flex;gap:8px;align-items:center;" onsubmit="event.preventDefault();">
+            <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;">
+              <i data-lucide="barcode" style="width:16px;height:16px;color:var(--fg-muted);"></i>
+              <input type="text" inputmode="numeric" placeholder="0028400064057" style="flex:1;background:transparent;border:none;color:var(--fg-bright);font-family:JetBrains Mono,monospace;font-size:14px;letter-spacing:0.04em;outline:none;" />
+            </label>
+            <button class="pill solid" style="padding:10px 16px;font-size:13px;font-weight:700;color:var(--fg-bright);">Look up</button>
+          </form>
+
+          <div style="text-align:center;padding:32px 24px 0;">
+            <div style="width:64px;height:64px;border-radius:24px;background:var(--card);border:1px solid var(--line);color:var(--fg-muted);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+              <i data-lucide="scan-line" style="width:32px;height:32px;stroke-width:1.6;"></i>
+            </div>
+            <div style="color:var(--fg-bright);font-size:14px;font-weight:700;">Point and shoot</div>
+            <div style="color:var(--fg-muted);font-size:12px;margin:4px auto 0;max-width:260px;line-height:1.45;">Scan a barcode, enter a UPC, or pick a food from the Browse tab to see how it scores against your code.</div>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab"><i data-lucide="sliders-horizontal" class="icon"></i><span>CODE</span></a>
+          <a class="tab"><i data-lucide="layout-grid" class="icon"></i><span>BROWSE</span></a>
+          <a class="tab active"><i data-lucide="scan-line" class="icon"></i><span>SCAN</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Two entry points: gradient camera CTA, or the mono UPC field. Empty hero teaches both.</div>
+</div>
+
+<!-- ─── 4B: Scan — UPC not found ────────────────────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Scan · Not found</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl">SCAN</div>
+            <h1>Find a food</h1>
+            <div class="sub">Live weighted to your code.</div>
+          </div>
+        </div>
+        <div class="px stack">
+          <button class="cta-emerald" style="width:100%;padding:16px;font-size:15px;border-radius:24px;">
+            <i data-lucide="camera" style="width:20px;height:20px;"></i>Scan a barcode
+          </button>
+          <div style="display:flex;align-items:center;gap:12px;color:var(--fg-faint);font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;">
+            <div style="flex:1;height:1px;background:var(--line);"></div><span>or enter UPC</span><div style="flex:1;height:1px;background:var(--line);"></div>
+          </div>
+          <form style="display:flex;gap:8px;align-items:center;" onsubmit="event.preventDefault();">
+            <label style="flex:1;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;">
+              <i data-lucide="barcode" style="width:16px;height:16px;color:var(--fg-muted);"></i>
+              <input type="text" inputmode="numeric" value="9999999999999" style="flex:1;background:transparent;border:none;color:var(--fg-bright);font-family:JetBrains Mono,monospace;font-size:14px;letter-spacing:0.04em;outline:none;" />
+            </label>
+            <button class="pill solid" style="padding:10px 16px;font-size:13px;font-weight:700;color:var(--fg-bright);">Look up</button>
+          </form>
+          <div class="card pad-m" style="text-align:center;color:var(--fg-muted);font-size:12px;line-height:1.5;">
+            Barcode <strong class="mono" style="color:var(--fg-bright);letter-spacing:0.04em;">9999999999999</strong> isn't in our food database.
+          </div>
+          <div style="text-align:center;padding:8px 24px 0;">
+            <div style="width:64px;height:64px;border-radius:24px;background:var(--card);border:1px solid var(--line);color:var(--fg-muted);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+              <i data-lucide="scan-line" style="width:32px;height:32px;stroke-width:1.6;"></i>
+            </div>
+            <div style="color:var(--fg-bright);font-size:14px;font-weight:700;">Point and shoot</div>
+            <div style="color:var(--fg-muted);font-size:12px;margin:4px auto 0;max-width:260px;line-height:1.45;">Try another barcode, enter a different UPC, or browse for the food directly.</div>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab"><i data-lucide="sliders-horizontal" class="icon"></i><span>CODE</span></a>
+          <a class="tab"><i data-lucide="layout-grid" class="icon"></i><span>BROWSE</span></a>
+          <a class="tab active"><i data-lucide="scan-line" class="icon"></i><span>SCAN</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">A miss is friendly: the entered UPC echoes back so the user can double-check the digits.</div>
+</div>
+
+<!-- ─── 4C: Scan — Product Detail (full breakdown) ──────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Scan · Detail</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div>
+            <div class="ovl">SCAN RESULT</div>
+            <h1>Product Detail</h1>
+          </div>
+          <div class="icon-btn-row">
+            <button class="icon-btn" style="width:36px;height:36px;"><i data-lucide="share-2" class="icon"></i></button>
+            <button class="icon-btn" style="width:36px;height:36px;"><i data-lucide="bookmark" class="icon"></i></button>
+          </div>
+        </div>
+
+        <div class="px stack">
+          <section class="card elev green-shadow pad-l" style="border-radius:24px;">
+            <div style="display:flex;align-items:center;gap:14px;">
+              <div class="thumb-s" style="background:linear-gradient(135deg,#34E5A6,#22D3C5);">
+                <i data-lucide="package" style="width:30px;height:30px;"></i>
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div style="color:var(--fg-bright);font-size:16px;font-weight:800;letter-spacing:-0.01em;line-height:1.15;">Wild Atlantic Salmon Fillet</div>
+                <div style="color:var(--fg-muted);font-size:11px;font-weight:500;margin-top:2px;">Vital Choice</div>
+                <span class="pill" style="margin-top:6px;font-family:JetBrains Mono,monospace;letter-spacing:0.06em;font-size:9px;">
+                  <i data-lucide="barcode" style="width:10px;height:10px;"></i>
+                  0028400064057
+                </span>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;align-items:center;margin-top:16px;">
+              <div class="ring-wrap" style="width:200px;height:200px;">
+                <div class="ring-halo"></div>
+                <div class="ring" style="width:200px;height:200px;--end:91.18%;--thickness:14%;"></div>
+                <div class="ring-tip" style="left:51px;top:21px;"></div>
+                <div class="ring-num" style="font-size:78px;letter-spacing:-3px;">94<div class="lbl" style="color:var(--emerald);font-size:10px;letter-spacing:0.18em;">COMPOSITE</div></div>
+              </div>
+              <div class="verdict" style="color:var(--score-excellent);">
+                <i data-lucide="check-circle" style="width:14px;height:14px;"></i>Excellent match for your code
+              </div>
+            </div>
+          </section>
+
+          <div class="ovl-row" style="padding-top:4px;">
+            <div class="lbl">THE MATH</div>
+            <div class="lbl right" style="color:var(--fg-faint);letter-spacing:0.03em;">score × weight = contribution</div>
+          </div>
+
+          <div>
+            <!-- Heart Healthy 92 × 35% = 32.2 -->
+            <div class="math-row">
+              <div class="top">
+                <span class="math-icon" style="background:linear-gradient(135deg,#FF5E92,#FF9A2A);"><i data-lucide="heart-pulse" style="width:14px;height:14px;"></i></span>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
+                    <span style="color:var(--fg-bright);font-size:12px;font-weight:700;">Heart Healthy</span>
+                    <span class="tier-badge" style="background:linear-gradient(90deg,#FF5E9233,#FF9A2A33);color:#FF5E92;border:1px solid #FF5E9255;">EXCELLENT</span>
+                  </div>
+                  <div class="math-line">92 × 35% = 32.2</div>
+                </div>
+                <div class="math-num" style="color:var(--score-excellent);">92</div>
+              </div>
+              <div class="math-bar"><i style="width:92%;background:linear-gradient(90deg,#FF5E92,#FF9A2A);box-shadow:0 0 8px #FF5E9266;"></i></div>
+            </div>
+            <!-- Clean Label 91 × 28% = 25.5 -->
+            <div class="math-row">
+              <div class="top">
+                <span class="math-icon" style="background:linear-gradient(135deg,#34E5A6,#22D3C5);"><i data-lucide="sparkles" style="width:14px;height:14px;"></i></span>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
+                    <span style="color:var(--fg-bright);font-size:12px;font-weight:700;">Clean Label</span>
+                    <span class="tier-badge" style="background:linear-gradient(90deg,#34E5A633,#22D3C533);color:#34E5A6;border:1px solid #34E5A655;">EXCELLENT</span>
+                  </div>
+                  <div class="math-line">91 × 28% = 25.5</div>
+                </div>
+                <div class="math-num" style="color:var(--score-excellent);">91</div>
+              </div>
+              <div class="math-bar"><i style="width:91%;background:linear-gradient(90deg,#34E5A6,#22D3C5);box-shadow:0 0 8px #34E5A666;"></i></div>
+            </div>
+            <!-- No UPF 98 × 22% = 21.6 -->
+            <div class="math-row">
+              <div class="top">
+                <span class="math-icon" style="background:linear-gradient(135deg,#7C7CFB,#C44CD4);"><i data-lucide="leaf" style="width:14px;height:14px;"></i></span>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
+                    <span style="color:var(--fg-bright);font-size:12px;font-weight:700;">No Ultra-Processed</span>
+                    <span class="tier-badge" style="background:linear-gradient(90deg,#7C7CFB33,#C44CD433);color:#7C7CFB;border:1px solid #7C7CFB55;">EXCELLENT</span>
+                  </div>
+                  <div class="math-line">98 × 22% = 21.6</div>
+                </div>
+                <div class="math-num" style="color:var(--score-excellent);">98</div>
+              </div>
+              <div class="math-bar"><i style="width:98%;background:linear-gradient(90deg,#7C7CFB,#C44CD4);box-shadow:0 0 8px #7C7CFB66;"></i></div>
+            </div>
+            <!-- High Protein 87 × 15% = 13.1 -->
+            <div class="math-row">
+              <div class="top">
+                <span class="math-icon" style="background:linear-gradient(135deg,#F5C14E,#FF9A2A);"><i data-lucide="dumbbell" style="width:14px;height:14px;"></i></span>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:6px;">
+                    <span style="color:var(--fg-bright);font-size:12px;font-weight:700;">High Protein</span>
+                    <span class="tier-badge" style="background:linear-gradient(90deg,#F5C14E33,#FF9A2A33);color:#F5C14E;border:1px solid #F5C14E55;">GOOD</span>
+                  </div>
+                  <div class="math-line">87 × 15% = 13.1</div>
+                </div>
+                <div class="math-num" style="color:var(--score-good);">87</div>
+              </div>
+              <div class="math-bar"><i style="width:87%;background:linear-gradient(90deg,#F5C14E,#FF9A2A);box-shadow:0 0 8px #F5C14E66;"></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab"><i data-lucide="sliders-horizontal" class="icon"></i><span>CODE</span></a>
+          <a class="tab"><i data-lucide="layout-grid" class="icon"></i><span>BROWSE</span></a>
+          <a class="tab active"><i data-lucide="scan-line" class="icon"></i><span>SCAN</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Product hero card with composite ring + tier-colored verdict; "THE MATH" rows expose score × weight = contribution per code.</div>
+</div>
+
+<!-- ─── 4D: Camera — live ───────────────────────────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Camera · Live</div>
+  <div class="phone" style="background:#000;">
+    <div class="island"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="camera-bg"></div>
+    <div class="barcode-mock"></div>
+    <div class="vf-corner vf-tl"></div>
+    <div class="vf-corner vf-tr"></div>
+    <div class="vf-corner vf-bl"></div>
+    <div class="vf-corner vf-br"></div>
+    <div class="vf-hint">Point at any barcode</div>
+    <div class="camera-cancel">
+      <button class="pill solid" style="padding:10px 24px;font-size:14px;font-weight:700;color:var(--fg-bright);">Cancel</button>
+    </div>
+  </div>
+  <div class="phone-caption">Full-screen WebRTC video, viewfinder corners, hint band, anchored Cancel pill at the bottom safe-area.</div>
+</div>
+
+<!-- ─── 4E: Camera — opening + permission error ────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label">Camera · Error</div>
+  <div class="phone" style="background:#000;">
+    <div class="island"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="camera-bg"></div>
+    <div class="scan-status" style="top:30%;"><span class="spinner"></span>Opening camera…</div>
+    <div style="position:absolute;left:50%;top:60%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.85);border:1px solid var(--line);border-radius:24px;padding:16px;text-align:center;max-width:280px;backdrop-filter:blur(8px);">
+      <div style="width:48px;height:48px;border-radius:24px;background:var(--card);border:1px solid var(--line);color:var(--fg-muted);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;">
+        <i data-lucide="camera-off" style="width:22px;height:22px;"></i>
+      </div>
+      <div style="color:var(--fg-bright);font-size:13px;line-height:1.4;">Camera permission was denied. Enable camera access in your browser settings and try again.</div>
+      <div style="color:var(--fg-muted);font-size:11px;margin-top:8px;line-height:1.4;">You can still type the UPC in the field below.</div>
+    </div>
+    <div class="camera-cancel">
+      <button class="pill solid" style="padding:10px 24px;font-size:14px;font-weight:700;color:var(--fg-bright);">Cancel</button>
+    </div>
+  </div>
+  <div class="phone-caption">Two transient camera states stacked: "Opening camera…" spinner near the top, permission-denied fallback card lower down.</div>
+</div>
+
+
+
+<!-- ─── 5A: DB not configured ───────────────────────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label" style="color:var(--amber);">Setup · DB missing</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l" style="background:radial-gradient(closest-side, rgba(255,154,42,0.20), transparent 70%);"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll" style="display:flex;align-items:center;justify-content:center;padding:64px 20px 32px;">
+        <div class="setup-card">
+          <div class="eyebrow-amber">Setup required</div>
+          <h1>Database not configured</h1>
+          <p>This app reads <code class="mono" style="color:var(--fg);">DATABASE_URL</code> from <code class="mono" style="color:var(--fg);">.env.local</code>. Copy the template and fill in the connection string from the WISEintelligence user secret.</p>
+          <pre><code>cp .env.local.example .env.local</code></pre>
+          <p class="footnote">Next.js auto-reloads on <code class="mono">.env.local</code> changes — no dev-server restart needed. Press Retry once the file is in place.</p>
+          <div style="margin-top:18px;">
+            <button class="cta-emerald" style="padding:12px 20px;font-size:14px;">Retry</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="phone-caption">Surfaced when DatabaseNotConfiguredError bubbles from the app layout. Mock mode silences this — DATABASE_URL must be unset AND PN_MOCK_DATA != 0.</div>
+</div>
+
+<!-- ─── 5B: DB unreachable ──────────────────────────────────────────── -->
+<div class="phone-wrap">
+  <div class="phone-label" style="color:var(--rose);">Setup · DB unreachable</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l" style="background:radial-gradient(closest-side, rgba(255,94,146,0.22), transparent 70%);"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <i data-lucide="wifi" class="icon" style="width:16px;height:16px;color:white;"></i>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll" style="display:flex;align-items:center;justify-content:center;padding:64px 20px 32px;">
+        <div class="setup-card">
+          <div class="eyebrow-rose">Database unreachable</div>
+          <h1>Can't reach <span class="mono" style="color:var(--amber);">prod-db.example.com</span></h1>
+          <p>DNS or network couldn't open a socket to the configured host. Common fixes:</p>
+          <ul class="bullets">
+            <li>Confirm <code class="mono" style="color:var(--fg);">DATABASE_URL</code> in <code class="mono" style="color:var(--fg);">.env.local</code> is the form <code class="mono" style="color:var(--fg);">postgresql://user:pass@host:5432/db</code>.</li>
+            <li>If the database is behind a VPN, make sure you're connected.</li>
+            <li>For RDS / Aurora, verify the security group allows your current public IP.</li>
+          </ul>
+          <p class="footnote">Next.js auto-reloads on <code class="mono">.env.local</code> changes. Press Retry once you've fixed the connection string.</p>
+          <div style="margin-top:18px;">
+            <button class="cta-emerald" style="padding:12px 20px;font-size:14px;">Retry</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="phone-caption">Variant when query() rewraps a libuv error as DatabaseUnreachableError. Hostname renders inline; placeholder hostnames trigger an extra "looks like the .env example" hint.</div>
+</div>
+
+
+        </div>
+      </div>
+
+      <div class="legend">
+        <div>
+          <h4>Tokens</h4>
+          <p>Every color, radius, and shadow on this page maps directly to the design tokens in <code>DESIGN.md</code> §1. CSS custom properties at the top of the file mirror the variables the real Tailwind config exposes.</p>
+        </div>
+        <div>
+          <h4>Coverage</h4>
+          <p>Code (4 states) · Code Picker · Talk-to-AI Sheet · Browse (2 states) · Scan (3 states) · Camera (live + error) · Setup errors (2 variants). 15 frames in total.</p>
+        </div>
+        <div>
+          <h4>Drift</h4>
+          <p>Static screenshots can lag the live UI. The shells, hero, score ring, slot cards, browse rows, and math rows are hand-aligned to <code>DESIGN.md</code> §3 today; refresh after notable component edits.</p>
+        </div>
+      </div>
+    </main>
+    <script>
+      // After DOM is parsed, swap every <i data-lucide="…"> with the rendered SVG.
+      // Falls back gracefully if lucide failed to load (the <i> just stays empty).
+      if (window.lucide && typeof lucide.createIcons === "function") {
+        lucide.createIcons();
+      } else {
+        document.addEventListener("DOMContentLoaded", function () {
+          if (window.lucide) lucide.createIcons();
+        });
+      }
+    </script>
+  </body>
+</html>
