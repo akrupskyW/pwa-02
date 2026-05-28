@@ -10,7 +10,7 @@
       "reusable": true,
       "width": 390,
       "height": 844,
-      "fill": "#0A0F1C",
+      "fill": "#05080F",
       "cornerRadius": 54,
       "stroke": {
         "align": "inside",
@@ -25,7 +25,7 @@
           },
           "colors": [
             {
-              "color": "#2A3550",
+              "color": "#2A3A5E",
               "position": 0
             },
             {
@@ -132,7 +132,7 @@
           "id": "ca2TW",
           "fill": "$--foreground-bright",
           "content": "9:41",
-          "fontFamily": "Inter",
+          "fontFamily": "DM Sans",
           "fontSize": 17,
           "fontWeight": "600"
         },
@@ -345,7 +345,7 @@
               "name": "score",
               "fill": "$--foreground-bright",
               "content": "94",
-              "fontFamily": "Inter",
+              "fontFamily": "DM Sans",
               "fontSize": 80,
               "fontWeight": "800",
               "letterSpacing": -3
@@ -356,7 +356,7 @@
               "name": "label",
               "fill": "$--muted-foreground",
               "content": "YOUR SCORE",
-              "fontFamily": "Inter",
+              "fontFamily": "DM Sans",
               "fontSize": 10,
               "fontWeight": "700",
               "letterSpacing": 1.4
@@ -376,7 +376,7 @@
       "cornerRadius": 999,
       "stroke": {
         "thickness": 1,
-        "fill": "#243049"
+        "fill": "#2A3A5E"
       },
       "gap": 8,
       "padding": [
@@ -407,7 +407,7 @@
           "name": "label",
           "fill": "$--foreground",
           "content": "Heart Healthy",
-          "fontFamily": "Inter",
+          "fontFamily": "DM Sans",
           "fontSize": 12,
           "fontWeight": "600"
         }
@@ -422,7 +422,7 @@
       "reusable": true,
       "width": 330,
       "height": 62,
-      "fill": "#0D1422E5",
+      "fill": "#0F1729E5",
       "cornerRadius": 36,
       "stroke": {
         "thickness": 1,
@@ -466,7 +466,7 @@
                 "position": 0
               },
               {
-                "color": "#243558",
+                "color": "#2A3A5E",
                 "position": 1
               }
             ]
@@ -499,7 +499,7 @@
               "id": "VS3vW",
               "fill": "#F5F7FA",
               "content": "CODE",
-              "fontFamily": "Inter",
+              "fontFamily": "DM Sans",
               "fontSize": 10,
               "fontWeight": "700",
               "letterSpacing": 0.7
@@ -536,7 +536,7 @@
               "id": "JESm9",
               "fill": "#5A6478",
               "content": "BROWSE",
-              "fontFamily": "Inter",
+              "fontFamily": "DM Sans",
               "fontSize": 10,
               "fontWeight": "700",
               "letterSpacing": 0.7
@@ -573,7 +573,7 @@
               "id": "zZbg0",
               "fill": "#5A6478",
               "content": "SCAN",
-              "fontFamily": "Inter",
+              "fontFamily": "DM Sans",
               "fontSize": 10,
               "fontWeight": "700",
               "letterSpacing": 0.7
@@ -724,7 +724,7 @@
               "id": "y4Cp9G",
               "fill": "#34E5A6",
               "content": "PERSONALIZED NUTRITION",
-              "fontFamily": "Inter",
+              "fontFamily": "DM Sans",
               "fontSize": 13,
               "fontWeight": "700",
               "letterSpacing": 3.6
@@ -734,7 +734,7 @@
               "id": "pmetM",
               "fill": "$--foreground-bright",
               "content": "Bring your own rubric.",
-              "fontFamily": "Inter",
+              "fontFamily": "DM Sans",
               "fontSize": 64,
               "fontWeight": "800",
               "letterSpacing": -2
@@ -748,7 +748,7 @@
               "content": "Compose the codes that matter to you. Watch the entire catalog re-sort to your taste in real time. Every score is yours alone.",
               "lineHeight": 1.5,
               "textAlign": "center",
-              "fontFamily": "Inter",
+              "fontFamily": "DM Sans",
               "fontSize": 17,
               "fontWeight": "500"
             },
@@ -804,7 +804,7 @@
                       "id": "LgBBm",
                       "fill": "#05080F",
                       "content": "Try the demo",
-                      "fontFamily": "Inter",
+                      "fontFamily": "DM Sans",
                       "fontSize": 15,
                       "fontWeight": "800",
                       "letterSpacing": 0.2
@@ -827,7 +827,7 @@
                   "cornerRadius": 999,
                   "stroke": {
                     "thickness": 1,
-                    "fill": "#243049"
+                    "fill": "#2A3A5E"
                   },
                   "gap": 8,
                   "padding": [
@@ -850,7 +850,7 @@
                       "id": "KH37c",
                       "fill": "$--foreground",
                       "content": "Watch how it works",
-                      "fontFamily": "Inter",
+                      "fontFamily": "DM Sans",
                       "fontSize": 15,
                       "fontWeight": "700"
                     }
@@ -900,7 +900,7 @@
                     },
                     "colors": [
                       {
-                        "color": "#0B1326",
+                        "color": "#0A1426",
                         "position": 0
                       },
                       {
@@ -1022,7 +1022,7 @@
                                   "id": "O4K6Zo",
                                   "fill": "#34E5A6",
                                   "content": "YOUR CODE",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 11,
                                   "fontWeight": "700",
                                   "letterSpacing": 1.6
@@ -1032,7 +1032,7 @@
                                   "id": "T4wo9L",
                                   "fill": "$--foreground-bright",
                                   "content": "Personal Rubric",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 24,
                                   "fontWeight": "800",
                                   "letterSpacing": -0.6
@@ -1072,7 +1072,7 @@
                                   "id": "usW8R",
                                   "fill": "#05080F",
                                   "content": "T",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 16,
                                   "fontWeight": "800"
                                 }
@@ -1094,7 +1094,7 @@
                             },
                             "colors": [
                               {
-                                "color": "#15203B",
+                                "color": "#14203A",
                                 "position": 0
                               },
                               {
@@ -1208,7 +1208,7 @@
                                       "id": "K3XDS",
                                       "fill": "$--foreground-bright",
                                       "content": "100",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 32,
                                       "fontWeight": "800",
                                       "letterSpacing": -1
@@ -1218,7 +1218,7 @@
                                       "id": "jgomt",
                                       "fill": "$--muted-foreground",
                                       "content": "of 100",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 9,
                                       "fontWeight": "600",
                                       "letterSpacing": 1
@@ -1241,7 +1241,7 @@
                                   "textGrowth": "fixed-width",
                                   "width": "fill_container",
                                   "content": "In Harmony",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 18,
                                   "fontWeight": "700"
                                 },
@@ -1253,7 +1253,7 @@
                                   "width": "fill_container",
                                   "content": "Your 4 codes are perfectly balanced. Add one more to refine the rubric.",
                                   "lineHeight": 1.4,
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 12,
                                   "fontWeight": "500"
                                 },
@@ -1270,7 +1270,7 @@
                                       "cornerRadius": 999,
                                       "stroke": {
                                         "thickness": 1,
-                                        "fill": "#243049"
+                                        "fill": "#2A3A5E"
                                       },
                                       "padding": [
                                         4,
@@ -1282,7 +1282,7 @@
                                           "id": "PyfN1",
                                           "fill": "$--foreground",
                                           "content": "Whole",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 9,
                                           "fontWeight": "700",
                                           "letterSpacing": 0.6
@@ -1296,7 +1296,7 @@
                                       "cornerRadius": 999,
                                       "stroke": {
                                         "thickness": 1,
-                                        "fill": "#243049"
+                                        "fill": "#2A3A5E"
                                       },
                                       "padding": [
                                         4,
@@ -1308,7 +1308,7 @@
                                           "id": "VEhd7",
                                           "fill": "$--foreground",
                                           "content": "Plant",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 9,
                                           "fontWeight": "700",
                                           "letterSpacing": 0.6
@@ -1322,7 +1322,7 @@
                                       "cornerRadius": 999,
                                       "stroke": {
                                         "thickness": 1,
-                                        "fill": "#243049"
+                                        "fill": "#2A3A5E"
                                       },
                                       "padding": [
                                         4,
@@ -1334,7 +1334,7 @@
                                           "id": "HB5zb",
                                           "fill": "$--foreground",
                                           "content": "Lean",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 9,
                                           "fontWeight": "700",
                                           "letterSpacing": 0.6
@@ -1365,7 +1365,7 @@
                               "id": "oDO6B",
                               "fill": "$--muted-foreground",
                               "content": "YOUR CODES · 4 / 5",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 11,
                               "fontWeight": "700",
                               "letterSpacing": 1.4
@@ -1373,11 +1373,11 @@
                             {
                               "type": "frame",
                               "id": "T2k04G",
-                              "fill": "#15203B",
+                              "fill": "#14203A",
                               "cornerRadius": 999,
                               "stroke": {
                                 "thickness": 1,
-                                "fill": "#243049"
+                                "fill": "#2A3A5E"
                               },
                               "gap": 4,
                               "padding": [
@@ -1400,7 +1400,7 @@
                                   "id": "pgOkz",
                                   "fill": "$--foreground",
                                   "content": "Reset",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 10,
                                   "fontWeight": "700",
                                   "letterSpacing": 0.6
@@ -1490,7 +1490,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "Heart Healthy",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 14,
                                           "fontWeight": "700"
                                         },
@@ -1501,7 +1501,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "Health Goals",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "600",
                                           "letterSpacing": 0.5
@@ -1519,7 +1519,7 @@
                                           "id": "yecsR",
                                           "fill": "$--foreground-bright",
                                           "content": "35",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 22,
                                           "fontWeight": "800",
                                           "letterSpacing": -0.4
@@ -1529,7 +1529,7 @@
                                           "id": "Z79CJD",
                                           "fill": "$--muted-foreground",
                                           "content": "%",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 11,
                                           "fontWeight": "700"
                                         }
@@ -1550,7 +1550,7 @@
                                       "id": "XKWsx",
                                       "x": 0,
                                       "y": 0,
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "width": 316,
                                       "height": 8
                                     },
@@ -1689,7 +1689,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "Clean Label",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 14,
                                           "fontWeight": "700"
                                         },
@@ -1700,7 +1700,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "Clean Eating",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "600",
                                           "letterSpacing": 0.5
@@ -1718,7 +1718,7 @@
                                           "id": "U7iho",
                                           "fill": "$--foreground-bright",
                                           "content": "28",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 22,
                                           "fontWeight": "800",
                                           "letterSpacing": -0.4
@@ -1728,7 +1728,7 @@
                                           "id": "F5LduR",
                                           "fill": "$--muted-foreground",
                                           "content": "%",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 11,
                                           "fontWeight": "700"
                                         }
@@ -1749,7 +1749,7 @@
                                       "id": "lDqLV",
                                       "x": 0,
                                       "y": 0,
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "width": 316,
                                       "height": 8
                                     },
@@ -1888,7 +1888,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "No Ultra-Processed",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 14,
                                           "fontWeight": "700"
                                         },
@@ -1899,7 +1899,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "Clean Eating",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "600",
                                           "letterSpacing": 0.5
@@ -1917,7 +1917,7 @@
                                           "id": "CywbR",
                                           "fill": "$--foreground-bright",
                                           "content": "22",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 22,
                                           "fontWeight": "800",
                                           "letterSpacing": -0.4
@@ -1927,7 +1927,7 @@
                                           "id": "jCXRQ",
                                           "fill": "$--muted-foreground",
                                           "content": "%",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 11,
                                           "fontWeight": "700"
                                         }
@@ -1948,7 +1948,7 @@
                                       "id": "oZkgy",
                                       "x": 0,
                                       "y": 0,
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "width": 316,
                                       "height": 8
                                     },
@@ -2087,7 +2087,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "High Protein",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 14,
                                           "fontWeight": "700"
                                         },
@@ -2098,7 +2098,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "Macros",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "600",
                                           "letterSpacing": 0.5
@@ -2116,7 +2116,7 @@
                                           "id": "Frt1b",
                                           "fill": "$--foreground-bright",
                                           "content": "15",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 22,
                                           "fontWeight": "800",
                                           "letterSpacing": -0.4
@@ -2126,7 +2126,7 @@
                                           "id": "b2hTW",
                                           "fill": "$--muted-foreground",
                                           "content": "%",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 11,
                                           "fontWeight": "700"
                                         }
@@ -2147,7 +2147,7 @@
                                       "id": "wNzfN",
                                       "x": 0,
                                       "y": 0,
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "width": 316,
                                       "height": 8
                                     },
@@ -2216,11 +2216,11 @@
                               "type": "frame",
                               "id": "G9zXCe",
                               "width": "fill_container",
-                              "fill": "#0A1224",
+                              "fill": "#0A1020",
                               "cornerRadius": 18,
                               "stroke": {
                                 "thickness": 1.5,
-                                "fill": "#243049"
+                                "fill": "#2A3A5E"
                               },
                               "gap": 10,
                               "padding": 14,
@@ -2241,7 +2241,7 @@
                                   "id": "m04696",
                                   "fill": "$--foreground",
                                   "content": "Add a code",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 14,
                                   "fontWeight": "700",
                                   "letterSpacing": 0.3
@@ -2419,7 +2419,7 @@
                                   "id": "YJcfD",
                                   "fill": "#7C7CFB",
                                   "content": "BROWSE",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 11,
                                   "fontWeight": "700",
                                   "letterSpacing": 1.6
@@ -2429,7 +2429,7 @@
                                   "id": "OJi9H",
                                   "fill": "$--foreground-bright",
                                   "content": "Top Matches",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 24,
                                   "fontWeight": "800",
                                   "letterSpacing": -0.6
@@ -2447,11 +2447,11 @@
                                   "id": "OXVRX",
                                   "width": 38,
                                   "height": 38,
-                                  "fill": "#15203B",
+                                  "fill": "#14203A",
                                   "cornerRadius": 12,
                                   "stroke": {
                                     "thickness": 1,
-                                    "fill": "#243049"
+                                    "fill": "#2A3A5E"
                                   },
                                   "justifyContent": "center",
                                   "alignItems": "center",
@@ -2472,11 +2472,11 @@
                                   "id": "LzTMW",
                                   "width": 38,
                                   "height": 38,
-                                  "fill": "#15203B",
+                                  "fill": "#14203A",
                                   "cornerRadius": 12,
                                   "stroke": {
                                     "thickness": 1,
-                                    "fill": "#243049"
+                                    "fill": "#2A3A5E"
                                   },
                                   "justifyContent": "center",
                                   "alignItems": "center",
@@ -2509,7 +2509,7 @@
                               "cornerRadius": 999,
                               "stroke": {
                                 "thickness": 1,
-                                "fill": "#243049"
+                                "fill": "#2A3A5E"
                               },
                               "gap": 6,
                               "padding": [
@@ -2530,7 +2530,7 @@
                                   "id": "FEJzS",
                                   "fill": "$--foreground",
                                   "content": "Heart 35",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 10,
                                   "fontWeight": "700",
                                   "letterSpacing": 0.4
@@ -2544,7 +2544,7 @@
                               "cornerRadius": 999,
                               "stroke": {
                                 "thickness": 1,
-                                "fill": "#243049"
+                                "fill": "#2A3A5E"
                               },
                               "gap": 6,
                               "padding": [
@@ -2565,7 +2565,7 @@
                                   "id": "GnoA1",
                                   "fill": "$--foreground",
                                   "content": "Clean 28",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 10,
                                   "fontWeight": "700",
                                   "letterSpacing": 0.4
@@ -2579,7 +2579,7 @@
                               "cornerRadius": 999,
                               "stroke": {
                                 "thickness": 1,
-                                "fill": "#243049"
+                                "fill": "#2A3A5E"
                               },
                               "gap": 6,
                               "padding": [
@@ -2600,7 +2600,7 @@
                                   "id": "k7nTXR",
                                   "fill": "$--foreground",
                                   "content": "UPF 22",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 10,
                                   "fontWeight": "700",
                                   "letterSpacing": 0.4
@@ -2614,7 +2614,7 @@
                               "cornerRadius": 999,
                               "stroke": {
                                 "thickness": 1,
-                                "fill": "#243049"
+                                "fill": "#2A3A5E"
                               },
                               "gap": 6,
                               "padding": [
@@ -2635,7 +2635,7 @@
                                   "id": "mT1VX",
                                   "fill": "$--foreground",
                                   "content": "Protein 15",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 10,
                                   "fontWeight": "700",
                                   "letterSpacing": 0.4
@@ -2658,11 +2658,11 @@
                             },
                             "colors": [
                               {
-                                "color": "#1A2B3E",
+                                "color": "#1B2742",
                                 "position": 0
                               },
                               {
-                                "color": "#10182B",
+                                "color": "#111A2E",
                                 "position": 1
                               }
                             ]
@@ -2776,7 +2776,7 @@
                                               "id": "mt2Ci",
                                               "fill": "#05080F",
                                               "content": "TOP MATCH",
-                                              "fontFamily": "Inter",
+                                              "fontFamily": "DM Sans",
                                               "fontSize": 9,
                                               "fontWeight": "800",
                                               "letterSpacing": 0.8
@@ -2793,7 +2793,7 @@
                                       "width": "fill_container",
                                       "content": "Organic Quinoa & Kale Bowl",
                                       "lineHeight": 1.2,
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 15,
                                       "fontWeight": "700"
                                     },
@@ -2804,7 +2804,7 @@
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
                                       "content": "Sweetgreen",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 11,
                                       "fontWeight": "500"
                                     }
@@ -2823,7 +2823,7 @@
                                       "x": 0,
                                       "y": 0,
                                       "innerRadius": 0.78,
-                                      "fill": "#0B142A",
+                                      "fill": "#0A1426",
                                       "width": 64,
                                       "height": 64
                                     },
@@ -2879,7 +2879,7 @@
                                           "id": "T5500X",
                                           "fill": "$--foreground-bright",
                                           "content": "96",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 22,
                                           "fontWeight": "800",
                                           "letterSpacing": -0.5
@@ -2945,7 +2945,7 @@
                                           "width": "fill_container",
                                           "content": "92",
                                           "textAlign": "center",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "700"
                                         }
@@ -2992,7 +2992,7 @@
                                           "width": "fill_container",
                                           "content": "98",
                                           "textAlign": "center",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "700"
                                         }
@@ -3039,7 +3039,7 @@
                                           "width": "fill_container",
                                           "content": "99",
                                           "textAlign": "center",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "700"
                                         }
@@ -3086,7 +3086,7 @@
                                           "width": "fill_container",
                                           "content": "91",
                                           "textAlign": "center",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "700"
                                         }
@@ -3116,7 +3116,7 @@
                               "id": "gaR5E",
                               "fill": "$--muted-foreground",
                               "content": "ALL RESULTS · 12,847",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 11,
                               "fontWeight": "700",
                               "letterSpacing": 1.4
@@ -3132,7 +3132,7 @@
                                   "id": "V0UJMn",
                                   "fill": "$--foreground",
                                   "content": "Best Match",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 10,
                                   "fontWeight": "700",
                                   "letterSpacing": 0.6
@@ -3225,7 +3225,7 @@
                                       "width": "fill_container",
                                       "content": "Almond Crunch Granola",
                                       "lineHeight": 1.2,
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 13,
                                       "fontWeight": "700"
                                     },
@@ -3236,7 +3236,7 @@
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
                                       "content": "Three Wishes",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 10,
                                       "fontWeight": "500"
                                     },
@@ -3279,7 +3279,7 @@
                                           "id": "K7QvKs",
                                           "fill": "$--faint-foreground",
                                           "content": " 4 codes match",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 9,
                                           "fontWeight": "600"
                                         }
@@ -3299,7 +3299,7 @@
                                       "id": "psFUt",
                                       "fill": "#34E5A6",
                                       "content": "94",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 26,
                                       "fontWeight": "800",
                                       "letterSpacing": -0.6
@@ -3307,11 +3307,11 @@
                                     {
                                       "type": "frame",
                                       "id": "oWCt9",
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "cornerRadius": 999,
                                       "stroke": {
                                         "thickness": 1,
-                                        "fill": "#243049"
+                                        "fill": "#2A3A5E"
                                       },
                                       "gap": 3,
                                       "padding": [
@@ -3334,7 +3334,7 @@
                                           "id": "l1Uhlf",
                                           "fill": "$--muted-foreground",
                                           "content": "4/4",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 8,
                                           "fontWeight": "700",
                                           "letterSpacing": 0.3
@@ -3413,7 +3413,7 @@
                                       "width": "fill_container",
                                       "content": "Wild Atlantic Sardines",
                                       "lineHeight": 1.2,
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 13,
                                       "fontWeight": "700"
                                     },
@@ -3424,7 +3424,7 @@
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
                                       "content": "Wild Planet",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 10,
                                       "fontWeight": "500"
                                     },
@@ -3467,7 +3467,7 @@
                                           "id": "HbYCB",
                                           "fill": "$--faint-foreground",
                                           "content": " 4 codes match",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 9,
                                           "fontWeight": "600"
                                         }
@@ -3487,7 +3487,7 @@
                                       "id": "kr2eW",
                                       "fill": "#34E5A6",
                                       "content": "91",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 26,
                                       "fontWeight": "800",
                                       "letterSpacing": -0.6
@@ -3495,11 +3495,11 @@
                                     {
                                       "type": "frame",
                                       "id": "Rk0jm",
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "cornerRadius": 999,
                                       "stroke": {
                                         "thickness": 1,
-                                        "fill": "#243049"
+                                        "fill": "#2A3A5E"
                                       },
                                       "gap": 3,
                                       "padding": [
@@ -3522,7 +3522,7 @@
                                           "id": "AXsFh",
                                           "fill": "$--muted-foreground",
                                           "content": "4/4",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 8,
                                           "fontWeight": "700",
                                           "letterSpacing": 0.3
@@ -3601,7 +3601,7 @@
                                       "width": "fill_container",
                                       "content": "Grass-Fed Beef Bone Broth",
                                       "lineHeight": 1.2,
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 13,
                                       "fontWeight": "700"
                                     },
@@ -3612,7 +3612,7 @@
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
                                       "content": "Kettle & Fire",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 10,
                                       "fontWeight": "500"
                                     },
@@ -3655,7 +3655,7 @@
                                           "id": "B0WZW",
                                           "fill": "$--faint-foreground",
                                           "content": " 4 codes match",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 9,
                                           "fontWeight": "600"
                                         }
@@ -3675,7 +3675,7 @@
                                       "id": "vqWlM",
                                       "fill": "#22D3C5",
                                       "content": "88",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 26,
                                       "fontWeight": "800",
                                       "letterSpacing": -0.6
@@ -3683,11 +3683,11 @@
                                     {
                                       "type": "frame",
                                       "id": "Z1O2V",
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "cornerRadius": 999,
                                       "stroke": {
                                         "thickness": 1,
-                                        "fill": "#243049"
+                                        "fill": "#2A3A5E"
                                       },
                                       "gap": 3,
                                       "padding": [
@@ -3710,7 +3710,7 @@
                                           "id": "mHl1T",
                                           "fill": "$--muted-foreground",
                                           "content": "4/4",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 8,
                                           "fontWeight": "700",
                                           "letterSpacing": 0.3
@@ -3789,7 +3789,7 @@
                                       "width": "fill_container",
                                       "content": "Cashew Yogurt — Vanilla",
                                       "lineHeight": 1.2,
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 13,
                                       "fontWeight": "700"
                                     },
@@ -3800,7 +3800,7 @@
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
                                       "content": "Forager Project",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 10,
                                       "fontWeight": "500"
                                     },
@@ -3843,7 +3843,7 @@
                                           "id": "byY0g",
                                           "fill": "$--faint-foreground",
                                           "content": " 4 codes match",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 9,
                                           "fontWeight": "600"
                                         }
@@ -3863,7 +3863,7 @@
                                       "id": "sCJIn",
                                       "fill": "#22D3C5",
                                       "content": "86",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 26,
                                       "fontWeight": "800",
                                       "letterSpacing": -0.6
@@ -3871,11 +3871,11 @@
                                     {
                                       "type": "frame",
                                       "id": "B7BcXs",
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "cornerRadius": 999,
                                       "stroke": {
                                         "thickness": 1,
-                                        "fill": "#243049"
+                                        "fill": "#2A3A5E"
                                       },
                                       "gap": 3,
                                       "padding": [
@@ -3898,7 +3898,7 @@
                                           "id": "JY4fH",
                                           "fill": "$--muted-foreground",
                                           "content": "4/4",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 8,
                                           "fontWeight": "700",
                                           "letterSpacing": 0.3
@@ -3977,7 +3977,7 @@
                                       "width": "fill_container",
                                       "content": "Frozen Edamame Pods",
                                       "lineHeight": 1.2,
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 13,
                                       "fontWeight": "700"
                                     },
@@ -3988,7 +3988,7 @@
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
                                       "content": "Seapoint Farms",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 10,
                                       "fontWeight": "500"
                                     },
@@ -4031,7 +4031,7 @@
                                           "id": "F7ExnP",
                                           "fill": "$--faint-foreground",
                                           "content": " 4 codes match",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 9,
                                           "fontWeight": "600"
                                         }
@@ -4051,7 +4051,7 @@
                                       "id": "Y7DKO",
                                       "fill": "#F5C14E",
                                       "content": "84",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 26,
                                       "fontWeight": "800",
                                       "letterSpacing": -0.6
@@ -4059,11 +4059,11 @@
                                     {
                                       "type": "frame",
                                       "id": "aLZZ9",
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "cornerRadius": 999,
                                       "stroke": {
                                         "thickness": 1,
-                                        "fill": "#243049"
+                                        "fill": "#2A3A5E"
                                       },
                                       "gap": 3,
                                       "padding": [
@@ -4086,7 +4086,7 @@
                                           "id": "bVhaw",
                                           "fill": "$--muted-foreground",
                                           "content": "4/4",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 8,
                                           "fontWeight": "700",
                                           "letterSpacing": 0.3
@@ -4145,7 +4145,7 @@
                                     "position": 0
                                   },
                                   {
-                                    "color": "#243558",
+                                    "color": "#2A3A5E",
                                     "position": 1
                                   }
                                 ]
@@ -4334,11 +4334,11 @@
                                   "id": "Z8a9Ba",
                                   "width": 36,
                                   "height": 36,
-                                  "fill": "#15203B",
+                                  "fill": "#14203A",
                                   "cornerRadius": 12,
                                   "stroke": {
                                     "thickness": 1,
-                                    "fill": "#243049"
+                                    "fill": "#2A3A5E"
                                   },
                                   "justifyContent": "center",
                                   "alignItems": "center",
@@ -4364,7 +4364,7 @@
                                       "id": "N4UsRr",
                                       "fill": "#34E5A6",
                                       "content": "SCAN RESULT",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 10,
                                       "fontWeight": "700",
                                       "letterSpacing": 1.6
@@ -4374,7 +4374,7 @@
                                       "id": "sePHZ",
                                       "fill": "$--foreground-bright",
                                       "content": "Product Detail",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 14,
                                       "fontWeight": "700"
                                     }
@@ -4393,11 +4393,11 @@
                                   "id": "vBczl",
                                   "width": 36,
                                   "height": 36,
-                                  "fill": "#15203B",
+                                  "fill": "#14203A",
                                   "cornerRadius": 12,
                                   "stroke": {
                                     "thickness": 1,
-                                    "fill": "#243049"
+                                    "fill": "#2A3A5E"
                                   },
                                   "justifyContent": "center",
                                   "alignItems": "center",
@@ -4418,11 +4418,11 @@
                                   "id": "B5T1sS",
                                   "width": 36,
                                   "height": 36,
-                                  "fill": "#15203B",
+                                  "fill": "#14203A",
                                   "cornerRadius": 12,
                                   "stroke": {
                                     "thickness": 1,
-                                    "fill": "#243049"
+                                    "fill": "#2A3A5E"
                                   },
                                   "justifyContent": "center",
                                   "alignItems": "center",
@@ -4460,7 +4460,7 @@
                                 "position": 0
                               },
                               {
-                                "color": "#0D1422",
+                                "color": "#0F1729",
                                 "position": 1
                               }
                             ]
@@ -4468,7 +4468,7 @@
                           "cornerRadius": 24,
                           "stroke": {
                             "thickness": 1,
-                            "fill": "#243049"
+                            "fill": "#2A3A5E"
                           },
                           "effect": {
                             "type": "shadow",
@@ -4551,7 +4551,7 @@
                                       "width": "fill_container",
                                       "content": "Almond Crunch Granola",
                                       "lineHeight": 1.2,
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 16,
                                       "fontWeight": "800",
                                       "letterSpacing": -0.3
@@ -4563,7 +4563,7 @@
                                       "textGrowth": "fixed-width",
                                       "width": "fill_container",
                                       "content": "Three Wishes · 340 g",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 11,
                                       "fontWeight": "500"
                                     },
@@ -4576,11 +4576,11 @@
                                         {
                                           "type": "frame",
                                           "id": "MqXQf",
-                                          "fill": "#0A1224",
+                                          "fill": "#0A1020",
                                           "cornerRadius": 999,
                                           "stroke": {
                                             "thickness": 1,
-                                            "fill": "#243049"
+                                            "fill": "#2A3A5E"
                                           },
                                           "gap": 4,
                                           "padding": [
@@ -4603,7 +4603,7 @@
                                               "id": "bcYpZ",
                                               "fill": "$--muted-foreground",
                                               "content": "0 850001 234567",
-                                              "fontFamily": "Inter",
+                                              "fontFamily": "DM Sans",
                                               "fontSize": 9,
                                               "fontWeight": "600",
                                               "letterSpacing": 0.4
@@ -4658,7 +4658,7 @@
                                   "x": 0,
                                   "y": 0,
                                   "innerRadius": 0.85,
-                                  "fill": "#0A1224",
+                                  "fill": "#0A1020",
                                   "width": 200,
                                   "height": 200
                                 },
@@ -4733,7 +4733,7 @@
                                       "id": "uExos",
                                       "fill": "$--foreground-bright",
                                       "content": "94",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 78,
                                       "fontWeight": "800",
                                       "letterSpacing": -3
@@ -4743,7 +4743,7 @@
                                       "id": "Zm8ip",
                                       "fill": "#34E5A6",
                                       "content": "COMPOSITE",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 9,
                                       "fontWeight": "700",
                                       "letterSpacing": 1.8
@@ -4772,7 +4772,7 @@
                                   "id": "BHqJ0",
                                   "fill": "$--foreground",
                                   "content": "Excellent match for your code",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 12,
                                   "fontWeight": "700"
                                 }
@@ -4796,7 +4796,7 @@
                               "id": "lpwCf",
                               "fill": "$--muted-foreground",
                               "content": "THE MATH",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 11,
                               "fontWeight": "700",
                               "letterSpacing": 1.6
@@ -4806,7 +4806,7 @@
                               "id": "a3CzB",
                               "fill": "$--faint-foreground",
                               "content": "score × weight = contribution",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 10,
                               "fontWeight": "500",
                               "letterSpacing": 0.3
@@ -4902,7 +4902,7 @@
                                               "id": "JCS0q",
                                               "fill": "$--foreground-bright",
                                               "content": "Heart Healthy",
-                                              "fontFamily": "Inter",
+                                              "fontFamily": "DM Sans",
                                               "fontSize": 12,
                                               "fontWeight": "700"
                                             },
@@ -4943,7 +4943,7 @@
                                                   "id": "wv9MA",
                                                   "fill": "#FF5E92",
                                                   "content": "Excellent",
-                                                  "fontFamily": "Inter",
+                                                  "fontFamily": "DM Sans",
                                                   "fontSize": 8,
                                                   "fontWeight": "800",
                                                   "letterSpacing": 0.5
@@ -4959,7 +4959,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "92 × 35% = 32.2",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "600",
                                           "letterSpacing": 0.2
@@ -4971,7 +4971,7 @@
                                       "id": "DPYZW",
                                       "fill": "#FF5E92",
                                       "content": "92",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 22,
                                       "fontWeight": "800",
                                       "letterSpacing": -0.5
@@ -4991,7 +4991,7 @@
                                       "id": "DWRXL",
                                       "x": 0,
                                       "y": 0,
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "width": 308,
                                       "height": 6
                                     },
@@ -5115,7 +5115,7 @@
                                               "id": "zOhoL",
                                               "fill": "$--foreground-bright",
                                               "content": "Clean Label",
-                                              "fontFamily": "Inter",
+                                              "fontFamily": "DM Sans",
                                               "fontSize": 12,
                                               "fontWeight": "700"
                                             },
@@ -5156,7 +5156,7 @@
                                                   "id": "L4pwUJ",
                                                   "fill": "#34E5A6",
                                                   "content": "Excellent",
-                                                  "fontFamily": "Inter",
+                                                  "fontFamily": "DM Sans",
                                                   "fontSize": 8,
                                                   "fontWeight": "800",
                                                   "letterSpacing": 0.5
@@ -5172,7 +5172,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "98 × 28% = 27.4",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "600",
                                           "letterSpacing": 0.2
@@ -5184,7 +5184,7 @@
                                       "id": "jq0H7",
                                       "fill": "#34E5A6",
                                       "content": "98",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 22,
                                       "fontWeight": "800",
                                       "letterSpacing": -0.5
@@ -5204,7 +5204,7 @@
                                       "id": "kRKAB",
                                       "x": 0,
                                       "y": 0,
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "width": 308,
                                       "height": 6
                                     },
@@ -5328,7 +5328,7 @@
                                               "id": "cqzvL",
                                               "fill": "$--foreground-bright",
                                               "content": "No Ultra-Processed",
-                                              "fontFamily": "Inter",
+                                              "fontFamily": "DM Sans",
                                               "fontSize": 12,
                                               "fontWeight": "700"
                                             },
@@ -5369,7 +5369,7 @@
                                                   "id": "AUmoS",
                                                   "fill": "#7C7CFB",
                                                   "content": "Excellent",
-                                                  "fontFamily": "Inter",
+                                                  "fontFamily": "DM Sans",
                                                   "fontSize": 8,
                                                   "fontWeight": "800",
                                                   "letterSpacing": 0.5
@@ -5385,7 +5385,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "99 × 22% = 21.8",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "600",
                                           "letterSpacing": 0.2
@@ -5397,7 +5397,7 @@
                                       "id": "FrFjM",
                                       "fill": "#7C7CFB",
                                       "content": "99",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 22,
                                       "fontWeight": "800",
                                       "letterSpacing": -0.5
@@ -5417,7 +5417,7 @@
                                       "id": "nPKTY",
                                       "x": 0,
                                       "y": 0,
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "width": 308,
                                       "height": 6
                                     },
@@ -5541,7 +5541,7 @@
                                               "id": "Qa0UD",
                                               "fill": "$--foreground-bright",
                                               "content": "High Protein",
-                                              "fontFamily": "Inter",
+                                              "fontFamily": "DM Sans",
                                               "fontSize": 12,
                                               "fontWeight": "700"
                                             },
@@ -5582,7 +5582,7 @@
                                                   "id": "MpvJe",
                                                   "fill": "#F5C14E",
                                                   "content": "Excellent",
-                                                  "fontFamily": "Inter",
+                                                  "fontFamily": "DM Sans",
                                                   "fontSize": 8,
                                                   "fontWeight": "800",
                                                   "letterSpacing": 0.5
@@ -5598,7 +5598,7 @@
                                           "textGrowth": "fixed-width",
                                           "width": "fill_container",
                                           "content": "91 × 15% = 13.7",
-                                          "fontFamily": "Inter",
+                                          "fontFamily": "DM Sans",
                                           "fontSize": 10,
                                           "fontWeight": "600",
                                           "letterSpacing": 0.2
@@ -5610,7 +5610,7 @@
                                       "id": "oU3qf",
                                       "fill": "#F5C14E",
                                       "content": "91",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 22,
                                       "fontWeight": "800",
                                       "letterSpacing": -0.5
@@ -5630,7 +5630,7 @@
                                       "id": "gVwFd",
                                       "x": 0,
                                       "y": 0,
-                                      "fill": "#0A1224",
+                                      "fill": "#0A1020",
                                       "width": 308,
                                       "height": 6
                                     },
@@ -5720,7 +5720,7 @@
                                     "position": 0
                                   },
                                   {
-                                    "color": "#243558",
+                                    "color": "#2A3A5E",
                                     "position": 1
                                   }
                                 ]
@@ -5787,7 +5787,7 @@
           "id": "jKe9T",
           "fill": "$--foreground-bright",
           "content": "AI UX placement — three variants for the Preferences hero",
-          "fontFamily": "Inter",
+          "fontFamily": "DM Sans",
           "fontSize": 24,
           "fontWeight": "800",
           "letterSpacing": -0.4
@@ -5800,7 +5800,7 @@
           "width": 1100,
           "content": "Each phone is the SAME Preferences screen with a different AI affordance. Phone A: inline empty-state CTA. Phone B: dedicated AI strip below the hero ring (fresh-from-AI). Phone C: stale tags + Ask-AI ghost button (after user edits).",
           "lineHeight": 1.5,
-          "fontFamily": "Inter",
+          "fontFamily": "DM Sans",
           "fontSize": 13,
           "fontWeight": "500"
         },
@@ -5824,7 +5824,7 @@
                   "id": "txr1b",
                   "fill": "#34E5A6",
                   "content": "VARIANT A — EMPTY STATE",
-                  "fontFamily": "Inter",
+                  "fontFamily": "DM Sans",
                   "fontSize": 11,
                   "fontWeight": "700",
                   "letterSpacing": 1.6
@@ -5838,7 +5838,7 @@
                   "content": "No codes yet. The hero invites the user to talk to AI.",
                   "lineHeight": 1.4,
                   "textAlign": "center",
-                  "fontFamily": "Inter",
+                  "fontFamily": "DM Sans",
                   "fontSize": 12,
                   "fontWeight": "500"
                 },
@@ -5852,7 +5852,7 @@
                   "cornerRadius": 32,
                   "stroke": {
                     "thickness": 3,
-                    "fill": "#2A3550"
+                    "fill": "#2A3A5E"
                   },
                   "layout": "vertical",
                   "padding": [
@@ -5879,7 +5879,7 @@
                           "id": "Q9XoUE",
                           "fill": "#FFFFFF",
                           "content": "9:41",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 14,
                           "fontWeight": "600"
                         },
@@ -5888,7 +5888,7 @@
                           "id": "mZCCh",
                           "fill": "#22D3C5",
                           "content": "●",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 14,
                           "fontWeight": "600"
                         }
@@ -5912,7 +5912,7 @@
                           "id": "Okte2",
                           "fill": "#34E5A6",
                           "content": "YOUR CODE",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 11,
                           "fontWeight": "700",
                           "letterSpacing": 1.6
@@ -5922,7 +5922,7 @@
                           "id": "lbzYl",
                           "fill": "$--foreground-bright",
                           "content": "Personal Rubric",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 22,
                           "fontWeight": "800",
                           "letterSpacing": -0.4
@@ -5947,7 +5947,7 @@
                             "position": 0
                           },
                           {
-                            "color": "#0D1422",
+                            "color": "#0F1729",
                             "position": 1
                           }
                         ]
@@ -6020,7 +6020,7 @@
                           "id": "Dv9J5",
                           "fill": "$--foreground-bright",
                           "content": "Compose your code with AI",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 18,
                           "fontWeight": "800",
                           "letterSpacing": -0.2
@@ -6034,7 +6034,7 @@
                           "content": "Tell us what matters about your food, and we'll set up your slots and weights.",
                           "lineHeight": 1.4,
                           "textAlign": "center",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 12,
                           "fontWeight": "500"
                         },
@@ -6093,7 +6093,7 @@
                               "id": "P1YihK",
                               "fill": "#05080F",
                               "content": "Talk it through",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 13,
                               "fontWeight": "800",
                               "letterSpacing": 0.2
@@ -6128,7 +6128,7 @@
                           "id": "daSoi",
                           "fill": "$--faint-foreground",
                           "content": "OR PICK MANUALLY",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 9,
                           "fontWeight": "700",
                           "letterSpacing": 1.4
@@ -6147,11 +6147,11 @@
                       "type": "frame",
                       "id": "ILJfM",
                       "width": "fill_container",
-                      "fill": "#0A1224",
+                      "fill": "#0A1020",
                       "cornerRadius": 18,
                       "stroke": {
                         "thickness": 1.5,
-                        "fill": "#243049"
+                        "fill": "#2A3A5E"
                       },
                       "gap": 10,
                       "padding": 14,
@@ -6172,7 +6172,7 @@
                           "id": "I6Ycu",
                           "fill": "$--foreground",
                           "content": "Add a code",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 13,
                           "fontWeight": "700",
                           "letterSpacing": 0.2
@@ -6196,7 +6196,7 @@
                   "id": "Kv9jv",
                   "fill": "#34E5A6",
                   "content": "VARIANT B — AI-FRESH TAGS",
-                  "fontFamily": "Inter",
+                  "fontFamily": "DM Sans",
                   "fontSize": 11,
                   "fontWeight": "700",
                   "letterSpacing": 1.6
@@ -6210,7 +6210,7 @@
                   "content": "After Talk-it-through. Tags sit inside the hero card, in sync with the codes below.",
                   "lineHeight": 1.4,
                   "textAlign": "center",
-                  "fontFamily": "Inter",
+                  "fontFamily": "DM Sans",
                   "fontSize": 12,
                   "fontWeight": "500"
                 },
@@ -6224,7 +6224,7 @@
                   "cornerRadius": 32,
                   "stroke": {
                     "thickness": 3,
-                    "fill": "#2A3550"
+                    "fill": "#2A3A5E"
                   },
                   "layout": "vertical",
                   "padding": [
@@ -6251,7 +6251,7 @@
                           "id": "tHspJ",
                           "fill": "#FFFFFF",
                           "content": "9:41",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 14,
                           "fontWeight": "600"
                         },
@@ -6260,7 +6260,7 @@
                           "id": "A2o05l",
                           "fill": "#22D3C5",
                           "content": "●",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 14,
                           "fontWeight": "600"
                         }
@@ -6290,7 +6290,7 @@
                               "id": "ukjsf",
                               "fill": "#34E5A6",
                               "content": "YOUR CODE",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 11,
                               "fontWeight": "700",
                               "letterSpacing": 1.6
@@ -6300,7 +6300,7 @@
                               "id": "O3XEi",
                               "fill": "$--foreground-bright",
                               "content": "Personal Rubric",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 22,
                               "fontWeight": "800",
                               "letterSpacing": -0.4
@@ -6310,7 +6310,7 @@
                         {
                           "type": "frame",
                           "id": "U21PrC",
-                          "fill": "#15203B",
+                          "fill": "#14203A",
                           "cornerRadius": 999,
                           "stroke": {
                             "thickness": 1,
@@ -6337,7 +6337,7 @@
                               "id": "hNXcj",
                               "fill": "$--foreground",
                               "content": "Talk to AI",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 11,
                               "fontWeight": "700",
                               "letterSpacing": 0.2
@@ -6360,7 +6360,7 @@
                         },
                         "colors": [
                           {
-                            "color": "#15203B",
+                            "color": "#14203A",
                             "position": 0
                           },
                           {
@@ -6446,7 +6446,7 @@
                                   "id": "qx9Dx",
                                   "fill": "$--foreground-bright",
                                   "content": "100",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 28,
                                   "fontWeight": "800",
                                   "letterSpacing": -0.8
@@ -6456,7 +6456,7 @@
                                   "id": "fSrxP",
                                   "fill": "$--muted-foreground",
                                   "content": "OF 100",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 8,
                                   "fontWeight": "700",
                                   "letterSpacing": 1
@@ -6479,7 +6479,7 @@
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
                               "content": "In Harmony",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 17,
                               "fontWeight": "700"
                             },
@@ -6491,7 +6491,7 @@
                               "width": "fill_container",
                               "content": "4 of 5 codes — balanced to 100.",
                               "lineHeight": 1.4,
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 11,
                               "fontWeight": "500"
                             },
@@ -6531,7 +6531,7 @@
                                       "id": "EHnYE",
                                       "fill": "$--foreground",
                                       "content": "Whole foods",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 9,
                                       "fontWeight": "700"
                                     }
@@ -6567,7 +6567,7 @@
                                       "id": "HkGmi",
                                       "fill": "$--foreground",
                                       "content": "Heart-aware",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 9,
                                       "fontWeight": "700"
                                     }
@@ -6603,7 +6603,7 @@
                                       "id": "f4LkgU",
                                       "fill": "$--foreground",
                                       "content": "Lean",
-                                      "fontFamily": "Inter",
+                                      "fontFamily": "DM Sans",
                                       "fontSize": 9,
                                       "fontWeight": "700"
                                     }
@@ -6631,7 +6631,7 @@
                           "id": "NO9pQ",
                           "fill": "$--muted-foreground",
                           "content": "YOUR CODES · 4 / 5",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 11,
                           "fontWeight": "700",
                           "letterSpacing": 1.4
@@ -6692,7 +6692,7 @@
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
                               "content": "Heart Healthy",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 12,
                               "fontWeight": "700"
                             },
@@ -6701,7 +6701,7 @@
                               "id": "tc9il",
                               "fill": "$--foreground-bright",
                               "content": "35%",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 14,
                               "fontWeight": "800"
                             }
@@ -6754,7 +6754,7 @@
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
                               "content": "Clean Label",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 12,
                               "fontWeight": "700"
                             },
@@ -6763,7 +6763,7 @@
                               "id": "lS32U",
                               "fill": "$--foreground-bright",
                               "content": "28%",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 14,
                               "fontWeight": "800"
                             }
@@ -6788,7 +6788,7 @@
                   "id": "nnPBq",
                   "fill": "#7C7CFB",
                   "content": "VARIANT C — STALE TAGS",
-                  "fontFamily": "Inter",
+                  "fontFamily": "DM Sans",
                   "fontSize": 11,
                   "fontWeight": "700",
                   "letterSpacing": 1.6
@@ -6802,7 +6802,7 @@
                   "content": "User edited weights. Tags fade to muted with a dashed border and an Ask AI ghost button.",
                   "lineHeight": 1.4,
                   "textAlign": "center",
-                  "fontFamily": "Inter",
+                  "fontFamily": "DM Sans",
                   "fontSize": 12,
                   "fontWeight": "500"
                 },
@@ -6816,7 +6816,7 @@
                   "cornerRadius": 32,
                   "stroke": {
                     "thickness": 3,
-                    "fill": "#2A3550"
+                    "fill": "#2A3A5E"
                   },
                   "layout": "vertical",
                   "padding": [
@@ -6843,7 +6843,7 @@
                           "id": "efzPQ",
                           "fill": "#FFFFFF",
                           "content": "9:41",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 14,
                           "fontWeight": "600"
                         },
@@ -6852,7 +6852,7 @@
                           "id": "bFALZ",
                           "fill": "#22D3C5",
                           "content": "●",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 14,
                           "fontWeight": "600"
                         }
@@ -6882,7 +6882,7 @@
                               "id": "NJ3y1",
                               "fill": "#34E5A6",
                               "content": "YOUR CODE",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 11,
                               "fontWeight": "700",
                               "letterSpacing": 1.6
@@ -6892,7 +6892,7 @@
                               "id": "m8bvQJ",
                               "fill": "$--foreground-bright",
                               "content": "Personal Rubric",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 22,
                               "fontWeight": "800",
                               "letterSpacing": -0.4
@@ -6902,7 +6902,7 @@
                         {
                           "type": "frame",
                           "id": "irhMn",
-                          "fill": "#15203B",
+                          "fill": "#14203A",
                           "cornerRadius": 999,
                           "stroke": {
                             "thickness": 1,
@@ -6929,7 +6929,7 @@
                               "id": "PjNi8",
                               "fill": "$--foreground",
                               "content": "Talk to AI",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 11,
                               "fontWeight": "700",
                               "letterSpacing": 0.2
@@ -6952,7 +6952,7 @@
                         },
                         "colors": [
                           {
-                            "color": "#15203B",
+                            "color": "#14203A",
                             "position": 0
                           },
                           {
@@ -7038,7 +7038,7 @@
                                   "id": "kfuBU",
                                   "fill": "$--foreground-bright",
                                   "content": "100",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 28,
                                   "fontWeight": "800",
                                   "letterSpacing": -0.8
@@ -7048,7 +7048,7 @@
                                   "id": "kQWID",
                                   "fill": "$--muted-foreground",
                                   "content": "OF 100",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 8,
                                   "fontWeight": "700",
                                   "letterSpacing": 1
@@ -7071,7 +7071,7 @@
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
                               "content": "In Harmony",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 17,
                               "fontWeight": "700"
                             },
@@ -7083,14 +7083,14 @@
                               "width": "fill_container",
                               "content": "4 of 5 codes — balanced to 100.",
                               "lineHeight": 1.4,
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 11,
                               "fontWeight": "500"
                             },
                             {
                               "type": "frame",
                               "id": "vrAyF",
-                              "fill": "#0A1224",
+                              "fill": "#0A1020",
                               "cornerRadius": 999,
                               "stroke": {
                                 "thickness": 1.2,
@@ -7117,7 +7117,7 @@
                                   "id": "Fgj8R",
                                   "fill": "$--foreground",
                                   "content": "Ask AI for new tags",
-                                  "fontFamily": "Inter",
+                                  "fontFamily": "DM Sans",
                                   "fontSize": 10,
                                   "fontWeight": "700"
                                 }
@@ -7143,7 +7143,7 @@
                           "id": "i0mTr",
                           "fill": "$--muted-foreground",
                           "content": "YOUR CODES · 4 / 5",
-                          "fontFamily": "Inter",
+                          "fontFamily": "DM Sans",
                           "fontSize": 11,
                           "fontWeight": "700",
                           "letterSpacing": 1.4
@@ -7204,7 +7204,7 @@
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
                               "content": "Heart Healthy",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 12,
                               "fontWeight": "700"
                             },
@@ -7213,7 +7213,7 @@
                               "id": "k8o3Su",
                               "fill": "$--foreground-bright",
                               "content": "42%",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 14,
                               "fontWeight": "800"
                             }
@@ -7266,7 +7266,7 @@
                               "textGrowth": "fixed-width",
                               "width": "fill_container",
                               "content": "Clean Label",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 12,
                               "fontWeight": "700"
                             },
@@ -7275,7 +7275,7 @@
                               "id": "nNIkY",
                               "fill": "$--foreground-bright",
                               "content": "24%",
-                              "fontFamily": "Inter",
+                              "fontFamily": "DM Sans",
                               "fontSize": 14,
                               "fontWeight": "800"
                             }
@@ -7363,15 +7363,15 @@
     },
     "--font-display": {
       "type": "string",
-      "value": "Inter"
+      "value": "DM Sans"
     },
     "--font-mono": {
       "type": "string",
-      "value": "JetBrains Mono"
+      "value": "DM Sans"
     },
     "--font-primary": {
       "type": "string",
-      "value": "Inter"
+      "value": "DM Sans"
     },
     "--foreground": {
       "type": "color",
@@ -7447,7 +7447,7 @@
     },
     "--surface-glass": {
       "type": "color",
-      "value": "#1A2440CC"
+      "value": "#1B2440CC"
     },
     "--track": {
       "type": "color",
