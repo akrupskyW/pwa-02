@@ -429,7 +429,7 @@
       .scr-hdr {
         display: flex; justify-content: space-between; align-items: center;
         min-height: 38px;
-        padding: 0 20px 12px;
+        padding: 20px 20px 20px;
       }
       .scr-hdr .ovl {
         font-size: 11px; font-weight: 800; letter-spacing: 0.16em;
@@ -2476,8 +2476,8 @@
 
       /* ─── Rename link (bottom-left of rubric pie-card) ────────────────
          Mirror of .reset-link, anchored to the opposite corner. Lets the
-         user retitle their code (the italic phrase woven into the screen
-         headline — "Your <em>In Harmony</em> code"). Same quiet plain-
+         user retitle their code (the underlined phrase woven into the screen
+         headline — "Your <span class="code-name">In Harmony</span> code"). Same quiet plain-
          text affordance so it doesn't compete with Rebalance / Reset. */
       .rename-link {
         background: transparent;
@@ -2505,14 +2505,17 @@
       }
 
       /* ─── Code-name accent inside the Your Code headline ──────────────
-         The h1 reads "Your <em class="code-name">In Harmony</em> code" —
-         italic + brand-blue makes the user-given name pop without
-         shouting, and signals it's editable (paired with the Rename
-         link at the bottom-left of the pie-card). */
+         The h1 reads "Your <span class="code-name">In Harmony</span> code"
+         — same weight and color as the rest of the title, underlined so
+         the user-given name reads as editable (paired with Rename on the
+         pie-card) without a separate accent hue. */
       .scr-hdr h1 .code-name {
-        font-style: italic;
+        font-style: normal;
         font-weight: 800;
-        color: var(--blue);
+        color: inherit;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
       }
 
       /* ─── Rebalance bottom sheet ───────────────────────────────────────
@@ -3242,7 +3245,7 @@
                                 code" CTA tile (no [data-rubric] hooks
                                 so the subscriber leaves it untouched)
         1b. YOUR CODE (HOME)  — In Harmony · pie chart + compact slot
-                                list; italic code-name woven into the h1
+                                list; underlined code-name woven into the h1
                                 (Rename in the pie-card edits it)
         2.  ADD CODE (PICK)   — full-screen picker, 4 categories
         3.  BROWSE            — priorities row + featured + ranked olives
@@ -3331,7 +3334,7 @@
   </div>
 </section>
 
-<!-- ─── 1. YOUR CODE (HOME) — In Harmony · italic code-name in h1 ─────── -->
+<!-- ─── 1. YOUR CODE (HOME) — In Harmony · underlined code-name in h1 ─── -->
 <section class="screen-pair">
   <h3 class="screen-pair-label">1b · Your Code (Home)</h3>
   <div class="pair-row">
@@ -3416,7 +3419,7 @@
       </nav>
     </div>
   </div>
-  <div class="phone-caption">Personal Rubric in its filled, in-harmony state: pie chart visualises every slot's weight, the list under it lets the user fine-tune. The italic phrase in the headline ("In Harmony") is the user-given name for this code — Rename in the bottom-left of the pie-card edits it; Reset in the bottom-right wipes the rubric. Tap a row to read the code's description and start a chat with WISE AI about it.</div>
+  <div class="phone-caption">Personal Rubric in its filled, in-harmony state: pie chart visualises every slot's weight, the list under it lets the user fine-tune. The underlined phrase in the headline ("In Harmony") is the user-given name for this code — Rename in the bottom-left of the pie-card edits it; Reset in the bottom-right wipes the rubric. Tap a row to read the code's description and start a chat with WISE AI about it.</div>
 </div>
   </div>
 </section>
