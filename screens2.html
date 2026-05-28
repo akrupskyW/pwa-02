@@ -3193,6 +3193,294 @@
         align-items: flex-start;
         justify-content: center;
       }
+
+      /* ─── Intro / Welcome screen ──────────────────────────────────────
+         The far-left screen the user lands on before any code exists.
+         A bold value-prop headline, a 2×2 grid of "what you can do"
+         tiles, then a full-width card explaining how to pin the PWA to
+         the home screen. Pure presentation — no data hooks, so the
+         rubric / picker subscribers leave it untouched and the cloner
+         still mints its light twin. */
+      .intro-hero {
+        padding: 4px 2px 2px;
+      }
+      .intro-hero .kicker {
+        font-size: 11px; font-weight: 800; letter-spacing: 0.16em;
+        color: var(--blue);
+        text-transform: uppercase;
+      }
+      .intro-hero h1 {
+        margin: 10px 0 0;
+        color: var(--fg-bright);
+        font-size: 30px; font-weight: 800; letter-spacing: -0.025em;
+        line-height: 1.08;
+      }
+      .intro-hero h1 .accent { color: var(--emerald); }
+      .intro-hero p {
+        margin: 12px 0 0;
+        color: var(--fg-muted);
+        font-size: 13px; font-weight: 500; line-height: 1.5;
+      }
+      .intro-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .intro-tile {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 16px 14px;
+        display: flex; flex-direction: column; gap: 10px;
+        min-height: 128px;
+      }
+      .intro-tile .tile-ico {
+        width: 40px; height: 40px; border-radius: 12px;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: #FFFFFF;
+        flex-shrink: 0;
+      }
+      .intro-tile .tile-ico .material-symbols-outlined { font-size: 22px; }
+      .intro-tile .tile-title {
+        color: var(--fg-bright);
+        font-size: 14px; font-weight: 800; letter-spacing: -0.01em;
+      }
+      .intro-tile .tile-sub {
+        color: var(--fg-muted);
+        font-size: 11.5px; font-weight: 500; line-height: 1.4;
+      }
+      /* Full-width "pin to home screen" card under the grid. */
+      .intro-pin {
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 16px;
+        display: flex; align-items: flex-start; gap: 14px;
+      }
+      .intro-pin .pin-ico {
+        width: 44px; height: 44px; border-radius: 13px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: color-mix(in srgb, var(--blue) 16%, transparent);
+        color: var(--blue);
+        flex-shrink: 0;
+      }
+      .intro-pin .pin-ico .material-symbols-outlined { font-size: 24px; }
+      .intro-pin .pin-copy { flex: 1; min-width: 0; }
+      .intro-pin .pin-title {
+        color: var(--fg-bright);
+        font-size: 14px; font-weight: 800; letter-spacing: -0.01em;
+      }
+      .intro-pin .pin-steps {
+        margin: 8px 0 0; padding: 0; list-style: none;
+        display: flex; flex-direction: column; gap: 6px;
+      }
+      .intro-pin .pin-steps li {
+        display: flex; align-items: center; gap: 8px;
+        color: var(--fg-muted);
+        font-size: 12px; font-weight: 500; line-height: 1.4;
+      }
+      .intro-pin .pin-steps .material-symbols-outlined {
+        font-size: 17px; color: var(--fg-faint); flex-shrink: 0;
+      }
+      .intro-cta {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        width: 100%;
+        background: var(--emerald);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 14px;
+        padding: 15px 20px;
+        font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
+        box-shadow: 0 12px 28px -10px rgba(31,163,74,0.5);
+      }
+      .intro-cta .material-symbols-outlined { font-size: 20px; }
+
+      /* ─── Settings screen ─────────────────────────────────────────────
+         Reached from the new far-right SETTINGS tab. Grouped list cards
+         in the iOS-settings idiom: a labelled section overline, then a
+         rounded card holding one-or-more rows. Each row is an icon tile +
+         label/sub + trailing control (segmented theme switch, chevron, or
+         a button). Presentation-only, so it clones cleanly into a light
+         twin. */
+      .set-section + .set-section { margin-top: 18px; }
+      .set-section > .set-label {
+        display: block;
+        padding: 0 6px 8px;
+        font-size: 11px; font-weight: 800; letter-spacing: 0.14em;
+        color: var(--fg-muted);
+        text-transform: uppercase;
+      }
+      .set-group {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        overflow: hidden;
+      }
+      .set-row {
+        display: flex; align-items: center; gap: 13px;
+        width: 100%;
+        padding: 14px 15px;
+        background: transparent;
+        border: none;
+        text-align: left;
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .set-row + .set-row { border-top: 1px solid var(--line); }
+      .set-row .set-ico {
+        width: 38px; height: 38px; border-radius: 11px;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: #FFFFFF;
+        flex-shrink: 0;
+      }
+      .set-row .set-ico .material-symbols-outlined { font-size: 21px; }
+      .set-row .set-copy { flex: 1; min-width: 0; }
+      .set-row .set-title {
+        color: var(--fg-bright);
+        font-size: 14px; font-weight: 700; letter-spacing: -0.005em;
+      }
+      .set-row .set-sub {
+        color: var(--fg-muted);
+        font-size: 11.5px; font-weight: 500; line-height: 1.4;
+        margin-top: 2px;
+      }
+      .set-row .set-chev {
+        color: var(--fg-faint); flex-shrink: 0;
+        display: inline-flex; align-items: center;
+      }
+      .set-row .set-chev .material-symbols-outlined { font-size: 20px; }
+      .set-row .set-trail-btn {
+        flex-shrink: 0;
+        border: none;
+        border-radius: 10px;
+        padding: 8px 14px;
+        font-family: inherit;
+        font-size: 12.5px; font-weight: 800; letter-spacing: -0.005em;
+        cursor: pointer;
+      }
+      .set-row .set-trail-btn.solid {
+        background: var(--emerald); color: #FFFFFF;
+        box-shadow: 0 8px 18px -8px rgba(31,163,74,0.45);
+      }
+      .set-row .set-trail-btn.ghost {
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        color: var(--fg-bright);
+      }
+
+      /* Segmented Light/Dark theme switch. The active segment reflects
+         the subtree theme automatically: Dark is active by default, and
+         the .theme-light twin re-points the active segment to Light — so
+         each cloned phone shows the control already matching its own
+         rendering. */
+      .theme-seg {
+        display: inline-flex;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 3px;
+        gap: 2px;
+        flex-shrink: 0;
+      }
+      .theme-seg .seg-opt {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 7px 13px;
+        border-radius: 999px;
+        font-size: 12px; font-weight: 800; letter-spacing: -0.005em;
+        color: var(--fg-faint);
+      }
+      .theme-seg .seg-opt .material-symbols-outlined { font-size: 16px; }
+      /* Dark active by default */
+      .theme-seg .seg-dark {
+        background: var(--blue);
+        color: #FFFFFF;
+      }
+      .theme-light .theme-seg .seg-dark {
+        background: transparent;
+        color: var(--fg-faint);
+      }
+      .theme-light .theme-seg .seg-light {
+        background: var(--blue);
+        color: #FFFFFF;
+      }
+
+      /* ─── Delete-code confirmation bottom-sheet ───────────────────────
+         Tapping the minus on a rubric slot no longer removes the code
+         outright — it slides up this double-verify sheet first. Reuses
+         the reset-sheet's scrim + rounded-top sheet + drag-handle +
+         side-by-side cancel/destructive-confirm idiom so the two
+         destructive flows feel identical. One sheet per phone (mounted
+         into the .screen), so dark + light twins confirm independently. */
+      .delete-overlay {
+        position: absolute; inset: 0; z-index: 50;
+        background: var(--scrim-strong);
+        backdrop-filter: blur(8px);
+        display: flex; align-items: flex-end;
+        animation: cp-fade 160ms ease-out;
+      }
+      .delete-sheet {
+        width: 100%;
+        background: var(--card);
+        border-top: 1px solid var(--line);
+        border-radius: 22px 22px 0 0;
+        padding: 12px 20px 22px;
+        box-shadow: var(--shadow-sheet);
+        display: flex; flex-direction: column; gap: 6px;
+        animation: rc-slide 260ms cubic-bezier(.2,.85,.25,1);
+      }
+      .delete-sheet .handle {
+        width: 38px; height: 4px; border-radius: 999px;
+        background: var(--line-strong);
+        align-self: center;
+        opacity: 0.5;
+        margin-bottom: 8px;
+      }
+      .delete-sheet .del-code {
+        display: flex; align-items: center; gap: 11px;
+        margin-bottom: 4px;
+      }
+      .delete-sheet .del-code .ico {
+        width: 38px; height: 38px; border-radius: 11px;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: #FFFFFF; flex-shrink: 0;
+      }
+      .delete-sheet .del-code .ico .material-symbols-outlined { font-size: 21px; }
+      .delete-sheet .del-code .nm {
+        color: var(--fg-bright);
+        font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
+      }
+      .delete-sheet h2 {
+        margin: 0;
+        color: var(--fg-bright);
+        font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
+      }
+      .delete-sheet p {
+        margin: 0;
+        color: var(--fg-muted);
+        font-size: 13px; line-height: 1.5;
+      }
+      .delete-sheet .actions {
+        display: flex; gap: 10px; margin-top: 12px;
+      }
+      .delete-sheet .btn {
+        flex: 1;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 14px; font-weight: 800; letter-spacing: 0;
+        border: none; cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      }
+      .delete-sheet .btn-cancel {
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        color: var(--fg-bright);
+      }
+      .delete-sheet .btn-confirm {
+        background: var(--code-red);
+        color: #FFFFFF;
+        box-shadow: 0 8px 20px -8px rgba(202, 55, 31, 0.45);
+      }
+      .delete-sheet .btn-confirm .material-symbols-outlined { font-size: 18px; }
     </style>
   </head>
   <body>
@@ -3259,11 +3547,97 @@
                                 in Browse or a barcode result in Scan
       -->
       <div class="pair-rail-hint">
-        <span>7 frames · dark + light side-by-side</span>
+        <span>9 frames · dark + light side-by-side</span>
         <span class="arrows">Scroll <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
       </div>
       <div class="pair-rail-frame">
         <div class="pair-rail" tabindex="0" aria-label="Screen catalog — dark / light pairs">
+
+<!-- ─── 0. INTRO / WELCOME — landing screen, no codes yet ──────────────── -->
+<!--   The far-left frame: the first thing a fresh user sees. A value-prop
+       headline, a 2×2 grid of "what you can do" tiles, and a full-width
+       card that walks them through pinning the PWA to their home screen.
+       No data-rubric / data-picker hooks, so the subscribers skip it and
+       the cloner still mints a .theme-light twin. -->
+<section class="screen-pair">
+  <h3 class="screen-pair-label">0 · Intro / Welcome</h3>
+  <div class="pair-row">
+<div class="phone-wrap">
+  <div class="phone-label">Dark</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="px stack" style="padding-top:8px;">
+          <div class="intro-hero">
+            <h1>Eat to <span class="accent">your</span> code, not the average.</h1>
+            <p>Build a personal rubric of what matters to you, then see how any food scores against it — in seconds.</p>
+          </div>
+
+          <div class="intro-grid">
+            <div class="intro-tile">
+              <span class="tile-ico" style="background:#1D4ED8;"><span class="material-symbols-outlined">tune</span></span>
+              <div class="tile-title">Build your code</div>
+              <div class="tile-sub">Pick the factors you care about and weight them your way.</div>
+            </div>
+            <div class="intro-tile">
+              <span class="tile-ico" style="background:#1FA34A;"><span class="material-symbols-outlined">grid_view</span></span>
+              <div class="tile-title">Find top matches</div>
+              <div class="tile-sub">Browse foods ranked by your composite score.</div>
+            </div>
+            <div class="intro-tile">
+              <span class="tile-ico" style="background:#D8610C;"><span class="material-symbols-outlined">qr_code_scanner</span></span>
+              <div class="tile-title">Scan a barcode</div>
+              <div class="tile-sub">Point your camera at any product for an instant verdict.</div>
+            </div>
+            <div class="intro-tile">
+              <span class="tile-ico" style="background:#147A36;"><span class="material-symbols-outlined">chat_bubble</span></span>
+              <div class="tile-title">Chat with WISE AI</div>
+              <div class="tile-sub">Ask why a food scores the way it does and tune your code.</div>
+            </div>
+          </div>
+
+          <div class="intro-pin">
+            <span class="pin-ico"><span class="material-symbols-outlined">add_to_home_screen</span></span>
+            <div class="pin-copy">
+              <div class="pin-title">Pin it to your home screen</div>
+              <ul class="pin-steps">
+                <li><span class="material-symbols-outlined">ios_share</span>Tap the Share icon in your browser bar.</li>
+                <li><span class="material-symbols-outlined">add_box</span>Choose “Add to Home Screen.”</li>
+                <li><span class="material-symbols-outlined">touch_app</span>Launch it like any other app — full screen, no browser chrome.</li>
+              </ul>
+            </div>
+          </div>
+
+          <button type="button" class="intro-cta">
+            <span class="material-symbols-outlined">arrow_forward</span>
+            Build my code
+          </button>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">First-run welcome: a value-prop headline, a 2×2 grid of what the app does (build a code, find matches, scan, chat), and a full-width card explaining how to pin the PWA to the device home screen. The green CTA drops the user into building their first code.</div>
+</div>
+  </div>
+</section>
 
 <!-- ─── 1. YOUR CODE (EMPTY) — Pre-state · no codes added yet ─────────── -->
 <!--   Authored as a static phone-wrap with NO data-rubric / data-picker
@@ -3321,10 +3695,10 @@
       </div>
       <nav class="tab-bar">
         <div class="tab-pill">
-          <a class="tab active"><span class="material-symbols-outlined icon">tune</span><span>CODE</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -3411,10 +3785,10 @@
       </div>
       <nav class="tab-bar">
         <div class="tab-pill">
-          <a class="tab active"><span class="material-symbols-outlined icon">tune</span><span>CODE</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -3639,10 +4013,10 @@
       </div>
       <nav class="tab-bar">
         <div class="tab-pill">
-          <a class="tab"><span class="material-symbols-outlined icon">tune</span><span>CODE</span></a>
-          <a class="tab active"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -3703,10 +4077,10 @@
       </div>
       <nav class="tab-bar">
         <div class="tab-pill">
-          <a class="tab"><span class="material-symbols-outlined icon">tune</span><span>CODE</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab active"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -3784,10 +4158,10 @@
       </div>
       <nav class="tab-bar">
         <div class="tab-pill">
-          <a class="tab"><span class="material-symbols-outlined icon">tune</span><span>CODE</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
           <a class="tab active violet"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -3916,15 +4290,113 @@
       </div>
       <nav class="tab-bar">
         <div class="tab-pill">
-          <a class="tab"><span class="material-symbols-outlined icon">tune</span><span>CODE</span></a>
-          <a class="tab active"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
   </div>
   <div class="phone-caption">Tap any Top Match row in Browse (or land a barcode hit in Scan) to drill into the per-food drilldown: hero card with the product image / brand / UPC, then the same contribution donut as the user's rubric — only now each slice's value is what that slot contributed to the composite score for this specific food.</div>
+</div>
+  </div>
+</section>
+
+<!-- ─── 7. SETTINGS — reached from the far-right SETTINGS tab ──────────── -->
+<!--   Grouped-list settings in the iOS idiom. Appearance section hosts the
+       Light/Dark segmented switch (which auto-reflects each twin's own
+       theme); Account section holds Log in + Create account; the last
+       section is Share the app. Presentation-only, so it clones into a
+       light twin cleanly. -->
+<section class="screen-pair">
+  <h3 class="screen-pair-label">7 · Settings</h3>
+  <div class="pair-row">
+<div class="phone-wrap">
+  <div class="phone-label">Dark</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <h1>Settings</h1>
+        </div>
+
+        <div class="px">
+          <div class="set-section">
+            <span class="set-label">Appearance</span>
+            <div class="set-group">
+              <div class="set-row">
+                <span class="set-ico" style="background:#1D4ED8;"><span class="material-symbols-outlined">contrast</span></span>
+                <div class="set-copy">
+                  <div class="set-title">Theme</div>
+                  <div class="set-sub">Switch between light and dark mode.</div>
+                </div>
+                <div class="theme-seg" role="group" aria-label="Theme">
+                  <span class="seg-opt seg-dark"><span class="material-symbols-outlined">dark_mode</span>Dark</span>
+                  <span class="seg-opt seg-light"><span class="material-symbols-outlined">light_mode</span>Light</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="set-section">
+            <span class="set-label">Account</span>
+            <div class="set-group">
+              <button type="button" class="set-row">
+                <span class="set-ico" style="background:#1FA34A;"><span class="material-symbols-outlined">login</span></span>
+                <div class="set-copy">
+                  <div class="set-title">Log in</div>
+                  <div class="set-sub">Sync your code across devices.</div>
+                </div>
+                <span class="set-trail-btn ghost">Log in</span>
+              </button>
+              <button type="button" class="set-row">
+                <span class="set-ico" style="background:#147A36;"><span class="material-symbols-outlined">person_add</span></span>
+                <div class="set-copy">
+                  <div class="set-title">Create account</div>
+                  <div class="set-sub">Save your rubric and pick up anywhere.</div>
+                </div>
+                <span class="set-trail-btn solid">Sign up</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="set-section">
+            <span class="set-label">Share</span>
+            <div class="set-group">
+              <button type="button" class="set-row">
+                <span class="set-ico" style="background:#D8610C;"><span class="material-symbols-outlined">ios_share</span></span>
+                <div class="set-copy">
+                  <div class="set-title">Share the app</div>
+                  <div class="set-sub">Send Personalized Nutrition to a friend.</div>
+                </div>
+                <span class="set-chev"><span class="material-symbols-outlined">chevron_right</span></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab active"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Settings: the Appearance section's segmented switch flips light/dark (each twin shows the control already matching its own rendering); Account holds Log in and Create account; the last section shares the app. Reached from the new far-right SETTINGS tab.</div>
 </div>
   </div>
 </section>
@@ -5157,6 +5629,58 @@
           if (overlay) overlay.remove();
         }
 
+        // ─── Delete-code confirmation bottom-sheet ──────────────────────
+        // Tapping the minus on a rubric slot no longer removes the code
+        // outright — it slides up this double-verify sheet first, naming
+        // the exact code about to be dropped. Cancel dismisses; Remove
+        // calls WISE_CODES.removeCode() which strips the slot and
+        // re-equalizes the rest, propagating to every screen. The pending
+        // codeId is stashed on the overlay so confirm knows what to drop.
+        function openDeleteSheet(phoneWrap, codeId) {
+          if (!phoneWrap || !codeId) return;
+          if (phoneWrap.querySelector(".delete-overlay")) return;
+          var meta = W.CODE_CATALOG[codeId];
+          if (!meta) return;
+
+          var overlay = document.createElement("div");
+          overlay.className = "delete-overlay";
+          overlay._deleteCodeId = codeId;
+          overlay.innerHTML = ''
+            + '<div class="delete-sheet" role="dialog" aria-modal="true" aria-labelledby="delete-sheet-title">'
+            +   '<div class="handle" aria-hidden="true"></div>'
+            +   '<div class="del-code">'
+            +     '<span class="ico" style="background:' + meta.color + ';">'
+            +       '<span class="material-symbols-outlined">' + meta.icon + '</span>'
+            +     '</span>'
+            +     '<span class="nm">' + W.escapeHtml(meta.name) + '</span>'
+            +   '</div>'
+            +   '<h2 id="delete-sheet-title">Remove this code?</h2>'
+            +   '<p>This drops \u201C' + W.escapeHtml(meta.name) + '\u201D from your Personal Rubric and re-balances the remaining codes to total 100. You can add it back anytime.</p>'
+            +   '<div class="actions">'
+            +     '<button type="button" class="btn btn-cancel" data-action="delete-cancel">Cancel</button>'
+            +     '<button type="button" class="btn btn-confirm" data-action="delete-confirm">'
+            +       '<span class="material-symbols-outlined">do_not_disturb_on</span>Remove'
+            +     '</button>'
+            +   '</div>'
+            + '</div>';
+
+          overlay.addEventListener("click", function (e) {
+            if (e.target === overlay) {
+              e.preventDefault();
+              closeDeleteSheet(phoneWrap);
+            }
+          });
+
+          var screen = phoneWrap.querySelector(".screen");
+          if (screen) screen.appendChild(overlay);
+        }
+
+        function closeDeleteSheet(phoneWrap) {
+          if (!phoneWrap) return;
+          var overlay = phoneWrap.querySelector(".delete-overlay");
+          if (overlay) overlay.remove();
+        }
+
         // ─── Rebalance bottom-sheet ─────────────────────────────────────
         // Tapping the Rebalance pill on the rubric pie-card (or the
         // "Rebalance" text affordance above the Browse priority row)
@@ -5528,8 +6052,25 @@
             var row = target.closest(".slot-c[data-code-id]");
             if (row) {
               ev.preventDefault();
-              W.removeCode(row.getAttribute("data-code-id"));
+              // Double-verify: slide up the delete-confirm sheet instead
+              // of dropping the code on the first tap.
+              openDeleteSheet(phoneWrap, row.getAttribute("data-code-id"));
             }
+            return;
+          }
+
+          if (action === "delete-cancel" && phoneWrap) {
+            ev.preventDefault();
+            closeDeleteSheet(phoneWrap);
+            return;
+          }
+
+          if (action === "delete-confirm" && phoneWrap) {
+            ev.preventDefault();
+            var delOverlay = phoneWrap.querySelector(".delete-overlay");
+            var delCodeId = delOverlay && delOverlay._deleteCodeId;
+            if (delCodeId) W.removeCode(delCodeId);
+            closeDeleteSheet(phoneWrap);
             return;
           }
 
