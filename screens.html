@@ -413,6 +413,31 @@
         font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
         padding: 4px 10px;
       }
+      /* Code-action cluster on the filled Your Code screens — Rebalance
+         (primary) sits beside Rename and Reset so the trio shares one row. */
+      .code-actions { display: inline-flex; align-items: center; gap: 6px; }
+      .rename-btn {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: var(--surface-2); border: 1px solid var(--line);
+        color: var(--fg); border-radius: 999px;
+        font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+        padding: 4px 10px;
+      }
+      .rebalance-btn {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: rgba(124,124,251,0.16);
+        border: 1px solid rgba(124,124,251,0.45);
+        color: var(--fg-bright); border-radius: 999px;
+        font-size: 10px; font-weight: 800; letter-spacing: 0.06em;
+        padding: 4px 10px;
+      }
+      /* User-given code name woven into the "Your … code" headline,
+         underlined so it reads as editable (paired with Rename). */
+      .scr-hdr h1 .code-name {
+        font-weight: 800; color: inherit;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
 
       /* Slot card (preferences) */
       .slot {
@@ -983,8 +1008,7 @@
       <div class="scroll">
         <div class="scr-hdr">
           <div>
-            <div class="ovl">YOUR CODE</div>
-            <h1>Personal Rubric</h1>
+            <h1>Your code</h1>
           </div>
           <div class="ai-tile" style="width:38px;height:38px;border-radius:999px;font-weight:800;font-size:15px;">T</div>
         </div>
@@ -1042,8 +1066,7 @@
       <div class="scroll">
         <div class="scr-hdr">
           <div>
-            <div class="ovl">YOUR CODE</div>
-            <h1>Personal Rubric</h1>
+            <h1>Your <span class="code-name">Personal Rubric</span> code</h1>
           </div>
           <button class="cta-violet"><i data-lucide="sparkles" style="width:12px;height:12px;color:var(--violet);"></i>Talk to AI</button>
         </div>
@@ -1073,7 +1096,11 @@
 
           <div class="ovl-row">
             <div class="lbl">YOUR CODES · 4 / 5</div>
-            <button class="reset-btn"><i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i>Reset</button>
+            <div class="code-actions">
+              <button class="rebalance-btn"><i data-lucide="sliders-horizontal" style="width:11px;height:11px;"></i>Rebalance</button>
+              <button class="rename-btn"><i data-lucide="pencil" style="width:11px;height:11px;"></i>Rename</button>
+              <button class="reset-btn"><i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i>Reset</button>
+            </div>
           </div>
 
           <div class="stack-sm">
@@ -1176,8 +1203,7 @@
       <div class="scroll">
         <div class="scr-hdr">
           <div>
-            <div class="ovl">YOUR CODE</div>
-            <h1>Personal Rubric</h1>
+            <h1>Your <span class="code-name">Personal Rubric</span> code</h1>
           </div>
           <button class="cta-violet"><i data-lucide="sparkles" style="width:12px;height:12px;color:var(--violet);"></i>Talk to AI</button>
         </div>
@@ -1202,7 +1228,11 @@
 
           <div class="ovl-row">
             <div class="lbl">YOUR CODES · 4 / 5</div>
-            <button class="reset-btn"><i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i>Reset</button>
+            <div class="code-actions">
+              <button class="rebalance-btn"><i data-lucide="sliders-horizontal" style="width:11px;height:11px;"></i>Rebalance</button>
+              <button class="rename-btn"><i data-lucide="pencil" style="width:11px;height:11px;"></i>Rename</button>
+              <button class="reset-btn"><i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i>Reset</button>
+            </div>
           </div>
 
           <div class="stack-sm">
@@ -1288,8 +1318,7 @@
       <div class="scroll">
         <div class="scr-hdr">
           <div>
-            <div class="ovl">YOUR CODE</div>
-            <h1>Personal Rubric</h1>
+            <h1>Your <span class="code-name">Personal Rubric</span> code</h1>
           </div>
           <button class="cta-violet"><i data-lucide="sparkles" style="width:12px;height:12px;color:var(--violet);"></i>Talk to AI</button>
         </div>
@@ -1317,7 +1346,11 @@
           </section>
           <div class="ovl-row">
             <div class="lbl">YOUR CODES · 5 / 5</div>
-            <button class="reset-btn"><i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i>Reset</button>
+            <div class="code-actions">
+              <button class="rebalance-btn"><i data-lucide="sliders-horizontal" style="width:11px;height:11px;"></i>Rebalance</button>
+              <button class="rename-btn"><i data-lucide="pencil" style="width:11px;height:11px;"></i>Rename</button>
+              <button class="reset-btn"><i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i>Reset</button>
+            </div>
           </div>
           <div class="stack-sm">
             <div class="slot">
@@ -1415,8 +1448,7 @@
       <div class="scroll" style="filter:blur(0.5px);opacity:0.55;">
         <div class="scr-hdr">
           <div>
-            <div class="ovl">YOUR CODE</div>
-            <h1>Personal Rubric</h1>
+            <h1>Your <span class="code-name">Personal Rubric</span> code</h1>
           </div>
         </div>
         <div class="px"><div class="hero" style="opacity:0.7;"><div style="width:104px;height:104px;background:var(--track);border-radius:50%;"></div><div class="copy"><h3>Composing…</h3><p>Pick a code to fill this slot.</p></div></div></div>
@@ -1513,8 +1545,7 @@
       <div class="scroll" style="filter:blur(0.5px);opacity:0.55;">
         <div class="scr-hdr">
           <div>
-            <div class="ovl">YOUR CODE</div>
-            <h1>Personal Rubric</h1>
+            <h1>Your <span class="code-name">Personal Rubric</span> code</h1>
           </div>
         </div>
         <div class="px"><div class="ai-hero" style="opacity:0.85;"><span class="ai-tile"><i data-lucide="sparkles" style="width:26px;height:26px;"></i></span><div><h3>Compose your code with AI</h3><p>Tell us what matters about your food.</p></div></div></div>

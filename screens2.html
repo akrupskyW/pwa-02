@@ -4080,6 +4080,17 @@
         color: var(--fg-muted);
         font-size: 11.5px; font-weight: 600; text-align: center;
       }
+      .persona-hint:empty { display: none; }
+      .persona-skip {
+        display: block; margin: 12px auto 0;
+        background: none; border: none; padding: 4px 6px;
+        color: var(--fg-muted);
+        font-size: 12.5px; font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color .2s ease;
+      }
+      .persona-skip:hover { color: var(--blue); }
 
       /* ─── Settings screen ─────────────────────────────────────────────
          Reached from the new far-right SETTINGS tab. Grouped list cards
@@ -4585,7 +4596,8 @@
             <span class="material-symbols-outlined">arrow_forward</span>
             Show me my code
           </button>
-          <div class="persona-hint" data-persona-hint>Pick at least one persona to continue.</div>
+          <div class="persona-hint" data-persona-hint></div>
+          <button type="button" class="persona-skip" data-action="persona-skip">Skip for now</button>
         </div>
       </div>
       <nav class="tab-bar">
@@ -7679,13 +7691,18 @@
                 ? (pCount === 1
                     ? "1 persona picked — tap \u201CShow me my code.\u201D"
                     : pCount + " personas picked — tap \u201CShow me my code.\u201D")
-                : "Pick at least one persona to continue.";
+                : "";
             }
             return;
           }
 
           if (action === "persona-code") {
             if (target.hasAttribute("disabled")) { ev.preventDefault(); return; }
+            ev.preventDefault();
+            return;
+          }
+
+          if (action === "persona-skip") {
             ev.preventDefault();
             return;
           }
