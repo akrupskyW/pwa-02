@@ -200,7 +200,7 @@
         text-align: center;
       }
       .stage > header .eyebrow {
-        color: var(--emerald);
+        color: var(--blue);
         font-size: 12px;
         font-weight: 800;
         letter-spacing: 0.22em;
@@ -221,6 +221,59 @@
         font-size: 16px;
         line-height: 1.55;
       }
+      /* Section index under the headline — the actual screens in the
+         catalog, rendered as a centered row of pills. */
+      .stage > header .section-list {
+        list-style: none;
+        margin: 0 auto;
+        padding: 0;
+        max-width: 880px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+      }
+      .stage > header .section-list li {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 7px 13px;
+        border-radius: 999px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        color: var(--fg-muted);
+        font-size: 12.5px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .stage > header .section-list li .idx {
+        color: var(--blue);
+        font-weight: 800;
+      }
+      /* Replay control under the section labels — re-runs every donut's
+         bounce-in entrance across the whole catalog (both dark + light
+         twins) in one tap. */
+      .stage > header .replay-all {
+        margin-top: 22px;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 16px;
+        border-radius: 999px;
+        background: var(--blue);
+        border: 1px solid transparent;
+        color: #FFFFFF;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        cursor: pointer;
+        transition: filter 120ms ease, transform 120ms ease;
+      }
+      .stage > header .replay-all .material-symbols-outlined { font-size: 17px; }
+      @media (hover: hover) {
+        .stage > header .replay-all:hover { filter: brightness(1.08); }
+      }
+      .stage > header .replay-all:active { transform: scale(0.97); }
 
       /* ─── Section header above each row of phones ───────────────────── */
       .section { max-width: 1480px; margin: 0 auto 64px; }
@@ -449,15 +502,49 @@
         height: 26px;
       }
       /* Brand bug — painted in brand blue via a mask so it matches in both
-         themes, sized small and vertically centered against the headline. */
+         themes, sized small and vertically centered against the headline.
+         Doubles as the tap target that opens the WISE AI chat overlay, so
+         it's authored as a reset <button> with a gentle looping pulse to
+         hint at its interactivity. */
       .wise-bug {
         display: block;
         height: 18px;
         aspect-ratio: 193 / 100;
         flex-shrink: 0;
+        padding: 0;
+        border: 0;
+        appearance: none;
+        -webkit-appearance: none;
         background-color: var(--blue);
         -webkit-mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
         mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
+        cursor: pointer;
+        transform-origin: center;
+        animation: wise-bug-pulse 6s ease-in-out infinite;
+        transition: transform 140ms ease, opacity 140ms ease;
+      }
+      @media (hover: hover) {
+        .wise-bug:hover { opacity: 0.82; }
+      }
+      .wise-bug:active { transform: scale(0.94); }
+      .wise-bug:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 3px;
+        border-radius: 3px;
+      }
+      /* Color breathing pulse — a slow, gradient-like sweep through a few
+         royal-blue tones and back, so the bug reads as "alive" without any
+         size/position shift. Extra color stops keep the transition smooth
+         and continuous rather than a single in/out fade. */
+      @keyframes wise-bug-pulse {
+        0%   { background-color: #1D4ED8; }
+        25%  { background-color: #3B82F6; }
+        50%  { background-color: #60A5FA; }
+        75%  { background-color: #3B82F6; }
+        100% { background-color: #1D4ED8; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .wise-bug { animation: none; }
       }
       /* Full wordmark is authored dark — invert on the dark phone canvas. */
       .phone-wrap:not(.theme-light) .wise-logo-vertical {
@@ -1337,6 +1424,10 @@
         display: flex; align-items: flex-end;
       }
       @keyframes cp-fade { from { opacity: 0; } to { opacity: 1; } }
+      /* Swap picker stacks above the rebalance sheet (z-index 50) it was
+         launched from, so it reads as a sheet-on-sheet rather than
+         sliding in behind the dimmed rebalance scrim. */
+      .code-picker-overlay.code-picker-swap { z-index: 60; }
       .code-picker-card {
         position: relative;
         width: 100%;
@@ -2222,6 +2313,17 @@
         color: var(--violet);
       }
       .chat-avatar .material-symbols-outlined { font-size: 20px; }
+      /* WISE AI identity mark — the owl WISEcode bug painted in the avatar's
+         current color via a mask, standing in for a generic icon so the AI
+         reads as the brand rather than a plain star. */
+      .wise-bug-mark {
+        display: block;
+        width: 22px;
+        aspect-ratio: 193 / 100;
+        background-color: currentColor;
+        -webkit-mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
+        mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
+      }
       .chat-body {
         flex: 1; min-width: 0;
       }
@@ -2790,6 +2892,30 @@
         font-size: 11px; font-weight: 700;
         color: var(--fg-muted);
       }
+      /* Per-row "swap" affordance — a round icon button sitting to the
+         right of the live percentage. Tapping it opens the Pick a code
+         sheet stacked on top, scoped to swap this row's code out for the
+         one the user chooses (weight preserved). Quiet by default so it
+         doesn't compete with the slider; lifts on hover. */
+      .rebalance-sheet .rb-swap {
+        width: 30px; height: 30px;
+        border-radius: 999px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        color: var(--fg-muted);
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+      }
+      @media (hover: hover) {
+        .rebalance-sheet .rb-swap:hover {
+          background: var(--surface-3);
+          border-color: var(--line-strong);
+          color: var(--fg-bright);
+        }
+      }
+      .rebalance-sheet .rb-swap .material-symbols-outlined { font-size: 17px; }
       .rebalance-sheet .rb-slider {
         -webkit-appearance: none;
         appearance: none;
@@ -2916,6 +3042,14 @@
         margin-bottom: 14px;
         flex-shrink: 0;
       }
+      /* Bare header used by the bug-launched chat overlay: the title and
+         "Personalize your code" line are dropped (the WISE AI message
+         right below already establishes the context), leaving just the
+         close affordance pinned to the right. */
+      .code-detail-sheet .cd-head-bare {
+        justify-content: flex-end;
+        margin-bottom: 4px;
+      }
       .code-detail-sheet .cd-ico {
         width: 44px; height: 44px; border-radius: 12px;
         display: inline-flex; align-items: center; justify-content: center;
@@ -2923,6 +3057,9 @@
       }
       .code-detail-sheet .cd-ico .material-symbols-outlined {
         font-size: 24px; color: #FFFFFF;
+      }
+      .code-detail-sheet .cd-ico .wise-bug-mark {
+        width: 28px; color: #FFFFFF;
       }
       .code-detail-sheet .cd-title { flex: 1; min-width: 0; }
       .code-detail-sheet .cd-title h2 {
@@ -3067,6 +3204,7 @@
       .code-detail-sheet .cd-chat-pane .chat-composer {
         background: var(--card);
         border-top: 1px solid var(--line-subtle);
+        padding: 14px 20px 26px;
       }
 
       /* ─── Food detail bottom sheet ──────────────────────────────────
@@ -3511,6 +3649,37 @@
         transition: border-color .18s ease, background .18s ease, box-shadow .2s ease, transform .14s ease;
       }
       .persona-card:active { transform: scale(.99); }
+      /* Persona photo behind the icon/plus row. It sits above the card fill
+         but below the icon, title and pick toggle, and fades down into the
+         card body so the title/description below stay on a clean surface. */
+      .persona-card::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 76px;
+        border-radius: 18px 18px 0 0;
+        background-position: center 28%;
+        background-size: cover;
+        background-repeat: no-repeat;
+        z-index: 0;
+        -webkit-mask: linear-gradient(180deg, #000 0%, #000 50%, transparent 82%);
+        mask: linear-gradient(180deg, #000 0%, #000 50%, transparent 82%);
+      }
+      /* Scrim over the photo so the white icon and the translucent pick
+         toggle stay legible against any image. */
+      .persona-card::after {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 76px;
+        border-radius: 18px 18px 0 0;
+        background: linear-gradient(180deg, rgba(7,12,24,.55) 0%, rgba(7,12,24,.26) 46%, transparent 82%);
+        z-index: 1;
+        pointer-events: none;
+      }
+      .persona-card .pc-ico,
+      .persona-card .pc-title,
+      .persona-card .pc-sub { position: relative; z-index: 2; }
       .persona-card .pc-ico {
         width: 40px; height: 40px; border-radius: 12px;
         display: inline-flex; align-items: center; justify-content: center;
@@ -3528,12 +3697,13 @@
       /* Selection toggle pinned to the top-right corner so the card body
          stays a pixel-match for the intro feature tile. */
       .persona-card .pc-pick {
-        position: absolute; top: 12px; right: 12px;
+        position: absolute; top: 12px; right: 12px; z-index: 2;
         width: 26px; height: 26px; border-radius: 999px;
         display: inline-flex; align-items: center; justify-content: center;
         color: var(--blue);
-        background: color-mix(in srgb, var(--blue) 12%, transparent);
-        border: 1px solid color-mix(in srgb, var(--blue) 40%, transparent);
+        background: #FFFFFF;
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
         transition: color .18s ease, background .18s ease, border-color .18s ease;
       }
       .persona-card .pc-pick .material-symbols-outlined { font-size: 16px; }
@@ -3550,6 +3720,17 @@
       }
       .persona-card.is-sel .pc-pick .pc-off { display: none; }
       .persona-card.is-sel .pc-pick .pc-on { display: inline-flex; }
+      /* Per-persona photo for the top-strip background. */
+      .persona-card[data-persona="convenience-seeker"]::before { background-image: url("assets/personas/convenience-seeker.jpg"); }
+      .persona-card[data-persona="conscious-consumer"]::before { background-image: url("assets/personas/conscious-consumer.jpg"); }
+      .persona-card[data-persona="condition-manager"]::before  { background-image: url("assets/personas/condition-manager.jpg"); }
+      .persona-card[data-persona="clean-eater"]::before        { background-image: url("assets/personas/clean-eater.jpg"); }
+      .persona-card[data-persona="athlete"]::before            { background-image: url("assets/personas/athlete.jpg"); }
+      .persona-card[data-persona="wellness"]::before           { background-image: url("assets/personas/wellness.jpg"); }
+      .persona-card[data-persona="plant-based"]::before        { background-image: url("assets/personas/plant-based.jpg"); }
+      .persona-card[data-persona="budget-smart"]::before       { background-image: url("assets/personas/budget-smart.jpg"); }
+      .persona-card[data-persona="family-guardian"]::before    { background-image: url("assets/personas/family-guardian.jpg"); }
+      .persona-card[data-persona="label-scientist"]::before    { background-image: url("assets/personas/label-scientist.jpg"); }
       .persona-cta {
         display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         width: 100%;
@@ -3782,14 +3963,23 @@
     <main class="stage">
       <header>
         <div class="eyebrow">Personalized Nutrition · Screen Catalog</div>
-        <h1>The six core screens.</h1>
-        <p>
-          Your Code, Pick a Code, Top Matches, Find a Food, Chat, and
-          the per-food Product Detail — the full happy path. Each card
-          in the carousel below shows one screen in both themes: dark
-          on the left, light on the right. Swipe or scroll horizontally
-          to flip between screens.
-        </p>
+        <h1>PWA v1</h1>
+        <ul class="section-list">
+          <li><span class="idx">0</span>Intro / Welcome</li>
+          <li><span class="idx">0b</span>Pick Your Personas</li>
+          <li><span class="idx">1a</span>Your Code (Empty)</li>
+          <li><span class="idx">1b</span>Your Code (Home)</li>
+          <li><span class="idx">2</span>Add Code (Pick)</li>
+          <li><span class="idx">3</span>Browse (Top Matches)</li>
+          <li><span class="idx">4</span>Scan (Find a Food)</li>
+          <li><span class="idx">5</span>Chat</li>
+          <li><span class="idx">6</span>Food Detail</li>
+          <li><span class="idx">7</span>Settings</li>
+        </ul>
+        <button type="button" class="replay-all" data-action="replay-all" aria-label="Replay all donut animations">
+          <span class="material-symbols-outlined">replay</span>
+          Replay animations
+        </button>
       </header>
 
       <!--
@@ -4561,7 +4751,7 @@
         <div class="px chat-log" data-chat-log>
           <div class="chat-msg">
             <div class="chat-avatar ai" aria-hidden="true">
-              <span class="material-symbols-outlined">auto_awesome</span>
+              <span class="wise-bug-mark"></span>
             </div>
             <div class="chat-body">
               <div class="chat-meta">
@@ -4851,20 +5041,6 @@
         </div>
       </div>
 
-      <div class="legend">
-        <div>
-          <h4>Tokens</h4>
-          <p>Every color, radius, and shadow on this page maps to the design tokens in <code>DESIGN.md</code> §1. CSS custom properties at the top of the file mirror the variables the real Tailwind config exposes; the light theme is a single <code>:root[data-theme="light"], .theme-light</code> override that re-points the same names — applied to a subtree so each pair can render both modes in the same document.</p>
-        </div>
-        <div>
-          <h4>Coverage</h4>
-          <p>Six core screens — Your Code (home), Pick a Code, Top Matches (Browse), Find a Food (Scan), Chat, and per-food Product Detail — laid out as a single horizontal carousel. Every screen is authored once in dark and cloned at runtime into a <code>.theme-light</code> twin shown right next to it inside the same scroll-snap card.</p>
-        </div>
-        <div>
-          <h4>Code pie</h4>
-          <p>The Personal Code hero on Screens 1 &amp; 6 renders as a multi-slice donut: one arc per slot, colored with that slot's gradient stops, percentage labels painted on each segment, composite score (of 100) in the center. Renderer in <code>&lt;script&gt;</code> at the bottom — reads <code>data-slices</code> off each <code>.pie-svg</code>. On Product Detail the same donut shrinks the per-slice tags down to just the icon + percent and pairs the chart with a per-slot contribution table beneath.</p>
-        </div>
-      </div>
     </main>
     <script>
       // Icons are rendered as Material Symbols Outlined glyphs via the
@@ -5321,6 +5497,22 @@
         renderPieSvg(svg, { animate: true });
       });
 
+      // ─── Replay-all button (catalog header) ────────────────────────────
+      // The pill that lives at the very top of the page, under the section
+      // labels. Re-runs the bounce-in entrance on every populated donut at
+      // once — across both the dark wrap and its cloned light twin, since
+      // they all carry the same .pie-svg class.
+      document.addEventListener("click", function (e) {
+        if (!e.target.closest) return;
+        if (!e.target.closest('[data-action="replay-all"]')) return;
+        if (typeof renderPieSvg !== "function") return;
+        document.querySelectorAll(".pie-svg").forEach(function (svg) {
+          var slices = svg.getAttribute("data-slices");
+          if (!slices || slices === "[]") return; // nothing to animate
+          renderPieSvg(svg, { animate: true });
+        });
+      });
+
       // ─── Dark/light pair cloner ──────────────────────────────────────
       // The source markup only ships the dark phone-wrap inside each
       // .pair-row. We deep-clone that wrap, tag the clone with
@@ -5356,7 +5548,7 @@
       // sheets (picker, code detail, rebalance, reset) never get it.
       // Runs after the dark/light cloner so both twins pick up the markup.
       (function () {
-        var bugHtml = '<span class="wise-bug" aria-hidden="true"></span>';
+        var bugHtml = '<button type="button" class="wise-bug" data-action="open-chat" aria-label="Chat with WISE AI"></button>';
 
         function wrapHeadlineBlock(parent, block) {
           if (!block || parent.querySelector(".scr-hdr-headline")) return;
@@ -5773,6 +5965,28 @@
           notify();
         }
 
+        // Replace one filled slot's code with another, in place, keeping
+        // its current weight (and slot position) untouched. Used by the
+        // rebalance sheet's per-row "swap" affordance: the user trades a
+        // code out for a different one without disturbing the rest of the
+        // mix, so the total stays at 100 and no autoEqualize is needed.
+        // No-ops if the new code is unknown, identical to the old one, or
+        // already present in another slot (we never duplicate a code).
+        function swapCode(oldCodeId, newCodeId) {
+          if (!CODE_CATALOG[newCodeId]) return;
+          if (oldCodeId === newCodeId) return;
+          if (state.slots.some(function (s) { return s.codeId === newCodeId; })) return;
+          var found = false;
+          state.slots = state.slots.map(function (s) {
+            if (s.codeId === oldCodeId) {
+              found = true;
+              return { codeId: newCodeId, weight: s.weight };
+            }
+            return { codeId: s.codeId, weight: s.weight };
+          });
+          if (found) notify();
+        }
+
         function resetCode() {
           state.slots = INITIAL_SLOTS.map(function (s) {
             return { codeId: s.codeId, weight: s.weight };
@@ -5879,6 +6093,7 @@
           getSlots: getSlots,
           addCode: addCode,
           removeCode: removeCode,
+          swapCode: swapCode,
           resetCode: resetCode,
           clearCode: clearCode,
           setSlotWeight: setSlotWeight,
@@ -5989,6 +6204,19 @@
           var picked = ev.target.closest('[data-action="pick"]');
           if (picked && picked.hasAttribute("data-code-id")) {
             ev.preventDefault();
+            // Swap mode: this picker was opened from a rebalance row's
+            // swap button. Picking an available code trades it in for the
+            // row's code (weight preserved) and dismisses just this
+            // picker — the rebalance sheet underneath re-renders to show
+            // the new code. Taken codes still fall through to the detail
+            // preview below so the user can read about a code already in
+            // their mix.
+            var swapOverlay = picked.closest(".code-picker-overlay");
+            if (swapOverlay && swapOverlay._swapFromId && !picked.classList.contains("is-taken")) {
+              W.swapCode(swapOverlay._swapFromId, picked.getAttribute("data-code-id"));
+              if (swapOverlay.parentNode) swapOverlay.parentNode.removeChild(swapOverlay);
+              return;
+            }
             // Open the detail sheet as a preview step instead of
             // committing the add outright. The sheet hosts the code's
             // description, a "what it does for you" list, chat-starter
@@ -6154,17 +6382,30 @@
         // and shared-state change (so the taken-set updates if the
         // user removes a code on the other twin while the picker is
         // open).
-        function openPicker(phoneWrap) {
+        function openPicker(phoneWrap, opts) {
           if (phoneWrap.querySelector(".code-picker-overlay")) return;
+          opts = opts || {};
 
           var overlay = document.createElement("div");
           overlay.className = "code-picker-overlay";
           overlay._picker = { sort: "category", query: "" };
+          // When opened from a rebalance row's swap button, remember which
+          // code we're trading out so the pick handler swaps it in place
+          // (preserving weight) instead of adding a brand-new slot. The
+          // swap picker also stacks on top of the rebalance sheet rather
+          // than replacing it (code-picker-swap bumps the z-index above
+          // the rebalance overlay).
+          overlay._swapFromId = opts.swapFromId || null;
+          if (overlay._swapFromId) overlay.classList.add("code-picker-swap");
+          var swapMeta = overlay._swapFromId ? WISE_CODES.CODE_CATALOG[overlay._swapFromId] : null;
+          var headTitle = swapMeta
+            ? "Swap " + WISE_CODES.escapeHtml(swapMeta.name)
+            : "Pick a code";
           overlay.innerHTML = ''
             + '<div class="code-picker-card">'
             +   '<div class="cp-handle" aria-hidden="true"></div>'
             +   '<div class="cp-head">'
-            +     '<h1>Pick a code</h1>'
+            +     '<h1>' + headTitle + '</h1>'
             +     '<button class="cp-close" data-action="picker-close" aria-label="Close picker">'
             +       '<span class="material-symbols-outlined">close</span>'
             +     '</button>'
@@ -6469,6 +6710,12 @@
               +       '<div class="rb-cat">' + W.escapeHtml(meta.category) + '</div>'
               +     '</div>'
               +     '<span class="rb-pct"><b data-rebalance-pct>' + s.weight + '</b><small>%</small></span>'
+              +     '<button type="button" class="rb-swap" data-action="rb-swap" '
+              +       'data-code-id="' + s.codeId + '" '
+              +       'aria-label="Swap out ' + W.escapeHtml(meta.name) + '" '
+              +       'title="Swap this code">'
+              +       '<span class="material-symbols-outlined">swap_horiz</span>'
+              +     '</button>'
               +   '</div>'
               +   '<input type="range" min="0" max="100" value="' + s.weight + '" '
               +     'class="rb-slider" '
@@ -6561,7 +6808,7 @@
           var helpsHtml = detail.helps.map(function (h) {
             return ''
               + '<li>'
-              +   '<span class="material-symbols-outlined" aria-hidden="true">check_circle</span>'
+              +   '<span class="material-symbols-outlined" aria-hidden="true" style="color:' + meta.color + ';">check_circle</span>'
               +   '<span>' + W.escapeHtml(h) + '</span>'
               + '</li>';
           }).join("");
@@ -6654,6 +6901,97 @@
           if (overlay) overlay.remove();
         }
 
+        // Open a standalone "Chat with WISE AI" overlay — fired by the
+        // floating WISEcode brand bug in the screen header. Reuses the
+        // code-detail sheet shell in its .is-chat layout (chat-log +
+        // composer), seeded with the same opening greeting + intent chips
+        // as the dedicated Chat screen. Because the markup carries the
+        // shared data-chat-log / data-intent / data-composer-* hooks, the
+        // window.WISE_CHAT document-level delegates drive the conversation
+        // for free. Skipped on the dedicated Chat screen (which already
+        // owns a [data-chat-log]) to avoid two threads fighting over the
+        // same hooks.
+        function openChatOverlay(phoneWrap) {
+          if (!phoneWrap) return;
+          if (phoneWrap.querySelector(".code-detail-overlay")) return;
+          var screen = phoneWrap.querySelector(".screen");
+          if (!screen) return;
+          if (screen.querySelector("[data-chat-log]")) return;
+
+          var nowTime = (window.WISE_CHAT ? window.WISE_CHAT.fmtTime(new Date()) : "9:41 AM");
+
+          var overlay = document.createElement("div");
+          overlay.className = "code-detail-overlay";
+          overlay.setAttribute("data-context", "chat");
+          overlay.innerHTML = ''
+            + '<div class="code-detail-sheet is-chat" role="dialog" aria-modal="true" aria-label="Chat with WISE AI">'
+            +   '<div class="cd-handle" aria-hidden="true"></div>'
+            +   '<div class="cd-head cd-head-bare">'
+            +     '<button type="button" class="cd-close" data-action="code-detail-close" aria-label="Close">'
+            +       '<span class="material-symbols-outlined">close</span>'
+            +     '</button>'
+            +   '</div>'
+            +   '<div class="cd-scroll"></div>'
+            +   '<div class="cd-chat-pane">'
+            +     '<div class="chat-log" data-chat-log>'
+            +       '<div class="chat-msg">'
+            +         '<div class="chat-avatar ai" aria-hidden="true">'
+            +           '<span class="wise-bug-mark"></span>'
+            +         '</div>'
+            +         '<div class="chat-body">'
+            +           '<div class="chat-meta">'
+            +             '<span class="chat-name">WISE AI</span>'
+            +             '<span class="chat-time">' + nowTime + '</span>'
+            +           '</div>'
+            +           '<div class="chat-bubble ai">'
+            +             '<div class="chat-text">Tell me what matters to you \u2014 diet style, goals, foods to avoid, anything. I\u2019ll compose a personal code and weight your code accordingly.</div>'
+            +             '<div class="intent-row" data-intent-row>'
+            +               '<span class="intent-label">Try an intent</span>'
+            +               '<button class="intent-chip" data-intent>Eat clean</button>'
+            +               '<button class="intent-chip" data-intent>More protein</button>'
+            +               '<button class="intent-chip" data-intent>Avoid UPF</button>'
+            +               '<button class="intent-chip" data-intent>Heart health</button>'
+            +               '<button class="intent-chip" data-intent>Plant-forward</button>'
+            +               '<button class="intent-chip" data-intent>Watch sugar</button>'
+            +               '<button class="intent-chip" data-intent>Gluten-free</button>'
+            +               '<button class="intent-chip" data-intent>Low sodium</button>'
+            +             '</div>'
+            +           '</div>'
+            +         '</div>'
+            +       '</div>'
+            +     '</div>'
+            +     '<form class="chat-composer" data-chat-form onsubmit="event.preventDefault();">'
+            +       '<textarea class="composer-input" data-composer-input rows="1" placeholder="Message WISE AI\u2026" aria-label="Message"></textarea>'
+            +       '<button type="submit" class="composer-send" data-composer-send aria-label="Send" disabled>'
+            +         '<span class="material-symbols-outlined">arrow_upward</span>'
+            +       '</button>'
+            +     '</form>'
+            +   '</div>'
+            + '</div>';
+
+          overlay.addEventListener("click", function (e) {
+            if (e.target === overlay) {
+              e.preventDefault();
+              closeCodeDetail(phoneWrap);
+            }
+          });
+
+          screen.appendChild(overlay);
+
+          // Leave the height unset so the sheet fits its content — the
+          // greeting bubble + composer — and grows from there as the
+          // conversation adds messages. The .is-chat max-height caps the
+          // growth at near-full height, after which the chat-log scrolls.
+          // (Contrast with enterChatMode, which tweens an already-open
+          // compact sheet up to full height.)
+
+          // Focus the composer so the user can start typing right away.
+          setTimeout(function () {
+            var input = overlay.querySelector("[data-composer-input]");
+            if (input && window.WISE_CHAT) { window.WISE_CHAT.autosize(input); input.focus(); }
+          }, 320);
+        }
+
         // Grow the open code-detail sheet into a chat experience when
         // the user taps a chat-starter chip. The flow:
         //   1. Lock the sheet's current pixel height so the upcoming
@@ -6725,7 +7063,8 @@
         window.CODE_DETAIL_SHEET = {
           open: openCodeDetail,
           close: closeCodeDetail,
-          enterChat: enterChatMode
+          enterChat: enterChatMode,
+          openChat: openChatOverlay
         };
 
         // ─── Code + picker event delegation ─────────────────────────
@@ -6752,6 +7091,16 @@
           var phoneWrap = isCodeDetail
             ? target.closest(".phone-wrap")
             : target.closest("[data-code]");
+
+          // The floating WISEcode brand bug in the header opens a
+          // standalone WISE AI chat overlay. It lives on every primary
+          // screen (not just [data-code] phones), so resolve the phone
+          // generically here.
+          if (action === "open-chat") {
+            ev.preventDefault();
+            openChatOverlay(target.closest(".phone-wrap"));
+            return;
+          }
 
           // Persona picker (Screen 0b): toggle a card, then light up the
           // footer CTA once at least one persona is selected. Scoped to the
@@ -6956,6 +7305,20 @@
             return;
           }
 
+          // Swap affordance on a rebalance row: open the Pick a code
+          // sheet stacked on top of the rebalance sheet, in swap mode
+          // for this row's code. Picking a code there trades it in for
+          // this one (see the PICKER pick handler) while the rebalance
+          // sheet stays mounted underneath.
+          if (action === "rb-swap") {
+            var swapPhone = target.closest(".phone-wrap");
+            var swapFromId = target.getAttribute("data-code-id");
+            if (!swapPhone || !swapFromId) return;
+            ev.preventDefault();
+            openPicker(swapPhone, { swapFromId: swapFromId });
+            return;
+          }
+
           // Back-compat: any leftover data-action="reset" still fires
           // the immediate reset (no prompt) so older static markup
           // keeps working.
@@ -7026,8 +7389,19 @@
           document.querySelectorAll(".rebalance-overlay").forEach(function (overlay) {
             var rowsEl = overlay.querySelector("[data-rebalance-rows]");
             var filled = state.slots.filter(function (s) { return s.codeId; });
-            var rowCount = rowsEl ? rowsEl.querySelectorAll(".rb-row").length : 0;
-            if (rowCount !== filled.length) {
+            var domCodes = rowsEl
+              ? Array.prototype.map.call(
+                  rowsEl.querySelectorAll(".rb-row"),
+                  function (r) { return r.getAttribute("data-rebalance-code"); }
+                )
+              : [];
+            // Full re-render when the set of codes drifts — covers add /
+            // remove (count changes) AND swap (count holds but a codeId
+            // changed). Otherwise an in-place sync keeps the slider the
+            // user may be dragging from being torn down.
+            var sameSet = domCodes.length === filled.length
+              && filled.every(function (s) { return domCodes.indexOf(s.codeId) !== -1; });
+            if (!sameSet) {
               rebalanceApi.render(overlay, state.slots);
             } else {
               rebalanceApi.update(overlay, state.slots, overlay._dragCodeId);
@@ -7517,8 +7891,12 @@
           av.className = "chat-avatar " + (who === "you" ? "you" : "ai");
           av.setAttribute("aria-hidden", "true");
           var icon = document.createElement("span");
-          icon.className = "material-symbols-outlined";
-          icon.textContent = who === "you" ? "person" : "auto_awesome";
+          if (who === "you") {
+            icon.className = "material-symbols-outlined";
+            icon.textContent = "person";
+          } else {
+            icon.className = "wise-bug-mark";
+          }
           av.appendChild(icon);
 
           var body = document.createElement("div");
@@ -7579,7 +7957,7 @@
           log.innerHTML =
             '<div class="chat-msg">' +
               '<div class="chat-avatar ai" aria-hidden="true">' +
-                '<span class="material-symbols-outlined">auto_awesome</span>' +
+                '<span class="wise-bug-mark"></span>' +
               '</div>' +
               '<div class="chat-body">' +
                 '<div class="chat-meta">' +
