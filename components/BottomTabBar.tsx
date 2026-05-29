@@ -18,15 +18,14 @@ const TABS: Tab[] = [
   { href: "/scan", label: "SCAN", icon: "scan-line", accent: "emerald" },
 ];
 
-// Bottom nav rendered as a pill but anchored at the bottom of the phone
-// shell (i.e., a flex-flow sibling of the scroll area, not an overlay).
+// Bottom nav rendered as a floating pill, anchored at the bottom of the
+// phone shell (a flex-flow sibling of the scroll area, not an overlay).
 //
-// DESIGN.md §2 originally specified a *floating* pill that hovers over
-// content via backdrop blur — pretty, but a Sticky CTA (e.g. "+ Add a
-// code") near the bottom of the page lives under the bar's translucent
-// zone, which fights the same guideline's "App content must never be
-// obscured by the Tab Bar" rule. Anchoring keeps the pill aesthetic and
-// safely clears all content above it.
+// The nav wrapper itself is fully transparent — no rectangular bar, no
+// hairline, no backdrop blur — so the pill reads as the only affordance,
+// sitting on whatever the screen background already is. This matches the
+// screens2.html design reference. Because the bar is a flex sibling (not
+// an overlay), content above it is never obscured.
 //
 //   - 12 px top padding, 21 px sides + safe-area bottom on the container.
 //   - 4 px inner padding on the pill.
@@ -36,15 +35,11 @@ export const BottomTabBar = () => {
   const pathname = usePathname();
   return (
     <nav
-      className="bg-background relative z-20 shrink-0 px-[21px] pt-3 pb-[max(21px,env(safe-area-inset-bottom))]"
-      // A faint top hairline + soft inset gradient sells the "lifts off the
-      // background" feel that the floating version had — without the
-      // content-bleeds-through-glass downside.
-      style={{
-        borderTop: "1px solid var(--color-line-subtle)",
-        background: "linear-gradient(180deg, rgba(5,8,15,0.6) 0%, var(--color-background) 60%)",
-        backdropFilter: "blur(12px)",
-      }}
+      // No rectangular bar behind the pill — the pill is the only affordance,
+      // sitting on whatever the screen background already is (matches the
+      // screens2.html design reference). The nav is a transparent layout
+      // wrapper that just reserves space + safe-area padding.
+      className="relative z-20 shrink-0 px-[21px] pt-3 pb-[max(21px,env(safe-area-inset-bottom))]"
     >
       <div
         className="rounded-pill border-line shadow-tab-pill flex h-[62px] items-stretch gap-0 border p-1"

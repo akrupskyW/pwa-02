@@ -67,6 +67,13 @@ def ID() -> str:
 
 
 # ─── Design tokens (mirrors screens2.html :root dark theme) ──────────────
+# The screen builders only ever read from `T` (dark). The light variant
+# of every screen is produced by `recolor_for_light()`, a postprocess
+# walker that deep-copies a built dark subtree (minting fresh ids) and
+# swaps dark hex values for their light-theme equivalents via the
+# `DARK_TO_LIGHT_HEX` table below. Identity hues (emerald, royal blue,
+# amber, gold, risk-red, emerald-deep) and the on-color contrast
+# white/black are theme-agnostic, so they aren't in the map.
 class T:
     # Surface ramp (dark)
     BG = "#05141C"             # canvas / app background
@@ -467,6 +474,133 @@ def mi(glyph: str, **kwargs) -> dict:
     return icon(LUCIDE.get(glyph, glyph), **kwargs)
 
 
+# ─── Theme — dark → light recolor ────────────────────────────────────────
+# Mirrors `:root[data-theme="light"], .theme-light` in screens2.html. The
+# table is hex-keyed, not token-keyed, because the script bakes raw hex
+# values into the JSON; the walker swaps any matching string field on a
+# cloned subtree. Only surface ramp / text ramp / line / shadow tokens
+# differ across themes — identity hues (brand-green, royal-blue, amber,
+# gold, risk-red, emerald-deep) and on-color whites stay put.
+DARK_TO_LIGHT_HEX: dict[str, str] = {
+    # Surfaces
+    "#05141C":   "#EFEDF1",     # BG → bg-page
+    "#011722":   "#FBF6ED",     # BG_DEEP → signal-paper-tint
+    "#0A2330":   "#FFFFFF",     # SURFACE / CARD → white
+    "#14262E":   "#FBF6ED",     # SURFACE_2 / TRACK_SUBTLE → paper-tint
+    "#1C2130":   "#EFEDF1",     # SURFACE_3 / card-elev / bezel-inner
+    "#021B27":   "#EFEDF1",     # INK_SOFT
+    # Lines / dividers
+    "#1F222A":   "#ECE9F0",     # LINE_SUBTLE
+    "#2A2D36":   "#EFEDF1",     # LINE / TRACK
+    "#FFFFFF3D": "#827C90",     # LINE_STRONG: white-24% → signal-slate
+    # Text ramp
+    "#F4F2F6":   "#000000",     # FG / FG_BRIGHT / STATUS_FG
+    "#B7B2C4":   "#413A4D",     # FG_MUTED
+    "#A8A3B5":   "#544E61",     # FG_FAINT
+    # Composite tokens (surface w/ alpha)
+    "#0A2330E6": "#FFFFFFE6",   # SLOT_BG: surface @ 0.9 → white @ 0.9
+    "#0A2330EB": "#FFFFFFF5",   # TAB_PILL_BG: surface @ 0.92 → white @ 0.96
+    # Shadow colors: pure black at various alphas → ink-purple at lower alphas
+    "#000000A8": "#0F0A1F38",   # phone outer shadow (~0.66 → ~0.22)
+    "#00000099": "#0F0A1F33",   # tab-pill shadow (~0.6 → ~0.2)
+    "#00000073": "#0F0A1F2E",   # pie-center disc shadow (~0.45 → ~0.18)
+    "#000000B3": "#0F0A1F52",   # scrim-strong (~0.7 → ~0.32)
+    "#00000059": "#0F0A1F1F",   # pie slice inner shadow
+    # White-alpha inset → dark-alpha inset
+    "#FFFFFF10": "#0F0A1F0A",
+    # Pie-center disc fill (dark navy → cream)
+    "#161E32":   "#F5F2EC",
+    # Rose: dark rose (#FF8E8E AAA-on-dark) → risk-light (#CA371F AAA-on-light)
+    "#FF8E8E":   "#CA371F",
+    # Stage gradient stops referencing BG with 00-alpha → light bg with 00-alpha
+    "#05141C00": "#EFEDF100",
+}
+
+
+def _hex_to_light(value: str) -> str:
+    """Return the light-theme equivalent of a hex string, or the value
+    unchanged if it isn't in the mapping. Accepts any case; returns the
+    canonical 6/8-char uppercase form found in the map."""
+    return DARK_TO_LIGHT_HEX.get(value.upper(), value)
+
+
+def deep_clone_with_new_ids(node: Any) -> Any:
+    """Recursively deep-copy a node tree, minting a fresh id on every
+    dict that carries one. Keeps tree shape and every other field
+    identical so subsequent walks (recolor, ref-relink) can find the
+    nodes they need to mutate.
+
+    Used to spawn the light twin of a built dark subtree without
+    sharing ids (which would break the .pen file's unique-id invariant
+    and confuse the renderer)."""
+    if isinstance(node, dict):
+        new: dict[str, Any] = {}
+        for k, v in node.items():
+            if k == "id":
+                new[k] = ID()
+            else:
+                new[k] = deep_clone_with_new_ids(v)
+        return new
+    if isinstance(node, list):
+        return [deep_clone_with_new_ids(v) for v in node]
+    return node
+
+
+def recolor_for_light(node: Any) -> None:
+    """In-place dark → light recolor of a node tree. Walks every dict
+    key, replacing string values that match `DARK_TO_LIGHT_HEX` with
+    their light counterparts. Operates on color fields wherever they
+    appear: `fill`, `stroke.fill`, `effect.color`, gradient stop
+    `colors[].color`, text `fill`. Anything not in the map (identity
+    hues, white/black contrast colors, food-thumb illustration colors)
+    is left untouched."""
+    if isinstance(node, dict):
+        for k, v in list(node.items()):
+            if isinstance(v, str) and v.startswith("#"):
+                node[k] = _hex_to_light(v)
+            elif isinstance(v, (dict, list)):
+                recolor_for_light(v)
+    elif isinstance(node, list):
+        for v in node:
+            recolor_for_light(v)
+
+
+def find_node_by_name(node: Any, name: str) -> dict | None:
+    """First-match recursive search for a node by its `name` field."""
+    if isinstance(node, dict):
+        if node.get("name") == name:
+            return node
+        for v in node.values():
+            hit = find_node_by_name(v, name)
+            if hit is not None:
+                return hit
+    elif isinstance(node, list):
+        for v in node:
+            hit = find_node_by_name(v, name)
+            if hit is not None:
+                return hit
+    return None
+
+
+def relink_refs(node: Any, mapping: dict[str, str]) -> None:
+    """In-place walk that retargets any `{type: "ref", ref: <old>}`
+    nodes to their replacement id per `mapping`. Used after cloning a
+    dark subtree into a light one: the cloned status-bar refs still
+    point to the dark component, so we relink them to the light
+    component's id."""
+    if isinstance(node, dict):
+        if node.get("type") == "ref":
+            old = node.get("ref")
+            if old in mapping:
+                node["ref"] = mapping[old]
+        for v in node.values():
+            if isinstance(v, (dict, list)):
+                relink_refs(v, mapping)
+    elif isinstance(node, list):
+        for v in node:
+            relink_refs(v, mapping)
+
+
 # ─── Reusable components ─────────────────────────────────────────────────
 # We park the components off-canvas at x=-2000 so they don't collide with
 # the demo stage. Each one has a stable id we capture in module-level
@@ -654,22 +788,50 @@ def make_phoneframe() -> dict:
 
 
 class PhoneFrame:
-    """Holder for the PhoneFrame component id + its screen-slot id, so
-    screen builders can do `phone(screen=...)` without threading them by
-    argument."""
+    """Holder for the dark + light PhoneFrame component ids and their
+    screen-slot ids. Filled in by `build()` once each component has
+    been emitted, then read by `phone(theme=...)` so the same screen
+    builder can target either bezel."""
 
-    _id: str = ""
-    _screen_slot_id: str = ""
+    _id: str = ""             # legacy alias → dark
+    _screen_slot_id: str = ""  # legacy alias → dark slot
+    dark_id: str = ""
+    dark_slot: str = ""
+    light_id: str = ""
+    light_slot: str = ""
 
 
 class StatusBar:
-    _id: str = ""
+    """Holder for the dark + light StatusBar component ids."""
+
+    _id: str = ""    # legacy alias → dark
+    dark_id: str = ""
+    light_id: str = ""
 
 
-def phone(*, screen_children: list, screen_extra: dict | None = None, x: int, y: int, name: str) -> dict:
-    """Instantiate the PhoneFrame at (x, y) and override its "screen" slot
-    with the given child list. `screen_extra` lets callers override the
-    screen's fill (e.g., the camera background)."""
+def phone(
+    *,
+    screen_children: list,
+    screen_extra: dict | None = None,
+    x: int,
+    y: int,
+    name: str,
+    theme: str = "dark",
+) -> dict:
+    """Instantiate the PhoneFrame at (x, y) and override its "screen"
+    slot with the given child list. `theme="light"` swaps to the light
+    bezel component + a paper-tinted screen fill so the override
+    matches the surrounding bezel and the recolored screen children.
+    `screen_extra` lets callers override the screen's fill (e.g., the
+    camera background)."""
+    if theme == "light":
+        pf_id = PhoneFrame.light_id
+        slot_id = PhoneFrame.light_slot
+        screen_fill = _hex_to_light(T.BG)
+    else:
+        pf_id = PhoneFrame.dark_id
+        slot_id = PhoneFrame.dark_slot
+        screen_fill = T.BG
     screen_override = {
         "type": "frame",
         "id": ID(),
@@ -679,7 +841,7 @@ def phone(*, screen_children: list, screen_extra: dict | None = None, x: int, y:
         "clip": True,
         "width": 378,
         "height": 832,
-        "fill": T.BG,
+        "fill": screen_fill,
         "cornerRadius": 48,
         "layout": "vertical",
         "children": screen_children,
@@ -687,8 +849,8 @@ def phone(*, screen_children: list, screen_extra: dict | None = None, x: int, y:
     if screen_extra:
         screen_override.update(screen_extra)
     return ref(
-        PhoneFrame._id,
-        descendants={PhoneFrame._screen_slot_id: screen_override},
+        pf_id,
+        descendants={slot_id: screen_override},
         name=name,
         x=x,
         y=y,
@@ -789,11 +951,15 @@ def tabbar(active_index: int, *, violet_glow: bool = False) -> dict:
 
 
 # ─── Common screen scaffolding ───────────────────────────────────────────
-def status_bar_inst() -> dict:
+def status_bar_inst(theme: str = "dark") -> dict:
     """A new instance of the status bar component, pinned absolute at the
-    top of the screen frame."""
+    top of the screen frame. Screen builders always pass the dark id;
+    the light variant of each screen is produced by deep-cloning the
+    dark tree and then `relink_refs` swaps every dark statusbar ref
+    onto the light statusbar component."""
+    component_id = StatusBar.light_id if theme == "light" else StatusBar.dark_id
     return ref(
-        StatusBar._id,
+        component_id,
         layout_position="absolute",
         x=0,
         y=0,
@@ -2241,52 +2407,168 @@ def screen_7_food_detail() -> list:
 
 # ─── Assemble ────────────────────────────────────────────────────────────
 def build() -> dict:
-    """Build the root .pen dict. Components first, then the demo-stage
-    holding all phone refs."""
-    sb = make_statusbar()
-    StatusBar._id = sb["id"]
-    pf = make_phoneframe()
+    """Build the root .pen dict.
 
-    # Phones laid out in a horizontal-wrap row: 4 + 3, with 40px gap on
-    # all sides. 4 phones at 390 + 3*40 gap = 1680, +80px side padding
-    # → stage width 1760.
-    phones: list = []
-    # Stage internal positions. Pencil layout with `wrap` would be ideal,
-    # but the existing v1 stage uses absolute placement, so we mirror it
-    # for predictability across renderers.
-    cols, gap = 4, 40
-    px, py = 80, 120  # top-left of phone 1
-    rect_w, rect_h = 390, 844
+    Layout: 7 screens × 2 themes = 14 phones, arranged as a 7-column ×
+    2-row grid. Each column is one screen; the top row is the dark
+    variant, the bottom row is the light variant. A per-column header
+    sits above the dark phone with the screen index and name. This
+    mirrors screens2.html's `.screen-pair` / `.pair-row` structure:
+    same screen rendered twice side-by-side, swipe-able horizontally.
+
+    Component bootstrap:
+      1. Build the dark StatusBar + PhoneFrame components.
+      2. Spawn the light StatusBar + PhoneFrame by deep-cloning the
+         dark trees (fresh ids) and running `recolor_for_light()`.
+      3. Each screen builder (always authored against `T` dark tokens)
+         is invoked once to produce the dark phone, then its children
+         are deep-cloned, recolored, and statusbar-refs relinked to
+         build the light phone."""
+    # ─── 1. Dark components ──────────────────────────────────────────
+    sb_dark = make_statusbar()
+    StatusBar.dark_id = sb_dark["id"]
+    StatusBar._id = sb_dark["id"]  # back-compat alias
+    pf_dark = make_phoneframe()
+    PhoneFrame.dark_id = pf_dark["id"]
+    PhoneFrame.dark_slot = PhoneFrame._screen_slot_id
+
+    # ─── 2. Light components (cloned + recolored from dark) ──────────
+    sb_light = deep_clone_with_new_ids(sb_dark)
+    recolor_for_light(sb_light)
+    sb_light["name"] = "component/StatusBar — Light"
+    sb_light["y"] = 200  # park slightly below the dark one off-canvas
+    StatusBar.light_id = sb_light["id"]
+
+    pf_light = deep_clone_with_new_ids(pf_dark)
+    recolor_for_light(pf_light)
+    pf_light["name"] = "component/PhoneFrame — Light"
+    pf_light["y"] = 900  # park below dark
+    PhoneFrame.light_id = pf_light["id"]
+    light_screen_node = find_node_by_name(pf_light, "screen")
+    assert light_screen_node is not None, "light phone-frame missing screen slot"
+    PhoneFrame.light_slot = light_screen_node["id"]
+
+    # ─── 3. Screen specs ─────────────────────────────────────────────
     phone_specs = [
-        ("Phone 1 — Your Code (In Progress)",
+        ("1 · Your Code (Home)",
          lambda: screen_1_your_code(status_label="In Progress")),
-        ("Phone 2 — Add Code (Pick)",            screen_2_pick),
-        ("Phone 3 — Browse (Top Matches)",       screen_3_browse),
-        ("Phone 4 — Scan (Find a Food)",         screen_4_scan),
-        ("Phone 5 — Chat with WISE AI",          screen_5_chat),
-        ("Phone 6 — Your Code (In Harmony)",
+        ("2 · Add Code (Pick)",      screen_2_pick),
+        ("3 · Browse (Top Matches)", screen_3_browse),
+        ("4 · Scan (Find a Food)",   screen_4_scan),
+        ("5 · Chat with WISE AI",    screen_5_chat),
+        ("6 · Your Code (Filled)",
          lambda: screen_1_your_code(status_label="In Harmony")),
-        ("Phone 7 — Food Detail",                screen_7_food_detail),
+        ("7 · Food Detail",          screen_7_food_detail),
     ]
-    for i, (label, builder) in enumerate(phone_specs):
-        col = i % cols
-        row = i // cols
-        x = px + col * (rect_w + gap)
-        y = py + row * (rect_h + 160)  # extra space for label below phone
-        phones.append(phone(screen_children=builder(), x=x, y=y, name=label))
 
-    # Demo-stage frame — single canvas holding everything.
+    # ─── 4. Layout geometry ──────────────────────────────────────────
+    phone_w, phone_h = 390, 844
+    side_pad, top_pad = 64, 80
+    col_gap = 56          # matches `.pair-rail { gap: 56px }` in screens2.html
+    label_h = 30          # column title strip
+    label_gap = 18        # title → dark phone
+    row_gap = 56          # dark → light vertically
+    bottom_pad = 96
+
+    cols = len(phone_specs)
+    stage_w = side_pad * 2 + cols * phone_w + (cols - 1) * col_gap
+    stage_h = (
+        top_pad + label_h + label_gap
+        + phone_h + row_gap + phone_h
+        + bottom_pad
+    )
+
+    # ─── 5. Build phones + labels per column ─────────────────────────
+    stage_children: list = []
+
+    # Stage ambient washes (mirror .stage radial gradients in HTML)
+    stage_children.append(
+        ellipse(
+            x=-200, y=-200, width=900, height=900, opacity=0.6,
+            fill={
+                "type": "gradient", "gradientType": "radial", "enabled": True,
+                "rotation": 0, "size": {"width": 1, "height": 1},
+                "colors": [
+                    {"color": "#1FA34A2E", "position": 0},
+                    {"color": "#05141C00", "position": 1},
+                ],
+            },
+        )
+    )
+    stage_children.append(
+        ellipse(
+            x=stage_w - 700, y=stage_h - 700, width=900, height=900, opacity=0.6,
+            fill={
+                "type": "gradient", "gradientType": "radial", "enabled": True,
+                "rotation": 0, "size": {"width": 1, "height": 1},
+                "colors": [
+                    {"color": "#1D4ED829", "position": 0},
+                    {"color": "#05141C00", "position": 1},
+                ],
+            },
+        )
+    )
+
+    y_label = top_pad
+    y_dark = top_pad + label_h + label_gap
+    y_light = y_dark + phone_h + row_gap
+
+    for i, (title, builder) in enumerate(phone_specs):
+        x = side_pad + i * (phone_w + col_gap)
+
+        # Column header — matches `.screen-pair-label` in screens2.html
+        stage_children.append(
+            text(
+                title,
+                size=18,
+                weight="800",
+                color=T.FG_BRIGHT,
+                letter=-0.2,
+                x=x,
+                y=y_label,
+                width=phone_w,
+                align="center",
+                name=f"label/{title}",
+            )
+        )
+
+        # Dark variant — the canonical build path
+        dark_children = builder()
+        stage_children.append(
+            phone(
+                screen_children=dark_children,
+                x=x,
+                y=y_dark,
+                name=f"Dark — {title}",
+                theme="dark",
+            )
+        )
+
+        # Light variant — clone, recolor, relink statusbar refs
+        light_children = [deep_clone_with_new_ids(c) for c in dark_children]
+        for c in light_children:
+            recolor_for_light(c)
+            relink_refs(c, {StatusBar.dark_id: StatusBar.light_id})
+        stage_children.append(
+            phone(
+                screen_children=light_children,
+                x=x,
+                y=y_light,
+                name=f"Light — {title}",
+                theme="light",
+            )
+        )
+
+    # ─── 6. Demo stage frame ─────────────────────────────────────────
     stage = frame(
-        name="Demo Stage — 7 phones",
+        name="Demo Stage — 7 screens × dark + light",
         x=0,
         y=0,
-        width=80 + cols * rect_w + (cols - 1) * gap + 80,
-        height=200 + 2 * rect_h + 160,
+        width=stage_w,
+        height=stage_h,
         fill={
-            "type": "gradient",
-            "gradientType": "linear",
-            "enabled": True,
-            "rotation": 180,
+            "type": "gradient", "gradientType": "linear",
+            "enabled": True, "rotation": 180,
             "size": {"height": 1},
             "colors": [
                 {"color": T.BG, "position": 0},
@@ -2296,43 +2578,12 @@ def build() -> dict:
         },
         layout="none",
         clip=True,
-        children=[
-            # Stage ambient washes (mirror .stage radial gradients)
-            ellipse(
-                x=-200, y=-200, width=900, height=900, opacity=0.6,
-                fill={
-                    "type": "gradient",
-                    "gradientType": "radial",
-                    "enabled": True,
-                    "rotation": 0,
-                    "size": {"width": 1, "height": 1},
-                    "colors": [
-                        {"color": "#1FA34A2E", "position": 0},
-                        {"color": "#05141C00", "position": 1},
-                    ],
-                },
-            ),
-            ellipse(
-                x=1200, y=1500, width=900, height=900, opacity=0.6,
-                fill={
-                    "type": "gradient",
-                    "gradientType": "radial",
-                    "enabled": True,
-                    "rotation": 0,
-                    "size": {"width": 1, "height": 1},
-                    "colors": [
-                        {"color": "#1D4ED829", "position": 0},
-                        {"color": "#05141C00", "position": 1},
-                    ],
-                },
-            ),
-            *phones,
-        ],
+        children=stage_children,
     )
 
     root = {
         "version": "2.11",
-        "children": [pf, sb, stage],
+        "children": [pf_dark, sb_dark, pf_light, sb_light, stage],
     }
     return root
 

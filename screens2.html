@@ -431,6 +431,40 @@
         min-height: 38px;
         padding: 20px 20px 20px;
       }
+      /* Headline row — title block left, WISEcode bug floated right.
+         Only used on primary screen headers (.scr-hdr); never inside
+         bottom sheets (picker / detail / rebalance / reset). */
+      .scr-hdr-headline {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 12px;
+        flex: 1; min-width: 0;
+      }
+      .scr-hdr-headline h1 {
+        flex: 1; min-width: 0;
+      }
+      .wise-logo-vertical {
+        display: block;
+        width: auto;
+        height: 26px;
+      }
+      /* Brand bug — painted in brand blue via a mask so it matches in both
+         themes, sized small and vertically centered against the headline. */
+      .wise-bug {
+        display: block;
+        height: 18px;
+        aspect-ratio: 193 / 100;
+        flex-shrink: 0;
+        background-color: var(--blue);
+        -webkit-mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
+        mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
+      }
+      /* Full wordmark is authored dark — invert on the dark phone canvas. */
+      .phone-wrap:not(.theme-light) .wise-logo-vertical {
+        filter: brightness(0) invert(0.96);
+      }
+      .intro-brand {
+        padding: 0 2px 10px;
+      }
       .scr-hdr .ovl {
         font-size: 11px; font-weight: 800; letter-spacing: 0.16em;
         color: var(--blue);
@@ -687,8 +721,8 @@
         font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
       }
 
-      /* ─── Pie chart (multi-slot rubric viz) ─────────────────────────────
-         Multi-segment donut chart used on the Personal Rubric hero. Each
+      /* ─── Pie chart (multi-slot code viz) ─────────────────────────────
+         Multi-segment donut chart used on the Personal Code hero. Each
          slice is a single <path> with rounded outer + inner corners and a
          clean angular gap between neighbors — no track ring, no gradient
          overlay, no blurred halo. The center shows the composite score
@@ -696,7 +730,7 @@
          so the gaps between slices read as page-color separators.
          Renderer at the bottom of the document fills these in from
          data-slices on each .pie-svg. */
-      .pie-wrap { position: relative; flex-shrink: 0; }
+      .pie-wrap { position: relative; flex-shrink: 0; cursor: pointer; }
       .pie-svg { position: relative; display: block; }
       .pie-svg path.seg {
         /* Crisp edges + room for a soft drop shadow under each slice so
@@ -711,7 +745,7 @@
          the donut hole as a raised layer — sized larger than the donut's
          inner diameter so the disc visibly overlaps the inner edge of
          every slice, which sells the "raised puck floating above the
-         ring" read. Width here is the default for the rubric donut
+         ring" read. Width here is the default for the code donut
          (Screen 1, 300px SVG / 88px stroke → inner diameter ~111px);
          Screen 6 and the Food Detail sheet apply their own inline
          width/height to suit their differently-sized donuts.
@@ -802,7 +836,7 @@
       /* ─── Empty pie placeholder ─────────────────────────────────────────
          Static SVG used on the Your Code (Empty) variant where no codes
          have been added yet. Skips the JS path-renderer entirely (no
-         data-slices attr, no [data-rubric] subscriber on its phone-wrap)
+         data-slices attr, no [data-code] subscriber on its phone-wrap)
          and instead paints a single thick faint ring at the donut's
          centroid radius, matching the same outer/inner geometry as the
          live pie. The .pie-center disc still sits on top showing "0 OF
@@ -1139,7 +1173,7 @@
       }
       .cta-ink .icon { color: #7C7CFB; font-size: 12px; }
 
-      /* Card that holds the rubric pie (full-width). White in light mode,
+      /* Card that holds the code pie (full-width). White in light mode,
          deep navy in dark — sits at the top of the Code screen with the
          "In Progress" / "In Harmony" caption directly underneath. */
       .pie-card {
@@ -1273,16 +1307,16 @@
         font-size: 14px; font-weight: 700;
         cursor: pointer;
       }
-      .slot-add .material-symbols-outlined { color: var(--emerald); font-size: 18px; }
+      .slot-add .material-symbols-outlined { color: var(--blue); font-size: 18px; }
       @media (hover: hover) {
-        .slot-add:hover { border-color: color-mix(in srgb, var(--emerald) 50%, var(--line)); }
+        .slot-add:hover { border-color: color-mix(in srgb, var(--blue) 50%, var(--line)); }
       }
 
       /* In-phone code picker — a true bottom sheet. Slides up from the
          bottom over a scrim and shows the catalog (search + sort toggle
          in the chrome, scrolling list of codes below). Used both as the
          dynamic overlay that opens when the user taps "Add a code" on
-         the rubric AND as the static representation of Screen 2 in the
+         the code AND as the static representation of Screen 2 in the
          catalog, so the two stay visually identical. Mirrors
          components/CodePickerModal.tsx. */
       .code-picker-overlay {
@@ -1642,7 +1676,7 @@
 
            1. Product hero  — image + name/brand + UPC pill
            2. Score card    — green "Excellent match" verdict, contribution
-                              donut (re-using the rubric pie), and a
+                              donut (re-using the code pie), and a
                               per-slot contribution table beneath
            3. About card    — link to the score-math explainer
 
@@ -2312,7 +2346,7 @@
 
       /* Reset button. Rectangle (8px radius) per the app-wide rule that
          buttons are rectangles, not pills. Lives in the top-right corner
-         of the rubric pie-card (absolute) — see .pie-card .reset-pill
+         of the code pie-card (absolute) — see .pie-card .reset-pill
          below. Class name retained for back-compat with the markup. */
       .reset-pill {
         display: inline-flex; align-items: center; gap: 4px;
@@ -2334,7 +2368,7 @@
         }
       }
 
-      /* Anchor the Reset pill in the top-right corner of the rubric
+      /* Anchor the Reset pill in the top-right corner of the code
          pie-card. The card itself goes position:relative so the absolute
          button stays glued to its rounded shoulder even as the donut
          scales. */
@@ -2347,7 +2381,7 @@
 
       /* ─── Reset confirmation bottom-sheet ────────────────────────────
          Slides up from the bottom of the phone when the user taps the
-         Reset pill on the rubric pie-card. Mirrors the in-app bottom
+         Reset pill on the code pie-card. Mirrors the in-app bottom
          sheet idiom: scrim + rounded-top sheet with a small drag handle,
          destructive (red) confirm and neutral cancel sitting side-by-
          side. Mounted into the .screen subtree at runtime — one sheet
@@ -2414,7 +2448,7 @@
       }
       .reset-sheet .btn-confirm .material-symbols-outlined { font-size: 18px; }
 
-      /* ─── Rebalance button (top-right of rubric pie-card) ─────────────
+      /* ─── Rebalance button (top-right of code pie-card) ─────────────
          Primary affordance on the Your Code (Home / Filled) screens for
          fine-tuning slot weights. Sits in the corner that used to host
          Reset; tapping it opens the rebalance bottom sheet (sliders for
@@ -2432,6 +2466,9 @@
         cursor: pointer;
       }
       .rebalance-pill .material-symbols-outlined { font-size: 13px; }
+      /* In dark mode the pill's label + icon read as white against the
+         violet-tinted chip; light mode keeps the brand-blue treatment. */
+      .phone-wrap:not(.theme-light) .rebalance-pill { color: #FFFFFF; }
       @media (hover: hover) {
         .rebalance-pill:hover {
           background: color-mix(in srgb, var(--violet) 22%, transparent);
@@ -2444,7 +2481,7 @@
         z-index: 2;
       }
 
-      /* ─── Reset link (bottom-right of rubric pie-card) ────────────────
+      /* ─── Reset link (bottom-right of code pie-card) ────────────────
          Reset used to be the loud rectangle in the top-right of the
          pie-card; it's now a quiet plain-text affordance in the bottom-
          right corner so Rebalance can take the primary slot. Click
@@ -2474,7 +2511,7 @@
         z-index: 2;
       }
 
-      /* ─── Rename link (bottom-left of rubric pie-card) ────────────────
+      /* ─── Rename link (bottom-left of code pie-card) ────────────────
          Mirror of .reset-link, anchored to the opposite corner. Lets the
          user retitle their code (the underlined phrase woven into the screen
          headline — "Your <span class="code-name">In Harmony</span> code"). Same quiet plain-
@@ -2697,7 +2734,7 @@
       }
 
       /* Footer total — pinned below the slider list so the user always
-         sees their running 100. Turns green when the rubric is in
+         sees their running 100. Turns green when the code is in
          harmony (sum === 100) so the affordance reads as a target. */
       .rebalance-sheet .rb-footer {
         display: flex; align-items: baseline; justify-content: flex-end;
@@ -2869,7 +2906,7 @@
 
       /* Primary "Add to my code" CTA — only mounted when the sheet is
          opened from the Pick-a-code picker (i.e. the code isn't in the
-         user's rubric yet). Sits at the end of the cd-scroll so it
+         user's code yet). Sits at the end of the cd-scroll so it
          reads as the commit step after the user has skimmed the
          description, helps, and chat-starters. Rectangle (10px radius)
          per the app-wide rule that buttons are rectangles. */
@@ -3196,10 +3233,11 @@
 
       /* ─── Intro / Welcome screen ──────────────────────────────────────
          The far-left screen the user lands on before any code exists.
-         A bold value-prop headline, a 2×2 grid of "what you can do"
-         tiles, then a full-width card explaining how to pin the PWA to
+         WISEcode wordmark top-left, a purpose-driven headline + value
+         prop, a 2×2 grid framing the why behind each capability, a full-
+         width blue CTA, then a card explaining how to pin the PWA to
          the home screen. Pure presentation — no data hooks, so the
-         rubric / picker subscribers leave it untouched and the cloner
+         code / picker subscribers leave it untouched and the cloner
          still mints its light twin. */
       .intro-hero {
         padding: 4px 2px 2px;
@@ -3215,7 +3253,7 @@
         font-size: 30px; font-weight: 800; letter-spacing: -0.025em;
         line-height: 1.08;
       }
-      .intro-hero h1 .accent { color: var(--emerald); }
+      .intro-hero h1 .accent { color: var(--blue); }
       .intro-hero p {
         margin: 12px 0 0;
         color: var(--fg-muted);
@@ -3237,6 +3275,7 @@
       .intro-tile .tile-ico {
         width: 40px; height: 40px; border-radius: 12px;
         display: inline-flex; align-items: center; justify-content: center;
+        background: var(--blue);
         color: #FFFFFF;
         flex-shrink: 0;
       }
@@ -3249,7 +3288,7 @@
         color: var(--fg-muted);
         font-size: 11.5px; font-weight: 500; line-height: 1.4;
       }
-      /* Full-width "pin to home screen" card under the grid. */
+      /* Full-width "pin to home screen" card below the CTA. */
       .intro-pin {
         background: var(--surface-2);
         border: 1px solid var(--line);
@@ -3285,13 +3324,13 @@
       .intro-cta {
         display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         width: 100%;
-        background: var(--emerald);
+        background: var(--blue);
         color: #FFFFFF;
         border: none;
         border-radius: 14px;
         padding: 15px 20px;
         font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
-        box-shadow: 0 12px 28px -10px rgba(31,163,74,0.5);
+        box-shadow: 0 12px 28px -10px rgba(29, 78, 216, 0.5);
       }
       .intro-cta .material-symbols-outlined { font-size: 20px; }
 
@@ -3359,8 +3398,8 @@
         cursor: pointer;
       }
       .set-row .set-trail-btn.solid {
-        background: var(--emerald); color: #FFFFFF;
-        box-shadow: 0 8px 18px -8px rgba(31,163,74,0.45);
+        background: var(--blue); color: #FFFFFF;
+        box-shadow: 0 8px 18px -8px rgba(29,78,216,0.45);
       }
       .set-row .set-trail-btn.ghost {
         background: var(--surface-2);
@@ -3405,7 +3444,7 @@
       }
 
       /* ─── Delete-code confirmation bottom-sheet ───────────────────────
-         Tapping the minus on a rubric slot no longer removes the code
+         Tapping the minus on a code slot no longer removes the code
          outright — it slides up this double-verify sheet first. Reuses
          the reset-sheet's scrim + rounded-top sheet + drag-handle +
          side-by-side cancel/destructive-confirm idiom so the two
@@ -3521,17 +3560,17 @@
 
         Your Code (Screen 1) is shown in two states (Empty, Home) so
         the catalog reads left-to-right as the user's actual journey:
-        blank rubric → fill in codes → in-harmony composite. Both
+        blank code → fill in codes → in-harmony composite. Both
         states render from the same .pie-card / slot-list shell, just
-        with / without a populated WISE_CODES rubric. They share the
+        with / without a populated WISE_CODES code. They share the
         "1" number so every "Screen 1" reference in the code comments
         below still resolves correctly — only the trailing letter (a/b)
         differs.
 
         1a. YOUR CODE (EMPTY) — Pre-state · soft placeholder ring,
                                 "0 OF 100" disc, lone "Add your first
-                                code" CTA tile (no [data-rubric] hooks
-                                so the subscriber leaves it untouched)
+                                code" CTA opens the Pick a Code sheet
+                                and persists adds via WISE_CODES
         1b. YOUR CODE (HOME)  — In Harmony · pie chart + compact slot
                                 list; underlined code-name woven into the h1
                                 (Rename in the pie-card edits it)
@@ -3555,9 +3594,10 @@
 
 <!-- ─── 0. INTRO / WELCOME — landing screen, no codes yet ──────────────── -->
 <!--   The far-left frame: the first thing a fresh user sees. A value-prop
-       headline, a 2×2 grid of "what you can do" tiles, and a full-width
-       card that walks them through pinning the PWA to their home screen.
-       No data-rubric / data-picker hooks, so the subscribers skip it and
+       headline, a 2×2 grid of "what you can do" tiles, a blue CTA directly
+       beneath the grid, and a full-width card that walks them through
+       pinning the PWA to their home screen.
+       No data-code / data-picker hooks, so the subscribers skip it and
        the cloner still mints a .theme-light twin. -->
 <section class="screen-pair">
   <h3 class="screen-pair-label">0 · Intro / Welcome</h3>
@@ -3578,33 +3618,41 @@
     <div class="screen">
       <div class="scroll">
         <div class="px stack" style="padding-top:8px;">
+          <div class="intro-brand">
+            <img class="wise-logo-vertical" src="assets/WISEcode-logo-vertical.svg" alt="WISEcode" />
+          </div>
           <div class="intro-hero">
             <h1>Eat to <span class="accent">your</span> code, not the average.</h1>
-            <p>Build a personal rubric of what matters to you, then see how any food scores against it — in seconds.</p>
+            <p>“Healthy” isn’t one-size-fits-all. WISEcode turns what <em>you</em> care about into a personal scoring code, then grades every food against it — so the right choice is the obvious one.</p>
           </div>
 
           <div class="intro-grid">
             <div class="intro-tile">
-              <span class="tile-ico" style="background:#1D4ED8;"><span class="material-symbols-outlined">tune</span></span>
-              <div class="tile-title">Build your code</div>
-              <div class="tile-sub">Pick the factors you care about and weight them your way.</div>
+              <span class="tile-ico"><span class="material-symbols-outlined">tune</span></span>
+              <div class="tile-title">Define your standard</div>
+              <div class="tile-sub">Choose the factors that matter to you and weight them — your values become the score.</div>
             </div>
             <div class="intro-tile">
-              <span class="tile-ico" style="background:#1FA34A;"><span class="material-symbols-outlined">grid_view</span></span>
-              <div class="tile-title">Find top matches</div>
-              <div class="tile-sub">Browse foods ranked by your composite score.</div>
+              <span class="tile-ico"><span class="material-symbols-outlined">grid_view</span></span>
+              <div class="tile-title">See what truly fits</div>
+              <div class="tile-sub">Foods ranked by your code, not a generic average — so top matches are right for you.</div>
             </div>
             <div class="intro-tile">
-              <span class="tile-ico" style="background:#D8610C;"><span class="material-symbols-outlined">qr_code_scanner</span></span>
-              <div class="tile-title">Scan a barcode</div>
-              <div class="tile-sub">Point your camera at any product for an instant verdict.</div>
+              <span class="tile-ico"><span class="material-symbols-outlined">qr_code_scanner</span></span>
+              <div class="tile-title">Decide in the aisle</div>
+              <div class="tile-sub">Scan any barcode for an instant verdict against your standard — no label-reading required.</div>
             </div>
             <div class="intro-tile">
-              <span class="tile-ico" style="background:#147A36;"><span class="material-symbols-outlined">chat_bubble</span></span>
-              <div class="tile-title">Chat with WISE AI</div>
-              <div class="tile-sub">Ask why a food scores the way it does and tune your code.</div>
+              <span class="tile-ico"><span class="material-symbols-outlined">chat_bubble</span></span>
+              <div class="tile-title">Understand the why</div>
+              <div class="tile-sub">Ask WISE AI why a food scores the way it does, and refine your code as you learn.</div>
             </div>
           </div>
+
+          <button type="button" class="intro-cta">
+            <span class="material-symbols-outlined">arrow_forward</span>
+            Build my code
+          </button>
 
           <div class="intro-pin">
             <span class="pin-ico"><span class="material-symbols-outlined">add_to_home_screen</span></span>
@@ -3617,11 +3665,6 @@
               </ul>
             </div>
           </div>
-
-          <button type="button" class="intro-cta">
-            <span class="material-symbols-outlined">arrow_forward</span>
-            Build my code
-          </button>
         </div>
       </div>
       <nav class="tab-bar">
@@ -3634,24 +3677,21 @@
       </nav>
     </div>
   </div>
-  <div class="phone-caption">First-run welcome: a value-prop headline, a 2×2 grid of what the app does (build a code, find matches, scan, chat), and a full-width card explaining how to pin the PWA to the device home screen. The green CTA drops the user into building their first code.</div>
+  <div class="phone-caption">First-run welcome: the WISEcode wordmark, a purpose-led headline and value prop (personalized scoring vs. one-size-fits-all), a 2×2 grid framing the why behind each capability (define your standard, see what fits, decide in the aisle, understand the why), a blue CTA directly beneath the grid, and a full-width card explaining how to pin the PWA to the device home screen.</div>
 </div>
   </div>
 </section>
 
 <!-- ─── 1. YOUR CODE (EMPTY) — Pre-state · no codes added yet ─────────── -->
-<!--   Authored as a static phone-wrap with NO data-rubric / data-picker
-       hooks, so neither the rubric subscriber nor the click delegate
-       walks into it. Result: the empty pie + lone "Add a code" tile
-       stay frozen as authored on every render, while the cloneNode
-       cloner below still produces a .theme-light twin in the same
-       row. Lives before the In-Harmony card so the catalog reads
-       left-to-right as the user's actual journey through Your Code:
-       empty → fill in some codes → in harmony. -->
+<!--   Wired into the shared WISE_CODES state via data-code, but
+       data-code-empty keeps the pie at zero until the user taps
+       "Add your first code" — at which point the code clears and
+       the Pick a Code bottom sheet opens. Adds persist globally and
+       fan out to every other code-aware screen. -->
 <section class="screen-pair">
   <h3 class="screen-pair-label">1a · Your Code (Empty)</h3>
   <div class="pair-row">
-<div class="phone-wrap">
+<div class="phone-wrap" data-code data-code-empty>
   <div class="phone-label">Dark</div>
   <div class="phone">
     <div class="island"></div>
@@ -3673,20 +3713,20 @@
         <div class="px stack">
           <section class="pie-card">
             <div class="pie-wrap" style="width:300px;height:300px;">
-              <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg-empty" aria-hidden="true">
-                <circle class="empty-track" cx="140" cy="140" r="95" />
-              </svg>
+              <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
+                   data-id="empty" data-size="280" data-stroke="88"
+                   data-slices='[]' aria-hidden="true"></svg>
               <div class="pie-center">
                 <div class="num" style="font-size:46px;">0</div>
                 <div class="lbl">OF 100</div>
               </div>
             </div>
-            <div class="status">Empty</div>
-            <div class="status-sub">Add codes to compose your rubric</div>
+            <div class="status" data-code-status>Empty</div>
+            <div class="status-sub">Add codes to compose your code</div>
           </section>
 
-          <div class="stack-sm">
-            <button type="button" class="slot-add">
+          <div class="stack-sm" data-code-list>
+            <button type="button" class="slot-add" data-action="add">
               <span class="material-symbols-outlined">add</span>
               <span>Add your first code</span>
             </button>
@@ -3712,7 +3752,7 @@
 <section class="screen-pair">
   <h3 class="screen-pair-label">1b · Your Code (Home)</h3>
   <div class="pair-row">
-<div class="phone-wrap" data-rubric>
+<div class="phone-wrap" data-code>
   <div class="phone-label">Dark</div>
   <div class="phone">
     <div class="island"></div>
@@ -3744,12 +3784,12 @@
                 <div class="lbl">OF 100</div>
               </div>
             </div>
-            <div class="status" data-rubric-status>In Progress</div>
+            <div class="status" data-code-status>In Progress</div>
             <button class="rename-link" data-action="rename-prompt" aria-label="Rename code">Rename</button>
-            <button class="reset-link" data-action="reset-prompt" aria-label="Reset rubric">Reset</button>
+            <button class="reset-link" data-action="reset-prompt" aria-label="Reset code">Reset</button>
           </section>
 
-          <div class="stack-sm" data-rubric-list>
+          <div class="stack-sm" data-code-list>
             <div class="slot-c" data-code-id="clean_label" data-action="code-detail">
               <span class="ico" style="background:#1FA34A;"><span class="material-symbols-outlined">auto_awesome</span></span>
               <div class="meta"><div class="nm">Clean Label</div></div>
@@ -3793,7 +3833,7 @@
       </nav>
     </div>
   </div>
-  <div class="phone-caption">Personal Rubric in its filled, in-harmony state: pie chart visualises every slot's weight, the list under it lets the user fine-tune. The underlined phrase in the headline ("In Harmony") is the user-given name for this code — Rename in the bottom-left of the pie-card edits it; Reset in the bottom-right wipes the rubric. Tap a row to read the code's description and start a chat with WISE AI about it.</div>
+  <div class="phone-caption">Personal Code in its filled, in-harmony state: pie chart visualises every slot's weight, the list under it lets the user fine-tune. The underlined phrase in the headline ("In Harmony") is the user-given name for this code — Rename in the bottom-left of the pie-card edits it; Reset in the bottom-right wipes the code. Tap a row to read the code's description and start a chat with WISE AI about it.</div>
 </div>
   </div>
 </section>
@@ -3826,9 +3866,9 @@
            with the same data-picker-* hooks as the modal overlay, so the
            same JS handlers drive both. The .cp-scroll contents are
            rendered at boot from CODE_CATALOG + WISE_CODES.getSlots(),
-           so a code that's already in the rubric (Screens 1/6) shows as
+           so a code that's already in the code (Screens 1/6) shows as
            "In your code" here, and tapping an available row adds it to
-           the rubric — propagating to Screens 1, 3, 6, and 7 in one
+           the code — propagating to Screens 1, 3, 6, and 7 in one
            pass. -->
       <div class="code-picker-overlay code-picker-static">
         <div class="code-picker-card">
@@ -3858,7 +3898,7 @@
       </div>
     </div>
   </div>
-  <div class="phone-caption">Bottom sheet over the rubric — search at the top, group-by-category / A–Z toggle next to it, then the catalog grouped by family. Each row pushes the slot detail (weight + composition) onto the stack.</div>
+  <div class="phone-caption">Bottom sheet over the code — search at the top, group-by-category / A–Z toggle next to it, then the catalog grouped by family. Each row pushes the slot detail (weight + composition) onto the stack.</div>
 </div>
   </div>
 </section>
@@ -3894,7 +3934,7 @@
           <div class="prio-row-wrap">
             <!-- Priority chips are populated by the browse subscriber from
                  WISE_CODES.getSlots(), sorted by descending weight, so
-                 they always mirror the rubric on Screens 1/6. -->
+                 they always mirror the code on Screens 1/6. -->
             <div class="prio-row" data-browse-prio></div>
           </div>
 
@@ -4124,7 +4164,7 @@
                 <span class="chat-time">9:41 AM</span>
               </div>
               <div class="chat-bubble ai">
-                <div class="chat-text">Tell me what matters to you — diet style, goals, foods to avoid, anything. I'll compose a personal rubric and weight your code accordingly.</div>
+                <div class="chat-text">Tell me what matters to you — diet style, goals, foods to avoid, anything. I'll compose a personal code and weight your code accordingly.</div>
                 <div class="intent-row" data-intent-row>
                   <span class="intent-label">Try an intent</span>
                   <button class="intent-chip" data-intent>Eat clean</button>
@@ -4180,7 +4220,7 @@
   <div class="phone">
     <div class="island"></div>
     <div class="glow-l"></div>
-    <div class="glow-r" style="background:radial-gradient(closest-side, rgba(31,163,74,0.28), transparent 70%);"></div>
+    <div class="glow-r"></div>
     <div class="status-bar"><span>9:41</span>
       <span class="right">
         <span class="bars"><span></span><span></span><span></span><span></span></span>
@@ -4236,7 +4276,7 @@
               Excellent match for your code
             </div>
 
-            <!-- Contribution donut — same renderer as the rubric pie on
+            <!-- Contribution donut — same renderer as the code pie on
                  Screens 1 & 6, just smaller per-slice tags (only the icon
                  + percent show, the slot name lives in the table below).
                  Center reads the composite score as "{score} / OF 100".
@@ -4244,7 +4284,7 @@
                  list, and the totals are all rewritten by the
                  product-detail subscriber from WISE_CODES.getSlots()
                  plus the per-slot SALMON_SCORES table, so a change to
-                 the rubric on Screens 1/6 (or a pick on Screen 2) flows
+                 the code on Screens 1/6 (or a pick on Screen 2) flows
                  through here in one pass. -->
             <div class="pie-wrap" style="width:310px;height:310px;margin:4px 0 8px;">
               <svg viewBox="0 0 280 280" width="310" height="310" class="pie-svg"
@@ -4258,7 +4298,7 @@
             </div>
 
             <!-- Per-slot contribution table. Order, names + icons mirror
-                 the user's rubric (Screen 1) so the eye can match each
+                 the user's code (Screen 1) so the eye can match each
                  slice to its row. Values sum (with rounding) to the
                  Total Contribution shown in the summary row underneath. -->
             <div class="contrib-list" data-product-detail-contrib></div>
@@ -4298,7 +4338,7 @@
       </nav>
     </div>
   </div>
-  <div class="phone-caption">Tap any Top Match row in Browse (or land a barcode hit in Scan) to drill into the per-food drilldown: hero card with the product image / brand / UPC, then the same contribution donut as the user's rubric — only now each slice's value is what that slot contributed to the composite score for this specific food.</div>
+  <div class="phone-caption">Tap any Top Match row in Browse (or land a barcode hit in Scan) to drill into the per-food drilldown: hero card with the product image / brand / UPC, then the same contribution donut as the user's code — only now each slice's value is what that slot contributed to the composite score for this specific food.</div>
 </div>
   </div>
 </section>
@@ -4310,7 +4350,7 @@
        section is Share the app. Presentation-only, so it clones into a
        light twin cleanly. -->
 <section class="screen-pair">
-  <h3 class="screen-pair-label">7 · Settings</h3>
+  <h3 class="screen-pair-label">7 · Settings (optional)</h3>
   <div class="pair-row">
 <div class="phone-wrap">
   <div class="phone-label">Dark</div>
@@ -4353,7 +4393,7 @@
             <span class="set-label">Account</span>
             <div class="set-group">
               <button type="button" class="set-row">
-                <span class="set-ico" style="background:#1FA34A;"><span class="material-symbols-outlined">login</span></span>
+                <span class="set-ico" style="background:#1D4ED8;"><span class="material-symbols-outlined">login</span></span>
                 <div class="set-copy">
                   <div class="set-title">Log in</div>
                   <div class="set-sub">Sync your code across devices.</div>
@@ -4361,10 +4401,10 @@
                 <span class="set-trail-btn ghost">Log in</span>
               </button>
               <button type="button" class="set-row">
-                <span class="set-ico" style="background:#147A36;"><span class="material-symbols-outlined">person_add</span></span>
+                <span class="set-ico" style="background:#1D4ED8;"><span class="material-symbols-outlined">person_add</span></span>
                 <div class="set-copy">
                   <div class="set-title">Create account</div>
-                  <div class="set-sub">Save your rubric and pick up anywhere.</div>
+                  <div class="set-sub">Save your code and pick up anywhere.</div>
                 </div>
                 <span class="set-trail-btn solid">Sign up</span>
               </button>
@@ -4375,7 +4415,7 @@
             <span class="set-label">Share</span>
             <div class="set-group">
               <button type="button" class="set-row">
-                <span class="set-ico" style="background:#D8610C;"><span class="material-symbols-outlined">ios_share</span></span>
+                <span class="set-ico" style="background:#1D4ED8;"><span class="material-symbols-outlined">ios_share</span></span>
                 <div class="set-copy">
                   <div class="set-title">Share the app</div>
                   <div class="set-sub">Send Personalized Nutrition to a friend.</div>
@@ -4416,8 +4456,8 @@
           <p>Six core screens — Your Code (home), Pick a Code, Top Matches (Browse), Find a Food (Scan), Chat, and per-food Product Detail — laid out as a single horizontal carousel. Every screen is authored once in dark and cloned at runtime into a <code>.theme-light</code> twin shown right next to it inside the same scroll-snap card.</p>
         </div>
         <div>
-          <h4>Rubric pie</h4>
-          <p>The Personal Rubric hero on Screens 1 &amp; 6 renders as a multi-slice donut: one arc per slot, colored with that slot's gradient stops, percentage labels painted on each segment, composite score (of 100) in the center. Renderer in <code>&lt;script&gt;</code> at the bottom — reads <code>data-slices</code> off each <code>.pie-svg</code>. On Product Detail the same donut shrinks the per-slice tags down to just the icon + percent and pairs the chart with a per-slot contribution table beneath.</p>
+          <h4>Code pie</h4>
+          <p>The Personal Code hero on Screens 1 &amp; 6 renders as a multi-slice donut: one arc per slot, colored with that slot's gradient stops, percentage labels painted on each segment, composite score (of 100) in the center. Renderer in <code>&lt;script&gt;</code> at the bottom — reads <code>data-slices</code> off each <code>.pie-svg</code>. On Product Detail the same donut shrinks the per-slice tags down to just the icon + percent and pairs the chart with a per-slot contribution table beneath.</p>
         </div>
       </div>
     </main>
@@ -4463,7 +4503,7 @@
       //   asin(k/(r+k)), tangent point at radius √((r+k)² - k²).
       //
       // `renderPieSvg(svg, opts?)` is exposed at outer scope so the
-      // rubric and product-detail subscribers (further down) can
+      // code and product-detail subscribers (further down) can
       // re-render a single pie after the user adds or removes a code.
       // Pass `{ animate: true }` to play the bounce-in entrance —
       // each slice grows from zero angular span to its resting size,
@@ -4594,7 +4634,14 @@
             // kill any in-flight RAF so a fading-out pie doesn't keep
             // chewing through paintSlot() calls on detached nodes.
             if (svg._pieRaf) { cancelAnimationFrame(svg._pieRaf); svg._pieRaf = null; }
-            svg.innerHTML = "";
+            var emptySize = parseFloat(svg.getAttribute("data-size")) || 200;
+            var emptyStroke = parseFloat(svg.getAttribute("data-stroke")) || 34;
+            var emptyCx = emptySize / 2;
+            var emptyCy = emptySize / 2;
+            var emptyR = emptySize * 95 / 280;
+            svg.innerHTML = ''
+              + '<circle class="empty-track" cx="' + emptyCx + '" cy="' + emptyCy + '" r="' + emptyR + '"'
+              + ' fill="none" stroke="var(--track)" stroke-width="' + emptyStroke + '" opacity="0.6" />';
             var emptyWrap = svg.parentElement;
             if (emptyWrap) {
               emptyWrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
@@ -4615,16 +4662,16 @@
           var total = slices.reduce(function (s, x) { return s + (x.value || 0); }, 0);
           if (total <= 0) return;
 
-          // Angular gap between slices, in radians. ~5° looks like the
-          // reference: clearly separated, no slivers of card showing
-          // through between corner radii. Halved on each side of every
-          // boundary so adjacent slices each give up 2.5°.
-          var gap = 5 * Math.PI / 180;
+          // Angular gap between slices, in radians. ~3° keeps the
+          // slices clearly separated but tighter than before. Halved on
+          // each side of every boundary so adjacent slices each give up
+          // 1.5°.
+          var gap = 3 * Math.PI / 180;
           var halfGap = gap / 2;
           // Corner fillet radius, in user units. Scales with the ring
           // thickness so a thicker donut gets proportionally chunkier
-          // corners — clamped to a sensible range.
-          var cornerR = Math.max(6, Math.min(14, (R - r) * 0.22));
+          // corners — clamped to a sensible (tighter) range.
+          var cornerR = Math.max(4, Math.min(9, (R - r) * 0.14));
 
           var wrap = svg.parentElement;
           // Cancel any in-flight animation before rebuilding so we
@@ -4832,13 +4879,30 @@
         };
 
         // No initial paint here — the dark/light cloner below clones
-        // empty <svg> shells, then the WISE_CODES rubric and product-
+        // empty <svg> shells, then the WISE_CODES code and product-
         // detail subscribers fire immediately on subscribe and paint
         // every pie on the page (both twins) with the bounce-in
         // animation. Doing the paint there instead of here means
         // we never animate a dark pie only to have the subscriber
         // clobber the in-flight RAF a tick later.
       })();
+
+      // ─── Tap-to-replay the donut animation ────────────────────────────
+      // Tapping any rendered donut replays its bounce-in entrance. Used
+      // on the Personal Code ("your code") and the Food Detail donut,
+      // but harmless on every pie since renderPieSvg just re-reads the
+      // current data-slices and animates from zero. Delegated on the
+      // document so it covers both the dark wrap and its cloned light
+      // twin without per-node wiring.
+      document.addEventListener("click", function (e) {
+        var wrap = e.target.closest && e.target.closest(".pie-wrap");
+        if (!wrap) return;
+        var svg = wrap.querySelector(".pie-svg");
+        if (!svg || typeof renderPieSvg !== "function") return;
+        var slices = svg.getAttribute("data-slices");
+        if (!slices || slices === "[]") return; // nothing to animate
+        renderPieSvg(svg, { animate: true });
+      });
 
       // ─── Dark/light pair cloner ──────────────────────────────────────
       // The source markup only ships the dark phone-wrap inside each
@@ -4869,11 +4933,35 @@
         });
       })();
 
-      // ─── Shared rubric state (single source of truth) ─────────────────
+      // ─── WISEcode brand mark on primary screen headlines ─────────────
+      // Each in-phone .scr-hdr gets the brand bug floated to the right of
+      // its title, vertically centered. Primary screens only — bottom
+      // sheets (picker, code detail, rebalance, reset) never get it.
+      // Runs after the dark/light cloner so both twins pick up the markup.
+      (function () {
+        var bugHtml = '<span class="wise-bug" aria-hidden="true"></span>';
+
+        function wrapHeadlineBlock(parent, block) {
+          if (!block || parent.querySelector(".scr-hdr-headline")) return;
+          var row = document.createElement("div");
+          row.className = "scr-hdr-headline";
+          parent.insertBefore(row, block);
+          row.appendChild(block);
+          row.insertAdjacentHTML("beforeend", bugHtml);
+        }
+
+        document.querySelectorAll(".scr-hdr").forEach(function (hdr) {
+          var directH1 = hdr.querySelector(":scope > h1");
+          var textBlock = directH1 || hdr.querySelector(":scope > div");
+          wrapHeadlineBlock(hdr, textBlock);
+        });
+      })();
+
+      // ─── Shared code state (single source of truth) ─────────────────
       // Every screen that mentions "codes" reads and writes through this
       // singleton. Add or remove a code on Screen 1, or tap a row in
       // the Screen 2 picker — the change flows in one pass to every
-      // other screen that references the rubric (priority chips and
+      // other screen that references the code (priority chips and
       // per-food bars on Screen 3, donut + contribution table on
       // Screen 6, the picker's "in your code" greyed rows, and the
       // dark + light twins of Screen 1).
@@ -4883,17 +4971,17 @@
       //   • MAX_SLOTS = 5 — hard ceiling, same as the real app
       //   • addCode    → push, then autoEqualize so weights sum to 100
       //   • removeCode → strip, then autoEqualize the rest
-      //   • resetRubric → restore the authored "47/23/15/10/5" mix
+      //   • resetCode → restore the authored "47/23/15/10/5" mix
       //
       // The module also carries the per-codeId scoring table used by
       // the Product Detail screen so contribution numbers (and the
-      // composite score) recompute when the rubric changes.
+      // composite score) recompute when the code changes.
       var WISE_CODES = (function () {
         var MAX_SLOTS = 5;
 
         // Code catalog — every selectable expression, keyed by a stable
         // id. Carries the identity (display name, family, color, icon)
-        // used wherever a code shows up in the UI: rubric slot rows,
+        // used wherever a code shows up in the UI: code slot rows,
         // pie slices, priority chips, food-row bar segments, and the
         // picker.
         var CODE_CATALOG = {
@@ -5190,10 +5278,15 @@
           notify();
         }
 
-        function resetRubric() {
+        function resetCode() {
           state.slots = INITIAL_SLOTS.map(function (s) {
             return { codeId: s.codeId, weight: s.weight };
           });
+          notify();
+        }
+
+        function clearCode() {
+          state.slots = [];
           notify();
         }
 
@@ -5291,7 +5384,8 @@
           getSlots: getSlots,
           addCode: addCode,
           removeCode: removeCode,
-          resetRubric: resetRubric,
+          resetCode: resetCode,
+          clearCode: clearCode,
           setSlotWeight: setSlotWeight,
           productScore: productScore
         };
@@ -5299,7 +5393,7 @@
 
       // ─── Shared "Pick a code" renderer + handlers (Screen 2 static
       //     picker AND the dynamic modal opened from Screen 1) ─────────
-      // Exposed as PICKER so the rubric IIFE further down can call
+      // Exposed as PICKER so the code IIFE further down can call
       // PICKER.render on its dynamic modal. The static Screen 2 picker
       // and the dynamic modal share the same row markup, the same
       // search/sort UI, and the same pick-row behaviour — tapping a
@@ -5312,7 +5406,7 @@
           var taken = takenIds.has(entry.id);
           // Both taken and available rows fire the same "pick" action;
           // the click handler routes by class (.is-taken opens the
-          // detail sheet in rubric/read-only context, available rows
+          // detail sheet in code/read-only context, available rows
           // open it in picker/commit context with an Add CTA).
           return ''
             + '<div class="pick-row' + (taken ? ' is-taken' : '') + '"'
@@ -5379,7 +5473,7 @@
         // Sort + pick delegation. Works for every picker overlay on
         // the page — the static one inside [data-picker] phone-wraps
         // on Screen 2, and any dynamic modal mounted inside a
-        // [data-rubric] phone-wrap on Screen 1.
+        // [data-code] phone-wrap on Screen 1.
         document.addEventListener("click", function (ev) {
           var sortBtn = ev.target.closest("[data-picker-sort]");
           if (sortBtn) {
@@ -5404,9 +5498,9 @@
             // committing the add outright. The sheet hosts the code's
             // description, a "what it does for you" list, chat-starter
             // chips that grow into a chat experience, and — for codes
-            // not already in the rubric — an "Add to my code" CTA
+            // not already in the code — an "Add to my code" CTA
             // that fires WISE_CODES.addCode and tears down the
-            // picker / sheet stack. Taken codes open in "rubric"
+            // picker / sheet stack. Taken codes open in "code"
             // context (no Add CTA) so the user can still read about
             // a code they've already added.
             var phoneWrap = picked.closest(".phone-wrap");
@@ -5415,7 +5509,7 @@
             window.CODE_DETAIL_SHEET.open(
               phoneWrap,
               picked.getAttribute("data-code-id"),
-              { context: alreadyTaken ? "rubric" : "picker" }
+              { context: alreadyTaken ? "code" : "picker" }
             );
           }
         });
@@ -5432,7 +5526,7 @@
         });
 
         // Subscribe so every picker overlay (the static Screen 2 sheet
-        // and any open dynamic modal) re-renders whenever the rubric
+        // and any open dynamic modal) re-renders whenever the code
         // changes — greying out codes that just got picked and
         // un-greying ones that just got removed.
         WISE_CODES.subscribe(function () {
@@ -5442,8 +5536,8 @@
         return { render: render };
       })();
 
-      // ─── Personal Rubric interactivity (Screen 1) ─────────────────────
-      // Renders the rubric phone-wraps (dark + light twins of Screen 1)
+      // ─── Personal Code interactivity (Screen 1) ─────────────────────
+      // Renders the code phone-wraps (dark + light twins of Screen 1)
       // from WISE_CODES.getSlots(), wires the add/remove/reset actions,
       // and hosts the in-phone "Pick a code" modal that opens when the
       // user taps the dashed "+ Add a code" tile. Both twins are
@@ -5455,9 +5549,27 @@
       (function () {
         var W = WISE_CODES;
 
+        function resolveSlots(phoneWrap, slots) {
+          if (phoneWrap.hasAttribute("data-code-empty") && !phoneWrap._emptyActivated) {
+            return [];
+          }
+          return slots;
+        }
+
+        function activateEmptyScreen(phoneWrap) {
+          if (!phoneWrap || !phoneWrap.hasAttribute("data-code-empty")) return;
+          document.querySelectorAll(".phone-wrap[data-code-empty]").forEach(function (wrap) {
+            wrap._emptyActivated = true;
+          });
+          W.clearCode();
+        }
+
         function renderSlotList(phoneWrap, slots) {
-          var listEl = phoneWrap.querySelector("[data-rubric-list]");
+          var listEl = phoneWrap.querySelector("[data-code-list]");
           if (!listEl) return;
+
+          slots = resolveSlots(phoneWrap, slots);
+          var filledCount = W.filledSignature(slots);
 
           var html = "";
           slots.forEach(function (s) {
@@ -5479,11 +5591,11 @@
               + '</div>';
           });
 
-          if (W.filledSignature(slots) < W.MAX_SLOTS) {
+          if (filledCount < W.MAX_SLOTS) {
             html += ""
               + '<button type="button" class="slot-add" data-action="add">'
               +   '<span class="material-symbols-outlined">add</span>'
-              +   '<span>Add a code</span>'
+              +   '<span>' + (filledCount === 0 ? "Add your first code" : "Add a code") + '</span>'
               + '</button>';
           }
 
@@ -5491,20 +5603,28 @@
         }
 
         function renderHero(phoneWrap, slots, opts) {
+          slots = resolveSlots(phoneWrap, slots);
           var filled = slots.filter(function (s) { return s.codeId; });
           var weightSum = filled.reduce(function (a, s) { return a + s.weight; }, 0);
           var inHarmony = filled.length > 0 && weightSum === 100;
 
-          var countEl = phoneWrap.querySelector("[data-rubric-count]");
+          var countEl = phoneWrap.querySelector("[data-code-count]");
           if (countEl) {
             countEl.textContent = "YOUR CODES · " + filled.length + " / " + W.MAX_SLOTS;
           }
 
-          var statusEl = phoneWrap.querySelector("[data-rubric-status]");
+          var statusEl = phoneWrap.querySelector("[data-code-status]");
           if (statusEl) {
             statusEl.textContent = filled.length === 0
               ? "Empty"
               : (inHarmony ? "In Harmony" : "In Progress");
+          }
+
+          var statusSubEl = phoneWrap.querySelector(".status-sub");
+          if (statusSubEl) {
+            statusSubEl.textContent = filled.length === 0
+              ? "Add codes to compose your code"
+              : (inHarmony ? "Your weights are balanced" : "Balance weights to reach 100");
           }
 
           var pieSvg = phoneWrap.querySelector(".pie-svg");
@@ -5523,7 +5643,7 @@
           if (pieNum) pieNum.textContent = String(weightSum);
         }
 
-        function renderRubricWrap(phoneWrap, slots, opts) {
+        function renderCodeWrap(phoneWrap, slots, opts) {
           renderSlotList(phoneWrap, slots);
           renderHero(phoneWrap, slots, opts);
         }
@@ -5591,10 +5711,10 @@
         }
 
         // ─── Reset confirmation bottom-sheet ────────────────────────────
-        // Tapping Reset on the rubric pie-card no longer wipes the
+        // Tapping Reset on the code pie-card no longer wipes the
         // composition outright — it slides up a bottom sheet that asks
         // the user to double-confirm. Cancel dismisses; Reset calls
-        // WISE_CODES.resetRubric() which propagates to every screen.
+        // WISE_CODES.resetCode() which propagates to every screen.
         function openResetSheet(phoneWrap) {
           if (phoneWrap.querySelector(".reset-overlay")) return;
 
@@ -5604,7 +5724,7 @@
             + '<div class="reset-sheet" role="dialog" aria-modal="true" aria-labelledby="reset-sheet-title">'
             +   '<div class="handle" aria-hidden="true"></div>'
             +   '<h2 id="reset-sheet-title">Reset your code?</h2>'
-            +   '<p>This wipes every slot and weight in your Personal Rubric and restores the starting five codes. You can\u2019t undo it.</p>'
+            +   '<p>This wipes every slot and weight in your Personal Code and restores the starting five codes. You can\u2019t undo it.</p>'
             +   '<div class="actions">'
             +     '<button type="button" class="btn btn-cancel" data-action="reset-cancel">Cancel</button>'
             +     '<button type="button" class="btn btn-confirm" data-action="reset-confirm">'
@@ -5630,7 +5750,7 @@
         }
 
         // ─── Delete-code confirmation bottom-sheet ──────────────────────
-        // Tapping the minus on a rubric slot no longer removes the code
+        // Tapping the minus on a code slot no longer removes the code
         // outright — it slides up this double-verify sheet first, naming
         // the exact code about to be dropped. Cancel dismisses; Remove
         // calls WISE_CODES.removeCode() which strips the slot and
@@ -5655,7 +5775,7 @@
             +     '<span class="nm">' + W.escapeHtml(meta.name) + '</span>'
             +   '</div>'
             +   '<h2 id="delete-sheet-title">Remove this code?</h2>'
-            +   '<p>This drops \u201C' + W.escapeHtml(meta.name) + '\u201D from your Personal Rubric and re-balances the remaining codes to total 100. You can add it back anytime.</p>'
+            +   '<p>This drops \u201C' + W.escapeHtml(meta.name) + '\u201D from your Personal Code and re-balances the remaining codes to total 100. You can add it back anytime.</p>'
             +   '<div class="actions">'
             +     '<button type="button" class="btn btn-cancel" data-action="delete-cancel">Cancel</button>'
             +     '<button type="button" class="btn btn-confirm" data-action="delete-confirm">'
@@ -5682,16 +5802,16 @@
         }
 
         // ─── Rebalance bottom-sheet ─────────────────────────────────────
-        // Tapping the Rebalance pill on the rubric pie-card (or the
+        // Tapping the Rebalance pill on the code pie-card (or the
         // "Rebalance" text affordance above the Browse priority row)
         // slides up a bottom sheet listing every filled slot with a
         // slot-colored range slider. Dragging any slider calls
         // WISE_CODES.setSlotWeight which runs the same proportional-
         // rebalance algorithm as the live PWA, then notifies — every
-        // subscriber on the page (rubric pie + slot list, browse prio
+        // subscriber on the page (code pie + slot list, browse prio
         // chips + food-row bars, product-detail donut + table, and
         // any open rebalance sheet across the twin phone) re-renders
-        // in one pass. Both dark + light rubric phones each mount
+        // in one pass. Both dark + light code phones each mount
         // their own sheet via the .phone-wrap scope, so a drag in
         // dark also moves the sliders mirrored in the light twin.
         function openRebalanceSheet(phoneWrap) {
@@ -5802,7 +5922,7 @@
           if (sheet) sheet.classList.toggle("is-balanced", total === 100);
         }
 
-        // Expose the open/close/update helpers on the rubric closure so
+        // Expose the open/close/update helpers on the code closure so
         // the document-level click handler below + the slider input
         // listener can all reach them without re-importing the closure.
         // Hoisted here so the listeners declared later read the live
@@ -5820,11 +5940,11 @@
         // description, a short "what it does for you" list, and a row
         // of chat-starter intent chips under a "Chat with WISE AI
         // about this" label. Live weight is read off WISE_CODES
-        // .getSlots(), so the meta row reflects the current rubric.
+        // .getSlots(), so the meta row reflects the current code.
         //
         // Two contexts:
-        //   - opts.context === "rubric" (default): code is already in
-        //     the user's rubric. Header shows live weight%. No Add CTA.
+        //   - opts.context === "code" (default): code is already in
+        //     the user's code. Header shows live weight%. No Add CTA.
         //   - opts.context === "picker": code is being previewed from
         //     the picker. Header shows the category only. A primary
         //     "Add to my code" CTA appears at the end of the body so
@@ -5848,9 +5968,9 @@
             return s.codeId === codeId;
           })[0];
           var weight = slot ? slot.weight : 0;
-          var inRubric = !!slot;
-          var context = opts.context === "picker" ? "picker" : "rubric";
-          var showAddCta = (context === "picker") && !inRubric;
+          var inCode = !!slot;
+          var context = opts.context === "picker" ? "picker" : "code";
+          var showAddCta = (context === "picker") && !inCode;
 
           var helpsHtml = detail.helps.map(function (h) {
             return ''
@@ -5874,9 +5994,9 @@
               + '</button>';
           }).join("");
 
-          // Meta row: live weight% when the code is in the rubric;
+          // Meta row: live weight% when the code is in the code;
           // category only when previewing an unsaved pick.
-          var metaHtml = inRubric
+          var metaHtml = inCode
             ? ('<span class="cd-cat">' + W.escapeHtml(meta.category) + '</span>'
                + '<span class="cd-dot" aria-hidden="true">\u00b7</span>'
                + '<span class="cd-pct"><b>' + weight + '</b>%</span>')
@@ -6022,18 +6142,18 @@
           enterChat: enterChatMode
         };
 
-        // ─── Rubric + picker event delegation ─────────────────────────
-        // All add / remove / reset interactions across both rubric
+        // ─── Code + picker event delegation ─────────────────────────
+        // All add / remove / reset interactions across both code
         // twins go through this one listener. Picker actions (pick,
         // picker-close) are handled here too, since the modal lives
-        // inside [data-rubric] phone-wraps.
+        // inside [data-code] phone-wraps.
         //
         // Code-detail actions (code-detail, code-detail-close, code-
         // detail-intent, code-detail-add) can fire from either a
-        // [data-rubric] phone-wrap (Your Code rows / modal picker)
+        // [data-code] phone-wrap (Your Code rows / modal picker)
         // or a [data-picker] phone-wrap (the standalone Pick a Code
         // screen). So we look up the generic .phone-wrap for them
-        // rather than scoping to data-rubric.
+        // rather than scoping to data-code.
         document.addEventListener("click", function (ev) {
           var target = ev.target.closest("[data-action]");
           if (!target) return;
@@ -6045,7 +6165,7 @@
                           || action === "code-detail-add";
           var phoneWrap = isCodeDetail
             ? target.closest(".phone-wrap")
-            : target.closest("[data-rubric]");
+            : target.closest("[data-code]");
 
           if (action === "remove") {
             if (!phoneWrap) return;
@@ -6078,7 +6198,7 @@
             var detailRow = target.closest(".slot-c[data-code-id]");
             if (detailRow) {
               ev.preventDefault();
-              openCodeDetail(phoneWrap, detailRow.getAttribute("data-code-id"), { context: "rubric" });
+              openCodeDetail(phoneWrap, detailRow.getAttribute("data-code-id"), { context: "code" });
             }
             return;
           }
@@ -6108,7 +6228,7 @@
               W.addCode(addCodeId);
               closeCodeDetail(phoneWrap);
               // Also close any modal picker that opened from the
-              // rubric's "+ Add a code" tile — the user has committed
+              // code's "+ Add a code" tile — the user has committed
               // a pick, so the picker's job is done. The static
               // Screen 2 picker stays mounted (it IS the screen).
               var modal = phoneWrap.querySelector(".code-picker-overlay:not(.code-picker-static)");
@@ -6119,6 +6239,9 @@
 
           if (action === "add" && phoneWrap) {
             ev.preventDefault();
+            if (phoneWrap.hasAttribute("data-code-empty") && !phoneWrap._emptyActivated) {
+              activateEmptyScreen(phoneWrap);
+            }
             openPicker(phoneWrap);
             return;
           }
@@ -6143,13 +6266,13 @@
 
           if (action === "reset-confirm" && phoneWrap) {
             ev.preventDefault();
-            W.resetRubric();
+            W.resetCode();
             closeResetSheet(phoneWrap);
             return;
           }
 
           // Rebalance-open is allowed on any .phone-wrap (not just the
-          // [data-rubric] rubric phones) so the "Rebalance" affordance
+          // [data-code] code phones) so the "Rebalance" affordance
           // in the Browse priorities header (Screen 3) opens the same
           // sheet as the Rebalance pill on Screen 1.
           if (action === "rebalance-open") {
@@ -6173,7 +6296,7 @@
           // keeps working.
           if (action === "reset") {
             ev.preventDefault();
-            W.resetRubric();
+            W.resetCode();
             return;
           }
         });
@@ -6196,7 +6319,7 @@
           // If setSlotWeight clamped the value (e.g. others all at 0),
           // the slider thumb still sits at the user's drag position.
           // Snap it back to the actual state so the thumb tracks
-          // the integer the rubric is now committed to.
+          // the integer the code is now committed to.
           var actualSlot = W.getSlots().filter(function (s) {
             return s.codeId === codeId;
           })[0];
@@ -6208,7 +6331,7 @@
         });
 
         // Subscribe to shared state. The cloner has already run by
-        // this point, so both dark + light rubric twins exist; we
+        // this point, so both dark + light code twins exist; we
         // render them in one pass. (The picker overlays — both the
         // static Screen 2 one and any open dynamic modal — are kept
         // in sync by the PICKER module's own subscriber further up.)
@@ -6220,15 +6343,15 @@
         // subsequent notify() calls (add / remove / reset, twin
         // sync) repaint statically so live weight changes stay
         // tight and responsive.
-        var firstRubricPaint = true;
+        var firstCodePaint = true;
         WISE_CODES.subscribe(function (state) {
-          var paintOpts = firstRubricPaint ? { animate: true } : undefined;
-          document.querySelectorAll(".phone-wrap[data-rubric]").forEach(function (wrap) {
-            renderRubricWrap(wrap, state.slots, paintOpts);
+          var paintOpts = firstCodePaint ? { animate: true } : undefined;
+          document.querySelectorAll(".phone-wrap[data-code]").forEach(function (wrap) {
+            renderCodeWrap(wrap, state.slots, paintOpts);
           });
-          firstRubricPaint = false;
+          firstCodePaint = false;
 
-          // Any open rebalance sheet (could be on a rubric phone or
+          // Any open rebalance sheet (could be on a code phone or
           // on the Browse phone) gets an in-place sync so a drag here
           // also updates the mirror sheet on the twin without tearing
           // down the slider element the user might be holding. The
@@ -6250,9 +6373,9 @@
 
       // ─── Browse (Screen 3) — priority chips + food-row bars ──────────
       // Re-renders the "Your priorities" chip row (sorted by descending
-      // weight) and every per-food .health-bar from the live rubric.
+      // weight) and every per-food .health-bar from the live code.
       // Food-row scores stay authored — only the bar's color/flex mix
-      // updates, so the segments always read as the live rubric mix
+      // updates, so the segments always read as the live code mix
       // (matching the priority chips above and the donut on Screens
       // 1 / 6).
       (function () {
@@ -6299,7 +6422,7 @@
       // ─── Product Detail (Screen 6) — donut + contribution table ──────
       // Recomputes the per-slot contribution numbers, the totals row,
       // and the composite score in the donut center whenever the
-      // rubric changes. Uses WISE_CODES.productScore(codeId) as the
+      // code changes. Uses WISE_CODES.productScore(codeId) as the
       // per-code performance of the example food (Wild Atlantic
       // Salmon Fillet) so the math is:
       //
@@ -6378,7 +6501,7 @@
           }
         }
 
-        // Same first-fire trick as the rubric subscriber: play the
+        // Same first-fire trick as the code subscriber: play the
         // bounce-in donut entrance on the initial synchronous
         // invocation; repaint statically on every later notify().
         var firstProductDetailPaint = true;
@@ -6448,7 +6571,7 @@
           var filled = slots.filter(function (s) { return s.codeId && s.weight > 0; });
 
           // Reference total = what the salmon table would yield
-          // against the current rubric. Used as the denominator
+          // against the current code. Used as the denominator
           // for the per-row scaling factor.
           var refTotal = filled.reduce(function (acc, s) {
             return acc + s.weight * W.productScore(s.codeId) / 100;
@@ -6473,10 +6596,10 @@
           var composite = totalContribution + W.OTHER_FACTORS;
 
           // Donut — reuses the shared pie renderer (same one used by
-          // the rubric and Product Detail donuts) so the shape stays
+          // the code and Product Detail donuts) so the shape stays
           // visually identical across surfaces. Slice values are
           // slot weights, not contributions, so the donut shape
-          // mirrors the user's rubric pie 1:1.
+          // mirrors the user's code pie 1:1.
           var pieSvg = scrollEl.querySelector(".pie-svg[data-id='food-detail']");
           if (pieSvg && typeof renderPieSvg === "function") {
             var slices = filled.map(function (s) {
@@ -6623,8 +6746,8 @@
         }
 
         // Browse-scoped event delegation. Lives in its own listener
-        // so it doesn't tangle with the [data-rubric]-scoped one in
-        // the rubric IIFE.
+        // so it doesn't tangle with the [data-code]-scoped one in
+        // the code IIFE.
         document.addEventListener("click", function (ev) {
           var target = ev.target.closest("[data-action]");
           if (!target) return;
@@ -6663,7 +6786,7 @@
           openFoodDetail(phoneWrap, row);
         });
 
-        // Re-render open sheets when the rubric changes. The first
+        // Re-render open sheets when the code changes. The first
         // notify fires synchronously inside subscribe() at boot —
         // no sheet exists yet, so the loop is a no-op. Subsequent
         // notifies (a rebalance on Screens 1/6, a pick on Screen
@@ -6768,7 +6891,7 @@
             return "Got it \u2014 leaning toward whole, minimally processed foods. I\u2019ll weight UPF avoidance and ingredient simplicity higher in your code.";
           }
           if (/protein|muscle|gym|runner|athlete/.test(lc)) {
-            return "Noted \u2014 performance-leaning. I\u2019ll bump protein density and recovery-friendly micros in your rubric.";
+            return "Noted \u2014 performance-leaning. I\u2019ll bump protein density and recovery-friendly micros in your code.";
           }
           if (/heart|cardio|cholesterol|sodium/.test(lc)) {
             return "Heart-first it is. I\u2019ll favor low-sodium, plant-forward picks and lean against saturated-fat-heavy items.";
@@ -6799,7 +6922,7 @@
                   '<span class="chat-time">' + fmtTime(new Date()) + '</span>' +
                 '</div>' +
                 '<div class="chat-bubble ai">' +
-                  '<div class="chat-text">Tell me what matters to you \u2014 diet style, goals, foods to avoid, anything. I\u2019ll compose a personal rubric and weight your code accordingly.</div>' +
+                  '<div class="chat-text">Tell me what matters to you \u2014 diet style, goals, foods to avoid, anything. I\u2019ll compose a personal code and weight your code accordingly.</div>' +
                   '<div class="intent-row" data-intent-row>' +
                     '<span class="intent-label">Try an intent</span>' +
                     '<button class="intent-chip" data-intent>Eat clean</button>' +
@@ -6944,6 +7067,55 @@
           refreshSend: refreshSend,
           submitComposer: submitComposer
         };
+      })();
+    </script>
+
+    <!-- ─── Live reload ────────────────────────────────────────────────
+         Plain static servers (e.g. `python3 -m http.server`) don't push
+         updates, so this poller asks the server for the page's own
+         Last-Modified / ETag every second and hard-reloads the moment
+         the file changes on disk. No build step, no extra dependency —
+         works under any static host. Skips file:// (no server to poll).
+         Disable by appending #noreload to the URL. -->
+    <script>
+      (function () {
+        if (location.protocol === "file:") return;
+        if (location.hash.indexOf("noreload") !== -1) return;
+
+        var url = location.pathname + location.search;
+        var lastSignature = null;
+        var pollMs = 1000;
+
+        function signatureFrom(res) {
+          return (
+            res.headers.get("Last-Modified") ||
+            res.headers.get("ETag") ||
+            res.headers.get("Content-Length") ||
+            ""
+          );
+        }
+
+        function poll() {
+          fetch(url, { method: "HEAD", cache: "no-store" })
+            .then(function (res) {
+              if (!res.ok) return;
+              var sig = signatureFrom(res);
+              if (lastSignature === null) {
+                lastSignature = sig;
+              } else if (sig && sig !== lastSignature) {
+                location.reload();
+                return;
+              }
+            })
+            .catch(function () {
+              /* server momentarily down (restart/save) — keep polling */
+            })
+            .finally(function () {
+              setTimeout(poll, pollMs);
+            });
+        }
+
+        poll();
       })();
     </script>
   </body>
