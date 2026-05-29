@@ -414,6 +414,7 @@
       .pt-hdr { padding-top: 4px; }
       .stack > * + * { margin-top: 16px; }
       .stack-sm > * + * { margin-top: 10px; }
+      [data-code-list].stack-sm > * + * { margin-top: 6px; }
       .row-flex { display: flex; align-items: center; }
       .between { display: flex; align-items: center; justify-content: space-between; }
       .mono { font-family: "DM Sans", system-ui, sans-serif; }
@@ -799,6 +800,15 @@
         font-weight: 900;
         line-height: 1;
         letter-spacing: -0.04em;
+      }
+      .pie-center .num .num-pct {
+        font-size: 0.4em;
+        font-weight: 800;
+        line-height: 0;
+        letter-spacing: 0;
+        vertical-align: super;
+        margin-left: 1px;
+        color: var(--fg-muted);
       }
       .pie-center .lbl {
         color: var(--fg-muted);
@@ -1211,7 +1221,7 @@
         background: var(--card);
         border: 1px solid var(--line);
         border-radius: 14px;
-        padding: 10px 12px;
+        padding: 6px 12px;
         cursor: pointer;
         transition: background 120ms ease, border-color 120ms ease;
       }
@@ -1508,6 +1518,7 @@
         font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
       }
       .prio-rebalance-btn {
+        display: inline-flex; align-items: center; gap: 4px;
         background: transparent;
         border: none;
         padding: 0;
@@ -1516,6 +1527,7 @@
         font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
         cursor: pointer;
       }
+      .prio-rebalance-btn .material-symbols-outlined { font-size: 14px; }
       @media (hover: hover) {
         .prio-rebalance-btn:hover { text-decoration: underline; }
       }
@@ -2640,6 +2652,7 @@
         font-style: normal;
         font-weight: 800;
         color: inherit;
+        cursor: pointer;
         text-decoration: underline;
         text-underline-offset: 3px;
         text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
@@ -3201,54 +3214,6 @@
         user-select: none;
       }
 
-      /* ─── Emoji icon set ────────────────────────────────────────────────
-         Every icon glyph is a native Unicode emoji rendered through the
-         platform color-emoji font. The `.emoji` modifier sits alongside
-         `.material-symbols-outlined` so all the existing per-context
-         `font-size` rules keep working unchanged — it just swaps the font
-         family (and disables the Material ligature/variation settings) so
-         the codepoint resolves to the color emoji instead of a Material
-         glyph. The `.emoji-tint-*` filters are ported verbatim from
-         _WISEdesigns/wise-icons.html's nutrition-emoji wall: grayscale →
-         sepia → saturate → hue-rotate remaps any emoji into one hue family
-         while preserving its glossy shading, so a badge's glyph tones with
-         its status background. */
-      .material-symbols-outlined.emoji {
-        font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji",
-          "Twemoji Mozilla", "EmojiOne Color", sans-serif;
-        font-weight: 400;
-        font-feature-settings: normal;
-        -webkit-font-feature-settings: normal;
-        font-variation-settings: normal;
-      }
-      .emoji-tint-red {
-        -webkit-filter: grayscale(1) contrast(1.14) sepia(1) saturate(5.8) hue-rotate(318deg) brightness(1.05) contrast(1.06);
-        filter: grayscale(1) contrast(1.14) sepia(1) saturate(5.8) hue-rotate(318deg) brightness(1.05) contrast(1.06);
-      }
-      .emoji-tint-orange {
-        -webkit-filter: grayscale(1) contrast(1.12) sepia(1) saturate(5.2) hue-rotate(12deg) brightness(1.06) contrast(1.05);
-        filter: grayscale(1) contrast(1.12) sepia(1) saturate(5.2) hue-rotate(12deg) brightness(1.06) contrast(1.05);
-      }
-      .emoji-tint-yellow {
-        -webkit-filter: grayscale(1) contrast(1.07) sepia(1) saturate(5.6) hue-rotate(6deg) brightness(1.14) contrast(1.05);
-        filter: grayscale(1) contrast(1.07) sepia(1) saturate(5.6) hue-rotate(6deg) brightness(1.14) contrast(1.05);
-      }
-      .emoji-tint-lgreen {
-        -webkit-filter: grayscale(1) contrast(1.1) sepia(1) saturate(4.2) hue-rotate(82deg) brightness(1.04) contrast(1.06);
-        filter: grayscale(1) contrast(1.1) sepia(1) saturate(4.2) hue-rotate(82deg) brightness(1.04) contrast(1.06);
-      }
-      .emoji-tint-fgreen {
-        -webkit-filter: grayscale(1) contrast(1.16) sepia(1) saturate(4.4) hue-rotate(104deg) brightness(0.91) contrast(1.08);
-        filter: grayscale(1) contrast(1.16) sepia(1) saturate(4.4) hue-rotate(104deg) brightness(0.91) contrast(1.08);
-      }
-      /* Blue isn't one of the reference hue families, but several chips
-         (settings rows, Add-a-code, active tab accent) use wise-nonupf-blue;
-         this keeps those glyphs toned with their chip. */
-      .emoji-tint-blue {
-        -webkit-filter: grayscale(1) contrast(1.12) sepia(1) saturate(4.6) hue-rotate(178deg) brightness(1.02) contrast(1.05);
-        filter: grayscale(1) contrast(1.12) sepia(1) saturate(4.6) hue-rotate(178deg) brightness(1.02) contrast(1.05);
-      }
-
       /* Generic size hint — when an icon needs a different visual size,
          author it with class="icon" (16px default) and the rules below
          pin font-size based on the icon's nesting context. */
@@ -3379,6 +3344,11 @@
          still mints its light twin. */
       .intro-hero {
         padding: 4px 2px 2px;
+        /* Locked height so the Intro and Persona heroes occupy the same
+           vertical space despite different copy — keeps the CTA below them
+           on an identical Y across both onboarding screens. */
+        box-sizing: border-box;
+        min-height: 171px;
       }
       .intro-hero .kicker {
         font-size: 11px; font-weight: 800; letter-spacing: 0.16em;
@@ -3497,6 +3467,114 @@
         box-shadow: 0 12px 28px -10px rgba(29, 78, 216, 0.5);
       }
       .intro-cta .material-symbols-outlined { font-size: 20px; }
+
+      /* ─── Persona pick (onboarding step right after Intro / Welcome) ───
+         A horizontal, swipeable, scroll-snap carousel of selectable
+         persona cards (same idiom as .intro-tile, but multi-select). The
+         footer CTA stays inert until at least one persona is chosen, then
+         it "lights up" into the same loud blue as .intro-cta. */
+      .persona-carousel {
+        margin: 0 -20px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        cursor: grab;
+        -webkit-mask: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+        mask: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+      }
+      .persona-carousel::-webkit-scrollbar { display: none; }
+      .persona-carousel:active { cursor: grabbing; }
+      .persona-track {
+        display: flex;
+        width: max-content;
+        padding: 4px 0 4px 20px;
+      }
+      /* Same footprint as .intro-tile (216 × 128) so the two carousels are
+         the same height and the CTA below lands on an identical Y. */
+      .persona-card {
+        position: relative;
+        width: 216px;
+        margin-right: 12px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 16px 14px;
+        display: flex; flex-direction: column; gap: 10px;
+        min-height: 128px;
+        box-sizing: border-box;
+        flex-shrink: 0;
+        text-align: left;
+        color: var(--fg);
+        cursor: pointer;
+        transition: border-color .18s ease, background .18s ease, box-shadow .2s ease, transform .14s ease;
+      }
+      .persona-card:active { transform: scale(.99); }
+      .persona-card .pc-ico {
+        width: 40px; height: 40px; border-radius: 12px;
+        display: inline-flex; align-items: center; justify-content: center;
+        background: var(--blue); color: #FFFFFF; flex-shrink: 0;
+      }
+      .persona-card .pc-ico .material-symbols-outlined { font-size: 22px; }
+      .persona-card .pc-title {
+        color: var(--fg-bright);
+        font-size: 14px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2;
+      }
+      .persona-card .pc-sub {
+        color: var(--fg-muted);
+        font-size: 11.5px; font-weight: 500; line-height: 1.4;
+      }
+      /* Selection toggle pinned to the top-right corner so the card body
+         stays a pixel-match for the intro feature tile. */
+      .persona-card .pc-pick {
+        position: absolute; top: 12px; right: 12px;
+        width: 26px; height: 26px; border-radius: 999px;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: var(--blue);
+        background: color-mix(in srgb, var(--blue) 12%, transparent);
+        border: 1px solid color-mix(in srgb, var(--blue) 40%, transparent);
+        transition: color .18s ease, background .18s ease, border-color .18s ease;
+      }
+      .persona-card .pc-pick .material-symbols-outlined { font-size: 16px; }
+      .persona-card .pc-pick .pc-on { display: none; }
+      /* Constant 1px border (matches the intro tile); the selected ring is an
+         inset shadow so selecting never nudges the card's size or neighbours. */
+      .persona-card.is-sel {
+        border-color: var(--blue);
+        background: color-mix(in srgb, var(--blue) 10%, var(--card));
+        box-shadow: inset 0 0 0 1px var(--blue), 0 10px 26px -12px rgba(29, 78, 216, 0.55);
+      }
+      .persona-card.is-sel .pc-pick {
+        color: #FFFFFF; background: var(--blue); border-color: var(--blue);
+      }
+      .persona-card.is-sel .pc-pick .pc-off { display: none; }
+      .persona-card.is-sel .pc-pick .pc-on { display: inline-flex; }
+      .persona-cta {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        width: 100%;
+        border: none;
+        border-radius: 14px;
+        padding: 15px 20px;
+        font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
+        background: var(--surface-2);
+        color: var(--fg-faint);
+        cursor: not-allowed;
+        box-shadow: none;
+        transition: background .25s ease, color .2s ease, box-shadow .28s ease, transform .14s ease;
+      }
+      .persona-cta .material-symbols-outlined { font-size: 20px; }
+      .persona-cta.is-ready {
+        background: var(--blue);
+        color: #FFFFFF;
+        cursor: pointer;
+        box-shadow: 0 12px 28px -10px rgba(29, 78, 216, 0.5);
+      }
+      .persona-cta.is-ready:active { transform: scale(.99); }
+      .persona-hint {
+        color: var(--fg-muted);
+        font-size: 11.5px; font-weight: 600; text-align: center;
+      }
 
       /* ─── Settings screen ─────────────────────────────────────────────
          Reached from the new far-right SETTINGS tab. Grouped list cards
@@ -3877,7 +3955,7 @@
       </div>
       <nav class="tab-bar">
         <div class="tab-pill">
-          <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
@@ -3886,6 +3964,126 @@
     </div>
   </div>
   <div class="phone-caption">First-run welcome: the WISEcode wordmark, a purpose-led headline and value prop (personalized scoring vs. one-size-fits-all), a 2×2 grid framing the why behind each capability (define your standard, see what fits, decide in the aisle, understand the why), a blue CTA directly beneath the grid, and a full-width card explaining how to pin the PWA to the device home screen.</div>
+</div>
+  </div>
+</section>
+
+<!-- ─── 0b. PICK YOUR PERSONAS — Onboarding step after the welcome ──────
+       Presentation-only (no data-code / data-picker hooks), so the code
+       subscribers skip it and the cloner still mints a .theme-light twin.
+       The persona cards are a swipeable, multi-select scroll-snap
+       carousel; selecting one or more "lights up" the footer CTA via the
+       shared data-action click delegate (persona-toggle / persona-code). -->
+<section class="screen-pair">
+  <h3 class="screen-pair-label">0b · Pick Your Personas</h3>
+  <div class="pair-row">
+<div class="phone-wrap">
+  <div class="phone-label">Dark</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="px stack" style="padding-top:8px;">
+          <div class="intro-brand">
+            <img class="wise-logo-vertical" src="assets/WISEcode-logo-vertical.svg" alt="WISEcode" />
+          </div>
+          <div class="intro-hero">
+            <h1>Which of these sounds like <span class="accent">you</span>?</h1>
+            <p>Pick the food personas that fit — choose as many as you like. We'll blend them into your starting WISEcode, then grade every food the way <em>you</em> would.</p>
+          </div>
+
+          <div class="persona-carousel" aria-label="Food personas, multi-select">
+            <div class="persona-track">
+              <div class="persona-card" data-action="persona-toggle" data-persona="convenience-seeker" role="button" tabindex="0" aria-pressed="false" aria-label="The Convenience Seeker">
+                <span class="pc-ico"><span class="material-symbols-outlined">bolt</span></span>
+                <div class="pc-title">The Convenience Seeker</div>
+                <div class="pc-sub">Quick meals, easy prep, clean-ish packaged options.</div>
+                <span class="pc-pick"><span class="material-symbols-outlined pc-off">add</span><span class="material-symbols-outlined pc-on">check</span></span>
+              </div>
+              <div class="persona-card" data-action="persona-toggle" data-persona="conscious-consumer" role="button" tabindex="0" aria-pressed="false" aria-label="The Conscious Consumer">
+                <span class="pc-ico"><span class="material-symbols-outlined">public</span></span>
+                <div class="pc-title">The Conscious Consumer</div>
+                <div class="pc-sub">Organic, sustainable, ethical brands, low impact.</div>
+                <span class="pc-pick"><span class="material-symbols-outlined pc-off">add</span><span class="material-symbols-outlined pc-on">check</span></span>
+              </div>
+              <div class="persona-card" data-action="persona-toggle" data-persona="condition-manager" role="button" tabindex="0" aria-pressed="false" aria-label="The Condition Manager">
+                <span class="pc-ico"><span class="material-symbols-outlined">medical_services</span></span>
+                <div class="pc-title">The Condition Manager</div>
+                <div class="pc-sub">Eating to manage specific health conditions (e.g. IBS, diabetes, hypertension).</div>
+                <span class="pc-pick"><span class="material-symbols-outlined pc-off">add</span><span class="material-symbols-outlined pc-on">check</span></span>
+              </div>
+              <div class="persona-card" data-action="persona-toggle" data-persona="clean-eater" role="button" tabindex="0" aria-pressed="false" aria-label="The Clean Eater">
+                <span class="pc-ico"><span class="material-symbols-outlined">nutrition</span></span>
+                <div class="pc-title">The Clean Eater</div>
+                <div class="pc-sub">Whole foods, minimal processing, ingredient transparency.</div>
+                <span class="pc-pick"><span class="material-symbols-outlined pc-off">add</span><span class="material-symbols-outlined pc-on">check</span></span>
+              </div>
+              <div class="persona-card" data-action="persona-toggle" data-persona="athlete" role="button" tabindex="0" aria-pressed="false" aria-label="The Athlete">
+                <span class="pc-ico"><span class="material-symbols-outlined">fitness_center</span></span>
+                <div class="pc-title">The Athlete</div>
+                <div class="pc-sub">Performance nutrition, macros, protein-forward choices.</div>
+                <span class="pc-pick"><span class="material-symbols-outlined pc-off">add</span><span class="material-symbols-outlined pc-on">check</span></span>
+              </div>
+              <div class="persona-card" data-action="persona-toggle" data-persona="wellness" role="button" tabindex="0" aria-pressed="false" aria-label="The Wellness Devotee">
+                <span class="pc-ico"><span class="material-symbols-outlined">self_improvement</span></span>
+                <div class="pc-title">The Wellness Devotee</div>
+                <div class="pc-sub">Holistic health, adaptogens, superfoods, functional foods.</div>
+                <span class="pc-pick"><span class="material-symbols-outlined pc-off">add</span><span class="material-symbols-outlined pc-on">check</span></span>
+              </div>
+              <div class="persona-card" data-action="persona-toggle" data-persona="plant-based" role="button" tabindex="0" aria-pressed="false" aria-label="The Plant-Based Pioneer">
+                <span class="pc-ico"><span class="material-symbols-outlined">eco</span></span>
+                <div class="pc-title">The Plant-Based Pioneer</div>
+                <div class="pc-sub">Vegan or vegetarian, ethical eating, planet-conscious.</div>
+                <span class="pc-pick"><span class="material-symbols-outlined pc-off">add</span><span class="material-symbols-outlined pc-on">check</span></span>
+              </div>
+              <div class="persona-card" data-action="persona-toggle" data-persona="budget-smart" role="button" tabindex="0" aria-pressed="false" aria-label="The Budget-Smart Shopper">
+                <span class="pc-ico"><span class="material-symbols-outlined">savings</span></span>
+                <div class="pc-title">The Budget-Smart Shopper</div>
+                <div class="pc-sub">Value-conscious, store brands, best quality per dollar.</div>
+                <span class="pc-pick"><span class="material-symbols-outlined pc-off">add</span><span class="material-symbols-outlined pc-on">check</span></span>
+              </div>
+              <div class="persona-card" data-action="persona-toggle" data-persona="family-guardian" role="button" tabindex="0" aria-pressed="false" aria-label="The Family Guardian">
+                <span class="pc-ico"><span class="material-symbols-outlined">family_restroom</span></span>
+                <div class="pc-title">The Family Guardian</div>
+                <div class="pc-sub">Safe for kids, no artificial additives, family-first choices.</div>
+                <span class="pc-pick"><span class="material-symbols-outlined pc-off">add</span><span class="material-symbols-outlined pc-on">check</span></span>
+              </div>
+              <div class="persona-card" data-action="persona-toggle" data-persona="label-scientist" role="button" tabindex="0" aria-pressed="false" aria-label="The Label Scientist">
+                <span class="pc-ico"><span class="material-symbols-outlined">science</span></span>
+                <div class="pc-title">The Label Scientist</div>
+                <div class="pc-sub">Deep ingredient dives, E-code aware, evidence-based.</div>
+                <span class="pc-pick"><span class="material-symbols-outlined pc-off">add</span><span class="material-symbols-outlined pc-on">check</span></span>
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="persona-cta" data-action="persona-code" disabled aria-disabled="true">
+            <span class="material-symbols-outlined">arrow_forward</span>
+            Show me my code
+          </button>
+          <div class="persona-hint" data-persona-hint>Pick at least one persona to continue.</div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Persona picker: a swipeable carousel of food personas you can multi-select. Each tap toggles a card (filled "Selected" pill + blue ring); the footer "Show me my code" CTA stays inert until at least one persona is chosen, then lights up. Drawn from the same persona set as the WISEcode signal onboarding.</div>
 </div>
   </div>
 </section>
@@ -3925,7 +4123,7 @@
                    data-id="empty" data-size="280" data-stroke="88"
                    data-slices='[]' aria-hidden="true"></svg>
               <div class="pie-center">
-                <div class="num" style="font-size:46px;">0</div>
+                <div class="num" style="font-size:46px;"><span data-pie-num-val>0</span><sup class="num-pct">%</sup></div>
                 <div class="lbl">OF 100</div>
               </div>
             </div>
@@ -3976,7 +4174,7 @@
     <div class="screen">
       <div class="scroll">
         <div class="scr-hdr">
-          <h1>Your <span class="code-name" data-code-name>In Harmony</span> code</h1>
+          <h1>Your <span class="code-name" data-code-name data-action="rename-prompt" role="button" tabindex="0" aria-label="Rename code">In Harmony</span> code</h1>
         </div>
 
         <div class="px stack">
@@ -3988,7 +4186,7 @@
                    data-slices='[{"value":47,"c":"#1FA34A","icon":"sparkles"},{"value":23,"c":"#D8610C","icon":"award"},{"value":15,"c":"#CA371F","icon":"heart-pulse"},{"value":10,"c":"#147A36","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"}]'
                    aria-hidden="true"></svg>
               <div class="pie-center">
-                <div class="num" style="font-size:46px;">100</div>
+                <div class="num" style="font-size:46px;"><span data-pie-num-val>100</span><sup class="num-pct">%</sup></div>
                 <div class="lbl">OF 100</div>
               </div>
             </div>
@@ -4136,7 +4334,7 @@
         <div class="px stack">
           <div class="prio-head">
             <span class="prio-head-label">Your priorities</span>
-            <button class="prio-rebalance-btn" type="button" data-action="rebalance-open" aria-label="Rebalance code weights">Rebalance</button>
+            <button class="prio-rebalance-btn" type="button" data-action="rebalance-open" aria-label="Rebalance code weights"><span class="material-symbols-outlined">tune</span>Rebalance</button>
           </div>
           <div class="prio-row-wrap">
             <!-- Priority chips are populated by the browse subscriber from
@@ -4718,11 +4916,6 @@
       // re-renders during interaction use the default (no animation)
       // so live weight adjustments stay tight and predictable.
       var renderPieSvg;
-      // Shared icon helpers — defined inside the pie-renderer IIFE below
-      // (where the Material-name aliases live) and exposed here so the
-      // catalog / code-detail / scan / chat renderers further down can emit
-      // the same emoji glyphs, tinted to each chip's status color.
-      var ICONS = {};
       (function () {
         var SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -4766,93 +4959,6 @@
         function msName(slug) {
           return ICON_ALIAS[slug] || slug;
         }
-
-        // ─── Emoji icon table ───────────────────────────────────────────
-        // Maps a Material Symbols name (after msName() de-aliasing) to the
-        // native Unicode emoji that stands in for it. Glyphs are drawn from
-        // the same nutrition/health emoji vocabulary as
-        // _WISEdesigns/wise-icons.html (anatomical heart, biceps, pill,
-        // scales, leaves, …). Unknown names fall back to a neutral dot.
-        var EMOJI = {
-          // code / status badges
-          auto_awesome: "✨", workspace_premium: "🏅", monitor_heart: "🫀",
-          speed: "⚡", fitness_center: "💪", eco: "🌿", shield: "🛡️",
-          water_drop: "💧", skeleton: "🦴", psychology: "🧠",
-          checklist: "📋", restaurant_menu: "🍽️", block: "🚫",
-          verified: "✅", bolt: "⚡", bedtime: "🌙", all_inclusive: "♾️",
-          // chrome / navigation
-          home: "🏠", qr_code_scanner: "📷", chat_bubble: "💬",
-          settings: "⚙️", tune: "🎛️", grid_view: "🔲", autorenew: "🔄",
-          wifi: "📶", search: "🔍", category: "🗂️", sort_by_alpha: "🔤",
-          chevron_right: "▶️", expand_more: "🔽", close: "✖️", add: "➕",
-          add_box: "➕", do_not_disturb_on: "🚫", arrow_forward: "➡️",
-          arrow_upward: "⬆️", photo_camera: "📷", barcode: "🏷️",
-          check_circle: "✅", check: "✔️", info: "ℹ️", history: "🕘",
-          restart_alt: "🔄", refresh: "🔄", thumb_up: "👍", send: "📨",
-          lightbulb: "💡", directions_walk: "🚶", person: "🧑",
-          person_add: "🪪", login: "🔑", ios_share: "📤",
-          add_to_home_screen: "📲", touch_app: "👆", contrast: "🌓",
-          dark_mode: "🌙", light_mode: "☀️"
-        };
-        function emojiFor(name) {
-          return EMOJI[name] || "•";
-        }
-
-        // Pick the reference hue family whose look best matches a status
-        // background hex. Keyed off the small fixed palette the app uses
-        // (brand green, signal orange/yellow, risk red, royal blue); any
-        // other color falls back to a coarse hue bucket so dynamically
-        // colored chips still tone with their background.
-        var TINT_BY_HEX = {
-          "#1FA34A": "lgreen", "#147A36": "fgreen", "#D8610C": "orange",
-          "#CA371F": "red", "#FF8E8E": "red", "#FFC434": "yellow",
-          "#1D4ED8": "blue"
-        };
-        function tintFamilyForColor(hex) {
-          if (!hex) return null;
-          var key = String(hex).trim().toUpperCase();
-          if (TINT_BY_HEX[key]) return TINT_BY_HEX[key];
-          var m = key.match(/^#?([0-9A-F]{6})$/);
-          if (!m) return null;
-          var n = parseInt(m[1], 16);
-          var r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-          var max = Math.max(r, g, b), min = Math.min(r, g, b);
-          if (max - min < 28) return null; // near-grey → leave native
-          var h, d = max - min;
-          if (max === r) h = ((g - b) / d) % 6;
-          else if (max === g) h = (b - r) / d + 2;
-          else h = (r - g) / d + 4;
-          h = (h * 60 + 360) % 360;
-          if (h < 18 || h >= 345) return "red";
-          if (h < 45) return "orange";
-          if (h < 70) return "yellow";
-          if (h < 105) return "lgreen";
-          if (h < 165) return "fgreen";
-          if (h < 255) return "blue";
-          return "red";
-        }
-        function tintClassForColor(hex) {
-          var fam = tintFamilyForColor(hex);
-          return fam ? " emoji-tint-" + fam : "";
-        }
-        // Stamp a span as an emoji glyph for `name`, tinted to `hex`.
-        function paintEmoji(el, name, hex) {
-          el.classList.add("emoji");
-          var fam = tintFamilyForColor(hex);
-          if (fam) el.classList.add("emoji-tint-" + fam);
-          el.textContent = emojiFor(msName(name));
-        }
-        // HTML-string variant for the template-literal renderers below.
-        function emojiSpanHTML(name, color, extraClass) {
-          var cls = "material-symbols-outlined emoji" + tintClassForColor(color)
-            + (extraClass ? " " + extraClass : "");
-          return '<span class="' + cls + '">' + emojiFor(msName(name)) + '</span>';
-        }
-        // Expose to the sibling IIFEs through the shared ICONS object.
-        ICONS.emojiFor = function (n) { return emojiFor(msName(n)); };
-        ICONS.tintClassForColor = tintClassForColor;
-        ICONS.spanHTML = emojiSpanHTML;
-        ICONS.paint = paintEmoji;
 
         function polar(cx, cy, rad, ang) {
           return { x: cx + rad * Math.cos(ang), y: cy + rad * Math.sin(ang) };
@@ -5040,7 +5146,8 @@
               var ico = document.createElement("span");
               ico.className = "ico";
               var glyph = document.createElement("span");
-              paintEmoji(glyph, slot.slice.icon, slot.slice.c);
+              glyph.className = "material-symbols-outlined";
+              glyph.textContent = msName(slot.slice.icon);
               ico.appendChild(glyph);
               tag.appendChild(ico);
             }
@@ -5277,7 +5384,7 @@
       // let go. Skipped entirely under prefers-reduced-motion.
       (function () {
         var SET_WIDTH = 1368; // 6 × (216px card + 12px margin)
-        var SPEED = 12; // px per second — calm, readable drift
+        var SPEED = 26; // px per second — calm, readable drift
         var reduce =
           window.matchMedia &&
           window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -5316,19 +5423,34 @@
 
           if (reduce) return;
 
+          // Drive an internal float accumulator and write it to scrollLeft
+          // each frame. Reading scrollLeft back would round to an integer,
+          // so sub-pixel-per-frame drift (SPEED/60 px) would vanish and the
+          // marquee would sit still — the accumulator keeps the motion.
+          var pos = el.scrollLeft;
           function tick(now) {
             if (last == null) last = now;
             var dt = (now - last) / 1000;
             last = now;
-            if (!paused) {
-              el.scrollLeft += SPEED * dt;
-              if (el.scrollLeft >= SET_WIDTH) el.scrollLeft -= SET_WIDTH;
+            if (paused) {
+              pos = el.scrollLeft; // track hand-panning while held
+            } else {
+              pos += SPEED * dt;
+              if (pos >= SET_WIDTH) pos -= SET_WIDTH;
+              el.scrollLeft = pos;
             }
             requestAnimationFrame(tick);
           }
           requestAnimationFrame(tick);
         });
       })();
+
+      // ─── Persona picker carousel · manual scroll only ────────────────
+      // Unlike the intro feature marquee, the onboarding persona carousel
+      // does NOT auto-scroll: it's a plain hand-swipeable row of the ten
+      // cards (overflow-x on .persona-carousel). No drift, no duplicated
+      // set — so there's no risk of selecting a clone, and the row stays
+      // put until the user pans it themselves.
 
       // ─── Shared code state (single source of truth) ─────────────────
       // Every screen that mentions "codes" reads and writes through this
@@ -5786,12 +5908,12 @@
             +      ' data-action="pick"'
             +      ' data-code-id="' + entry.id + '">'
             +   '<span class="ico" style="background:' + entry.meta.color + ';">'
-            +     ICONS.spanHTML(entry.meta.icon, entry.meta.color)
+            +     '<span class="material-symbols-outlined">' + entry.meta.icon + '</span>'
             +   '</span>'
             +   '<div class="nm">' + W.escapeHtml(entry.meta.name) + '</div>'
             +   (taken
                   ? '<span class="taken-lbl">In your code</span>'
-                  : '<span class="chev">' + ICONS.spanHTML("chevron_right", null) + '</span>')
+                  : '<span class="chev"><span class="material-symbols-outlined">chevron_right</span></span>')
             + '</div>';
         }
 
@@ -6015,7 +6137,8 @@
             renderPieSvg(pieSvg, opts);
           }
 
-          var pieNum = phoneWrap.querySelector(".pie-center .num");
+          var pieNum = phoneWrap.querySelector(".pie-center .num [data-pie-num-val]")
+                    || phoneWrap.querySelector(".pie-center .num");
           if (pieNum) pieNum.textContent = String(weightSum);
         }
 
@@ -6629,6 +6752,64 @@
           var phoneWrap = isCodeDetail
             ? target.closest(".phone-wrap")
             : target.closest("[data-code]");
+
+          // Persona picker (Screen 0b): toggle a card, then light up the
+          // footer CTA once at least one persona is selected. Scoped to the
+          // tapped .phone-wrap so the dark + cloned light twin stay
+          // independent.
+          if (action === "persona-toggle") {
+            var pCard = target.closest(".persona-card");
+            var pWrap = target.closest(".phone-wrap");
+            if (!pCard || !pWrap) return;
+            ev.preventDefault();
+            // The marquee duplicates the card set for a seamless loop, so a
+            // persona can appear twice. Toggle every card sharing this
+            // data-persona id (within this phone-wrap) so the original and
+            // its clone stay in lockstep.
+            var pId = pCard.getAttribute("data-persona");
+            var pWillSel = !pCard.classList.contains("is-sel");
+            var pTwins = pId
+              ? pWrap.querySelectorAll('.persona-card[data-persona="' + pId + '"]')
+              : [pCard];
+            pTwins.forEach(function (c) {
+              c.classList.toggle("is-sel", pWillSel);
+              c.setAttribute("aria-pressed", pWillSel ? "true" : "false");
+            });
+            // Count distinct personas (not raw cards) so duplicates don't
+            // double the tally.
+            var pSeen = {};
+            pWrap.querySelectorAll(".persona-card.is-sel").forEach(function (c) {
+              pSeen[c.getAttribute("data-persona") || c.getAttribute("aria-label")] = 1;
+            });
+            var pCount = Object.keys(pSeen).length;
+            var pCta = pWrap.querySelector(".persona-cta");
+            var pHint = pWrap.querySelector("[data-persona-hint]");
+            if (pCta) {
+              var pReady = pCount > 0;
+              pCta.classList.toggle("is-ready", pReady);
+              if (pReady) {
+                pCta.removeAttribute("disabled");
+                pCta.setAttribute("aria-disabled", "false");
+              } else {
+                pCta.setAttribute("disabled", "");
+                pCta.setAttribute("aria-disabled", "true");
+              }
+            }
+            if (pHint) {
+              pHint.textContent = pCount > 0
+                ? (pCount === 1
+                    ? "1 persona picked — tap \u201CShow me my code.\u201D"
+                    : pCount + " personas picked — tap \u201CShow me my code.\u201D")
+                : "Pick at least one persona to continue.";
+            }
+            return;
+          }
+
+          if (action === "persona-code") {
+            if (target.hasAttribute("disabled")) { ev.preventDefault(); return; }
+            ev.preventDefault();
+            return;
+          }
 
           if (action === "remove") {
             if (!phoneWrap) return;
