@@ -2448,6 +2448,96 @@
       }
       .reset-sheet .btn-confirm .material-symbols-outlined { font-size: 18px; }
 
+      /* ─── Rename bottom sheet ───────────────────────────────────────
+         Tapping Rename on the code pie-card slides up this sheet: a
+         single text input pre-filled with the current code name, plus
+         Cancel / Save. Reuses the reset-sheet scrim + rounded-top sheet
+         + rc-slide language; the confirm is brand-green (a save, not a
+         destructive action). One sheet per phone so the dark + cloned
+         light twin each run their own rename without cross-talk. */
+      .rename-overlay {
+        position: absolute; inset: 0; z-index: 50;
+        background: var(--scrim-strong);
+        backdrop-filter: blur(8px);
+        display: flex; align-items: flex-end;
+        animation: cp-fade 160ms ease-out;
+      }
+      .rename-sheet {
+        width: 100%;
+        background: var(--card);
+        border-top: 1px solid var(--line);
+        border-radius: 22px 22px 0 0;
+        padding: 12px 20px 22px;
+        box-shadow: var(--shadow-sheet);
+        display: flex; flex-direction: column; gap: 6px;
+        animation: rc-slide 260ms cubic-bezier(.2,.85,.25,1);
+      }
+      .rename-sheet .handle {
+        width: 38px; height: 4px; border-radius: 999px;
+        background: var(--line-strong);
+        align-self: center;
+        opacity: 0.5;
+        margin-bottom: 8px;
+      }
+      .rename-sheet h2 {
+        margin: 0;
+        color: var(--fg-bright);
+        font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
+      }
+      .rename-sheet p {
+        margin: 0;
+        color: var(--fg-muted);
+        font-size: 13px; line-height: 1.5;
+      }
+      .rename-sheet .rn-input {
+        margin-top: 12px;
+        width: 100%;
+        box-sizing: border-box;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px 14px;
+        color: var(--fg-bright);
+        font-family: inherit;
+        font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+        outline: none;
+        transition: border-color 120ms ease;
+      }
+      .rename-sheet .rn-input::placeholder {
+        color: var(--fg-faint);
+        font-weight: 500;
+      }
+      .rename-sheet .rn-input:focus {
+        border-color: var(--code-green);
+      }
+      .rename-sheet .actions {
+        display: flex; gap: 10px; margin-top: 12px;
+      }
+      .rename-sheet .btn {
+        flex: 1;
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 14px; font-weight: 800; letter-spacing: 0;
+        border: none; cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      }
+      .rename-sheet .btn-cancel {
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        color: var(--fg-bright);
+      }
+      .rename-sheet .btn-confirm {
+        background: var(--code-green);
+        color: #FFFFFF;
+        box-shadow: 0 8px 20px -8px rgba(31, 163, 74, 0.45);
+      }
+      .rename-sheet .btn-confirm:disabled {
+        opacity: 0.45;
+        cursor: default;
+        box-shadow: none;
+      }
+      .rename-sheet .btn-confirm .material-symbols-outlined { font-size: 18px; }
+
       /* ─── Rebalance button (top-right of code pie-card) ─────────────
          Primary affordance on the Your Code (Home / Filled) screens for
          fine-tuning slot weights. Sits in the corner that used to host
@@ -3111,6 +3201,54 @@
         user-select: none;
       }
 
+      /* ─── Emoji icon set ────────────────────────────────────────────────
+         Every icon glyph is a native Unicode emoji rendered through the
+         platform color-emoji font. The `.emoji` modifier sits alongside
+         `.material-symbols-outlined` so all the existing per-context
+         `font-size` rules keep working unchanged — it just swaps the font
+         family (and disables the Material ligature/variation settings) so
+         the codepoint resolves to the color emoji instead of a Material
+         glyph. The `.emoji-tint-*` filters are ported verbatim from
+         _WISEdesigns/wise-icons.html's nutrition-emoji wall: grayscale →
+         sepia → saturate → hue-rotate remaps any emoji into one hue family
+         while preserving its glossy shading, so a badge's glyph tones with
+         its status background. */
+      .material-symbols-outlined.emoji {
+        font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji",
+          "Twemoji Mozilla", "EmojiOne Color", sans-serif;
+        font-weight: 400;
+        font-feature-settings: normal;
+        -webkit-font-feature-settings: normal;
+        font-variation-settings: normal;
+      }
+      .emoji-tint-red {
+        -webkit-filter: grayscale(1) contrast(1.14) sepia(1) saturate(5.8) hue-rotate(318deg) brightness(1.05) contrast(1.06);
+        filter: grayscale(1) contrast(1.14) sepia(1) saturate(5.8) hue-rotate(318deg) brightness(1.05) contrast(1.06);
+      }
+      .emoji-tint-orange {
+        -webkit-filter: grayscale(1) contrast(1.12) sepia(1) saturate(5.2) hue-rotate(12deg) brightness(1.06) contrast(1.05);
+        filter: grayscale(1) contrast(1.12) sepia(1) saturate(5.2) hue-rotate(12deg) brightness(1.06) contrast(1.05);
+      }
+      .emoji-tint-yellow {
+        -webkit-filter: grayscale(1) contrast(1.07) sepia(1) saturate(5.6) hue-rotate(6deg) brightness(1.14) contrast(1.05);
+        filter: grayscale(1) contrast(1.07) sepia(1) saturate(5.6) hue-rotate(6deg) brightness(1.14) contrast(1.05);
+      }
+      .emoji-tint-lgreen {
+        -webkit-filter: grayscale(1) contrast(1.1) sepia(1) saturate(4.2) hue-rotate(82deg) brightness(1.04) contrast(1.06);
+        filter: grayscale(1) contrast(1.1) sepia(1) saturate(4.2) hue-rotate(82deg) brightness(1.04) contrast(1.06);
+      }
+      .emoji-tint-fgreen {
+        -webkit-filter: grayscale(1) contrast(1.16) sepia(1) saturate(4.4) hue-rotate(104deg) brightness(0.91) contrast(1.08);
+        filter: grayscale(1) contrast(1.16) sepia(1) saturate(4.4) hue-rotate(104deg) brightness(0.91) contrast(1.08);
+      }
+      /* Blue isn't one of the reference hue families, but several chips
+         (settings rows, Add-a-code, active tab accent) use wise-nonupf-blue;
+         this keeps those glyphs toned with their chip. */
+      .emoji-tint-blue {
+        -webkit-filter: grayscale(1) contrast(1.12) sepia(1) saturate(4.6) hue-rotate(178deg) brightness(1.02) contrast(1.05);
+        filter: grayscale(1) contrast(1.12) sepia(1) saturate(4.6) hue-rotate(178deg) brightness(1.02) contrast(1.05);
+      }
+
       /* Generic size hint — when an icon needs a different visual size,
          author it with class="icon" (16px default) and the rules below
          pin font-size based on the icon's nesting context. */
@@ -3259,18 +3397,44 @@
         color: var(--fg-muted);
         font-size: 13px; font-weight: 500; line-height: 1.5;
       }
-      .intro-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
+      /* ─── Intro feature carousel ───────────────────────────────────
+         Six cards on an infinite, gently auto-scrolling marquee. The
+         track holds the six cards TWICE; a JS rAF loop nudges the
+         container's scrollLeft and wraps by exactly one set's width
+         (6 × (card 216 + margin 12) = 1368px) so the loop is seamless.
+         Because the motion is real native scroll (not a transform),
+         hovering pauses the drift and lets you grab / swipe to pan it
+         yourself. It bleeds past the .px 20px gutter with fade masks on
+         both sides. Honors prefers-reduced-motion. */
+      .intro-carousel {
+        margin: 0 -20px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        cursor: grab;
+        -webkit-mask: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+        mask: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
+      }
+      .intro-carousel::-webkit-scrollbar { display: none; }
+      .intro-carousel:active { cursor: grabbing; }
+      .intro-carousel-track {
+        display: flex;
+        width: max-content;
+        padding: 4px 0 4px 20px;
       }
       .intro-tile {
+        width: 216px;
+        margin-right: 12px;
         background: var(--card);
         border: 1px solid var(--line);
         border-radius: 18px;
         padding: 16px 14px;
         display: flex; flex-direction: column; gap: 10px;
         min-height: 128px;
+        box-sizing: border-box;
+        flex-shrink: 0;
       }
       .intro-tile .tile-ico {
         width: 40px; height: 40px; border-radius: 12px;
@@ -3626,26 +3790,70 @@
             <p>“Healthy” isn’t one-size-fits-all. WISEcode turns what <em>you</em> care about into a personal scoring code, then grades every food against it — so the right choice is the obvious one.</p>
           </div>
 
-          <div class="intro-grid">
-            <div class="intro-tile">
-              <span class="tile-ico"><span class="material-symbols-outlined">tune</span></span>
-              <div class="tile-title">Define your standard</div>
-              <div class="tile-sub">Choose the factors that matter to you and weight them — your values become the score.</div>
-            </div>
-            <div class="intro-tile">
-              <span class="tile-ico"><span class="material-symbols-outlined">grid_view</span></span>
-              <div class="tile-title">See what truly fits</div>
-              <div class="tile-sub">Foods ranked by your code, not a generic average — so top matches are right for you.</div>
-            </div>
-            <div class="intro-tile">
-              <span class="tile-ico"><span class="material-symbols-outlined">qr_code_scanner</span></span>
-              <div class="tile-title">Decide in the aisle</div>
-              <div class="tile-sub">Scan any barcode for an instant verdict against your standard — no label-reading required.</div>
-            </div>
-            <div class="intro-tile">
-              <span class="tile-ico"><span class="material-symbols-outlined">chat_bubble</span></span>
-              <div class="tile-title">Understand the why</div>
-              <div class="tile-sub">Ask WISE AI why a food scores the way it does, and refine your code as you learn.</div>
+          <div class="intro-carousel" aria-label="What you can do with WISEcode">
+            <div class="intro-carousel-track">
+              <!-- Set A · the six feature cards -->
+              <div class="intro-tile">
+                <span class="tile-ico"><span class="material-symbols-outlined">tune</span></span>
+                <div class="tile-title">Define your standard</div>
+                <div class="tile-sub">Choose the factors that matter to you and weight them — your values become the score.</div>
+              </div>
+              <div class="intro-tile">
+                <span class="tile-ico"><span class="material-symbols-outlined">grid_view</span></span>
+                <div class="tile-title">See what truly fits</div>
+                <div class="tile-sub">Foods ranked by your code, not a generic average — so top matches are right for you.</div>
+              </div>
+              <div class="intro-tile">
+                <span class="tile-ico"><span class="material-symbols-outlined">qr_code_scanner</span></span>
+                <div class="tile-title">Decide in the aisle</div>
+                <div class="tile-sub">Scan any barcode for an instant verdict against your standard — no label-reading required.</div>
+              </div>
+              <div class="intro-tile">
+                <span class="tile-ico"><span class="material-symbols-outlined">chat_bubble</span></span>
+                <div class="tile-title">Understand the why</div>
+                <div class="tile-sub">Ask WISE AI why a food scores the way it does, and refine your code as you learn.</div>
+              </div>
+              <div class="intro-tile">
+                <span class="tile-ico"><span class="material-symbols-outlined">autorenew</span></span>
+                <div class="tile-title">Refine as you go</div>
+                <div class="tile-sub">Nudge your weights whenever your priorities shift — every food re-ranks instantly.</div>
+              </div>
+              <div class="intro-tile">
+                <span class="tile-ico"><span class="material-symbols-outlined">verified</span></span>
+                <div class="tile-title">Grounded in real data</div>
+                <div class="tile-sub">Scores draw on comprehensive nutrition facts, so your standard stays honest.</div>
+              </div>
+              <!-- Set B · exact duplicate for the seamless marquee loop (aria-hidden) -->
+              <div class="intro-tile" aria-hidden="true">
+                <span class="tile-ico"><span class="material-symbols-outlined">tune</span></span>
+                <div class="tile-title">Define your standard</div>
+                <div class="tile-sub">Choose the factors that matter to you and weight them — your values become the score.</div>
+              </div>
+              <div class="intro-tile" aria-hidden="true">
+                <span class="tile-ico"><span class="material-symbols-outlined">grid_view</span></span>
+                <div class="tile-title">See what truly fits</div>
+                <div class="tile-sub">Foods ranked by your code, not a generic average — so top matches are right for you.</div>
+              </div>
+              <div class="intro-tile" aria-hidden="true">
+                <span class="tile-ico"><span class="material-symbols-outlined">qr_code_scanner</span></span>
+                <div class="tile-title">Decide in the aisle</div>
+                <div class="tile-sub">Scan any barcode for an instant verdict against your standard — no label-reading required.</div>
+              </div>
+              <div class="intro-tile" aria-hidden="true">
+                <span class="tile-ico"><span class="material-symbols-outlined">chat_bubble</span></span>
+                <div class="tile-title">Understand the why</div>
+                <div class="tile-sub">Ask WISE AI why a food scores the way it does, and refine your code as you learn.</div>
+              </div>
+              <div class="intro-tile" aria-hidden="true">
+                <span class="tile-ico"><span class="material-symbols-outlined">autorenew</span></span>
+                <div class="tile-title">Refine as you go</div>
+                <div class="tile-sub">Nudge your weights whenever your priorities shift — every food re-ranks instantly.</div>
+              </div>
+              <div class="intro-tile" aria-hidden="true">
+                <span class="tile-ico"><span class="material-symbols-outlined">verified</span></span>
+                <div class="tile-title">Grounded in real data</div>
+                <div class="tile-sub">Scores draw on comprehensive nutrition facts, so your standard stays honest.</div>
+              </div>
             </div>
           </div>
 
@@ -3784,7 +3992,6 @@
                 <div class="lbl">OF 100</div>
               </div>
             </div>
-            <div class="status" data-code-status>In Progress</div>
             <button class="rename-link" data-action="rename-prompt" aria-label="Rename code">Rename</button>
             <button class="reset-link" data-action="reset-prompt" aria-label="Reset code">Reset</button>
           </section>
@@ -4511,6 +4718,11 @@
       // re-renders during interaction use the default (no animation)
       // so live weight adjustments stay tight and predictable.
       var renderPieSvg;
+      // Shared icon helpers — defined inside the pie-renderer IIFE below
+      // (where the Material-name aliases live) and exposed here so the
+      // catalog / code-detail / scan / chat renderers further down can emit
+      // the same emoji glyphs, tinted to each chip's status color.
+      var ICONS = {};
       (function () {
         var SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -4554,6 +4766,93 @@
         function msName(slug) {
           return ICON_ALIAS[slug] || slug;
         }
+
+        // ─── Emoji icon table ───────────────────────────────────────────
+        // Maps a Material Symbols name (after msName() de-aliasing) to the
+        // native Unicode emoji that stands in for it. Glyphs are drawn from
+        // the same nutrition/health emoji vocabulary as
+        // _WISEdesigns/wise-icons.html (anatomical heart, biceps, pill,
+        // scales, leaves, …). Unknown names fall back to a neutral dot.
+        var EMOJI = {
+          // code / status badges
+          auto_awesome: "✨", workspace_premium: "🏅", monitor_heart: "🫀",
+          speed: "⚡", fitness_center: "💪", eco: "🌿", shield: "🛡️",
+          water_drop: "💧", skeleton: "🦴", psychology: "🧠",
+          checklist: "📋", restaurant_menu: "🍽️", block: "🚫",
+          verified: "✅", bolt: "⚡", bedtime: "🌙", all_inclusive: "♾️",
+          // chrome / navigation
+          home: "🏠", qr_code_scanner: "📷", chat_bubble: "💬",
+          settings: "⚙️", tune: "🎛️", grid_view: "🔲", autorenew: "🔄",
+          wifi: "📶", search: "🔍", category: "🗂️", sort_by_alpha: "🔤",
+          chevron_right: "▶️", expand_more: "🔽", close: "✖️", add: "➕",
+          add_box: "➕", do_not_disturb_on: "🚫", arrow_forward: "➡️",
+          arrow_upward: "⬆️", photo_camera: "📷", barcode: "🏷️",
+          check_circle: "✅", check: "✔️", info: "ℹ️", history: "🕘",
+          restart_alt: "🔄", refresh: "🔄", thumb_up: "👍", send: "📨",
+          lightbulb: "💡", directions_walk: "🚶", person: "🧑",
+          person_add: "🪪", login: "🔑", ios_share: "📤",
+          add_to_home_screen: "📲", touch_app: "👆", contrast: "🌓",
+          dark_mode: "🌙", light_mode: "☀️"
+        };
+        function emojiFor(name) {
+          return EMOJI[name] || "•";
+        }
+
+        // Pick the reference hue family whose look best matches a status
+        // background hex. Keyed off the small fixed palette the app uses
+        // (brand green, signal orange/yellow, risk red, royal blue); any
+        // other color falls back to a coarse hue bucket so dynamically
+        // colored chips still tone with their background.
+        var TINT_BY_HEX = {
+          "#1FA34A": "lgreen", "#147A36": "fgreen", "#D8610C": "orange",
+          "#CA371F": "red", "#FF8E8E": "red", "#FFC434": "yellow",
+          "#1D4ED8": "blue"
+        };
+        function tintFamilyForColor(hex) {
+          if (!hex) return null;
+          var key = String(hex).trim().toUpperCase();
+          if (TINT_BY_HEX[key]) return TINT_BY_HEX[key];
+          var m = key.match(/^#?([0-9A-F]{6})$/);
+          if (!m) return null;
+          var n = parseInt(m[1], 16);
+          var r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+          var max = Math.max(r, g, b), min = Math.min(r, g, b);
+          if (max - min < 28) return null; // near-grey → leave native
+          var h, d = max - min;
+          if (max === r) h = ((g - b) / d) % 6;
+          else if (max === g) h = (b - r) / d + 2;
+          else h = (r - g) / d + 4;
+          h = (h * 60 + 360) % 360;
+          if (h < 18 || h >= 345) return "red";
+          if (h < 45) return "orange";
+          if (h < 70) return "yellow";
+          if (h < 105) return "lgreen";
+          if (h < 165) return "fgreen";
+          if (h < 255) return "blue";
+          return "red";
+        }
+        function tintClassForColor(hex) {
+          var fam = tintFamilyForColor(hex);
+          return fam ? " emoji-tint-" + fam : "";
+        }
+        // Stamp a span as an emoji glyph for `name`, tinted to `hex`.
+        function paintEmoji(el, name, hex) {
+          el.classList.add("emoji");
+          var fam = tintFamilyForColor(hex);
+          if (fam) el.classList.add("emoji-tint-" + fam);
+          el.textContent = emojiFor(msName(name));
+        }
+        // HTML-string variant for the template-literal renderers below.
+        function emojiSpanHTML(name, color, extraClass) {
+          var cls = "material-symbols-outlined emoji" + tintClassForColor(color)
+            + (extraClass ? " " + extraClass : "");
+          return '<span class="' + cls + '">' + emojiFor(msName(name)) + '</span>';
+        }
+        // Expose to the sibling IIFEs through the shared ICONS object.
+        ICONS.emojiFor = function (n) { return emojiFor(msName(n)); };
+        ICONS.tintClassForColor = tintClassForColor;
+        ICONS.spanHTML = emojiSpanHTML;
+        ICONS.paint = paintEmoji;
 
         function polar(cx, cy, rad, ang) {
           return { x: cx + rad * Math.cos(ang), y: cy + rad * Math.sin(ang) };
@@ -4724,6 +5023,14 @@
             path.setAttribute("class", "seg");
             path.setAttribute("fill", slot.slice.c);
             path.setAttribute("stroke", "none");
+            // When the slice maps to a code, make it tappable: the doc
+            // click delegate routes data-action="code-detail" to the
+            // per-code bottom sheet. The hole/center still replays the
+            // entrance animation (handled by the separate replay listener).
+            if (slot.slice.codeId) {
+              path.setAttribute("data-action", "code-detail");
+              path.setAttribute("data-code-id", slot.slice.codeId);
+            }
             svg.appendChild(path);
             slot.pathEl = path;
 
@@ -4733,8 +5040,7 @@
               var ico = document.createElement("span");
               ico.className = "ico";
               var glyph = document.createElement("span");
-              glyph.className = "material-symbols-outlined";
-              glyph.textContent = msName(slot.slice.icon);
+              paintEmoji(glyph, slot.slice.icon, slot.slice.c);
               ico.appendChild(glyph);
               tag.appendChild(ico);
             }
@@ -4895,7 +5201,11 @@
       // document so it covers both the dark wrap and its cloned light
       // twin without per-node wiring.
       document.addEventListener("click", function (e) {
-        var wrap = e.target.closest && e.target.closest(".pie-wrap");
+        if (!e.target.closest) return;
+        // Slice taps open the per-code bottom sheet (handled elsewhere);
+        // only the donut hole / center disc replays the entrance bounce.
+        if (e.target.closest("path.seg")) return;
+        var wrap = e.target.closest(".pie-wrap");
         if (!wrap) return;
         var svg = wrap.querySelector(".pie-svg");
         if (!svg || typeof renderPieSvg !== "function") return;
@@ -4954,6 +5264,69 @@
           var directH1 = hdr.querySelector(":scope > h1");
           var textBlock = directH1 || hdr.querySelector(":scope > div");
           wrapHeadlineBlock(hdr, textBlock);
+        });
+      })();
+
+      // ─── Intro feature carousel · gentle native-scroll marquee ───────
+      // Each .intro-carousel drifts by nudging its own scrollLeft every
+      // frame and wrapping at one card-set's width (1368px). Set A and
+      // Set B are pixel-identical, so subtracting a full set is visually
+      // invisible — the loop never jumps. Because the motion is real
+      // native scroll, pointer-over / touch pauses the drift and lets
+      // you grab and pan the cards yourself; it resumes a beat after you
+      // let go. Skipped entirely under prefers-reduced-motion.
+      (function () {
+        var SET_WIDTH = 1368; // 6 × (216px card + 12px margin)
+        var SPEED = 12; // px per second — calm, readable drift
+        var reduce =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        document.querySelectorAll(".intro-carousel").forEach(function (el) {
+          var paused = false;
+          var resumeTimer = null;
+          var last = null;
+
+          function hold() {
+            paused = true;
+            if (resumeTimer) {
+              clearTimeout(resumeTimer);
+              resumeTimer = null;
+            }
+          }
+          function releaseSoon() {
+            if (resumeTimer) clearTimeout(resumeTimer);
+            resumeTimer = setTimeout(function () {
+              paused = false;
+              last = null;
+            }, 1400);
+          }
+
+          el.addEventListener("pointerenter", hold);
+          el.addEventListener("pointerleave", releaseSoon);
+          el.addEventListener("pointerdown", hold);
+          el.addEventListener("pointerup", releaseSoon);
+          el.addEventListener("touchstart", hold, { passive: true });
+          el.addEventListener("touchend", releaseSoon, { passive: true });
+
+          // Keep any scroll position (drift or hand-panned) inside one set.
+          el.addEventListener("scroll", function () {
+            if (el.scrollLeft >= SET_WIDTH) el.scrollLeft -= SET_WIDTH;
+          });
+
+          if (reduce) return;
+
+          function tick(now) {
+            if (last == null) last = now;
+            var dt = (now - last) / 1000;
+            last = now;
+            if (!paused) {
+              el.scrollLeft += SPEED * dt;
+              if (el.scrollLeft >= SET_WIDTH) el.scrollLeft -= SET_WIDTH;
+            }
+            requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
         });
       })();
 
@@ -5413,12 +5786,12 @@
             +      ' data-action="pick"'
             +      ' data-code-id="' + entry.id + '">'
             +   '<span class="ico" style="background:' + entry.meta.color + ';">'
-            +     '<span class="material-symbols-outlined">' + entry.meta.icon + '</span>'
+            +     ICONS.spanHTML(entry.meta.icon, entry.meta.color)
             +   '</span>'
             +   '<div class="nm">' + W.escapeHtml(entry.meta.name) + '</div>'
             +   (taken
                   ? '<span class="taken-lbl">In your code</span>'
-                  : '<span class="chev"><span class="material-symbols-outlined">chevron_right</span></span>')
+                  : '<span class="chev">' + ICONS.spanHTML("chevron_right", null) + '</span>')
             + '</div>';
         }
 
@@ -5572,6 +5945,17 @@
           var filledCount = W.filledSignature(slots);
 
           var html = "";
+
+          // Add tile always sits above the code rows, so removing a code
+          // never shuffles the "Add a code" affordance down the list.
+          if (filledCount < W.MAX_SLOTS) {
+            html += ""
+              + '<button type="button" class="slot-add" data-action="add">'
+              +   '<span class="material-symbols-outlined">add</span>'
+              +   '<span>' + (filledCount === 0 ? "Add your first code" : "Add a code") + '</span>'
+              + '</button>';
+          }
+
           slots.forEach(function (s) {
             if (!s.codeId) return;
             var meta = W.CODE_CATALOG[s.codeId];
@@ -5590,14 +5974,6 @@
               +   '</button>'
               + '</div>';
           });
-
-          if (filledCount < W.MAX_SLOTS) {
-            html += ""
-              + '<button type="button" class="slot-add" data-action="add">'
-              +   '<span class="material-symbols-outlined">add</span>'
-              +   '<span>' + (filledCount === 0 ? "Add your first code" : "Add a code") + '</span>'
-              + '</button>';
-          }
 
           listEl.innerHTML = html;
         }
@@ -5632,7 +6008,7 @@
             var slices = filled.map(function (s) {
               var meta = W.CODE_CATALOG[s.codeId];
               return meta
-                ? { value: s.weight, c: meta.color, icon: meta.icon }
+                ? { value: s.weight, c: meta.color, icon: meta.icon, codeId: s.codeId }
                 : null;
             }).filter(Boolean);
             pieSvg.setAttribute("data-slices", JSON.stringify(slices));
@@ -5746,6 +6122,93 @@
 
         function closeResetSheet(phoneWrap) {
           var overlay = phoneWrap.querySelector(".reset-overlay");
+          if (overlay) overlay.remove();
+        }
+
+        // ─── Rename bottom-sheet ────────────────────────────────────────
+        // Tapping Rename on the code pie-card slides up a sheet with a
+        // single text input pre-filled with the code's current name.
+        // Save writes the trimmed value back into every [data-code-name]
+        // span (the underlined phrase woven into the Your Code headline)
+        // so the dark + light twins stay in sync; Cancel dismisses with
+        // no change. Empty names are rejected (Save stays disabled).
+        function currentCodeName(phoneWrap) {
+          var nameEl = phoneWrap && phoneWrap.querySelector("[data-code-name]");
+          return nameEl ? nameEl.textContent.trim() : "";
+        }
+
+        function openRenameSheet(phoneWrap) {
+          if (!phoneWrap) return;
+          if (phoneWrap.querySelector(".rename-overlay")) return;
+
+          var name = currentCodeName(phoneWrap);
+
+          var overlay = document.createElement("div");
+          overlay.className = "rename-overlay";
+          overlay.innerHTML = ''
+            + '<div class="rename-sheet" role="dialog" aria-modal="true" aria-labelledby="rename-sheet-title">'
+            +   '<div class="handle" aria-hidden="true"></div>'
+            +   '<h2 id="rename-sheet-title">Rename your code</h2>'
+            +   '<p>Give your Personal Code a name. It shows in the Your Code headline.</p>'
+            +   '<input type="text" class="rn-input" data-rename-input maxlength="40" '
+            +     'placeholder="e.g. In Harmony" aria-label="Code name" value="' + W.escapeHtml(name) + '" />'
+            +   '<div class="actions">'
+            +     '<button type="button" class="btn btn-cancel" data-action="rename-cancel">Cancel</button>'
+            +     '<button type="button" class="btn btn-confirm" data-action="rename-save">'
+            +       '<span class="material-symbols-outlined">check</span>Save'
+            +     '</button>'
+            +   '</div>'
+            + '</div>';
+
+          overlay.addEventListener("click", function (e) {
+            if (e.target === overlay) {
+              e.preventDefault();
+              closeRenameSheet(phoneWrap);
+            }
+          });
+
+          var input = overlay.querySelector("[data-rename-input]");
+          var saveBtn = overlay.querySelector('[data-action="rename-save"]');
+          function syncSaveState() {
+            if (saveBtn) saveBtn.disabled = input.value.trim().length === 0;
+          }
+          if (input) {
+            input.addEventListener("input", syncSaveState);
+            input.addEventListener("keydown", function (e) {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                commitRename(phoneWrap);
+              }
+            });
+          }
+          syncSaveState();
+
+          var screen = phoneWrap.querySelector(".screen");
+          if (screen) screen.appendChild(overlay);
+
+          if (input) {
+            input.focus();
+            input.select();
+          }
+        }
+
+        function commitRename(phoneWrap) {
+          var overlay = phoneWrap.querySelector(".rename-overlay");
+          if (!overlay) return;
+          var input = overlay.querySelector("[data-rename-input]");
+          var next = input ? input.value.trim() : "";
+          if (!next) return;
+          // Keep both twins in lockstep — the name isn't part of the
+          // shared WISE_CODES state, so write it across every headline.
+          document.querySelectorAll("[data-code-name]").forEach(function (el) {
+            el.textContent = next;
+          });
+          closeRenameSheet(phoneWrap);
+        }
+
+        function closeRenameSheet(phoneWrap) {
+          if (!phoneWrap) return;
+          var overlay = phoneWrap.querySelector(".rename-overlay");
           if (overlay) overlay.remove();
         }
 
@@ -6195,7 +6658,10 @@
           }
 
           if (action === "code-detail" && phoneWrap) {
-            var detailRow = target.closest(".slot-c[data-code-id]");
+            // Either a slot row (.slot-c) or a tapped pie slice (a
+            // <path> carrying its own data-code-id) opens the sheet.
+            var detailRow = target.closest(".slot-c[data-code-id]")
+                         || (target.hasAttribute("data-code-id") ? target : null);
             if (detailRow) {
               ev.preventDefault();
               openCodeDetail(phoneWrap, detailRow.getAttribute("data-code-id"), { context: "code" });
@@ -6249,6 +6715,24 @@
           if (action === "picker-close" && phoneWrap) {
             ev.preventDefault();
             closePicker(phoneWrap);
+            return;
+          }
+
+          if (action === "rename-prompt" && phoneWrap) {
+            ev.preventDefault();
+            openRenameSheet(phoneWrap);
+            return;
+          }
+
+          if (action === "rename-cancel" && phoneWrap) {
+            ev.preventDefault();
+            closeRenameSheet(phoneWrap);
+            return;
+          }
+
+          if (action === "rename-save" && phoneWrap) {
+            ev.preventDefault();
+            commitRename(phoneWrap);
             return;
           }
 
@@ -6460,7 +6944,7 @@
             var slices = filled.map(function (s) {
               var meta = W.CODE_CATALOG[s.codeId];
               return meta
-                ? { value: s.weight, c: meta.color, icon: meta.icon }
+                ? { value: s.weight, c: meta.color, icon: meta.icon, codeId: s.codeId }
                 : null;
             }).filter(Boolean);
             pieSvg.setAttribute("data-slices", JSON.stringify(slices));
@@ -6605,7 +7089,7 @@
             var slices = filled.map(function (s) {
               var meta = W.CODE_CATALOG[s.codeId];
               return meta
-                ? { value: s.weight, c: meta.color, icon: meta.icon }
+                ? { value: s.weight, c: meta.color, icon: meta.icon, codeId: s.codeId }
                 : null;
             }).filter(Boolean);
             pieSvg.setAttribute("data-slices", JSON.stringify(slices));
