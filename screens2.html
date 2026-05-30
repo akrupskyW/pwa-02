@@ -172,6 +172,51 @@
         --ring-tip: #1A8C40;
       }
 
+      /* ─── Color-vision-safe palette (opt-in) ──────────────────────────
+         Toggled by data-cvd="safe" on <html> — from Settings → Color
+         vision, or the catalog header preview switch. It remaps ONLY the
+         semantic score / code hues; the surface + text ramps and the
+         royal-blue nav accent are deliberately left alone (blue already
+         survives every CVD type). "Good" stays a bluish-green so the
+         learned "green = healthy" reading holds, but the whole ramp is
+         the Okabe-Ito colour-blind-safe set and is ordered by luminance
+         so deuteranope / protanope / tritanope viewers can separate the
+         tiers by lightness as well as hue. The dark twin keeps a lighter
+         "poor" for contrast on the dark canvas, exactly like the base
+         palette does; the light subtree re-asserts the deeper variant.
+         Hues verified against deuteranope + protanope simulation. */
+      :root[data-cvd="safe"],
+      .theme-light[data-cvd="safe"],
+      [data-cvd="safe"] {
+        --score-excellent: #009E73;  /* bluish green — Okabe-Ito */
+        --score-good: #009E73;
+        --score-fair: #F0C808;       /* golden yellow */
+        --score-low: #E8852B;        /* orange */
+        --score-poor: #FF8E5E;       /* light vermillion (dark-canvas contrast) */
+        --rose: #FF8E5E;
+
+        /* Brand-green verdict / viewfinder / accents follow the same
+           bluish-green so the "good" signal stays consistent everywhere. */
+        --emerald: #009E73;
+        --teal: #009E73;
+
+        --code-green:  #009E73;      /* category swatches → Okabe-Ito set */
+        --code-deep:   #0072B2;      /* second "cool" category = blue, not green */
+        --code-yellow: #F0C808;
+        --code-amber:  #E8852B;
+        --code-red:    #C73E1D;      /* vermillion */
+
+        --ring-tip: #009E73;
+      }
+      /* Light subtrees set their own deeper poor/rose + ring-tip; re-assert
+         the CVD values at higher specificity so they win there too. */
+      [data-cvd="safe"] .theme-light,
+      :root[data-cvd="safe"][data-theme="light"] {
+        --score-poor: #C73E1D;       /* deep vermillion (white-canvas contrast) */
+        --rose: #C73E1D;
+        --ring-tip: #007E5A;
+      }
+
       * { box-sizing: border-box; }
       html, body { margin: 0; padding: 0; }
       body {
@@ -274,6 +319,40 @@
         .stage > header .replay-all:hover { filter: brightness(1.08); }
       }
       .stage > header .replay-all:active { transform: scale(0.97); }
+
+      /* Header preview switch — flips the whole catalog into the color-
+         vision-safe palette so the dark + light score frames can be
+         eyeballed side-by-side with the same toggle the in-app Settings
+         row drives. Ghost by default; fills with the CVD "good" green
+         and reads "On" once engaged. */
+      .stage > header .cvd-preview {
+        margin: 14px 8px 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 9px 16px;
+        border-radius: 999px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        color: var(--fg-muted);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        cursor: pointer;
+        transition: filter 120ms ease, transform 120ms ease, background 120ms ease, color 120ms ease;
+      }
+      .stage > header .cvd-preview .material-symbols-outlined { font-size: 17px; }
+      .stage > header .cvd-preview .state { opacity: 0.65; font-weight: 800; }
+      :root[data-cvd="safe"] .stage > header .cvd-preview {
+        background: var(--score-good);
+        border-color: transparent;
+        color: #FFFFFF;
+      }
+      :root[data-cvd="safe"] .stage > header .cvd-preview .state { opacity: 1; }
+      @media (hover: hover) {
+        .stage > header .cvd-preview:hover { filter: brightness(1.06); }
+      }
+      .stage > header .cvd-preview:active { transform: scale(0.97); }
 
       /* ─── Section header above each row of phones ───────────────────── */
       .section { max-width: 1480px; margin: 0 auto 64px; }
@@ -930,6 +1009,75 @@
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
       }
 
+      /* ─── Clustered bubble chart (alternate code viz) ────────────────
+         The same code mix the donut paints, redrawn as a pack of
+         circles — one bubble per code, area ∝ its weight, colored by
+         the code's hue. Toggled in from the chart-type button in the
+         pie-card's top-left corner; shares the .pie-svg shell and the
+         .pie-slice-tag label nodes (icon + percentage) the donut uses,
+         so switching back and forth reuses the same cleanup path. The
+         center "OF 100" disc is hidden while bubbles are showing (the
+         bubbles fill the hole), via .pie-wrap.is-bubble below. */
+      .pie-svg circle.bubble {
+        cursor: pointer;
+        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
+      }
+      :root[data-theme="dark"] .pie-svg circle.bubble {
+        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.40));
+      }
+      /* Bubble labels reuse .pie-slice-tag positioning but let the icon
+         box collapse to its glyph (no fixed 28px tile) so it scales down
+         cleanly on smaller bubbles. Per-bubble font sizes are set inline
+         by the renderer from each bubble's radius. */
+      .pie-slice-tag.bubble-tag { gap: 0; }
+      .pie-slice-tag.bubble-tag .ico { width: auto; height: auto; }
+      /* The donut hole disc is meaningless under the bubble pack or the
+         treemap — hide it for both (tap-to-replay still works on the
+         wrap). */
+      .pie-wrap.is-bubble .pie-center,
+      .pie-wrap.is-treemap .pie-center { display: none; }
+
+      /* Treemap tiles — squarified rectangles, area ∝ weight. Each scales
+         from its own center for the pop-in (transform-box: fill-box). */
+      .pie-svg rect.tm {
+        cursor: pointer;
+        transform-box: fill-box;
+        transform-origin: center;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.10));
+      }
+      :root[data-theme="dark"] .pie-svg rect.tm {
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+      }
+      .pie-slice-tag.treemap-tag { gap: 2px; }
+      .pie-slice-tag.treemap-tag .ico { width: auto; height: auto; }
+
+      /* ─── Chart-type toggle (pie-card top-left) ──────────────────────
+         Mirrors the Rebalance pill in the opposite corner, but icon-only:
+         a square chip that flips the code viz between the donut and the
+         clustered bubble chart. The glyph swaps to preview the OTHER
+         chart (bubble_chart while a donut shows, donut_large while
+         bubbles show). */
+      .chart-toggle {
+        position: absolute;
+        top: 12px; left: 12px;
+        z-index: 2;
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px;
+        border-radius: 8px;
+        background: color-mix(in srgb, var(--violet) 14%, transparent);
+        border: 1px solid color-mix(in srgb, var(--violet) 45%, var(--line));
+        color: var(--violet);
+        cursor: pointer;
+      }
+      .chart-toggle .material-symbols-outlined { font-size: 17px; }
+      .phone-wrap:not(.theme-light) .chart-toggle { color: #FFFFFF; }
+      @media (hover: hover) {
+        .chart-toggle:hover {
+          background: color-mix(in srgb, var(--violet) 22%, transparent);
+          border-color: color-mix(in srgb, var(--violet) 65%, var(--line));
+        }
+      }
+
       /* ─── Empty pie placeholder ─────────────────────────────────────────
          Static SVG used on the Your Code (Empty) variant where no codes
          have been added yet. Skips the JS path-renderer entirely (no
@@ -1273,13 +1421,19 @@
       /* Card that holds the code pie (full-width). White in light mode,
          deep navy in dark — sits at the top of the Code screen with the
          "In Progress" / "In Harmony" caption directly underneath. */
+      /* Chart card is now frameless — no surface fill or border, just the
+         viz floating on the page. Generous top + bottom bands reserve
+         clear space for the corner controls (chart-type toggle + Rebalance
+         up top, Rename + Reset along the bottom) so the square charts
+         (bubble pack / treemap) never slide under them the way they would
+         if they filled to the card edge. */
       .pie-card {
         display: flex; flex-direction: column; align-items: center;
-        background: var(--card);
-        border: 1px solid var(--line);
+        background: transparent;
+        border: none;
         border-radius: 24px;
-        padding: 18px 12px 12px;
-        gap: 4px;
+        padding: 50px 8px 40px;
+        gap: 6px;
       }
       .pie-card .status {
         margin-top: 8px;
@@ -1594,9 +1748,9 @@
 
       /* Priorities block at the top of Browse — a small "Your priorities"
          label paired inline with a "Rebalance" text affordance that
-         floats to the right edge, over a row that lays out all five
-         slot chips at once (no horizontal scroll, no filter icon
-         eating the fifth slot's space). Each chip stacks a filled
+         floats to the right edge, over a row that lays out up to five
+         slot chips per line (wrapping to a second row for codes six
+         through ten, no horizontal scroll). Each chip stacks a filled
          colored icon circle, the slot's live weight as a percentage,
          and the slot's name — giving the user a quick legend of
          exactly how their code is currently weighting results. */
@@ -1631,17 +1785,20 @@
 
       .prio-row {
         flex: 1; min-width: 0;
-        display: flex; flex-wrap: nowrap;
+        display: flex; flex-wrap: wrap;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 6px;
+        gap: 10px 6px;
         padding: 2px 0;
       }
+      /* Each chip claims a fifth of the row (minus the gap), so up to five
+         sit on one line and a sixth-through-tenth code wraps onto a second
+         row instead of overflowing the phone width. */
       .prio-chip {
         display: inline-flex; flex-direction: column;
         align-items: center; gap: 4px;
         padding: 0;
-        flex: 1 1 0;
+        flex: 1 1 calc(20% - 5px);
         min-width: 0;
         background: transparent;
         border: none;
@@ -1708,7 +1865,13 @@
         .health-bar.hb-armed.hb-in { clip-path: none; animation: none; }
       }
 
-      /* "TOP MATCH" pill used above the featured row */
+      /* "TOP MATCH" pill + "Reevaluate" link sit on one row above the
+         featured card. The pill is left-aligned; the link floats right. */
+      .top-match-head {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 6px;
+      }
       .top-match-tag {
         display: inline-flex; align-items: center;
         background: var(--blue);
@@ -1716,7 +1879,27 @@
         font-size: 9px; font-weight: 800; letter-spacing: 0.14em;
         padding: 3px 8px;
         border-radius: 4px;
-        margin-bottom: 6px;
+      }
+      /* "Reevaluate" — re-scores the list against the current code mix.
+         Styled as a quiet text link (mirrors .prio-rebalance-btn). The
+         icon spins while the re-evaluation animation plays. */
+      .reevaluate-link {
+        display: inline-flex; align-items: center; gap: 4px;
+        background: transparent;
+        border: none;
+        padding: 0;
+        color: var(--blue);
+        font: inherit;
+        font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+        cursor: pointer;
+      }
+      .reevaluate-link .material-symbols-outlined { font-size: 14px; }
+      .reevaluate-link[disabled] { opacity: 0.6; cursor: default; }
+      .reevaluate-link.is-loading .material-symbols-outlined {
+        animation: spin 0.7s linear infinite;
+      }
+      @media (hover: hover) {
+        .reevaluate-link:not([disabled]):hover { text-decoration: underline; }
       }
 
       /* Featured + ranked food rows on Browse. Outer card is a vertical
@@ -3491,6 +3674,292 @@
         justify-content: center;
       }
 
+      /* ─── Design System board ────────────────────────────────────────
+         The far-left frame of the rail: a "foundations" reference panel
+         that documents the tokens every screen downstream is built from
+         — color ramps, the DM Sans type scale, and the live WCAG 2.1
+         contrast audit. It is part of the same scroll-snap rail as the
+         phones but renders as a flat board (no device bezel, no
+         dark/light clone — both themes are shown inline). Its hex values
+         and contrast ratios mirror the :root / .theme-light token blocks
+         at the top of this file verbatim. */
+      .ds-pair { width: min(1240px, 90vw); }
+      .ds-board {
+        width: 100%;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 28px;
+        box-shadow: var(--shadow-card-soft);
+        padding: 36px 36px 40px;
+        overflow: hidden;
+      }
+      .ds-board-hd .eyebrow {
+        color: var(--blue);
+        font-size: 11px; font-weight: 800;
+        letter-spacing: 0.2em; text-transform: uppercase;
+      }
+      .ds-board-hd h2 {
+        margin: 10px 0 8px;
+        color: var(--fg-bright);
+        font-size: 34px; font-weight: 800; letter-spacing: -0.025em;
+      }
+      .ds-board-hd p {
+        margin: 0; max-width: 660px;
+        color: var(--fg-muted); font-size: 14px; line-height: 1.6;
+      }
+
+      .ds-section { margin-top: 34px; }
+      .ds-section > h3 {
+        display: flex; align-items: center; gap: 10px;
+        margin: 0 0 18px;
+        color: var(--fg-bright);
+        font-size: 12px; font-weight: 800;
+        letter-spacing: 0.16em; text-transform: uppercase;
+      }
+      .ds-section > h3 .material-symbols-outlined {
+        font-size: 18px; color: var(--blue);
+      }
+      .ds-section > h3::after {
+        content: ""; flex: 1; height: 1px; background: var(--line);
+      }
+
+      /* Side-by-side dark / light surface + text ramps */
+      .ds-theme-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      .ds-theme-panel {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 16px 16px 18px;
+      }
+      .ds-theme-tag {
+        display: inline-flex; align-items: center; gap: 6px;
+        margin-bottom: 14px;
+        color: var(--fg-faint);
+        font-size: 10px; font-weight: 800;
+        letter-spacing: 0.16em; text-transform: uppercase;
+      }
+      .ds-theme-tag .material-symbols-outlined { font-size: 14px; }
+      .ds-subhead {
+        margin: 14px 0 8px;
+        color: var(--fg-faint);
+        font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .ds-subhead:first-child { margin-top: 0; }
+
+      .ds-ramp { display: flex; gap: 7px; }
+      .ds-swatch {
+        flex: 1; min-width: 0;
+        border-radius: 11px; overflow: hidden;
+        border: 1px solid var(--line);
+        background: var(--surface);
+      }
+      .ds-swatch .chip {
+        height: 46px;
+        border-bottom: 1px solid var(--line-subtle);
+      }
+      .ds-swatch .meta { padding: 6px 7px 7px; }
+      .ds-swatch .meta .nm {
+        font-size: 9.5px; font-weight: 700; color: var(--fg-bright);
+        line-height: 1.1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      }
+      .ds-swatch .meta .hx {
+        margin-top: 2px;
+        font-size: 9px; font-weight: 600; color: var(--fg-faint);
+        letter-spacing: 0.02em;
+      }
+
+      /* Text-ramp specimen — each line painted in its own text token */
+      .ds-textramp { display: flex; flex-direction: column; gap: 4px; }
+      .ds-textramp .line { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+      .ds-textramp .line .lbl { font-size: 14px; font-weight: 600; }
+      .ds-textramp .line .tok { font-size: 9.5px; font-weight: 600; color: var(--fg-faint); letter-spacing: 0.02em; white-space: nowrap; }
+
+      /* Shared identity palette — one swatch grid (theme-stable hues) */
+      .ds-palette {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(116px, 1fr));
+        gap: 10px;
+      }
+      .ds-pal {
+        border-radius: 13px; overflow: hidden;
+        border: 1px solid var(--line);
+        background: var(--surface);
+      }
+      .ds-pal .chip { height: 56px; display: flex; align-items: flex-end; padding: 7px; }
+      .ds-pal .chip .role {
+        font-size: 9px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+        padding: 2px 6px; border-radius: 999px;
+        background: rgba(0,0,0,0.28); color: #fff;
+      }
+      .ds-pal .meta { padding: 7px 9px 9px; }
+      .ds-pal .meta .nm { font-size: 11px; font-weight: 700; color: var(--fg-bright); }
+      .ds-pal .meta .hx { margin-top: 2px; font-size: 9.5px; font-weight: 600; color: var(--fg-faint); }
+
+      /* Standard vs colour-blind-safe score ramp comparison. Both ramps
+         always render (it's a reference), but the column matching the
+         live data-cvd state is highlighted and the other dims — so the
+         catalog toggle visibly drives the design-system board too. */
+      .ds-cvd-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+      .ds-cvd-col {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 13px;
+        transition: opacity 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+      }
+      /* default (CVD off) → Standard is the active palette */
+      .ds-cvd-col.is-safe { opacity: 0.5; }
+      .ds-cvd-col.is-standard { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+      /* CVD on → flip the emphasis to the colour-safe column */
+      [data-cvd="safe"] .ds-cvd-col.is-standard { opacity: 0.5; border-color: var(--line); box-shadow: none; }
+      [data-cvd="safe"] .ds-cvd-col.is-safe { opacity: 1; border-color: var(--score-good); box-shadow: 0 0 0 1px var(--score-good); }
+      .ds-cvd-tag {
+        display: flex; align-items: center; gap: 7px; margin-bottom: 10px;
+        color: var(--fg-faint);
+        font-size: 10px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+      }
+      .ds-cvd-active {
+        display: none;
+        padding: 1px 7px; border-radius: 999px;
+        font-size: 8.5px; font-weight: 800; letter-spacing: 0.06em;
+        background: var(--blue); color: #FFFFFF;
+      }
+      .ds-cvd-col.is-standard .ds-cvd-active { display: inline-block; }
+      [data-cvd="safe"] .ds-cvd-col.is-standard .ds-cvd-active { display: none; }
+      [data-cvd="safe"] .ds-cvd-col.is-safe .ds-cvd-active { display: inline-block; background: var(--score-good); }
+      .ds-cvd-note {
+        margin-top: 10px;
+        color: var(--fg-muted); font-size: 11px; line-height: 1.45;
+      }
+      .ds-cvd-note .material-symbols-outlined { font-size: 14px; vertical-align: -2px; color: var(--blue); }
+      @media (max-width: 760px) { .ds-cvd-compare { grid-template-columns: 1fr; } }
+
+      /* Typography */
+      .ds-type-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 22px; }
+      .ds-type-list { display: flex; flex-direction: column; }
+      .ds-type-row {
+        display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+        padding: 11px 0;
+        border-bottom: 1px solid var(--line-subtle);
+      }
+      .ds-type-row:last-child { border-bottom: 0; }
+      .ds-type-row .sample { color: var(--fg-bright); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .ds-type-row .spec { color: var(--fg-faint); font-size: 11px; font-weight: 600; white-space: nowrap; }
+      .ds-type-aside {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+      }
+      .ds-type-aside .fam {
+        color: var(--fg-bright); font-size: 22px; font-weight: 800; letter-spacing: -0.01em;
+      }
+      .ds-type-aside .fam-sub { margin-top: 2px; color: var(--fg-muted); font-size: 12px; line-height: 1.5; }
+      .ds-weights { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 18px; }
+      .ds-weight { text-align: center; }
+      .ds-weight .glyph { color: var(--fg-bright); font-size: 26px; line-height: 1; }
+      .ds-weight .lbl { margin-top: 5px; color: var(--fg-faint); font-size: 9.5px; font-weight: 700; letter-spacing: 0.04em; }
+
+      /* Iconography — every Material Symbol used across the catalog */
+      .ds-icons {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(94px, 1fr));
+        gap: 8px;
+      }
+      .ds-ico {
+        display: flex; flex-direction: column; align-items: center; gap: 8px;
+        padding: 13px 6px 10px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 13px;
+        text-align: center;
+      }
+      .ds-ico .material-symbols-outlined { font-size: 24px; color: var(--fg-bright); }
+      .ds-ico .nm {
+        font-size: 9px; font-weight: 600; color: var(--fg-faint);
+        line-height: 1.25; word-break: break-word;
+      }
+      .ds-section > h3 .ds-count {
+        margin-left: -2px;
+        font-size: 11px; font-weight: 700; letter-spacing: 0;
+        text-transform: none;
+        color: var(--fg-faint);
+      }
+
+      /* Accessibility — WCAG contrast audit */
+      .ds-a11y-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+      .ds-a11y-col {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px 16px 16px;
+      }
+      .ds-cr {
+        display: grid;
+        grid-template-columns: 18px 1fr auto auto;
+        align-items: center; gap: 10px;
+        padding: 9px 0;
+        border-bottom: 1px solid var(--line-subtle);
+      }
+      .ds-cr:last-child { border-bottom: 0; }
+      .ds-cr .dot {
+        width: 16px; height: 16px; border-radius: 5px;
+        border: 1px solid var(--line-strong);
+      }
+      .ds-cr .pair { min-width: 0; }
+      .ds-cr .pair .fgn { font-size: 11.5px; font-weight: 700; color: var(--fg-bright); line-height: 1.15; }
+      .ds-cr .pair .bgn { font-size: 9.5px; font-weight: 600; color: var(--fg-faint); }
+      .ds-cr .ratio { font-size: 12px; font-weight: 800; color: var(--fg); font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+      .ds-badge {
+        font-size: 9.5px; font-weight: 800; letter-spacing: 0.04em;
+        padding: 3px 8px; border-radius: 999px; white-space: nowrap; text-align: center;
+      }
+      .ds-badge.aaa  { background: var(--emerald); color: #fff; }
+      .ds-badge.aa   { background: var(--blue); color: #fff; }
+      .ds-badge.aalg { background: var(--gold); color: #2A1A00; }
+      .ds-badge.fail { background: var(--rose); color: #2A0606; }
+
+      .ds-notes {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+      .ds-note {
+        display: flex; gap: 11px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 13px 14px;
+      }
+      .ds-note .material-symbols-outlined {
+        font-size: 20px; color: var(--blue); flex-shrink: 0; margin-top: 1px;
+      }
+      .ds-note .nt-title { color: var(--fg-bright); font-size: 12px; font-weight: 800; letter-spacing: -0.005em; }
+      .ds-note .nt-body { margin-top: 3px; color: var(--fg-muted); font-size: 11px; line-height: 1.45; }
+      .ds-note .nt-body code {
+        font-family: "DM Sans", system-ui, sans-serif;
+        font-size: 10.5px; font-weight: 700;
+        color: var(--fg-bright);
+        background: var(--surface-2);
+        padding: 1px 5px; border-radius: 5px;
+      }
+      .ds-legend {
+        display: flex; flex-wrap: wrap; gap: 14px;
+        margin-top: 16px;
+        color: var(--fg-faint); font-size: 10.5px; font-weight: 600;
+      }
+      .ds-legend .li { display: inline-flex; align-items: center; gap: 6px; }
+
+      @media (max-width: 760px) {
+        .ds-theme-row, .ds-type-grid, .ds-a11y-grid { grid-template-columns: 1fr; }
+      }
+
       /* ─── Intro / Welcome screen ──────────────────────────────────────
          The far-left screen the user lands on before any code exists.
          WISEcode wordmark top-left, a purpose-driven headline + value
@@ -4125,12 +4594,11 @@
       }
       .set-row + .set-row { border-top: 1px solid var(--line); }
       .set-row .set-ico {
-        width: 38px; height: 38px; border-radius: 11px;
+        width: 38px; height: 38px;
         display: inline-flex; align-items: center; justify-content: center;
-        color: #FFFFFF;
         flex-shrink: 0;
       }
-      .set-row .set-ico .material-symbols-outlined { font-size: 21px; }
+      .set-row .set-ico .material-symbols-outlined { font-size: 26px; }
       .set-row .set-copy { flex: 1; min-width: 0; }
       .set-row .set-title {
         color: var(--fg-bright);
@@ -4163,6 +4631,21 @@
         background: var(--surface-2);
         border: 1px solid var(--line);
         color: var(--fg-bright);
+      }
+      /* Rows that carry a wide control (segmented switch or pill button)
+         wrap it onto its own line below the copy instead of squeezing the
+         title/sub into a narrow column. The control aligns under the text
+         (past the icon) via a left indent equal to the icon + row gap. */
+      .set-row:has(.theme-seg, .set-trail-btn) {
+        flex-wrap: wrap;
+        row-gap: 12px;
+      }
+      .set-row:has(.theme-seg, .set-trail-btn) .set-copy {
+        flex: 1 1 calc(100% - 51px);
+      }
+      .set-row:has(.theme-seg, .set-trail-btn) .theme-seg,
+      .set-row:has(.theme-seg, .set-trail-btn) .set-trail-btn {
+        margin-left: 51px;
       }
 
       /* Segmented Light/Dark theme switch. The active segment reflects
@@ -4200,6 +4683,18 @@
         background: var(--blue);
         color: #FFFFFF;
       }
+
+      /* Color-vision segmented switch (Default / Color-safe). Unlike the
+         theme switch — whose active half is decided per-twin by the
+         subtree theme — color-vision mode is a single global state, so
+         its active half keys off data-cvd="safe" on <html>. Both phone
+         twins therefore always show the same selection. */
+      .cvd-seg .seg-off { background: var(--blue); color: #FFFFFF; }
+      .cvd-seg .seg-on { background: transparent; color: var(--fg-faint); }
+      :root[data-cvd="safe"] .cvd-seg .seg-off,
+      [data-cvd="safe"] .cvd-seg .seg-off { background: transparent; color: var(--fg-faint); }
+      :root[data-cvd="safe"] .cvd-seg .seg-on,
+      [data-cvd="safe"] .cvd-seg .seg-on { background: var(--score-good); color: #FFFFFF; }
 
       /* ─── Delete-code confirmation bottom-sheet ───────────────────────
          Tapping the minus on a code slot no longer removes the code
@@ -4300,6 +4795,7 @@
         <div class="eyebrow">Personalized Nutrition · Screen Catalog</div>
         <h1>PWA v1</h1>
         <ul class="section-list">
+          <li><span class="idx">DS</span>Design System</li>
           <li><span class="idx">0</span>Intro / Welcome</li>
           <li><span class="idx">0b</span>Pick Your Personas</li>
           <li><span class="idx">1a</span>Your Code (Empty)</li>
@@ -4314,6 +4810,10 @@
         <button type="button" class="replay-all" data-action="replay-all" aria-label="Replay all donut animations">
           <span class="material-symbols-outlined">replay</span>
           Replay animations
+        </button>
+        <button type="button" class="cvd-preview" data-action="toggle-cvd" aria-pressed="false" aria-label="Preview the color-blind-safe palette across the catalog">
+          <span class="material-symbols-outlined">visibility</span>
+          Color-blind preview · <span class="state">Off</span>
         </button>
       </header>
 
@@ -4353,11 +4853,285 @@
                                 in Browse or a barcode result in Scan
       -->
       <div class="pair-rail-hint">
-        <span>9 frames · dark + light side-by-side</span>
+        <span>Design system + 9 frames · dark + light side-by-side</span>
         <span class="arrows">Scroll <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
       </div>
       <div class="pair-rail-frame">
         <div class="pair-rail" tabindex="0" aria-label="Screen catalog — dark / light pairs">
+
+<!-- ─── DS. DESIGN SYSTEM — foundations reference board ─────────────────
+       Separate from the phone frames (no bezel, no dark/light clone) but
+       lives in the same scroll-snap rail as the first frame. Documents
+       the color ramps, DM Sans type scale, and the WCAG 2.1 contrast
+       audit that the screens to its right are built on. Every hex and
+       ratio here is copied from the :root / .theme-light token blocks at
+       the top of this file and verified against the WCAG 2.x relative-
+       luminance formula. -->
+<section class="screen-pair ds-pair">
+  <h3 class="screen-pair-label">DS · Design System</h3>
+  <div class="ds-board">
+    <div class="ds-board-hd">
+      <div class="eyebrow">Foundations</div>
+      <h2>Design System</h2>
+      <p>The color, type, and accessibility primitives every screen in this catalog is built from — sourced from the wise-signal palette and audited against WCAG&nbsp;2.1.</p>
+    </div>
+
+    <!-- ── Color ─────────────────────────────────────────────────── -->
+    <div class="ds-section">
+      <h3><span class="material-symbols-outlined">palette</span>Color ramps</h3>
+
+      <div class="ds-theme-row">
+        <!-- Dark theme -->
+        <div class="ds-theme-panel">
+          <span class="ds-theme-tag"><span class="material-symbols-outlined">dark_mode</span>Dark theme</span>
+          <div class="ds-subhead">Surfaces</div>
+          <div class="ds-ramp">
+            <div class="ds-swatch"><div class="chip" style="background:#05141C;"></div><div class="meta"><div class="nm">bg</div><div class="hx">#05141C</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#011722;"></div><div class="meta"><div class="nm">bg-deep</div><div class="hx">#011722</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#0A2330;"></div><div class="meta"><div class="nm">surface</div><div class="hx">#0A2330</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#14262E;"></div><div class="meta"><div class="nm">surface-2</div><div class="hx">#14262E</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#1C2130;"></div><div class="meta"><div class="nm">surface-3</div><div class="hx">#1C2130</div></div></div>
+          </div>
+          <div class="ds-subhead">Text on surface</div>
+          <div class="ds-textramp">
+            <div class="line"><span class="lbl" style="color:#F4F2F6;font-weight:800;">Primary — the quick brown fox</span><span class="tok">#F4F2F6</span></div>
+            <div class="line"><span class="lbl" style="color:#B7B2C4;">Secondary — the quick brown fox</span><span class="tok">#B7B2C4</span></div>
+            <div class="line"><span class="lbl" style="color:#A8A3B5;">Tertiary — the quick brown fox</span><span class="tok">#A8A3B5</span></div>
+          </div>
+        </div>
+
+        <!-- Light theme -->
+        <div class="ds-theme-panel theme-light">
+          <span class="ds-theme-tag"><span class="material-symbols-outlined">light_mode</span>Light theme</span>
+          <div class="ds-subhead">Surfaces</div>
+          <div class="ds-ramp">
+            <div class="ds-swatch"><div class="chip" style="background:#EFEDF1;"></div><div class="meta"><div class="nm">bg</div><div class="hx">#EFEDF1</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#FBF6ED;"></div><div class="meta"><div class="nm">bg-deep</div><div class="hx">#FBF6ED</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#FFFFFF;"></div><div class="meta"><div class="nm">surface</div><div class="hx">#FFFFFF</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#E7E4EC;"></div><div class="meta"><div class="nm">track</div><div class="hx">#E7E4EC</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#827C90;"></div><div class="meta"><div class="nm">line-str</div><div class="hx">#827C90</div></div></div>
+          </div>
+          <div class="ds-subhead">Text on surface</div>
+          <div class="ds-textramp">
+            <div class="line"><span class="lbl" style="color:#000000;font-weight:800;">Primary — the quick brown fox</span><span class="tok">#000000</span></div>
+            <div class="line"><span class="lbl" style="color:#413A4D;">Secondary — the quick brown fox</span><span class="tok">#413A4D</span></div>
+            <div class="line"><span class="lbl" style="color:#544E61;">Tertiary — the quick brown fox</span><span class="tok">#544E61</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ds-subhead" style="margin-top:18px;">Identity &amp; signal palette</div>
+      <div class="ds-palette">
+        <div class="ds-pal"><div class="chip" style="background:#1FA34A;"><span class="role">Primary</span></div><div class="meta"><div class="nm">Brand Green</div><div class="hx">#1FA34A</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#147A36;"><span class="role">Verdict</span></div><div class="meta"><div class="nm">Emerald Deep</div><div class="hx">#147A36</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#1D4ED8;"><span class="role">Nav · AI</span></div><div class="meta"><div class="nm">Royal Blue</div><div class="hx">#1D4ED8</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#3B82F6;"><span class="role">Sky</span></div><div class="meta"><div class="nm">Signal Sky</div><div class="hx">#3B82F6</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#FFC434;"><span class="role" style="background:rgba(0,0,0,0.45);">Fair</span></div><div class="meta"><div class="nm">Signal Yellow</div><div class="hx">#FFC434</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#D8610C;"><span class="role">Low</span></div><div class="meta"><div class="nm">Signal Orange</div><div class="hx">#D8610C</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#CA371F;"><span class="role">Poor</span></div><div class="meta"><div class="nm">Signal Risk</div><div class="hx">#CA371F</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#FF8E8E;"><span class="role" style="background:rgba(0,0,0,0.4);">Poor · dk</span></div><div class="meta"><div class="nm">Risk Soft</div><div class="hx">#FF8E8E</div></div></div>
+      </div>
+
+      <div class="ds-subhead" style="margin-top:18px;">Code / category palette · standard vs color-blind-safe</div>
+      <div class="ds-cvd-compare">
+        <div class="ds-cvd-col is-standard">
+          <span class="ds-cvd-tag">Standard <span class="ds-cvd-active">Active</span></span>
+          <div class="ds-ramp">
+            <div class="ds-swatch"><div class="chip" style="background:#1FA34A;"></div><div class="meta"><div class="nm">Green</div><div class="hx">#1FA34A</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#147A36;"></div><div class="meta"><div class="nm">Deep</div><div class="hx">#147A36</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#FFC434;"></div><div class="meta"><div class="nm">Yellow</div><div class="hx">#FFC434</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#D8610C;"></div><div class="meta"><div class="nm">Orange</div><div class="hx">#D8610C</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#CA371F;"></div><div class="meta"><div class="nm">Risk</div><div class="hx">#CA371F</div></div></div>
+          </div>
+        </div>
+        <div class="ds-cvd-col is-safe">
+          <span class="ds-cvd-tag">Color-blind-safe (Okabe-Ito) <span class="ds-cvd-active">Active</span></span>
+          <div class="ds-ramp">
+            <div class="ds-swatch"><div class="chip" style="background:#009E73;"></div><div class="meta"><div class="nm">Green</div><div class="hx">#009E73</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#0072B2;"></div><div class="meta"><div class="nm">Blue</div><div class="hx">#0072B2</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#F0C808;"></div><div class="meta"><div class="nm">Yellow</div><div class="hx">#F0C808</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#E8852B;"></div><div class="meta"><div class="nm">Orange</div><div class="hx">#E8852B</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#C73E1D;"></div><div class="meta"><div class="nm">Risk</div><div class="hx">#C73E1D</div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ds-cvd-note"><span class="material-symbols-outlined">visibility</span> These are the five hues the donut slices and slot tiles actually use. Color-vision mode keeps the brand green as a bluish-green (so "green = healthy" still reads) and turns the second <em>deep-green</em> category <strong>blue</strong> — the clearest change to watch on the <strong>Your Code</strong> donut and <strong>Food Detail</strong>. Flip it live from the <strong>Color-blind preview</strong> switch in the header or <strong>Settings → Color vision</strong>.</div>
+    </div>
+
+    <!-- ── Typography ────────────────────────────────────────────── -->
+    <div class="ds-section">
+      <h3><span class="material-symbols-outlined">text_fields</span>Typography</h3>
+      <div class="ds-type-grid">
+        <div class="ds-type-list">
+          <div class="ds-type-row"><span class="sample" style="font-size:34px;font-weight:800;letter-spacing:-0.03em;">Eat to your code</span><span class="spec">Display · 56 / 800 / -0.03em</span></div>
+          <div class="ds-type-row"><span class="sample" style="font-size:24px;font-weight:800;letter-spacing:-0.02em;">Top matches today</span><span class="spec">Title · 24 / 800 / -0.02em</span></div>
+          <div class="ds-type-row"><span class="sample" style="font-size:18px;font-weight:800;letter-spacing:-0.01em;">Ask WISE anything</span><span class="spec">Heading · 18 / 800</span></div>
+          <div class="ds-type-row"><span class="sample" style="font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;">86<span style="font-size:11px;font-weight:700;color:var(--fg-muted);"> / 100</span></span><span class="spec">Score · 22 / 800 · tabular</span></div>
+          <div class="ds-type-row"><span class="sample" style="font-size:16px;font-weight:400;">Healthy isn’t one-size-fits-all.</span><span class="spec">Body L · 16 / 400</span></div>
+          <div class="ds-type-row"><span class="sample" style="font-size:14px;font-weight:500;">Default body copy and table text.</span><span class="spec">Body · 14 / 500</span></div>
+          <div class="ds-type-row"><span class="sample" style="font-size:12px;font-weight:600;">Caption &amp; lead-in text</span><span class="spec">Label · 12 / 600</span></div>
+          <div class="ds-type-row"><span class="sample" style="font-size:11px;font-weight:700;">Pill &amp; chip label</span><span class="spec">Micro · 11 / 700</span></div>
+          <div class="ds-type-row"><span class="sample" style="font-size:10px;font-weight:800;letter-spacing:0.16em;text-transform:uppercase;">Overline eyebrow</span><span class="spec">Eyebrow · 10 / 800 / 0.16em</span></div>
+        </div>
+        <div class="ds-type-aside">
+          <div class="fam">DM Sans</div>
+          <div class="fam-sub">Geometric grotesque, variable 400–900. The single family across every screen — UI, numerals, and headlines. Numbers use tabular figures for score alignment.</div>
+          <div class="ds-weights">
+            <div class="ds-weight"><div class="glyph" style="font-weight:400;">Aa</div><div class="lbl">400 · Reg</div></div>
+            <div class="ds-weight"><div class="glyph" style="font-weight:500;">Aa</div><div class="lbl">500 · Med</div></div>
+            <div class="ds-weight"><div class="glyph" style="font-weight:600;">Aa</div><div class="lbl">600 · Semi</div></div>
+            <div class="ds-weight"><div class="glyph" style="font-weight:700;">Aa</div><div class="lbl">700 · Bold</div></div>
+            <div class="ds-weight"><div class="glyph" style="font-weight:800;">Aa</div><div class="lbl">800 · X-Bold</div></div>
+            <div class="ds-weight"><div class="glyph" style="font-weight:900;">Aa</div><div class="lbl">900 · Black</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Iconography ───────────────────────────────────────────────
+         Every Material Symbols Outlined glyph referenced anywhere in
+         this catalog, rendered live from the font linked in <head>.
+         Generated from the markup, so it stays an exhaustive index of
+         what the screens actually use. -->
+    <div class="ds-section">
+      <h3><span class="material-symbols-outlined">interests</span>Iconography<span class="ds-count">· 67 Material Symbols</span></h3>
+      <div class="ds-icons">
+        <div class="ds-ico"><span class="material-symbols-outlined">accessibility_new</span><span class="nm">accessibility_new</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">add</span><span class="nm">add</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">add_box</span><span class="nm">add_box</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">add_to_home_screen</span><span class="nm">add_to_home_screen</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">all_inclusive</span><span class="nm">all_inclusive</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">arrow_back</span><span class="nm">arrow_back</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">arrow_forward</span><span class="nm">arrow_forward</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">arrow_upward</span><span class="nm">arrow_upward</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">auto_awesome</span><span class="nm">auto_awesome</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">autorenew</span><span class="nm">autorenew</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">barcode</span><span class="nm">barcode</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">bolt</span><span class="nm">bolt</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">bookmark_add</span><span class="nm">bookmark_add</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">bubble_chart</span><span class="nm">bubble_chart</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">category</span><span class="nm">category</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">chat_bubble</span><span class="nm">chat_bubble</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">check</span><span class="nm">check</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">check_circle</span><span class="nm">check_circle</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">chevron_left</span><span class="nm">chevron_left</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">chevron_right</span><span class="nm">chevron_right</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">close</span><span class="nm">close</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">content_copy</span><span class="nm">content_copy</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">contrast</span><span class="nm">contrast</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">dark_mode</span><span class="nm">dark_mode</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">do_not_disturb_on</span><span class="nm">do_not_disturb_on</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">eco</span><span class="nm">eco</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">expand_more</span><span class="nm">expand_more</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">family_restroom</span><span class="nm">family_restroom</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">filter_center_focus</span><span class="nm">filter_center_focus</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">fitness_center</span><span class="nm">fitness_center</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">format_size</span><span class="nm">format_size</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">grid_view</span><span class="nm">grid_view</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">history</span><span class="nm">history</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">home</span><span class="nm">home</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">info</span><span class="nm">info</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">ios_share</span><span class="nm">ios_share</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">light_mode</span><span class="nm">light_mode</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">location_on</span><span class="nm">location_on</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">login</span><span class="nm">login</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">medical_services</span><span class="nm">medical_services</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">monitor_heart</span><span class="nm">monitor_heart</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">motion_photos_off</span><span class="nm">motion_photos_off</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">nutrition</span><span class="nm">nutrition</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">palette</span><span class="nm">palette</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">person_add</span><span class="nm">person_add</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">photo_camera</span><span class="nm">photo_camera</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">psychology</span><span class="nm">psychology</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">public</span><span class="nm">public</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">qr_code_scanner</span><span class="nm">qr_code_scanner</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">replay</span><span class="nm">replay</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">restart_alt</span><span class="nm">restart_alt</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">restaurant_menu</span><span class="nm">restaurant_menu</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">savings</span><span class="nm">savings</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">science</span><span class="nm">science</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">search</span><span class="nm">search</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">self_improvement</span><span class="nm">self_improvement</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">settings</span><span class="nm">settings</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">sort_by_alpha</span><span class="nm">sort_by_alpha</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">speed</span><span class="nm">speed</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">swap_horiz</span><span class="nm">swap_horiz</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">tab</span><span class="nm">tab</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">text_fields</span><span class="nm">text_fields</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">touch_app</span><span class="nm">touch_app</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">tune</span><span class="nm">tune</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">verified</span><span class="nm">verified</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">wifi</span><span class="nm">wifi</span></div>
+        <div class="ds-ico"><span class="material-symbols-outlined">workspace_premium</span><span class="nm">workspace_premium</span></div>
+      </div>
+    </div>
+
+    <!-- ── Accessibility ─────────────────────────────────────────── -->
+    <div class="ds-section">
+      <h3><span class="material-symbols-outlined">accessibility_new</span>Accessibility · WCAG 2.1</h3>
+      <div class="ds-a11y-grid">
+        <!-- Dark contrast audit -->
+        <div class="ds-a11y-col">
+          <span class="ds-theme-tag"><span class="material-symbols-outlined">dark_mode</span>Dark · contrast</span>
+          <div class="ds-cr"><span class="dot" style="background:#F4F2F6;"></span><span class="pair"><span class="fgn">Primary text</span><span class="bgn">#F4F2F6 on #05141C</span></span><span class="ratio">16.8:1</span><span class="ds-badge aaa">AAA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#B7B2C4;"></span><span class="pair"><span class="fgn">Secondary text</span><span class="bgn">#B7B2C4 on #0A2330</span></span><span class="ratio">7.9:1</span><span class="ds-badge aaa">AAA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#A8A3B5;"></span><span class="pair"><span class="fgn">Tertiary text</span><span class="bgn">#A8A3B5 on #0A2330</span></span><span class="ratio">6.6:1</span><span class="ds-badge aa">AA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#1D4ED8;"></span><span class="pair"><span class="fgn">White on blue CTA</span><span class="bgn">#FFFFFF on #1D4ED8</span></span><span class="ratio">6.7:1</span><span class="ds-badge aa">AA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#1FA34A;"></span><span class="pair"><span class="fgn">Brand green text</span><span class="bgn">#1FA34A on #05141C</span></span><span class="ratio">5.7:1</span><span class="ds-badge aa">AA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#FFC434;"></span><span class="pair"><span class="fgn">Signal yellow</span><span class="bgn">#FFC434 on #05141C</span></span><span class="ratio">11.8:1</span><span class="ds-badge aaa">AAA</span></div>
+        </div>
+        <!-- Light contrast audit -->
+        <div class="ds-a11y-col theme-light">
+          <span class="ds-theme-tag"><span class="material-symbols-outlined">light_mode</span>Light · contrast</span>
+          <div class="ds-cr"><span class="dot" style="background:#000000;"></span><span class="pair"><span class="fgn">Primary text</span><span class="bgn">#000000 on #FFFFFF</span></span><span class="ratio">21:1</span><span class="ds-badge aaa">AAA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#413A4D;"></span><span class="pair"><span class="fgn">Secondary text</span><span class="bgn">#413A4D on #FFFFFF</span></span><span class="ratio">10.8:1</span><span class="ds-badge aaa">AAA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#544E61;"></span><span class="pair"><span class="fgn">Tertiary text</span><span class="bgn">#544E61 on #FFFFFF</span></span><span class="ratio">8.0:1</span><span class="ds-badge aaa">AAA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#1D4ED8;"></span><span class="pair"><span class="fgn">White on blue CTA</span><span class="bgn">#FFFFFF on #1D4ED8</span></span><span class="ratio">6.7:1</span><span class="ds-badge aa">AA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#CA371F;"></span><span class="pair"><span class="fgn">Risk red text</span><span class="bgn">#CA371F on #FFFFFF</span></span><span class="ratio">5.2:1</span><span class="ds-badge aa">AA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#D8610C;"></span><span class="pair"><span class="fgn">Orange · large only</span><span class="bgn">#D8610C on #FFFFFF</span></span><span class="ratio">3.7:1</span><span class="ds-badge aalg">AA LG</span></div>
+        </div>
+      </div>
+
+      <div class="ds-legend">
+        <span class="li"><span class="ds-badge aaa">AAA</span>≥ 7:1 body</span>
+        <span class="li"><span class="ds-badge aa">AA</span>≥ 4.5:1 body</span>
+        <span class="li"><span class="ds-badge aalg">AA LG</span>≥ 3:1 · 18px+/bold only</span>
+        <span class="li"><span class="ds-badge fail">FAIL</span>&lt; 3:1 · decorative</span>
+      </div>
+
+      <div class="ds-notes">
+        <div class="ds-note">
+          <span class="material-symbols-outlined">touch_app</span>
+          <div><div class="nt-title">Target size · 2.5.5</div><div class="nt-body">Tap targets meet or exceed 44&nbsp;px — the tab pill stands 62&nbsp;px tall and primary CTAs run full-width.</div></div>
+        </div>
+        <div class="ds-note">
+          <span class="material-symbols-outlined">motion_photos_off</span>
+          <div><div class="nt-title">Reduced motion · 2.3.3</div><div class="nt-body">Donut bounce-ins and the feature marquee are suppressed under <code>prefers-reduced-motion</code>.</div></div>
+        </div>
+        <div class="ds-note">
+          <span class="material-symbols-outlined">filter_center_focus</span>
+          <div><div class="nt-title">Focus visible · 2.4.7</div><div class="nt-body">The rail and every control are keyboard-reachable with a visible focus indicator.</div></div>
+        </div>
+        <div class="ds-note">
+          <span class="material-symbols-outlined">palette</span>
+          <div><div class="nt-title">Not color alone · 1.4.1</div><div class="nt-body">Scores always pair a hue with a number and label, so verdicts never rely on color perception.</div></div>
+        </div>
+        <div class="ds-note">
+          <span class="material-symbols-outlined">visibility</span>
+          <div><div class="nt-title">Color-vision mode</div><div class="nt-body">Settings → Color vision swaps the score ramp to an Okabe-Ito color-blind-safe set, ordered by luminance. Preview it from the header switch above.</div></div>
+        </div>
+        <div class="ds-note">
+          <span class="material-symbols-outlined">format_size</span>
+          <div><div class="nt-title">Resize &amp; reflow · 1.4.4 / 1.4.10</div><div class="nt-body">Type scales in <code>rem</code>-equivalents and layouts reflow to a single column on narrow viewports.</div></div>
+        </div>
+        <div class="ds-note">
+          <span class="material-symbols-outlined">contrast</span>
+          <div><div class="nt-title">Non-text contrast · 1.4.11</div><div class="nt-body">Borders, icons, and track fills hold ≥ 3:1 against their adjacent surface in both themes.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ─── 0. INTRO / WELCOME — landing screen, no codes yet ──────────────── -->
 <!--   The far-left frame: the first thing a fresh user sees. A value-prop
@@ -4685,7 +5459,7 @@
 <section class="screen-pair">
   <h3 class="screen-pair-label">1b · Your Code (Home)</h3>
   <div class="pair-row">
-<div class="phone-wrap" data-code>
+<div class="phone-wrap" data-code data-chart="bubble">
   <div class="phone-label">Dark</div>
   <div class="phone">
     <div class="island"></div>
@@ -4706,11 +5480,12 @@
 
         <div class="px stack">
           <section class="pie-card">
+            <button class="chart-toggle" data-action="chart-toggle" aria-label="Switch to treemap chart"><span class="material-symbols-outlined">dashboard</span></button>
             <button class="rebalance-pill" data-action="rebalance-open" aria-label="Rebalance code weights"><span class="material-symbols-outlined">tune</span>Rebalance</button>
             <div class="pie-wrap" style="width:300px;height:300px;">
               <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
                    data-id="home" data-size="280" data-stroke="88"
-                   data-slices='[{"value":47,"c":"#1FA34A","icon":"sparkles"},{"value":23,"c":"#D8610C","icon":"award"},{"value":15,"c":"#CA371F","icon":"heart-pulse"},{"value":10,"c":"#147A36","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"}]'
+                   data-slices='[{"value":20,"c":"#1FA34A","icon":"sparkles"},{"value":15,"c":"#D8610C","icon":"award"},{"value":12,"c":"#CA371F","icon":"heart-pulse"},{"value":11,"c":"#147A36","icon":"gauge"},{"value":10,"c":"#FFC434","icon":"dumbbell"},{"value":8,"c":"#CA371F","icon":"leaf"},{"value":8,"c":"#D8610C","icon":"salad"},{"value":6,"c":"#147A36","icon":"brain"},{"value":5,"c":"#FFC434","icon":"zap"},{"value":5,"c":"#147A36","icon":"infinity"}]'
                    aria-hidden="true"></svg>
               <div class="pie-center">
                 <div class="num" style="font-size:46px;"><span data-pie-num-val>100</span><sup class="num-pct">%</sup></div>
@@ -4725,30 +5500,60 @@
             <div class="slot-c" data-code-id="clean_label" data-action="code-detail">
               <span class="ico" style="background:#1FA34A;"><span class="material-symbols-outlined">auto_awesome</span></span>
               <div class="meta"><div class="nm">Clean Label</div></div>
-              <span class="pct"><b>47</b><small>%</small></span>
+              <span class="pct"><b>20</b><small>%</small></span>
               <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
             </div>
             <div class="slot-c" data-code-id="overall_quality" data-action="code-detail">
               <span class="ico" style="background:#D8610C;"><span class="material-symbols-outlined">workspace_premium</span></span>
               <div class="meta"><div class="nm">Overall Quality</div></div>
-              <span class="pct"><b>23</b><small>%</small></span>
+              <span class="pct"><b>15</b><small>%</small></span>
               <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
             </div>
             <div class="slot-c" data-code-id="heart_health" data-action="code-detail">
               <span class="ico" style="background:#CA371F;"><span class="material-symbols-outlined">monitor_heart</span></span>
               <div class="meta"><div class="nm">Heart Health</div></div>
-              <span class="pct"><b>15</b><small>%</small></span>
+              <span class="pct"><b>12</b><small>%</small></span>
               <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
             </div>
             <div class="slot-c" data-code-id="performance_score" data-action="code-detail">
               <span class="ico" style="background:#147A36;"><span class="material-symbols-outlined">speed</span></span>
               <div class="meta"><div class="nm">Performance Score</div></div>
-              <span class="pct"><b>10</b><small>%</small></span>
+              <span class="pct"><b>11</b><small>%</small></span>
               <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
             </div>
             <div class="slot-c" data-code-id="muscle_health" data-action="code-detail">
               <span class="ico" style="background:#FFC434;"><span class="material-symbols-outlined">fitness_center</span></span>
               <div class="meta"><div class="nm">Muscle Health</div></div>
+              <span class="pct"><b>10</b><small>%</small></span>
+              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
+            </div>
+            <div class="slot-c" data-code-id="gut_health" data-action="code-detail">
+              <span class="ico" style="background:#CA371F;"><span class="material-symbols-outlined">eco</span></span>
+              <div class="meta"><div class="nm">Gut Health</div></div>
+              <span class="pct"><b>8</b><small>%</small></span>
+              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
+            </div>
+            <div class="slot-c" data-code-id="nutrient_density" data-action="code-detail">
+              <span class="ico" style="background:#D8610C;"><span class="material-symbols-outlined">restaurant_menu</span></span>
+              <div class="meta"><div class="nm">Nutrient Density</div></div>
+              <span class="pct"><b>8</b><small>%</small></span>
+              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
+            </div>
+            <div class="slot-c" data-code-id="brain_health" data-action="code-detail">
+              <span class="ico" style="background:#147A36;"><span class="material-symbols-outlined">psychology</span></span>
+              <div class="meta"><div class="nm">Brain Health</div></div>
+              <span class="pct"><b>6</b><small>%</small></span>
+              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
+            </div>
+            <div class="slot-c" data-code-id="energy_stamina" data-action="code-detail">
+              <span class="ico" style="background:#FFC434;"><span class="material-symbols-outlined">bolt</span></span>
+              <div class="meta"><div class="nm">Energy &amp; Stamina</div></div>
+              <span class="pct"><b>5</b><small>%</small></span>
+              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
+            </div>
+            <div class="slot-c" data-code-id="longevity_score" data-action="code-detail">
+              <span class="ico" style="background:#147A36;"><span class="material-symbols-outlined">all_inclusive</span></span>
+              <div class="meta"><div class="nm">Longevity Score</div></div>
               <span class="pct"><b>5</b><small>%</small></span>
               <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
             </div>
@@ -4871,7 +5676,10 @@
           </div>
 
           <div>
-            <span class="top-match-tag">TOP MATCH</span>
+            <div class="top-match-head">
+              <span class="top-match-tag">TOP MATCH</span>
+              <button type="button" class="reevaluate-link" data-action="reevaluate" aria-label="Re-evaluate matches against your updated code balance"><span class="material-symbols-outlined">autorenew</span>Reevaluate</button>
+            </div>
             <div class="food-row featured" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Divina Kalamata Olives Pitted">
               <div class="main">
                 <div class="food-thumb" style="background:linear-gradient(135deg,#5C7148 0%,#2F4225 100%);">
@@ -5202,7 +6010,8 @@
           </div>
 
           <!-- ─── Score card — verdict, contribution donut, table ─── -->
-          <div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+          <div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">
+            <button class="chart-toggle" data-action="detail-chart-toggle" aria-label="Switch to treemap chart"><span class="material-symbols-outlined">dashboard</span></button>
             <div class="match-verdict-row">
               <span class="material-symbols-outlined">check_circle</span>
               Excellent match for your code
@@ -5218,7 +6027,7 @@
                  plus the per-slot SALMON_SCORES table, so a change to
                  the code on Screens 1/6 (or a pick on Screen 2) flows
                  through here in one pass. -->
-            <div class="pie-wrap" style="width:310px;height:310px;margin:4px 0 8px;">
+            <div class="pie-wrap" data-chart="bubble" style="width:310px;height:310px;margin:4px 0 8px;">
               <svg viewBox="0 0 280 280" width="310" height="310" class="pie-svg"
                    data-id="product-detail" data-size="280" data-stroke="88"
                    data-slices='[]'
@@ -5308,7 +6117,7 @@
             <span class="set-label">Appearance</span>
             <div class="set-group">
               <div class="set-row">
-                <span class="set-ico" style="background:#1D4ED8;"><span class="material-symbols-outlined">contrast</span></span>
+                <span class="set-ico" style="color:#1D4ED8;"><span class="material-symbols-outlined">contrast</span></span>
                 <div class="set-copy">
                   <div class="set-title">Theme</div>
                   <div class="set-sub">Switch between light and dark mode.</div>
@@ -5318,6 +6127,17 @@
                   <span class="seg-opt seg-light"><span class="material-symbols-outlined">light_mode</span>Light</span>
                 </div>
               </div>
+              <div class="set-row">
+                <span class="set-ico" style="color:#1D4ED8;"><span class="material-symbols-outlined">visibility</span></span>
+                <div class="set-copy">
+                  <div class="set-title">Color vision</div>
+                  <div class="set-sub">Switch scores to a color-blind-safe palette.</div>
+                </div>
+                <div class="cvd-seg theme-seg" role="group" aria-label="Color vision" data-action="toggle-cvd">
+                  <span class="seg-opt seg-off">Default</span>
+                  <span class="seg-opt seg-on"><span class="material-symbols-outlined">contrast</span>Color-safe</span>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -5325,7 +6145,7 @@
             <span class="set-label">Account</span>
             <div class="set-group">
               <button type="button" class="set-row">
-                <span class="set-ico" style="background:#1D4ED8;"><span class="material-symbols-outlined">login</span></span>
+                <span class="set-ico" style="color:#1D4ED8;"><span class="material-symbols-outlined">login</span></span>
                 <div class="set-copy">
                   <div class="set-title">Log in</div>
                   <div class="set-sub">Sync your code across devices.</div>
@@ -5333,7 +6153,7 @@
                 <span class="set-trail-btn ghost">Log in</span>
               </button>
               <button type="button" class="set-row">
-                <span class="set-ico" style="background:#1D4ED8;"><span class="material-symbols-outlined">person_add</span></span>
+                <span class="set-ico" style="color:#1D4ED8;"><span class="material-symbols-outlined">person_add</span></span>
                 <div class="set-copy">
                   <div class="set-title">Create account</div>
                   <div class="set-sub">Save your code and pick up anywhere.</div>
@@ -5344,10 +6164,24 @@
           </div>
 
           <div class="set-section">
+            <span class="set-label">Location</span>
+            <div class="set-group">
+              <button type="button" class="set-row" data-action="share-location">
+                <span class="set-ico" style="color:#0E7C4A;"><span class="material-symbols-outlined">location_on</span></span>
+                <div class="set-copy">
+                  <div class="set-title">Share location</div>
+                  <div class="set-sub" data-loc-sub>Surface stores and picks near you.</div>
+                </div>
+                <span class="set-trail-btn ghost" data-loc-btn>Allow</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="set-section">
             <span class="set-label">Share</span>
             <div class="set-group">
               <button type="button" class="set-row">
-                <span class="set-ico" style="background:#1D4ED8;"><span class="material-symbols-outlined">ios_share</span></span>
+                <span class="set-ico" style="color:#1D4ED8;"><span class="material-symbols-outlined">ios_share</span></span>
                 <div class="set-copy">
                   <div class="set-title">Share the app</div>
                   <div class="set-sub">Send Personalized Nutrition to a friend.</div>
@@ -5429,6 +6263,16 @@
       // re-renders during interaction use the default (no animation)
       // so live weight adjustments stay tight and predictable.
       var renderPieSvg;
+      // Companion renderer that paints the same code mix as a clustered
+      // bubble chart instead of a donut. Exposed at outer scope so the
+      // code hero's renderHero can dispatch to it when the pie-card is
+      // toggled into bubble mode. Assigned inside the same IIFE as
+      // renderPieSvg so it shares the icon-alias map and SVG namespace.
+      var renderBubbleChart;
+      // Third code viz: a squarified treemap (tiled rectangles, area ∝
+      // weight). Assigned in the same IIFE as the other two so it shares
+      // the icon-alias map + SVG namespace, exposed here for renderHero.
+      var renderTreemap;
       (function () {
         var SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -5804,6 +6648,372 @@
           svg._pieRaf = requestAnimationFrame(tick);
         };
 
+        // ─── Clustered bubble chart renderer ───────────────────────────
+        // Reads the same `data-slices` JSON the donut uses and lays the
+        // codes out as a tight pack of circles (area ∝ weight). Packing
+        // is a simple force relaxation: seed each bubble on a golden-angle
+        // spiral, then iterate gravity-toward-center + pairwise collision
+        // resolution until the cluster settles, and finally scale/center
+        // the whole pack to fit the SVG viewBox. With ≤10 bubbles the
+        // O(n²·iters) loop is trivially cheap. Labels (icon + percentage)
+        // reuse the donut's .pie-slice-tag nodes — same positioning model,
+        // same teardown — tagged .bubble-tag and sized per-bubble.
+        renderBubbleChart = function (svg, opts) {
+          opts = opts || {};
+          var animate = opts.animate === true;
+
+          var slices;
+          try {
+            slices = JSON.parse(svg.getAttribute("data-slices"));
+          } catch (e) { return; }
+
+          var wrap = svg.parentElement;
+          if (svg._pieRaf) { cancelAnimationFrame(svg._pieRaf); svg._pieRaf = null; }
+          svg.innerHTML = "";
+          if (wrap) {
+            wrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
+          }
+          if (!Array.isArray(slices) || !slices.length) return;
+
+          var size = parseFloat(svg.getAttribute("data-size")) || 200;
+          var cx = size / 2;
+          var cy = size / 2;
+          var total = slices.reduce(function (s, x) { return s + (x.value || 0); }, 0);
+          if (total <= 0) return;
+
+          // One node per non-empty slice; relative radius ∝ √value so
+          // AREA tracks the weight.
+          var nodes = slices
+            .filter(function (s) { return (s.value || 0) > 0; })
+            .map(function (s) { return { slice: s, r: Math.sqrt(s.value) }; });
+          if (!nodes.length) return;
+
+          // Seed positions on a golden-angle spiral so the relaxation
+          // starts already roughly spread out (avoids a degenerate
+          // all-stacked-at-origin start that resolves into a line).
+          var GA = Math.PI * (3 - Math.sqrt(5));
+          nodes.forEach(function (nd, i) {
+            var ang = i * GA;
+            var rad = nd.r * 1.4 * Math.sqrt(i + 0.5);
+            nd.x = Math.cos(ang) * rad;
+            nd.y = Math.sin(ang) * rad;
+          });
+
+          // Relaxation. Gentle inward pull each pass keeps the pack tight;
+          // pairwise push-apart enforces a small gap between bubbles.
+          var gapU = 0.6;
+          var n = nodes.length;
+          for (var iter = 0; iter < 400; iter++) {
+            for (var g = 0; g < n; g++) { nodes[g].x *= 0.985; nodes[g].y *= 0.985; }
+            for (var i = 0; i < n; i++) {
+              for (var j = i + 1; j < n; j++) {
+                var a = nodes[i], b = nodes[j];
+                var dx = b.x - a.x, dy = b.y - a.y;
+                var d = Math.sqrt(dx * dx + dy * dy) || 0.0001;
+                var minD = a.r + b.r + gapU;
+                if (d < minD) {
+                  var push = (minD - d) / 2;
+                  var ux = dx / d, uy = dy / d;
+                  a.x -= ux * push; a.y -= uy * push;
+                  b.x += ux * push; b.y += uy * push;
+                }
+              }
+            }
+          }
+
+          // Fit the settled pack to a circle inside the viewBox.
+          var pad = 6;
+          var targetR = size / 2 - pad;
+          var maxExt = 0;
+          nodes.forEach(function (nd) {
+            var ext = Math.sqrt(nd.x * nd.x + nd.y * nd.y) + nd.r;
+            if (ext > maxExt) maxExt = ext;
+          });
+          var scale = maxExt > 0 ? targetR / maxExt : 1;
+          nodes.forEach(function (nd) {
+            nd.fx = cx + nd.x * scale;
+            nd.fy = cy + nd.y * scale;
+            nd.fr = nd.r * scale;
+          });
+
+          // Mount each bubble + its label. The icon shows only on bubbles
+          // big enough to carry it; the percentage shows a bit lower.
+          nodes.forEach(function (nd) {
+            var circle = document.createElementNS(SVG_NS, "circle");
+            circle.setAttribute("class", "bubble");
+            circle.setAttribute("cx", nd.fx.toFixed(2));
+            circle.setAttribute("cy", nd.fy.toFixed(2));
+            circle.setAttribute("r", animate ? "0" : nd.fr.toFixed(2));
+            circle.setAttribute("fill", nd.slice.c);
+            if (nd.slice.codeId) {
+              circle.setAttribute("data-action", "code-detail");
+              circle.setAttribute("data-code-id", nd.slice.codeId);
+            }
+            svg.appendChild(circle);
+            nd.circleEl = circle;
+
+            var tag = document.createElement("div");
+            tag.className = "pie-slice-tag bubble-tag";
+            var scaleF = Math.max(0.5, Math.min(1, nd.fr / 34));
+            if (nd.slice.icon && nd.fr >= 16) {
+              var ico = document.createElement("span");
+              ico.className = "ico";
+              var glyph = document.createElement("span");
+              glyph.className = "material-symbols-outlined";
+              glyph.textContent = msName(nd.slice.icon);
+              glyph.style.fontSize = (22 * scaleF).toFixed(1) + "px";
+              ico.appendChild(glyph);
+              tag.appendChild(ico);
+            }
+            if (nd.fr >= 12) {
+              var pct = document.createElement("span");
+              pct.className = "pct";
+              pct.textContent = Math.round(nd.slice.value) + "%";
+              pct.style.fontSize = (16 * scaleF).toFixed(1) + "px";
+              tag.appendChild(pct);
+            }
+            if (tag.childNodes.length) {
+              tag.style.left = ((nd.fx / size) * 100).toFixed(3) + "%";
+              tag.style.top = ((nd.fy / size) * 100).toFixed(3) + "%";
+              tag.style.opacity = animate ? "0" : "1";
+              wrap.appendChild(tag);
+              nd.tagEl = tag;
+            }
+          });
+
+          if (!animate) return;
+
+          // Staggered pop-in: each bubble scales up from r=0 with a small
+          // overshoot, its label fading in over the back of the pop.
+          var DUR = 360, STAG = 70, c1 = 1.70158, c3 = c1 + 1;
+          function easeOutBack(x) {
+            return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+          }
+          var t0 = null;
+          function tick(now) {
+            if (t0 === null) t0 = now;
+            var elapsed = now - t0;
+            var allDone = true;
+            for (var i = 0; i < nodes.length; i++) {
+              var nd = nodes[i];
+              var local = elapsed - i * STAG;
+              var x = local <= 0 ? 0 : Math.min(local / DUR, 1);
+              var ease = x <= 0 ? 0 : easeOutBack(x);
+              nd.circleEl.setAttribute("r", Math.max(0, nd.fr * ease).toFixed(2));
+              if (nd.tagEl) {
+                nd.tagEl.style.opacity = Math.max(0, Math.min(1, (x - 0.4) / 0.6)).toFixed(3);
+              }
+              if (x < 1) allDone = false;
+            }
+            if (!allDone) {
+              svg._pieRaf = requestAnimationFrame(tick);
+            } else {
+              svg._pieRaf = null;
+              nodes.forEach(function (nd) {
+                nd.circleEl.setAttribute("r", nd.fr.toFixed(2));
+                if (nd.tagEl) nd.tagEl.style.opacity = "1";
+              });
+            }
+          }
+          svg._pieRaf = requestAnimationFrame(tick);
+        };
+
+        // ─── Squarified treemap renderer ───────────────────────────────
+        // Reads the same `data-slices` JSON and tiles the full viewBox
+        // with rectangles, each one's AREA proportional to its weight,
+        // laid out with the squarified algorithm (Bruls/Huizing/van Wijk)
+        // so tiles stay close to square instead of degenerating into thin
+        // strips. Tiles carry the same data-action/code-id as the donut
+        // slices (tap → code sheet) and reuse the .pie-slice-tag label
+        // nodes for cleanup parity.
+        renderTreemap = function (svg, opts) {
+          opts = opts || {};
+          var animate = opts.animate === true;
+
+          var slices;
+          try {
+            slices = JSON.parse(svg.getAttribute("data-slices"));
+          } catch (e) { return; }
+
+          var wrap = svg.parentElement;
+          if (svg._pieRaf) { cancelAnimationFrame(svg._pieRaf); svg._pieRaf = null; }
+          svg.innerHTML = "";
+          if (wrap) {
+            wrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
+          }
+          if (!Array.isArray(slices) || !slices.length) return;
+
+          var size = parseFloat(svg.getAttribute("data-size")) || 200;
+          var total = slices.reduce(function (s, x) { return s + (x.value || 0); }, 0);
+          if (total <= 0) return;
+
+          // Inset the whole map by 1px so the outer drop-shadow isn't
+          // clipped at the viewBox edge.
+          var X0 = 1, Y0 = 1, AREA_W = size - 2, AREA_H = size - 2;
+
+          // Scale each weight to a pixel area so the tiles exactly fill
+          // the map rectangle.
+          var scaleArea = (AREA_W * AREA_H) / total;
+          var items = slices
+            .filter(function (s) { return (s.value || 0) > 0; })
+            .map(function (s) { return { slice: s, area: s.value * scaleArea }; })
+            .sort(function (a, b) { return b.area - a.area; });
+          if (!items.length) return;
+
+          // "Worst" aspect ratio of a candidate row laid along `length`.
+          function worst(row, length) {
+            var sum = 0, max = 0, min = Infinity;
+            for (var i = 0; i < row.length; i++) {
+              var a = row[i].area;
+              sum += a;
+              if (a > max) max = a;
+              if (a < min) min = a;
+            }
+            if (sum <= 0) return Infinity;
+            var s2 = sum * sum, l2 = length * length;
+            return Math.max((l2 * max) / s2, s2 / (l2 * min));
+          }
+
+          // Squarified layout → array of { slice, x, y, w, h }.
+          var rects = [];
+          var x = X0, y = Y0, w = AREA_W, h = AREA_H;
+          var idx = 0;
+          while (idx < items.length) {
+            var shortSide = Math.min(w, h);
+            if (shortSide <= 0) break;
+            var row = [items[idx]];
+            var next = idx + 1;
+            while (next < items.length) {
+              var withNext = row.concat([items[next]]);
+              if (worst(withNext, shortSide) <= worst(row, shortSide)) {
+                row = withNext;
+                next++;
+              } else break;
+            }
+            var rowSum = row.reduce(function (a, r) { return a + r.area; }, 0);
+            var thickness = rowSum / shortSide;
+            if (w >= h) {
+              // Row becomes a vertical column on the left edge.
+              var offY = y;
+              for (var k = 0; k < row.length; k++) {
+                var cellH = row[k].area / thickness;
+                rects.push({ slice: row[k].slice, x: x, y: offY, w: thickness, h: cellH });
+                offY += cellH;
+              }
+              x += thickness; w -= thickness;
+            } else {
+              // Row becomes a horizontal band across the top edge.
+              var offX = x;
+              for (var k2 = 0; k2 < row.length; k2++) {
+                var cellW = row[k2].area / thickness;
+                rects.push({ slice: row[k2].slice, x: offX, y: y, w: cellW, h: thickness });
+                offX += cellW;
+              }
+              y += thickness; h -= thickness;
+            }
+            idx = next;
+          }
+
+          // Mount each tile + label. Tiles inset by a small gap so they
+          // read as separate chips.
+          var gap = 2.5;
+          rects.forEach(function (rc) {
+            var rx = Math.max(0, rc.x + gap / 2);
+            var ry = Math.max(0, rc.y + gap / 2);
+            var rw = Math.max(1, rc.w - gap);
+            var rh = Math.max(1, rc.h - gap);
+
+            var rect = document.createElementNS(SVG_NS, "rect");
+            rect.setAttribute("class", "tm");
+            rect.setAttribute("x", rx.toFixed(2));
+            rect.setAttribute("y", ry.toFixed(2));
+            rect.setAttribute("width", rw.toFixed(2));
+            rect.setAttribute("height", rh.toFixed(2));
+            rect.setAttribute("rx", Math.min(6, rw / 2, rh / 2).toFixed(2));
+            rect.setAttribute("fill", rc.slice.c);
+            if (rc.slice.codeId) {
+              rect.setAttribute("data-action", "code-detail");
+              rect.setAttribute("data-code-id", rc.slice.codeId);
+            }
+            if (animate) {
+              rect.style.opacity = "0";
+              rect.style.transform = "scale(0.6)";
+            }
+            svg.appendChild(rect);
+            rc.rectEl = rect;
+
+            var minDim = Math.min(rw, rh);
+            var tag = document.createElement("div");
+            tag.className = "pie-slice-tag treemap-tag";
+            var scaleF = Math.max(0.5, Math.min(1, minDim / 64));
+            if (rc.slice.icon && minDim >= 40) {
+              var ico = document.createElement("span");
+              ico.className = "ico";
+              var glyph = document.createElement("span");
+              glyph.className = "material-symbols-outlined";
+              glyph.textContent = msName(rc.slice.icon);
+              glyph.style.fontSize = (22 * scaleF).toFixed(1) + "px";
+              ico.appendChild(glyph);
+              tag.appendChild(ico);
+            }
+            if (minDim >= 22) {
+              var pct = document.createElement("span");
+              pct.className = "pct";
+              pct.textContent = Math.round(rc.slice.value) + "%";
+              pct.style.fontSize = (16 * scaleF).toFixed(1) + "px";
+              tag.appendChild(pct);
+            }
+            if (tag.childNodes.length) {
+              var ccx = rx + rw / 2;
+              var ccy = ry + rh / 2;
+              tag.style.left = ((ccx / size) * 100).toFixed(3) + "%";
+              tag.style.top = ((ccy / size) * 100).toFixed(3) + "%";
+              tag.style.opacity = animate ? "0" : "1";
+              wrap.appendChild(tag);
+              rc.tagEl = tag;
+            }
+          });
+
+          if (!animate) return;
+
+          // Staggered pop-in: each tile scales up from 0.6 with a small
+          // overshoot while fading in, label following on the back half.
+          var DUR = 340, STAG = 55, c1 = 1.70158, c3 = c1 + 1;
+          function easeOutBack(t) {
+            return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+          }
+          var t0 = null;
+          function tick(now) {
+            if (t0 === null) t0 = now;
+            var elapsed = now - t0;
+            var allDone = true;
+            for (var i = 0; i < rects.length; i++) {
+              var rc = rects[i];
+              var local = elapsed - i * STAG;
+              var p = local <= 0 ? 0 : Math.min(local / DUR, 1);
+              var ease = p <= 0 ? 0 : easeOutBack(p);
+              var sc = 0.6 + 0.4 * ease;
+              rc.rectEl.style.opacity = Math.min(1, p * 1.6).toFixed(3);
+              rc.rectEl.style.transform = "scale(" + sc.toFixed(3) + ")";
+              if (rc.tagEl) {
+                rc.tagEl.style.opacity = Math.max(0, Math.min(1, (p - 0.4) / 0.6)).toFixed(3);
+              }
+              if (p < 1) allDone = false;
+            }
+            if (!allDone) {
+              svg._pieRaf = requestAnimationFrame(tick);
+            } else {
+              svg._pieRaf = null;
+              rects.forEach(function (rc) {
+                rc.rectEl.style.opacity = "1";
+                rc.rectEl.style.transform = "scale(1)";
+                if (rc.tagEl) rc.tagEl.style.opacity = "1";
+              });
+            }
+          }
+          svg._pieRaf = requestAnimationFrame(tick);
+        };
+
         // No initial paint here — the dark/light cloner below clones
         // empty <svg> shells, then the WISE_CODES code and product-
         // detail subscribers fire immediately on subscribe and paint
@@ -5812,6 +7022,68 @@
         // we never animate a dark pie only to have the subscriber
         // clobber the in-flight RAF a tick later.
       })();
+
+      // ─── Shared chart-type cycle config + dispatcher ─────────────────
+      // One source of truth for the donut → bubble → treemap cycle, used
+      // by the code hero toggle (Screen 1) and the detail-screen toggles
+      // (Product Detail + Food Detail sheet). CHART_ICON is the glyph
+      // shown ON the toggle button — a preview of the chart the NEXT tap
+      // switches to.
+      var CHART_ORDER = ["donut", "bubble", "treemap"];
+      var CHART_ICON = { donut: "donut_large", bubble: "bubble_chart", treemap: "dashboard" };
+      var CHART_LABEL = { donut: "donut chart", bubble: "bubble chart", treemap: "treemap chart" };
+
+      // Paint one pie-svg in whichever mode its .pie-wrap is set to
+      // (data-chart), toggling the is-bubble / is-treemap classes that
+      // hide the center disc. Reads the slices already written onto the
+      // svg, so callers just set data-slices then call this. Shared by
+      // the Product Detail + Food Detail renderers.
+      function renderDetailChart(pieSvg, opts) {
+        if (!pieSvg) return;
+        var wrap = pieSvg.closest(".pie-wrap");
+        var mode = wrap ? wrap.getAttribute("data-chart") : null;
+        if (mode !== "bubble" && mode !== "treemap") mode = "donut";
+        if (wrap) {
+          wrap.classList.toggle("is-bubble", mode === "bubble");
+          wrap.classList.toggle("is-treemap", mode === "treemap");
+        }
+        if (mode === "bubble" && typeof renderBubbleChart === "function") {
+          renderBubbleChart(pieSvg, opts);
+        } else if (mode === "treemap" && typeof renderTreemap === "function") {
+          renderTreemap(pieSvg, opts);
+        } else {
+          renderPieSvg(pieSvg, opts);
+        }
+      }
+
+      // Toggle handler for the detail-screen chart buttons. Cycles the
+      // pie-wrap's data-chart, updates the button glyph to preview the
+      // next chart, and repaints that one pie with the entrance
+      // animation. Scoped by action name so it never collides with the
+      // code hero's own [data-code]-scoped toggle.
+      document.addEventListener("click", function (ev) {
+        var btn = ev.target.closest && ev.target.closest('[data-action="detail-chart-toggle"]');
+        if (!btn) return;
+        ev.preventDefault();
+        var scope = btn.closest(".card") || btn.parentElement;
+        var pieSvg = scope ? scope.querySelector(".pie-svg") : null;
+        if (!pieSvg) return;
+        var wrap = pieSvg.closest(".pie-wrap");
+        if (!wrap) return;
+
+        var cur = wrap.getAttribute("data-chart");
+        var idx = CHART_ORDER.indexOf(cur);
+        if (idx < 0) idx = 0;
+        var nextMode = CHART_ORDER[(idx + 1) % CHART_ORDER.length];
+        var afterNext = CHART_ORDER[(idx + 2) % CHART_ORDER.length];
+        wrap.setAttribute("data-chart", nextMode);
+
+        var glyph = btn.querySelector(".material-symbols-outlined");
+        if (glyph) glyph.textContent = CHART_ICON[afterNext];
+        btn.setAttribute("aria-label", "Switch to " + CHART_LABEL[afterNext]);
+
+        renderDetailChart(pieSvg, { animate: true });
+      });
 
       // ─── Tap-to-replay the donut animation ────────────────────────────
       // Tapping any rendered donut replays its bounce-in entrance. Used
@@ -5824,14 +7096,28 @@
         if (!e.target.closest) return;
         // Slice taps open the per-code bottom sheet (handled elsewhere);
         // only the donut hole / center disc replays the entrance bounce.
+        // Slice / bubble / tile taps open the per-code sheet (handled by
+        // the action delegate) — only a tap on the hole / empty space
+        // replays the entrance.
         if (e.target.closest("path.seg")) return;
+        if (e.target.closest("circle.bubble")) return;
+        if (e.target.closest("rect.tm")) return;
         var wrap = e.target.closest(".pie-wrap");
         if (!wrap) return;
         var svg = wrap.querySelector(".pie-svg");
         if (!svg || typeof renderPieSvg !== "function") return;
         var slices = svg.getAttribute("data-slices");
         if (!slices || slices === "[]") return; // nothing to animate
-        renderPieSvg(svg, { animate: true });
+        // Replay in whichever mode the wrap is currently showing, so a
+        // tap on the bubble / treemap viz re-pops that one instead of
+        // snapping back to a donut.
+        if (wrap.classList.contains("is-bubble") && typeof renderBubbleChart === "function") {
+          renderBubbleChart(svg, { animate: true });
+        } else if (wrap.classList.contains("is-treemap") && typeof renderTreemap === "function") {
+          renderTreemap(svg, { animate: true });
+        } else {
+          renderPieSvg(svg, { animate: true });
+        }
       });
 
       // ─── Replay-all button (catalog header) ────────────────────────────
@@ -5861,7 +7147,16 @@
         if (!pies.length) return;
 
         function playAll() {
-          pies.forEach(function (svg) { renderPieSvg(svg, { animate: true }); });
+          pies.forEach(function (svg) {
+            var w = svg.closest(".pie-wrap");
+            if (w && w.classList.contains("is-bubble") && typeof renderBubbleChart === "function") {
+              renderBubbleChart(svg, { animate: true });
+            } else if (w && w.classList.contains("is-treemap") && typeof renderTreemap === "function") {
+              renderTreemap(svg, { animate: true });
+            } else {
+              renderPieSvg(svg, { animate: true });
+            }
+          });
         }
 
         // Already looking at a donut? (The rail scrolls horizontally while
@@ -5887,6 +7182,130 @@
         setTimeout(fire, 700);
         frame.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
       });
+
+      // ─── Color-vision-safe palette toggle ────────────────────────────
+      // Sets data-cvd="safe" on <html>, which swaps the score/code CSS
+      // tokens to the Okabe-Ito colour-blind-safe ramp (see the
+      // [data-cvd] block in the stylesheet). But the catalog hard-codes
+      // those same hues inline — in data-slices, style="background:#…",
+      // and SVG fill/stroke — so a token override alone wouldn't reach
+      // the donuts, slot tiles, pills or verdict chips. We therefore also
+      // remap the inline hexes (reversibly) and repaint the pies whenever
+      // the mode flips. Driven by the header preview switch and the
+      // Settings → Color vision segmented control; both are delegated so
+      // the cloned light twin's control works too.
+      (function () {
+        var root = document.documentElement;
+
+        // brand / score / code hex → colour-vision-safe hex.
+        var FWD = {
+          "#1FA34A": "#009E73", // brand green    → bluish green
+          "#147A36": "#0072B2", // emerald deep   → blue (2nd cool category)
+          "#FFC434": "#F0C808", // signal yellow  → golden yellow
+          "#D8610C": "#E8852B", // signal orange  → orange
+          "#CA371F": "#C73E1D", // signal risk    → vermillion
+          "#FF8E8E": "#FF8E5E"  // dark risk-soft → light vermillion
+        };
+        var REV = {};
+        Object.keys(FWD).forEach(function (k) { REV[FWD[k]] = k; });
+
+        function remap(str, map) {
+          if (!str) return str;
+          return str.replace(/#[0-9A-Fa-f]{6}/g, function (m) {
+            return map[m.toUpperCase()] || m;
+          });
+        }
+
+        function applyRemap(on) {
+          var map = on ? FWD : REV;
+          // The Design System board documents the *base* palette with
+          // hard-coded hex captions, so leave its swatches untouched —
+          // remapping them would contradict their printed hex labels.
+          function skip(el) { return el.closest(".ds-board"); }
+          document.querySelectorAll("[style]").forEach(function (el) {
+            if (skip(el)) return;
+            var s = el.getAttribute("style");
+            var n = remap(s, map);
+            if (n !== s) el.setAttribute("style", n);
+          });
+          document.querySelectorAll("[fill],[stroke]").forEach(function (el) {
+            if (skip(el)) return;
+            ["fill", "stroke"].forEach(function (a) {
+              var v = el.getAttribute(a);
+              if (!v) return;
+              var n = remap(v, map);
+              if (n !== v) el.setAttribute(a, n);
+            });
+          });
+          document.querySelectorAll(".pie-svg[data-slices]").forEach(function (svg) {
+            var s = svg.getAttribute("data-slices");
+            var n = remap(s, map);
+            if (n === s) return;
+            svg.setAttribute("data-slices", n);
+            try {
+              var w = svg.closest(".pie-wrap");
+              if (w && w.classList.contains("is-bubble") && typeof renderBubbleChart === "function") {
+                renderBubbleChart(svg, { animate: false });
+              } else if (typeof renderPieSvg === "function") {
+                renderPieSvg(svg, { animate: false });
+              }
+            } catch (err) {}
+          });
+        }
+
+        function sync() {
+          var on = root.getAttribute("data-cvd") === "safe";
+          document.querySelectorAll('[data-action="toggle-cvd"]').forEach(function (el) {
+            if (el.hasAttribute("aria-pressed")) el.setAttribute("aria-pressed", on ? "true" : "false");
+            var st = el.querySelector(".state");
+            if (st) st.textContent = on ? "On" : "Off";
+          });
+        }
+
+        // The recoloured donut / verdict / tile screens sit several frames
+        // to the right of the opening Design System + Intro frames, so a
+        // toggle from the pinned header otherwise looks like a no-op. When
+        // turning the preview ON, slide the first populated donut frame into
+        // view so the change is actually visible.
+        function revealScoredFrame() {
+          var target = null;
+          document.querySelectorAll(".pie-svg[data-slices]").forEach(function (svg) {
+            if (target) return;
+            var sl = svg.getAttribute("data-slices");
+            if (sl && sl !== "[]") target = svg;
+          });
+          if (!target) return;
+          var r = target.getBoundingClientRect();
+          if (r.left < window.innerWidth && r.right > 0 && r.top < window.innerHeight && r.bottom > 0) return;
+          var frame = target.closest(".screen-pair");
+          if (frame && frame.scrollIntoView) {
+            frame.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+          }
+        }
+
+        function setCvd(on, reveal) {
+          var cur = root.getAttribute("data-cvd") === "safe";
+          if (on !== cur) {
+            if (on) root.setAttribute("data-cvd", "safe");
+            else root.removeAttribute("data-cvd");
+            applyRemap(on);
+          }
+          sync();
+          if (on && reveal) revealScoredFrame();
+        }
+
+        document.addEventListener("click", function (e) {
+          if (!e.target || !e.target.closest) return;
+          var seg = e.target.closest(".cvd-seg .seg-opt");
+          if (seg) { setCvd(seg.classList.contains("seg-on"), false); return; }
+          var btn = e.target.closest('[data-action="toggle-cvd"]');
+          if (btn && !btn.classList.contains("cvd-seg")) {
+            setCvd(root.getAttribute("data-cvd") !== "safe", true);
+          }
+        });
+
+        sync();
+      })();
 
       // ─── Dark/light pair cloner ──────────────────────────────────────
       // The source markup only ships the dark phone-wrap inside each
@@ -6030,16 +7449,16 @@
       //
       // Mirrors the slice in store/slices/preferences-slice.ts and the
       // helpers in lib/composite.ts:
-      //   • MAX_SLOTS = 5 — hard ceiling, same as the real app
+      //   • MAX_SLOTS = 10 — hard ceiling, same as the real app
       //   • addCode    → push, then autoEqualize so weights sum to 100
       //   • removeCode → strip, then autoEqualize the rest
-      //   • resetCode → restore the authored "47/23/15/10/5" mix
+      //   • resetCode → restore the authored ten-code starting mix
       //
       // The module also carries the per-codeId scoring table used by
       // the Product Detail screen so contribution numbers (and the
       // composite score) recompute when the code changes.
       var WISE_CODES = (function () {
-        var MAX_SLOTS = 5;
+        var MAX_SLOTS = 10;
 
         // Code catalog — every selectable expression, keyed by a stable
         // id. Carries the identity (display name, family, color, icon)
@@ -6079,11 +7498,16 @@
         // what's already in the DOM. The Reset sheet restores this
         // mix instead of falling back to an even split.
         var INITIAL_SLOTS = [
-          { codeId: "clean_label",       weight: 47 },
-          { codeId: "overall_quality",   weight: 23 },
-          { codeId: "heart_health",      weight: 15 },
-          { codeId: "performance_score", weight: 10 },
-          { codeId: "muscle_health",     weight: 5 }
+          { codeId: "clean_label",       weight: 20 },
+          { codeId: "overall_quality",   weight: 15 },
+          { codeId: "heart_health",      weight: 12 },
+          { codeId: "performance_score", weight: 11 },
+          { codeId: "muscle_health",     weight: 10 },
+          { codeId: "gut_health",        weight: 8 },
+          { codeId: "nutrient_density",  weight: 8 },
+          { codeId: "brain_health",      weight: 6 },
+          { codeId: "energy_stamina",    weight: 5 },
+          { codeId: "longevity_score",   weight: 5 }
         ];
 
         // Per-code copy that hydrates the bottom-sheet opened when the
@@ -6728,6 +8152,12 @@
               : (inHarmony ? "Your weights are balanced" : "Balance weights to reach 100");
           }
 
+          // Chart type is held per phone-wrap (so the dark + light twins
+          // stay independent, like the rest of the prototype). The
+          // pie-card's chart-toggle cycles donut → bubble → treemap.
+          var chartMode = phoneWrap.getAttribute("data-chart");
+          if (chartMode !== "bubble" && chartMode !== "treemap") chartMode = "donut";
+
           var pieSvg = phoneWrap.querySelector(".pie-svg");
           if (pieSvg && typeof renderPieSvg === "function") {
             var slices = filled.map(function (s) {
@@ -6737,7 +8167,22 @@
                 : null;
             }).filter(Boolean);
             pieSvg.setAttribute("data-slices", JSON.stringify(slices));
-            renderPieSvg(pieSvg, opts);
+
+            // The bubble pack / treemap fill the donut hole, so hide the
+            // center "OF 100" disc unless we're showing the donut.
+            var pieWrap = pieSvg.closest(".pie-wrap");
+            if (pieWrap) {
+              pieWrap.classList.toggle("is-bubble", chartMode === "bubble");
+              pieWrap.classList.toggle("is-treemap", chartMode === "treemap");
+            }
+
+            if (chartMode === "bubble" && typeof renderBubbleChart === "function") {
+              renderBubbleChart(pieSvg, opts);
+            } else if (chartMode === "treemap" && typeof renderTreemap === "function") {
+              renderTreemap(pieSvg, opts);
+            } else {
+              renderPieSvg(pieSvg, opts);
+            }
           }
 
           var pieNum = phoneWrap.querySelector(".pie-center .num [data-pie-num-val]")
@@ -7644,6 +9089,56 @@
             return;
           }
 
+          // Settings → Share location. Fires the browser's native
+          // geolocation permission prompt; the row's subtext + trailing
+          // button reflect the outcome. Scoped to the tapped row so the
+          // dark + cloned light twin report independently. The captured
+          // coordinates aren't used here (this is a screens prototype) —
+          // the point is to surface the real Allow/Deny system prompt.
+          if (action === "share-location") {
+            ev.preventDefault();
+            var locRow = target.closest(".set-row");
+            if (!locRow) return;
+            var locSub = locRow.querySelector("[data-loc-sub]");
+            var locBtn = locRow.querySelector("[data-loc-btn]");
+
+            if (!navigator.geolocation) {
+              if (locSub) locSub.textContent = "Location isn't available on this device.";
+              return;
+            }
+            if (locRow.getAttribute("data-loc-state") === "pending") return;
+
+            locRow.setAttribute("data-loc-state", "pending");
+            if (locSub) locSub.textContent = "Requesting permission\u2026";
+            if (locBtn) locBtn.textContent = "\u2026";
+
+            navigator.geolocation.getCurrentPosition(
+              function () {
+                locRow.setAttribute("data-loc-state", "granted");
+                if (locSub) locSub.textContent = "On \u2014 we\u2019ll surface stores and picks near you.";
+                if (locBtn) {
+                  locBtn.textContent = "On";
+                  locBtn.classList.remove("ghost");
+                  locBtn.classList.add("solid");
+                }
+              },
+              function (err) {
+                locRow.setAttribute("data-loc-state", "denied");
+                if (locSub) {
+                  locSub.textContent = (err && err.code === 1)
+                    ? "Permission denied \u2014 enable location in your browser settings."
+                    : "Couldn\u2019t get your location. Try again.";
+                }
+                if (locBtn) {
+                  locBtn.textContent = "Allow";
+                  locBtn.classList.add("ghost");
+                  locBtn.classList.remove("solid");
+                }
+              }
+            );
+            return;
+          }
+
           // Persona picker (Screen 0b): toggle a card, then light up the
           // footer CTA once at least one persona is selected. Scoped to the
           // tapped .phone-wrap so the dark + cloned light twin stay
@@ -7878,6 +9373,30 @@
             return;
           }
 
+          // "Reevaluate" (Browse, right of the TOP MATCH pill): re-scores
+          // the list against the current code balance. The food rows are
+          // authored, so we simulate the reload by spinning the link icon
+          // briefly and replaying the health-bar wipe across this phone —
+          // the bars already mirror the live code mix via the browse
+          // subscriber, so re-painting them reads as a fresh re-score.
+          if (action === "reevaluate") {
+            var rePhone = target.closest(".phone-wrap");
+            if (!rePhone) return;
+            ev.preventDefault();
+            if (target.classList.contains("is-loading")) return; // debounce
+            target.classList.add("is-loading");
+            target.setAttribute("disabled", "");
+            if (typeof window.replayHealthBars === "function") {
+              window.replayHealthBars(rePhone);
+            }
+            // Clear the spinner once the staggered wipe has finished.
+            setTimeout(function () {
+              target.classList.remove("is-loading");
+              target.removeAttribute("disabled");
+            }, 900);
+            return;
+          }
+
           // Swap affordance on a rebalance row: open the Pick a code
           // sheet stacked on top of the rebalance sheet, in swap mode
           // for this row's code. Picking a code there trades it in for
@@ -7994,6 +9513,37 @@
             }
           });
         });
+
+        // ─── Chart-type toggle (donut → bubble → treemap → donut) ──────
+        // The icon button in the pie-card's top-left corner cycles that
+        // phone-wrap through the three code vizzes. State lives on the
+        // wrap (data-chart) so renderHero — driven from shared slot
+        // state — keeps painting the right viz on every later add /
+        // remove / rebalance. We re-render this one wrap with the entrance
+        // animation so the new chart pops in, and set the button's glyph
+        // + label to preview the chart the NEXT tap will switch to.
+        // (Cycle config + glyphs come from the shared CHART_ORDER /
+        // CHART_ICON / CHART_LABEL defined above.)
+        document.addEventListener("click", function (ev) {
+          var btn = ev.target.closest && ev.target.closest('[data-action="chart-toggle"]');
+          if (!btn) return;
+          var wrap = btn.closest(".phone-wrap[data-code]");
+          if (!wrap) return;
+          ev.preventDefault();
+
+          var cur = wrap.getAttribute("data-chart");
+          var idx = CHART_ORDER.indexOf(cur);
+          if (idx < 0) idx = 0; // unset → treat as donut
+          var nextMode = CHART_ORDER[(idx + 1) % CHART_ORDER.length];
+          var afterNext = CHART_ORDER[(idx + 2) % CHART_ORDER.length];
+          wrap.setAttribute("data-chart", nextMode);
+
+          var glyph = btn.querySelector(".material-symbols-outlined");
+          if (glyph) glyph.textContent = CHART_ICON[afterNext];
+          btn.setAttribute("aria-label", "Switch to " + CHART_LABEL[afterNext]);
+
+          renderCodeWrap(wrap, W.getSlots(), { animate: true });
+        });
       })();
 
       // ─── Browse (Screen 3) — priority chips + food-row bars ──────────
@@ -8050,13 +9600,45 @@
       // applied transiently: when a bar enters the viewport it is clipped
       // shut for one frame, then animated open. Bars are staggered within
       // their phone (featured Top Match leads, ranked rows cascade) so the
-      // mix reads as it paints in, and the wipe replays every time the bar
-      // scrolls back into view. Skipped under reduced-motion so the bars
-      // simply render fully.
+      // mix reads as it paints in. The wipe plays ONCE per bar the first
+      // time it scrolls into view — the bar is then unobserved so threshold
+      // chatter (these bars are only 6px tall, so sub-pixel scroll jitter
+      // near the 35% line otherwise re-armed them repeatedly and made them
+      // blink). Skipped under reduced-motion so the bars simply render fully.
       (function () {
         var reduce =
           window.matchMedia &&
           window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        // Re-arm + wipe a single bar after a stagger delay. Shared by the
+        // first-view reveal and the "Reevaluate" replay. Bypasses the
+        // hbPlayed guard so it can run again on demand.
+        function wipe(bar) {
+          var delay = (Number(bar.dataset.hbIndex) || 0) * 90;
+          setTimeout(function () {
+            bar.classList.remove("hb-in");
+            bar.classList.add("hb-armed"); // clip shut
+            void bar.offsetWidth; // force reflow so the wipe restarts
+            requestAnimationFrame(function () {
+              bar.classList.add("hb-in"); // animate open + snap
+            });
+          }, delay);
+        }
+
+        // "Reevaluate" replays the wipe across a scope (a .phone-wrap), so a
+        // re-score against the new code balance reads as the list re-painting.
+        // Re-indexes first so newly-rendered bars stagger correctly. Under
+        // reduced-motion it's a no-op (bars are already fully shown).
+        window.replayHealthBars = function (scope) {
+          if (reduce) return;
+          var root = scope || document;
+          var group = root.querySelectorAll(".health-bar");
+          Array.prototype.forEach.call(group, function (bar, i) {
+            bar.dataset.hbIndex = i;
+            wipe(bar);
+          });
+        };
+
         if (reduce) return;
 
         var bars = Array.prototype.slice.call(
@@ -8072,27 +9654,20 @@
         });
 
         function play(bar) {
-          var delay = (Number(bar.dataset.hbIndex) || 0) * 90;
-          setTimeout(function () {
-            bar.classList.remove("hb-in");
-            bar.classList.add("hb-armed"); // clip shut
-            void bar.offsetWidth; // force reflow so the wipe restarts
-            requestAnimationFrame(function () {
-              bar.classList.add("hb-in"); // animate open + snap
-            });
-          }, delay);
+          if (bar.dataset.hbPlayed) return; // one wipe per bar, ever
+          bar.dataset.hbPlayed = "1";
+          wipe(bar);
         }
 
         if ("IntersectionObserver" in window) {
           var io = new IntersectionObserver(
             function (entries) {
               entries.forEach(function (entry) {
-                var bar = entry.target;
                 if (entry.isIntersecting) {
-                  play(bar);
-                } else {
-                  // reset so the wipe replays on the next entry
-                  bar.classList.remove("hb-in", "hb-armed");
+                  play(entry.target);
+                  // Stop watching once played — no reset/replay, so the
+                  // bar can't re-arm and blink as it straddles the threshold.
+                  io.unobserve(entry.target);
                 }
               });
             },
@@ -8142,9 +9717,10 @@
           var totalContribution = Math.round(totalRaw);
           var composite = totalContribution + W.OTHER_FACTORS;
 
-          // Donut — feeds the existing shared renderer.
+          // Chart — feeds the shared dispatcher so it honors the
+          // pie-wrap's data-chart (donut / bubble / treemap toggle).
           var pieSvg = phoneWrap.querySelector(".pie-svg[data-id='product-detail']");
-          if (pieSvg && typeof renderPieSvg === "function") {
+          if (pieSvg && typeof renderDetailChart === "function") {
             var slices = filled.map(function (s) {
               var meta = W.CODE_CATALOG[s.codeId];
               return meta
@@ -8152,7 +9728,7 @@
                 : null;
             }).filter(Boolean);
             pieSvg.setAttribute("data-slices", JSON.stringify(slices));
-            renderPieSvg(pieSvg, opts);
+            renderDetailChart(pieSvg, opts);
           }
 
           // Composite score in the donut center.
@@ -8283,13 +9859,13 @@
           var totalContribution = Math.round(totalRaw);
           var composite = totalContribution + W.OTHER_FACTORS;
 
-          // Donut — reuses the shared pie renderer (same one used by
-          // the code and Product Detail donuts) so the shape stays
-          // visually identical across surfaces. Slice values are
-          // slot weights, not contributions, so the donut shape
-          // mirrors the user's code pie 1:1.
+          // Chart — routes through the shared dispatcher so it honors
+          // the pie-wrap's data-chart (donut / bubble / treemap toggle),
+          // matching the code hero + Product Detail. Slice values are
+          // slot weights, not contributions, so the shape mirrors the
+          // user's code pie 1:1.
           var pieSvg = scrollEl.querySelector(".pie-svg[data-id='food-detail']");
-          if (pieSvg && typeof renderPieSvg === "function") {
+          if (pieSvg && typeof renderDetailChart === "function") {
             var slices = filled.map(function (s) {
               var meta = W.CODE_CATALOG[s.codeId];
               return meta
@@ -8297,7 +9873,7 @@
                 : null;
             }).filter(Boolean);
             pieSvg.setAttribute("data-slices", JSON.stringify(slices));
-            renderPieSvg(pieSvg, opts);
+            renderDetailChart(pieSvg, opts);
           }
 
           var scoreEl = scrollEl.querySelector("[data-food-detail-score]");
@@ -8378,12 +9954,13 @@
             +         '</div>'
             +       '</div>'
             +     '</div>'
-            +     '<div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;">'
+            +     '<div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">'
+            +       '<button class="chart-toggle" data-action="detail-chart-toggle" aria-label="Switch to treemap chart"><span class="material-symbols-outlined">dashboard</span></button>'
             +       '<div class="match-verdict-row">'
             +         '<span class="material-symbols-outlined">' + verdict.icon + '</span>'
             +         W.escapeHtml(verdict.text)
             +       '</div>'
-            +       '<div class="pie-wrap" style="width:240px;height:240px;margin:4px 0 8px;">'
+            +       '<div class="pie-wrap" data-chart="bubble" style="width:240px;height:240px;margin:4px 0 8px;">'
             +         '<svg viewBox="0 0 240 240" width="240" height="240" class="pie-svg"'
             +              ' data-id="food-detail" data-size="240" data-stroke="72"'
             +              ' data-slices="[]" aria-hidden="true"></svg>'
