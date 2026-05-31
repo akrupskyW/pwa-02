@@ -1827,6 +1827,117 @@
         line-height: 1.15;
       }
 
+      /* ─── Browse filters (ingredients / codes) ──────────────────────
+         A short row of pill chips that sit directly under the priority
+         grid and above the "TOP MATCH" badge. Tapping a chip slides up a
+         bottom sheet of multi-select options (same idiom as the code
+         picker / reset / rename sheets); once the user picks one or more,
+         a count badge appears on the chip and the chip tints to the
+         active (blue) state. */
+      .browse-filters {
+        display: flex; gap: 8px;
+        padding: 2px 0;
+      }
+      /* Two chips split the row 50 / 50, spanning the full container
+         width with their content centered. */
+      .filter-chip-wrap { flex: 1 1 0; min-width: 0; }
+      .filter-chip {
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+        width: 100%;
+        background: var(--card);
+        border: 1px solid var(--line);
+        color: var(--fg-bright);
+        border-radius: 999px;
+        padding: 8px 10px;
+        font-size: 12px; font-weight: 700;
+        line-height: 1;
+        letter-spacing: -0.005em;
+        cursor: pointer;
+        transition: border-color 120ms ease, background 120ms ease;
+      }
+      .filter-chip .fc-lead {
+        font-size: 15px;
+        color: var(--fg-muted);
+      }
+      .filter-chip .fc-caret {
+        font-size: 16px;
+        color: var(--fg-muted);
+      }
+      .filter-chip .fc-count {
+        display: inline-flex; align-items: center; justify-content: center;
+        min-width: 16px; height: 16px;
+        padding: 0 4px;
+        border-radius: 999px;
+        background: var(--blue);
+        color: #FFFFFF;
+        font-size: 10px; font-weight: 800; line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      /* The explicit display above otherwise beats the [hidden] UA rule,
+         so the "0" badge leaks through when nothing is selected. */
+      .filter-chip .fc-count[hidden] { display: none; }
+      @media (hover: hover) {
+        .filter-chip:hover {
+          border-color: color-mix(in srgb, var(--blue) 50%, var(--line));
+        }
+      }
+      /* Active = at least one option selected. */
+      .filter-chip-wrap.is-active .filter-chip {
+        border-color: color-mix(in srgb, var(--blue) 55%, var(--line));
+        background: color-mix(in srgb, var(--blue) 12%, var(--card));
+      }
+      .filter-chip-wrap.is-active .filter-chip .fc-lead { color: var(--blue); }
+
+      /* Filter sheet — the EXACT same bottom sheet as "Pick a code":
+         it reuses the .code-picker-card chrome (drag handle, head,
+         search + sort toolbar, scrolling .pick-row list) wholesale. We
+         only add (a) its own overlay class so the shared PICKER
+         subscriber/handlers don't re-render or hijack it, and (b) a
+         stylized checkbox on each row for multi-select. */
+      .filter-picker-overlay {
+        position: absolute; inset: 0; z-index: 40;
+        background: var(--scrim-strong);
+        backdrop-filter: blur(10px);
+        animation: cp-fade 160ms ease-out;
+        display: flex; align-items: flex-end;
+      }
+
+      /* Stylized checkbox that trails each filter row (replacing the
+         picker's chevron). Empty rounded square by default; fills blue
+         with a check when the row is selected. */
+      .code-picker-card .pick-check {
+        flex-shrink: 0;
+        width: 24px; height: 24px;
+        border-radius: 8px;
+        border: 2px solid var(--line-strong);
+        background: transparent;
+        display: inline-flex; align-items: center; justify-content: center;
+        transition: background 120ms ease, border-color 120ms ease;
+      }
+      .code-picker-card .pick-check .material-symbols-outlined {
+        font-size: 16px; color: #FFFFFF;
+        opacity: 0; transform: scale(0.6);
+        transition: opacity 120ms ease, transform 120ms ease;
+      }
+      .code-picker-card .pick-row.is-selected {
+        border-color: color-mix(in srgb, var(--blue) 55%, var(--line));
+        background: color-mix(in srgb, var(--blue) 10%, var(--card));
+      }
+      .code-picker-card .pick-row.is-selected .pick-check {
+        background: var(--blue);
+        border-color: var(--blue);
+      }
+      .code-picker-card .pick-row.is-selected .pick-check .material-symbols-outlined {
+        opacity: 1; transform: scale(1);
+      }
+      /* Ingredient rows have no code color — give them a neutral icon
+         swatch so the row rhythm matches the code rows. */
+      .code-picker-card .pick-row .ico.is-neutral {
+        background: var(--surface-2);
+        color: var(--fg-muted);
+        border: 1px solid var(--line);
+      }
+
       /* Color-divided health bar painted beneath each food row on Browse.
          5 stacked segments, each colored by its slot's hue, width = that
          slot's priority weight. A 2px gap between segments reads as the
@@ -5675,6 +5786,31 @@
             <div class="prio-row" data-browse-prio></div>
           </div>
 
+          <!-- Filter chips — sit directly below the 5×2 priority grid and
+               above the TOP MATCH badge. Tapping a chip slides up a bottom
+               sheet of multi-select options (codes from
+               WISE_CODES.CODE_CATALOG, ingredients from a static list),
+               mounted at runtime by the browse-filters controller. The
+               count badge on the chip shows how many options are active. -->
+          <div class="browse-filters" data-browse-filters>
+            <div class="filter-chip-wrap" data-filter-group="ingredients">
+              <button type="button" class="filter-chip" data-filter-chip aria-haspopup="dialog" aria-expanded="false">
+                <span class="material-symbols-outlined fc-lead">nutrition</span>
+                <span class="fc-text">Ingredients</span>
+                <span class="fc-count" data-filter-count hidden>0</span>
+                <span class="material-symbols-outlined fc-caret">expand_more</span>
+              </button>
+            </div>
+            <div class="filter-chip-wrap" data-filter-group="codes">
+              <button type="button" class="filter-chip" data-filter-chip aria-haspopup="dialog" aria-expanded="false">
+                <span class="material-symbols-outlined fc-lead">category</span>
+                <span class="fc-text">Codes</span>
+                <span class="fc-count" data-filter-count hidden>0</span>
+                <span class="material-symbols-outlined fc-caret">expand_more</span>
+              </button>
+            </div>
+          </div>
+
           <div>
             <div class="top-match-head">
               <span class="top-match-tag">TOP MATCH</span>
@@ -6167,7 +6303,7 @@
             <span class="set-label">Location</span>
             <div class="set-group">
               <button type="button" class="set-row" data-action="share-location">
-                <span class="set-ico" style="color:#0E7C4A;"><span class="material-symbols-outlined">location_on</span></span>
+                <span class="set-ico" style="color:#1D4ED8;"><span class="material-symbols-outlined">location_on</span></span>
                 <div class="set-copy">
                   <div class="set-title">Share location</div>
                   <div class="set-sub" data-loc-sub>Surface stores and picks near you.</div>
@@ -9621,6 +9757,250 @@
           document.querySelectorAll("[data-browse-bar]").forEach(function (el) {
             renderHealthBar(el, state.slots);
           });
+        });
+      })();
+
+      // ─── Browse (Screen 3) — ingredient / code filter chips ──────────
+      // Two pill chips below the priority grid each open the SAME bottom
+      // sheet as "Pick a code" — the .code-picker-card chrome (drag
+      // handle, headline, search + sort toolbar, scrolling .pick-row
+      // list) is reused verbatim. The only differences: each row carries
+      // a stylized checkbox (.pick-check) for multi-select, and the
+      // sheet rides its own .filter-picker-overlay so the shared PICKER
+      // subscriber/handlers leave it alone. Codes come straight from
+      // WISE_CODES.CODE_CATALOG (same catalog, categories, icons as the
+      // code picker); ingredients are a static demo list. Picks stamp a
+      // count badge on the chip; selection persists on the chip-wrap so
+      // reopening restores it. Tap the scrim or the close button to
+      // dismiss. One sheet per phone, mounted at runtime.
+      (function () {
+        var W = WISE_CODES;
+
+        // Common ingredient terms a shopper might filter on. Static for
+        // the mockup — in the live app this would be a searchable index.
+        var INGREDIENTS = [
+          "Almonds", "Cane Sugar", "Citric Acid", "Cocoa", "Coconut Oil",
+          "Garlic", "Honey", "Natural Flavors", "Oats", "Olive Oil",
+          "Palm Oil", "Sea Salt", "Soy Lecithin", "Vinegar", "Whole Grain"
+        ];
+
+        var GROUP_META = {
+          ingredients: { title: "Ingredients", search: "Search ingredients", hasSort: false },
+          codes:       { title: "Codes",       search: "Search codes",       hasSort: true }
+        };
+
+        // Catalog entries for a group: codes mirror the code picker
+        // (id, name, category, color, icon); ingredients are a flat list.
+        function entriesFor(group) {
+          if (group === "codes") {
+            return Object.keys(W.CODE_CATALOG).map(function (id) {
+              var m = W.CODE_CATALOG[id];
+              return { value: id, name: m.name, category: m.category, color: m.color, icon: m.icon };
+            });
+          }
+          return INGREDIENTS.map(function (name) {
+            return { value: name, name: name };
+          });
+        }
+
+        // Single .pick-row — identical structure to the code picker, plus
+        // the trailing stylized checkbox.
+        function buildRow(entry, sel) {
+          var selected = !!sel[entry.value];
+          var ico = entry.icon
+            ? '<span class="ico" style="background:' + entry.color + ';">'
+              +   '<span class="material-symbols-outlined">' + entry.icon + '</span>'
+              + '</span>'
+            : '<span class="ico is-neutral"><span class="material-symbols-outlined">nutrition</span></span>';
+          return ''
+            + '<div class="pick-row' + (selected ? ' is-selected' : '') + '"'
+            +      ' data-filter-opt'
+            +      ' data-value="' + W.escapeHtml(entry.value) + '"'
+            +      ' role="checkbox" aria-checked="' + (selected ? 'true' : 'false') + '">'
+            +   ico
+            +   '<div class="nm">' + W.escapeHtml(entry.name) + '</div>'
+            +   '<span class="pick-check"><span class="material-symbols-outlined">check</span></span>'
+            + '</div>';
+        }
+
+        // Selection state lives on the chip-wrap (one map per group per
+        // phone) so the dark + any cloned twin track their own picks.
+        function getSel(wrap) {
+          if (!wrap._filterSel) wrap._filterSel = {};
+          return wrap._filterSel;
+        }
+        function selCount(wrap) {
+          var sel = getSel(wrap), n = 0, k;
+          for (k in sel) { if (sel[k]) n++; }
+          return n;
+        }
+        function refreshChip(wrap) {
+          var n = selCount(wrap);
+          var badge = wrap.querySelector("[data-filter-count]");
+          if (badge) {
+            badge.textContent = String(n);
+            badge.hidden = n === 0;
+          }
+          wrap.classList.toggle("is-active", n > 0);
+        }
+
+        // Render the scrolling list — mirrors PICKER.render: filter by
+        // query, then group by category (codes) or show a flat A–Z list
+        // (ingredients / alpha sort).
+        function renderList(overlay) {
+          var state = overlay._filter;
+          var sel = getSel(state.wrap);
+          var q = state.query.trim().toLowerCase();
+
+          var entries = entriesFor(state.group);
+          if (q) {
+            entries = entries.filter(function (e) {
+              return e.name.toLowerCase().indexOf(q) !== -1
+                  || (e.category && e.category.toLowerCase().indexOf(q) !== -1);
+            });
+          }
+
+          var html;
+          if (entries.length === 0) {
+            html = '<div class="cp-empty">No matches for <b>' + W.escapeHtml(state.query) + '</b>.</div>';
+          } else if (state.group === "codes" && state.sort === "category") {
+            var byCat = {};
+            entries.forEach(function (e) {
+              (byCat[e.category] = byCat[e.category] || []).push(e);
+            });
+            html = W.CATEGORY_ORDER
+              .filter(function (cat) { return byCat[cat] && byCat[cat].length; })
+              .map(function (cat) {
+                var rows = byCat[cat]
+                  .slice()
+                  .sort(function (a, b) { return a.name.localeCompare(b.name); })
+                  .map(function (e) { return buildRow(e, sel); })
+                  .join("");
+                return '<div class="pick-cat">' + W.escapeHtml(cat) + '</div>' + rows;
+              }).join("");
+          } else {
+            entries.sort(function (a, b) { return a.name.localeCompare(b.name); });
+            html = entries.map(function (e) { return buildRow(e, sel); }).join("");
+          }
+
+          var scroll = overlay.querySelector("[data-filter-scroll]");
+          if (scroll) scroll.innerHTML = html;
+        }
+
+        function closeSheet(overlay) {
+          var wrap = overlay._filter && overlay._filter.wrap;
+          overlay.remove();
+          if (wrap) {
+            var chip = wrap.querySelector("[data-filter-chip]");
+            if (chip) chip.setAttribute("aria-expanded", "false");
+          }
+        }
+
+        function openSheet(wrap) {
+          var phone = wrap.closest(".phone-wrap");
+          if (!phone) return;
+          var screen = phone.querySelector(".screen");
+          if (!screen) return;
+
+          // One filter sheet per phone at a time.
+          var existing = screen.querySelector(".filter-picker-overlay");
+          if (existing) existing.remove();
+
+          var group = wrap.getAttribute("data-filter-group");
+          var meta = GROUP_META[group] || { title: "Filter", search: "Search", hasSort: false };
+
+          var overlay = document.createElement("div");
+          overlay.className = "filter-picker-overlay";
+          overlay._filter = { wrap: wrap, group: group, query: "", sort: "category" };
+
+          var sortHtml = meta.hasSort
+            ? '<div class="cp-sort" role="group" aria-label="Sort codes">'
+              +   '<button type="button" class="cp-sort-btn is-active" data-filter-sort="category" aria-label="Group by category" aria-pressed="true" title="Group by category">'
+              +     '<span class="material-symbols-outlined">category</span>'
+              +   '</button>'
+              +   '<button type="button" class="cp-sort-btn" data-filter-sort="alpha" aria-label="Sort alphabetically" aria-pressed="false" title="Sort A\u2013Z">'
+              +     '<span class="material-symbols-outlined">sort_by_alpha</span>'
+              +   '</button>'
+              + '</div>'
+            : '';
+
+          overlay.innerHTML = ''
+            + '<div class="code-picker-card" role="dialog" aria-modal="true" aria-label="Filter by ' + W.escapeHtml(meta.title.toLowerCase()) + '">'
+            +   '<div class="cp-handle" aria-hidden="true"></div>'
+            +   '<div class="cp-head">'
+            +     '<h1>' + W.escapeHtml(meta.title) + '</h1>'
+            +     '<button class="cp-close" data-filter-close aria-label="Close">'
+            +       '<span class="material-symbols-outlined">close</span>'
+            +     '</button>'
+            +   '</div>'
+            +   '<div class="cp-toolbar">'
+            +     '<label class="cp-search">'
+            +       '<span class="material-symbols-outlined">search</span>'
+            +       '<input type="text" placeholder="' + meta.search + '" aria-label="' + meta.search + '" data-filter-search />'
+            +     '</label>'
+            +     sortHtml
+            +   '</div>'
+            +   '<div class="cp-scroll" data-filter-scroll></div>'
+            + '</div>';
+
+          // Scrim dismiss — only a direct hit on the overlay, not bubbling
+          // from inside the card.
+          overlay.addEventListener("click", function (ev) {
+            var t = ev.target;
+            if (!(t instanceof Element)) return;
+
+            if (t === overlay) { ev.preventDefault(); closeSheet(overlay); return; }
+
+            if (t.closest("[data-filter-close]")) { closeSheet(overlay); return; }
+
+            var sortBtn = t.closest("[data-filter-sort]");
+            if (sortBtn) {
+              overlay._filter.sort = sortBtn.getAttribute("data-filter-sort");
+              overlay.querySelectorAll("[data-filter-sort]").forEach(function (b) {
+                var on = b === sortBtn;
+                b.classList.toggle("is-active", on);
+                b.setAttribute("aria-pressed", on ? "true" : "false");
+              });
+              renderList(overlay);
+              return;
+            }
+
+            var row = t.closest("[data-filter-opt]");
+            if (row) {
+              var sel = getSel(wrap);
+              var val = row.getAttribute("data-value");
+              var nowOn = !sel[val];
+              if (nowOn) sel[val] = true; else delete sel[val];
+              row.classList.toggle("is-selected", nowOn);
+              row.setAttribute("aria-checked", nowOn ? "true" : "false");
+              refreshChip(wrap);
+              return;
+            }
+          });
+
+          overlay.addEventListener("input", function (ev) {
+            var input = ev.target.closest("[data-filter-search]");
+            if (!input) return;
+            overlay._filter.query = input.value;
+            renderList(overlay);
+          });
+
+          screen.appendChild(overlay);
+          renderList(overlay);
+
+          var chip = wrap.querySelector("[data-filter-chip]");
+          if (chip) chip.setAttribute("aria-expanded", "true");
+        }
+
+        document.addEventListener("click", function (ev) {
+          var target = ev.target;
+          if (!(target instanceof Element)) return;
+          var chip = target.closest("[data-filter-chip]");
+          if (!chip) return;
+          var wrap = chip.closest("[data-filter-group]");
+          if (!wrap) return;
+          ev.preventDefault();
+          openSheet(wrap);
         });
       })();
 

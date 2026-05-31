@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
-Build PersonalizedNutrition-v2.pen — a Pencil prototype file with the seven
-core screens from screens2.html (dark theme), authored on a single
-horizontal demo-stage canvas.
+Build PersonalizedNutrition-v2.pen — a Pencil prototype file mirroring the
+ten phone screens from screens2.html (intro, persona picker, empty code,
+your code home, code picker, browse, scan, chat, food detail, settings),
+each rendered dark + light, authored on a single horizontal demo-stage
+canvas. The DS · Design System foundations board is intentionally omitted.
 
 The .pen file format is a JSON document with a tree of nodes. Each node has a
 type ("frame" | "rectangle" | "ellipse" | "text" | "icon_font" | "ref"), a
@@ -466,6 +468,34 @@ LUCIDE = {
     "bolt": "zap",
     "bedtime": "moon",
     "all_inclusive": "infinity",
+    # Tab bar (HOME generation) + onboarding / settings glyphs
+    "home": "home",
+    "settings": "settings",
+    "arrow_forward": "arrow-right",
+    "autorenew": "refresh-cw",
+    "add_to_home_screen": "smartphone",
+    "ios_share": "share",
+    "add_box": "square-plus",
+    "touch_app": "pointer",
+    # Persona glyphs
+    "public": "globe",
+    "medical_services": "briefcase-medical",
+    "nutrition": "apple",
+    "self_improvement": "person-standing",
+    "savings": "piggy-bank",
+    "family_restroom": "users",
+    "science": "flask-conical",
+    "check": "check",
+    # Settings glyphs
+    "contrast": "contrast",
+    "dark_mode": "moon",
+    "light_mode": "sun",
+    "visibility": "eye",
+    "login": "log-in",
+    "person_add": "user-plus",
+    "location_on": "map-pin",
+    # Chart toggle (Your Code + Food Detail)
+    "dashboard": "layout-dashboard",
 }
 
 
@@ -865,9 +895,20 @@ TAB_DEFS = [
     ("CHAT", "chat_bubble"),
 ]
 
+# The HOME-generation tab set used by the onboarding / settings screens in
+# screens2.html (`home` / `qr_code_scanner` / `chat_bubble` / `settings`).
+# The older catalog screens (Code / Browse / Scan / Chat) keep TAB_DEFS.
+TAB_DEFS_HOME = [
+    ("HOME", "home"),
+    ("SCAN", "qr_code_scanner"),
+    ("CHAT", "chat_bubble"),
+    ("SETTINGS", "settings"),
+]
 
-def tabbar(active_index: int, *, violet_glow: bool = False) -> dict:
-    """The bottom tab pill. `active_index` highlights one of four tabs.
+
+def tabbar(active_index: int, *, violet_glow: bool = False, defs=TAB_DEFS) -> dict:
+    """The bottom tab pill. `active_index` highlights one of the four tabs
+    in `defs` (pass -1 for no active tab, e.g. the intro/persona screens).
 
     Per screens2.html the active-tab accent is royal blue everywhere now:
     `.tab.active` and `.tab.active.violet` both apply
@@ -943,7 +984,7 @@ def tabbar(active_index: int, *, violet_glow: bool = False) -> dict:
                 },
                 children=[
                     tab(label, glyph, idx == active_index)
-                    for idx, (label, glyph) in enumerate(TAB_DEFS)
+                    for idx, (label, glyph) in enumerate(defs)
                 ],
             ),
         ],
@@ -1013,10 +1054,35 @@ PIE_SLICES = [
     ("Muscle Health",      5, T.GOLD,    "fitness_center"),
 ]
 
+# The default "In Harmony" code — the 10-slot composition authored on
+# screens 1b / 3 / 6 of the latest screens2.html (INITIAL_SLOTS ×
+# CODE_CATALOG). Each tuple is
+#   (codeId, display name, weight %, hue, MS icon, salmon score)
+# where `salmon score` is PRODUCT_SCORES[codeId] — the example food's
+# per-code performance that drives the Food-Detail contribution math
+# (contribution = weight × score / 100). Weights sum to 100.
+DEFAULT_CODE = [
+    ("clean_label",       "Clean Label",       20, T.EMERALD,      "auto_awesome",      94),
+    ("overall_quality",   "Overall Quality",   15, T.AMBER,        "workspace_premium", 93),
+    ("heart_health",      "Heart Health",      12, T.RISK,         "monitor_heart",     92),
+    ("performance_score", "Performance Score", 11, T.EMERALD_DEEP, "speed",             90),
+    ("muscle_health",     "Muscle Health",     10, T.GOLD,         "fitness_center",    88),
+    ("gut_health",        "Gut Health",         8, T.RISK,         "eco",               70),
+    ("nutrient_density",  "Nutrient Density",   8, T.AMBER,        "restaurant_menu",   92),
+    ("brain_health",      "Brain Health",       6, T.EMERALD_DEEP, "psychology",        96),
+    ("energy_stamina",    "Energy & Stamina",   5, T.GOLD,         "bolt",              86),
+    ("longevity_score",   "Longevity Score",    5, T.EMERALD_DEEP, "all_inclusive",     91),
+]
+
+# Pie/health-bar slice tuples (name, weight, hue, icon) derived from the
+# default code, used by the code donut, browse health bar, and the
+# Food-Detail contribution donut.
+DEFAULT_PIE_SLICES = [(n, w, c, g) for _id, n, w, c, g, _s in DEFAULT_CODE]
+
 
 def make_pie(*, size: int = 300, stroke: int = 94, slices=PIE_SLICES, center_num: str = "100",
              center_num_size: int = 46, center_size: int = 110,
-             show_tags: bool = True) -> dict:
+             show_tags: bool = True, placeholder: bool = False) -> dict:
     """Render the rubric pie as a stack of arc ellipses + a center disc with
     composite-score text. Returns an absolutely-laid-out frame (size × size).
 
@@ -1034,6 +1100,58 @@ def make_pie(*, size: int = 300, stroke: int = 94, slices=PIE_SLICES, center_num
     gap_deg = 5  # gap between slices
 
     container_children: list = []
+
+    # Empty-state placeholder: a single faint full ring (no slices, no
+    # per-slice tags) sitting behind the center disc — mirrors the
+    # zero-value pie on screen 1a · Your Code (Empty) in screens2.html.
+    if placeholder:
+        container_children.append(
+            ellipse(
+                x=0, y=0, width=size, height=size,
+                fill=T.TRACK,
+                inner_radius=inner_ratio,
+                opacity=0.55,
+                layout_position="absolute",
+            )
+        )
+        half_center = center_size // 2
+        container_children.append(
+            frame(
+                layout_position="absolute",
+                x=int(R - half_center),
+                y=int(R - half_center),
+                width=center_size,
+                height=center_size,
+                corner=center_size // 2,
+                fill="#161E32",
+                stroke={"thickness": 1, "fill": "#FFFFFF10", "align": "inside"},
+                effect={
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "#00000073",
+                    "offset": {"x": 0, "y": 6},
+                    "blur": 14,
+                },
+                layout="vertical",
+                justify="center",
+                align="center",
+                gap=2,
+                children=[
+                    text(center_num, size=center_num_size, weight="800",
+                         color=T.FG_BRIGHT, letter=-1.0),
+                    text("OF 100", size=11, weight="700", color=T.FG_MUTED, letter=1.8),
+                ],
+            )
+        )
+        return frame(
+            name="pie-wrap",
+            width=size,
+            height=size,
+            fill="#00000000",
+            layout="none",
+            children=container_children,
+        )
+
     cursor_deg = -90.0  # start at 12 o'clock, going CW
     for name, val, color, glyph in slices:
         span = (val / total) * 360.0
@@ -1240,17 +1358,110 @@ def reset_pill() -> dict:
 # added by the builder as needed.
 
 
-def screen_1_your_code(*, status_label: str = "In Progress") -> list:
-    """Screen 1 — Your Code (Home, In Progress).
+def code_name_header(prefix: str, code_name: str, suffix: str) -> dict:
+    """Your-Code headline with the user-given code name set inline in
+    brand-green (screens2.html underlines it; pen text is single-fill so we
+    convey "this word is the editable code name" with the accent color)."""
+    return frame(
+        name="scr-hdr",
+        width="fill_container",
+        padding=[0, 20, 12, 20],
+        align="center",
+        fill="#00000000",
+        children=[
+            frame(
+                width="hug", gap=0, align="center",
+                fill="#00000000",
+                children=[
+                    text(prefix, size=24, weight="800", color=T.FG_BRIGHT, letter=-0.5),
+                    text(code_name, size=24, weight="800", color=T.EMERALD, letter=-0.5),
+                    text(suffix, size=24, weight="800", color=T.FG_BRIGHT, letter=-0.5),
+                ],
+            ),
+        ],
+    )
 
-    Structure: status bar (absolute) over a scroll column with the header,
-    a pie-card hero containing the rubric pie + status caption, and a
-    stack of 5 slot rows beneath. Tab bar pinned at the bottom."""
-    pie_card_children = [
-        reset_pill(),
-        make_pie(),
-        text(status_label, size=16, weight="800", color=T.FG_BRIGHT, letter=-0.16),
-    ]
+
+def code_slot_row(name: str, pct: int, color: str, glyph: str) -> dict:
+    """A slot card on Your Code (Home) — color tile + icon, code name, big
+    bold percent, and a remove (minus-circle) button. No category line
+    (the latest screens2.html slot-c shows only the name)."""
+    return frame(
+        name="slot-c",
+        width="fill_container",
+        height="hug",
+        fill=T.SURFACE,
+        corner=14,
+        stroke={"thickness": 1, "fill": T.LINE, "align": "inside"},
+        padding=[10, 12, 10, 12],
+        gap=12,
+        align="center",
+        children=[
+            frame(
+                width=30, height=30, fill=color, corner=9,
+                justify="center", align="center",
+                children=[mi(glyph, size=18, color="#FFFFFF")],
+            ),
+            text(name, size=13, weight="700", color=T.FG_BRIGHT,
+                 extra={"width": "fill_container"}),
+            frame(
+                width="hug", gap=1, align="end",
+                fill="#00000000",
+                children=[
+                    text(str(pct), size=18, weight="800", color=T.FG_BRIGHT, letter=-0.4),
+                    text("%", size=11, weight="700", color=T.FG_MUTED),
+                ],
+            ),
+            frame(
+                width=26, height=26, fill="#00000000", corner=999,
+                justify="center", align="center",
+                children=[mi("do_not_disturb_on", size=22, color=T.FG_FAINT)],
+            ),
+        ],
+    )
+
+
+def rebalance_pill() -> dict:
+    """Top-right pill on the pie card: tune icon + "Rebalance"."""
+    return frame(
+        layout_position="absolute",
+        x=224, y=12,
+        width="hug",
+        height=24,
+        fill=T.SURFACE_2,
+        corner=999,
+        stroke={"thickness": 1, "fill": T.LINE, "align": "inside"},
+        padding=[3, 10, 3, 10],
+        gap=4,
+        align="center",
+        children=[
+            mi("tune", size=14, color=T.VIOLET),
+            text("Rebalance", size=11, weight="700", color=T.FG_BRIGHT, letter=0.2),
+        ],
+    )
+
+
+def chart_toggle(x: int = 12, y: int = 12) -> dict:
+    """Small circular icon button that switches the chart type (donut /
+    bubble / treemap) — top corner of the pie / score card."""
+    return frame(
+        layout_position="absolute",
+        x=x, y=y,
+        width=34, height=34,
+        fill=T.SURFACE_2,
+        corner=999,
+        stroke={"thickness": 1, "fill": T.LINE, "align": "inside"},
+        justify="center", align="center",
+        children=[mi("dashboard", size=18, color=T.FG_MUTED)],
+    )
+
+
+def screen_1b_home() -> list:
+    """Screen 1b — Your Code (Home), the filled "In Harmony" state.
+
+    A pie-card hero (chart-toggle top-left, Rebalance pill top-right, the
+    10-slot donut, Rename/Reset links beneath) over a stack of 10 slot
+    rows. The headline carries the editable code name inline."""
     pie_card = frame(
         name="pie-card",
         width="fill_container",
@@ -1261,7 +1472,22 @@ def screen_1_your_code(*, status_label: str = "In Progress") -> list:
         gap=4,
         layout="vertical",
         align="center",
-        children=pie_card_children,
+        children=[
+            chart_toggle(),
+            rebalance_pill(),
+            make_pie(slices=DEFAULT_PIE_SLICES, center_num="100"),
+            frame(
+                extra={"width": "fill_container"},
+                justify="space_between",
+                align="center",
+                padding=[4, 6, 0, 6],
+                fill="#00000000",
+                children=[
+                    text("Rename", size=11, weight="700", color=T.FG_MUTED, letter=0.2),
+                    text("Reset", size=11, weight="700", color=T.FG_MUTED, letter=0.2),
+                ],
+            ),
+        ],
     )
 
     slot_stack = frame(
@@ -1269,7 +1495,7 @@ def screen_1_your_code(*, status_label: str = "In Progress") -> list:
         gap=10,
         fill="#00000000",
         extra={"width": "fill_container"},
-        children=[slot_row(*s) for s in PIE_SLICES_AS_SLOT_ROW_ARGS()],
+        children=[code_slot_row(n, w, c, g) for _id, n, w, c, g, _s in DEFAULT_CODE],
     )
 
     scroll = frame(
@@ -1280,7 +1506,7 @@ def screen_1_your_code(*, status_label: str = "In Progress") -> list:
         layout="vertical",
         padding=[56, 0, 0, 0],  # status bar safe area
         children=[
-            scr_header("Your Code"),
+            code_name_header("Your ", "In Harmony", " code"),
             frame(
                 width="fill_container",
                 layout="vertical",
@@ -1292,21 +1518,7 @@ def screen_1_your_code(*, status_label: str = "In Progress") -> list:
         ],
     )
 
-    return [scroll, tabbar(active_index=0), status_bar_inst()]
-
-
-def PIE_SLICES_AS_SLOT_ROW_ARGS():
-    """Pie data plus category labels needed by slot rows. Categories come
-    straight from `CODE_CATALOG[i].category` in screens2.html."""
-    cats = {
-        "Clean Label": "Clean & Natural",
-        "Overall Quality": "Overall",
-        "Heart Health": "Health Outcomes",
-        "Performance Score": "Performance Health",
-        "Muscle Health": "Performance Health",
-    }
-    for name, val, color, glyph in PIE_SLICES:
-        yield (name, cats[name], val, color, glyph)
+    return [scroll, tabbar(active_index=0, defs=TAB_DEFS_HOME), status_bar_inst()]
 
 
 # ─── Screen 2 — Add Code (Pick) bottom sheet ─────────────────────────────
@@ -1530,10 +1742,11 @@ def screen_2_pick() -> list:
 
 # ─── Screen 3 — Browse (Top Matches) ─────────────────────────────────────
 def prio_chip(pct: int, name: str, color: str, glyph: str) -> dict:
-    """A single priority chip — circular colored icon, percent below, name
-    in muted text."""
+    """A single priority chip — circular colored icon, percent, name in
+    muted text. Fixed width so the row reads as a horizontally-scrollable
+    rail (the live code has up to 10 chips)."""
     return frame(
-        width="fill_container",
+        width=58,
         layout="vertical",
         align="center",
         gap=4,
@@ -1547,18 +1760,15 @@ def prio_chip(pct: int, name: str, color: str, glyph: str) -> dict:
             ),
             text(f"{pct}%", size=11, weight="800", color=T.FG_BRIGHT),
             text(name, size=9, weight="700", color=T.FG_MUTED, align="center",
-                 extra={"width": "fill_container"}),
+                 line_height=1.15, wrap=58),
         ],
     )
 
 
 def health_bar() -> dict:
-    """The 5-segment color-divided bar painted under each Top Match row.
-    Widths mirror the live rubric percentages (47/23/15/10/5)."""
-    segs = [
-        (47, T.EMERALD), (23, T.AMBER), (15, T.RISK),
-        (10, T.EMERALD_DEEP), (5,  T.GOLD),
-    ]
+    """The color-divided bar painted under each Top Match row. Segment
+    widths mirror the live code weights (the default 10-slot mix)."""
+    segs = [(w, c) for _id, _n, w, c, _g, _s in DEFAULT_CODE]
     # Without true flex children in pen, give each segment an explicit
     # pixel width that sums to ~290 (the card content width). Per-corner
     # radius arrays aren't supported by pen, so every segment uses a
@@ -1676,7 +1886,7 @@ def food_row(name: str, brand: str, score: int, *, featured: bool = False,
 
 def screen_3_browse() -> list:
     """Screen 3 — Browse (Top Matches)."""
-    # Priorities head row: label + Rebalance affordance
+    # Priorities head row: label + Rebalance button (tune + label)
     prio_head = frame(
         extra={"width": "fill_container"},
         justify="space_between",
@@ -1686,35 +1896,66 @@ def screen_3_browse() -> list:
         children=[
             text("Your priorities", size=11, weight="700",
                  color=T.FG_MUTED, letter=0.4),
-            text("Rebalance", size=11, weight="700",
-                 color=T.VIOLET, letter=0.4),
+            frame(
+                width="hug", gap=4, align="center",
+                fill="#00000000",
+                children=[
+                    mi("tune", size=14, color=T.VIOLET),
+                    text("Rebalance", size=11, weight="700",
+                         color=T.VIOLET, letter=0.4),
+                ],
+            ),
         ],
     )
 
-    # Five priority chips evenly spaced
-    chips = frame(
-        extra={"width": "fill_container"},
+    # Priority chips — one per slot in the live code, sorted by descending
+    # weight, rendered as a horizontally-scrollable rail (10 chips overflow
+    # the screen; the phone clip masks the tail like a swipe rail).
+    chip_rail = frame(
+        width="hug",
         gap=6,
         align="start",
         fill="#00000000",
         padding=[2, 0, 2, 0],
         children=[
-            prio_chip(47, "Clean Label",       T.EMERALD, "auto_awesome"),
-            prio_chip(23, "Overall Quality",   T.AMBER,   "workspace_premium"),
-            prio_chip(15, "Heart Health",      T.RISK,    "monitor_heart"),
-            prio_chip(10, "Performance Score", T.EMERALD_DEEP, "speed"),
-            prio_chip(5,  "Muscle Health",     T.GOLD,    "fitness_center"),
+            prio_chip(w, n, c, g)
+            for _id, n, w, c, g, _s in sorted(
+                DEFAULT_CODE, key=lambda s: s[2], reverse=True
+            )
         ],
     )
+    chips = frame(
+        extra={"width": "fill_container"},
+        fill="#00000000",
+        clip=True,
+        children=[chip_rail],
+    )
 
-    # TOP MATCH tag + featured row
-    top_match_tag = frame(
-        width="hug",
-        corner=4,
-        fill=T.VIOLET,
-        padding=[3, 8, 3, 8],
+    # TOP MATCH head: tag + Reevaluate link
+    top_match_head = frame(
+        extra={"width": "fill_container"},
+        justify="space_between",
+        align="center",
+        fill="#00000000",
+        padding=[0, 0, 6, 0],
         children=[
-            text("TOP MATCH", size=9, weight="800", color="#FFFFFF", letter=1.3),
+            frame(
+                width="hug",
+                corner=4,
+                fill=T.VIOLET,
+                padding=[3, 8, 3, 8],
+                children=[
+                    text("TOP MATCH", size=9, weight="800", color="#FFFFFF", letter=1.3),
+                ],
+            ),
+            frame(
+                width="hug", gap=4, align="center",
+                fill="#00000000",
+                children=[
+                    mi("autorenew", size=14, color=T.VIOLET),
+                    text("Reevaluate", size=11, weight="700", color=T.VIOLET, letter=0.2),
+                ],
+            ),
         ],
     )
     featured = food_row(
@@ -1782,7 +2023,7 @@ def screen_3_browse() -> list:
                           children=[prio_head, chips]),
                     frame(layout="vertical", gap=6, fill="#00000000",
                           extra={"width": "fill_container"},
-                          children=[top_match_tag, featured]),
+                          children=[top_match_head, featured]),
                     meta_row,
                     rows,
                 ],
@@ -1790,7 +2031,7 @@ def screen_3_browse() -> list:
         ],
     )
 
-    return [scroll, tabbar(active_index=1), status_bar_inst()]
+    return [scroll, tabbar(active_index=-1, defs=TAB_DEFS_HOME), status_bar_inst()]
 
 
 # ─── Screen 4 — Scan (Find a Food) ───────────────────────────────────────
@@ -1985,7 +2226,7 @@ def screen_4_scan() -> list:
         ],
     )
 
-    return [scroll, tabbar(active_index=2), status_bar_inst()]
+    return [scroll, tabbar(active_index=1, defs=TAB_DEFS_HOME), status_bar_inst()]
 
 
 # ─── Screen 5 — Chat ─────────────────────────────────────────────────────
@@ -2058,7 +2299,7 @@ def screen_5_chat() -> list:
         children=[
             text(
                 "Tell me what matters to you — diet style, goals, foods to "
-                "avoid, anything. I'll compose a personal rubric and weight "
+                "avoid, anything. I'll compose a personal code and weight "
                 "your code accordingly.",
                 size=13, weight="500", color=T.FG, line_height=1.5,
                 wrap=270,  # ~bubble inner width (378 - 40 px padding - 36 avatar - 10 gap - 28 bubble pad)
@@ -2160,7 +2401,8 @@ def screen_5_chat() -> list:
         ],
     )
 
-    return [scroll, tabbar(active_index=3, violet_glow=True), status_bar_inst()]
+    return [scroll, tabbar(active_index=2, defs=TAB_DEFS_HOME, violet_glow=True),
+            status_bar_inst()]
 
 
 # ─── Screen 7 — Food Detail ──────────────────────────────────────────────
@@ -2243,7 +2485,7 @@ def screen_7_food_detail() -> list:
     # pie) with the same 94-px stroke proportion. Center disc stays
     # 110-px to match the rubric pies, but the composite number is
     # sized up to 52 pt for emphasis.
-    donut = make_pie(center_num="97", center_num_size=52)
+    donut = make_pie(slices=DEFAULT_PIE_SLICES, center_num="94", center_num_size=52)
 
     # Contribution table rows. Names + colors come straight from
     # WISE_CODES.CODE_CATALOG; raw contributions are computed live in
@@ -2255,12 +2497,11 @@ def screen_7_food_detail() -> list:
     #   muscle_health      5 × 88 / 100 =  4.4
     # Total raw = 92.77 → rounded 93. Composite = 93 + OTHER_FACTORS(4)
     # = 97 (driven through the donut center). Other Factors stays at 4.
+    # Per-slot contribution = weight × salmon score / 100, formatted like
+    # the HTML's `raw.toFixed(1)`. Sums to 90; composite = 90 + 4 = 94.
     contrib_data = [
-        ("Clean Label",       T.EMERALD,      "auto_awesome",      47, "44.2"),
-        ("Overall Quality",   T.AMBER,        "workspace_premium", 23, "21.4"),
-        ("Heart Health",      T.RISK,         "monitor_heart",     15, "13.8"),
-        ("Performance Score", T.EMERALD_DEEP, "speed",             10, "9.0"),
-        ("Muscle Health",     T.GOLD,         "fitness_center",     5, "4.4"),
+        (n, c, g, w, f"{w * s / 100:.1f}")
+        for _id, n, w, c, g, s in DEFAULT_CODE
     ]
 
     def contrib_row(name: str, color: str, glyph: str, pct: int, val: str) -> dict:
@@ -2315,7 +2556,7 @@ def screen_7_food_detail() -> list:
                 padding=[0, 0, 0, 0],
                 fill="#00000000",
                 children=[
-                    text("Total Contribution: 93 of 100", size=11, weight="500",
+                    text("Total Contribution: 90 of 100", size=11, weight="500",
                          color=T.FG_MUTED),
                     frame(
                         width="hug", gap=4, align="center", fill="#00000000",
@@ -2340,7 +2581,7 @@ def screen_7_food_detail() -> list:
         layout="vertical",
         gap=8,
         align="center",
-        children=[verdict, donut, contrib_list, contrib_summary],
+        children=[chart_toggle(x=288, y=14), verdict, donut, contrib_list, contrib_summary],
     )
 
     # About card — chevron-tipped link
@@ -2402,14 +2643,628 @@ def screen_7_food_detail() -> list:
         ],
     )
 
-    return [scroll, tabbar(active_index=1), status_bar_inst()]
+    return [scroll, tabbar(active_index=-1, defs=TAB_DEFS_HOME), status_bar_inst()]
+
+
+# ─── Onboarding brand mark (screens 0 / 0b) ──────────────────────────────
+def intro_brand() -> dict:
+    """Centered WISEcode wordmark used at the top of the Intro + Persona
+    screens. screens2.html loads a vertical SVG logo; pen can't embed the
+    asset, so we approximate it: a rounded brand tile with a sparkle mark
+    above a two-tone "WISEcode" wordmark (WISE bright, code brand-green)."""
+    return frame(
+        name="intro-brand",
+        width="fill_container",
+        justify="center",
+        align="center",
+        padding=[0, 0, 6, 0],
+        fill="#00000000",
+        children=[
+            frame(
+                layout="vertical",
+                align="center",
+                gap=8,
+                fill="#00000000",
+                children=[
+                    frame(
+                        width=44, height=44, corner=13,
+                        fill=T.EMERALD,
+                        justify="center", align="center",
+                        children=[mi("auto_awesome", size=24, color="#FFFFFF")],
+                    ),
+                    frame(
+                        width="hug", gap=0, align="center",
+                        fill="#00000000",
+                        children=[
+                            text("WISE", size=24, weight="900",
+                                 color=T.FG_BRIGHT, letter=-0.6),
+                            text("code", size=24, weight="900",
+                                 color=T.EMERALD, letter=-0.6),
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+
+def intro_hero(headline: str, body: str) -> dict:
+    """Headline + value-prop paragraph block. Pen text nodes are
+    single-fill, so the inline emerald accent on "your"/"you" in
+    screens2.html is rendered in the primary ink — the copy reads the
+    same, just without the colored word."""
+    return frame(
+        layout="vertical",
+        gap=10,
+        fill="#00000000",
+        extra={"width": "fill_container"},
+        children=[
+            text(headline, size=27, weight="800", color=T.FG_BRIGHT,
+                 letter=-0.6, line_height=1.12, wrap=338),
+            text(body, size=14, weight="500", color=T.FG_MUTED,
+                 line_height=1.5, wrap=338),
+        ],
+    )
+
+
+# ─── Screen 0 — Intro / Welcome ──────────────────────────────────────────
+INTRO_TILES = [
+    ("tune", "Define your standard",
+     "Choose the factors that matter to you and weight them — your values become the score."),
+    ("grid_view", "See what truly fits",
+     "Foods ranked by your code, not a generic average — so top matches are right for you."),
+    ("qr_code_scanner", "Decide in the aisle",
+     "Scan any barcode for an instant verdict against your standard — no label-reading required."),
+    ("chat_bubble", "Understand the why",
+     "Ask WISE AI why a food scores the way it does, and refine your code as you learn."),
+    ("autorenew", "Refine as you go",
+     "Nudge your weights whenever your priorities shift — every food re-ranks instantly."),
+    ("verified", "Grounded in real data",
+     "Scores draw on comprehensive nutrition facts, so your standard stays honest."),
+]
+
+
+def intro_tile(glyph: str, title: str, sub: str) -> dict:
+    return frame(
+        name="intro-tile",
+        width=170,
+        height=172,
+        layout="vertical",
+        gap=8,
+        fill=T.SURFACE,
+        corner=16,
+        stroke={"thickness": 1, "fill": T.LINE, "align": "inside"},
+        padding=14,
+        children=[
+            frame(
+                width=34, height=34, corner=10,
+                fill=T.SURFACE_2,
+                justify="center", align="center",
+                children=[mi(glyph, size=20, color=T.VIOLET)],
+            ),
+            text(title, size=13, weight="700", color=T.FG_BRIGHT),
+            text(sub, size=11, weight="500", color=T.FG_MUTED,
+                 line_height=1.35, wrap=140),
+        ],
+    )
+
+
+def cta_button(label: str, glyph: str = "arrow_forward", *, disabled: bool = False) -> dict:
+    """Full-width royal-blue primary CTA with a leading icon. `disabled`
+    dims it to the inert state used by the persona screen's footer."""
+    return frame(
+        name="cta",
+        extra={"width": "fill_container"},
+        height=50,
+        fill=T.VIOLET,
+        corner=12,
+        padding=[14, 20, 14, 20],
+        justify="center", align="center", gap=10,
+        opacity=0.45 if disabled else None,
+        effect=None if disabled else {
+            "type": "shadow", "shadowType": "outer",
+            "color": "#1D4ED873",
+            "offset": {"x": 0, "y": 8}, "blur": 20, "spread": -8,
+        },
+        children=[
+            mi(glyph, size=18, color="#FFFFFF"),
+            text(label, size=15, weight="800", color="#FFFFFF", letter=-0.16),
+        ],
+    )
+
+
+def screen_0_intro() -> list:
+    """Screen 0 — Intro / Welcome (first-run landing)."""
+    carousel = frame(
+        name="intro-carousel",
+        width="hug",
+        gap=12,
+        fill="#00000000",
+        children=[intro_tile(*t) for t in INTRO_TILES],
+    )
+
+    pin_steps = [
+        ("ios_share", "Tap the Share icon in your browser bar."),
+        ("add_box", "Choose \u201cAdd to Home Screen.\u201d"),
+        ("touch_app", "Launch it like any other app — full screen, no browser chrome."),
+    ]
+    pin_step_rows = [
+        frame(
+            extra={"width": "fill_container"},
+            gap=8, align="center",
+            fill="#00000000",
+            children=[
+                mi(glyph, size=16, color=T.FG_MUTED),
+                text(copy, size=12, weight="500", color=T.FG,
+                     line_height=1.35, wrap=232),
+            ],
+        )
+        for glyph, copy in pin_steps
+    ]
+    pin_card = frame(
+        name="intro-pin",
+        extra={"width": "fill_container"},
+        fill=T.SURFACE,
+        corner=16,
+        stroke={"thickness": 1, "fill": T.LINE, "align": "inside"},
+        padding=14,
+        gap=12,
+        align="start",
+        children=[
+            frame(
+                width=40, height=40, corner=12,
+                fill=T.SURFACE_2,
+                justify="center", align="center",
+                children=[mi("add_to_home_screen", size=22, color=T.VIOLET)],
+            ),
+            frame(
+                extra={"width": "fill_container"},
+                layout="vertical",
+                gap=8,
+                fill="#00000000",
+                children=[
+                    text("Pin it to your home screen", size=13, weight="800",
+                         color=T.FG_BRIGHT, letter=-0.1),
+                    frame(
+                        extra={"width": "fill_container"},
+                        layout="vertical", gap=6,
+                        fill="#00000000",
+                        children=pin_step_rows,
+                    ),
+                    frame(
+                        width="hug", gap=2, align="center",
+                        fill="#00000000",
+                        children=[
+                            text("Show me how", size=12, weight="700",
+                                 color=T.VIOLET),
+                            mi("chevron_right", size=16, color=T.VIOLET),
+                        ],
+                    ),
+                ],
+            ),
+        ],
+    )
+
+    scroll = frame(
+        name="scroll",
+        width="fill_container",
+        height="fill_container",
+        fill="#00000000",
+        layout="vertical",
+        padding=[64, 0, 0, 0],
+        children=[
+            frame(
+                extra={"width": "fill_container"},
+                layout="vertical",
+                gap=16,
+                fill="#00000000",
+                padding=[8, 20, 0, 20],
+                children=[
+                    intro_brand(),
+                    intro_hero(
+                        "Eat to your code, not the average.",
+                        "\u201cHealthy\u201d isn't one-size-fits-all. WISEcode turns what "
+                        "you care about into a personal scoring code, then grades every "
+                        "food against it — so the right choice is the obvious one.",
+                    ),
+                ],
+            ),
+            # Carousel bleeds to the right edge — left-aligned to the 20px
+            # gutter, overflowing past the screen clip like a swipe rail.
+            frame(
+                extra={"width": "fill_container"},
+                padding=[16, 0, 0, 20],
+                fill="#00000000",
+                clip=True,
+                children=[
+                    frame(
+                        extra={"width": "fill_container"},
+                        padding=[0, 0, 0, 20],
+                        fill="#00000000",
+                        children=[carousel],
+                    ),
+                ],
+            ),
+            frame(
+                extra={"width": "fill_container"},
+                layout="vertical",
+                gap=14,
+                fill="#00000000",
+                padding=[16, 20, 0, 20],
+                children=[cta_button("Build my code"), pin_card],
+            ),
+        ],
+    )
+
+    return [scroll, tabbar(active_index=-1, defs=TAB_DEFS_HOME), status_bar_inst()]
+
+
+# ─── Screen 0b — Pick Your Personas ──────────────────────────────────────
+PERSONA_CARDS = [
+    ("bolt", "The Convenience Seeker",
+     "Quick meals, easy prep, clean-ish packaged options."),
+    ("public", "The Conscious Consumer",
+     "Organic, sustainable, ethical brands, low impact."),
+    ("medical_services", "The Condition Manager",
+     "Eating to manage specific health conditions (e.g. IBS, diabetes, hypertension)."),
+    ("nutrition", "The Clean Eater",
+     "Whole foods, minimal processing, ingredient transparency."),
+    ("fitness_center", "The Athlete",
+     "Performance nutrition, macros, protein-forward choices."),
+    ("self_improvement", "The Wellness Devotee",
+     "Holistic health, adaptogens, superfoods, functional foods."),
+    ("eco", "The Plant-Based Pioneer",
+     "Vegan or vegetarian, ethical eating, planet-conscious."),
+    ("savings", "The Budget-Smart Shopper",
+     "Value-conscious, store brands, best quality per dollar."),
+    ("family_restroom", "The Family Guardian",
+     "Safe for kids, no artificial additives, family-first choices."),
+    ("science", "The Label Scientist",
+     "Deep ingredient dives, E-code aware, evidence-based."),
+]
+
+
+def persona_card(glyph: str, title: str, sub: str) -> dict:
+    return frame(
+        name="persona-card",
+        width=204,
+        height=188,
+        layout="vertical",
+        gap=10,
+        fill=T.SURFACE,
+        corner=16,
+        stroke={"thickness": 1, "fill": T.LINE, "align": "inside"},
+        padding=14,
+        children=[
+            frame(
+                extra={"width": "fill_container"},
+                justify="space_between",
+                align="start",
+                fill="#00000000",
+                children=[
+                    frame(
+                        width=38, height=38, corner=11,
+                        fill=T.SURFACE_2,
+                        justify="center", align="center",
+                        children=[mi(glyph, size=22, color=T.VIOLET)],
+                    ),
+                    frame(
+                        width=26, height=26, corner=999,
+                        fill="#00000000",
+                        stroke={"thickness": 1, "fill": T.LINE, "align": "inside"},
+                        justify="center", align="center",
+                        children=[mi("add", size=18, color=T.FG_FAINT)],
+                    ),
+                ],
+            ),
+            text(title, size=14, weight="800", color=T.FG_BRIGHT, letter=-0.1),
+            text(sub, size=11, weight="500", color=T.FG_MUTED,
+                 line_height=1.35, wrap=176),
+        ],
+    )
+
+
+def screen_0b_personas() -> list:
+    """Screen 0b — Pick Your Personas (multi-select onboarding carousel)."""
+    carousel = frame(
+        name="persona-carousel",
+        width="hug",
+        gap=12,
+        fill="#00000000",
+        children=[persona_card(*p) for p in PERSONA_CARDS],
+    )
+
+    skip = frame(
+        extra={"width": "fill_container"},
+        justify="center", align="center",
+        padding=[2, 0, 0, 0],
+        fill="#00000000",
+        children=[
+            text("Skip for now", size=13, weight="700", color=T.FG_MUTED),
+        ],
+    )
+
+    scroll = frame(
+        name="scroll",
+        width="fill_container",
+        height="fill_container",
+        fill="#00000000",
+        layout="vertical",
+        padding=[64, 0, 0, 0],
+        children=[
+            frame(
+                extra={"width": "fill_container"},
+                layout="vertical",
+                gap=16,
+                fill="#00000000",
+                padding=[8, 20, 0, 20],
+                children=[
+                    intro_brand(),
+                    intro_hero(
+                        "Which of these sounds like you?",
+                        "Pick the food personas that fit — choose as many as you like. "
+                        "We'll blend them into your starting WISEcode, then grade every "
+                        "food the way you would.",
+                    ),
+                ],
+            ),
+            frame(
+                extra={"width": "fill_container"},
+                padding=[16, 0, 0, 20],
+                fill="#00000000",
+                clip=True,
+                children=[
+                    frame(
+                        extra={"width": "fill_container"},
+                        padding=[0, 0, 0, 20],
+                        fill="#00000000",
+                        children=[carousel],
+                    ),
+                ],
+            ),
+            frame(
+                extra={"width": "fill_container"},
+                layout="vertical",
+                gap=12,
+                fill="#00000000",
+                padding=[16, 20, 0, 20],
+                children=[cta_button("Show me my code", disabled=True), skip],
+            ),
+        ],
+    )
+
+    return [scroll, tabbar(active_index=-1, defs=TAB_DEFS_HOME), status_bar_inst()]
+
+
+# ─── Screen 1a — Your Code (Empty) ───────────────────────────────────────
+def screen_1a_empty() -> list:
+    """Screen 1a — Your Code (Empty), the pre-state before any codes are
+    added: a zero-value placeholder pie and a single dashed
+    "Add your first code" tile."""
+    pie_card = frame(
+        name="pie-card",
+        width="fill_container",
+        fill=T.SURFACE,
+        corner=24,
+        stroke={"thickness": 1, "fill": T.LINE, "align": "inside"},
+        padding=[18, 12, 16, 12],
+        gap=4,
+        layout="vertical",
+        align="center",
+        children=[
+            make_pie(placeholder=True, center_num="0"),
+            text("Empty", size=16, weight="800", color=T.FG_BRIGHT, letter=-0.16),
+            text("Add codes to compose your code", size=12, weight="500",
+                 color=T.FG_MUTED),
+        ],
+    )
+
+    add_first = frame(
+        name="slot-add",
+        extra={"width": "fill_container"},
+        height=52,
+        fill="#00000000",
+        corner=14,
+        stroke={"thickness": 1, "fill": T.LINE_STRONG, "align": "inside"},
+        justify="center", align="center", gap=8,
+        children=[
+            mi("add", size=20, color=T.VIOLET),
+            text("Add your first code", size=14, weight="700", color=T.FG_BRIGHT),
+        ],
+    )
+
+    scroll = frame(
+        name="scroll",
+        width="fill_container",
+        height="fill_container",
+        fill="#00000000",
+        layout="vertical",
+        padding=[56, 0, 0, 0],
+        children=[
+            scr_header("Your code"),
+            frame(
+                width="fill_container",
+                layout="vertical",
+                gap=16,
+                fill="#00000000",
+                padding=[0, 20, 0, 20],
+                children=[pie_card, add_first],
+            ),
+        ],
+    )
+
+    return [scroll, tabbar(active_index=0, defs=TAB_DEFS_HOME), status_bar_inst()]
+
+
+# ─── Screen 7 — Settings ─────────────────────────────────────────────────
+def seg_opt(label: str, glyph: str | None, active: bool) -> dict:
+    """One option in a settings segmented control."""
+    children: list = []
+    on_color = "#FFFFFF" if active else T.FG_MUTED
+    if glyph:
+        children.append(mi(glyph, size=14, color=on_color))
+    children.append(text(label, size=11, weight="700", color=on_color))
+    return frame(
+        width="hug",
+        fill=T.VIOLET if active else "#00000000",
+        corner=999,
+        padding=[5, 10, 5, 10],
+        gap=4,
+        align="center",
+        children=children,
+    )
+
+
+def theme_seg(opts: list) -> dict:
+    """Segmented pill (e.g. Dark | Light) for a settings row trailing slot.
+    `opts` is a list of (label, glyph, active) tuples."""
+    return frame(
+        width="hug",
+        fill=T.SURFACE_2,
+        corner=999,
+        stroke={"thickness": 1, "fill": T.LINE, "align": "inside"},
+        padding=3,
+        gap=2,
+        align="center",
+        children=[seg_opt(*o) for o in opts],
+    )
+
+
+def trail_button(label: str, *, solid: bool = False) -> dict:
+    """Ghost / solid trailing pill button for an account-style row."""
+    return frame(
+        width="hug",
+        fill=T.VIOLET if solid else "#00000000",
+        corner=999,
+        stroke=None if solid else {"thickness": 1, "fill": T.LINE, "align": "inside"},
+        padding=[7, 13, 7, 13],
+        justify="center", align="center",
+        children=[
+            text(label, size=12, weight="700",
+                 color="#FFFFFF" if solid else T.FG_BRIGHT),
+        ],
+    )
+
+
+def set_row(glyph: str, glyph_color: str, title: str, sub: str, trailing: dict) -> dict:
+    return frame(
+        name="set-row",
+        extra={"width": "fill_container"},
+        gap=12,
+        align="center",
+        fill="#00000000",
+        padding=[12, 14, 12, 14],
+        children=[
+            frame(
+                width=36, height=36, corner=10,
+                fill=T.SURFACE_2,
+                justify="center", align="center",
+                children=[mi(glyph, size=20, color=glyph_color)],
+            ),
+            frame(
+                extra={"width": "fill_container"},
+                layout="vertical", gap=2,
+                fill="#00000000",
+                children=[
+                    text(title, size=14, weight="700", color=T.FG_BRIGHT),
+                    text(sub, size=11, weight="500", color=T.FG_MUTED,
+                         line_height=1.3, wrap=176),
+                ],
+            ),
+            trailing,
+        ],
+    )
+
+
+def set_section(label: str, rows: list) -> dict:
+    """A labelled settings group: an eyebrow label over a surface card whose
+    rows are separated by hairline dividers."""
+    group_children: list = []
+    for i, row in enumerate(rows):
+        group_children.append(row)
+        if i < len(rows) - 1:
+            group_children.append(
+                rect(width="fill_container", height=1, fill=T.LINE_SUBTLE)
+            )
+    return frame(
+        extra={"width": "fill_container"},
+        layout="vertical",
+        gap=8,
+        fill="#00000000",
+        children=[
+            text(label.upper(), size=10, weight="800", color=T.FG_MUTED,
+                 letter=1.2, extra={"padding": [0, 4, 0, 4]}),
+            frame(
+                name="set-group",
+                extra={"width": "fill_container"},
+                layout="vertical",
+                fill=T.SURFACE,
+                corner=16,
+                stroke={"thickness": 1, "fill": T.LINE, "align": "inside"},
+                children=group_children,
+            ),
+        ],
+    )
+
+
+def screen_8_settings() -> list:
+    """Screen 7 — Settings (optional). Appearance / Account / Location /
+    Share sections, reached from the far-right SETTINGS tab."""
+    appearance = set_section("Appearance", [
+        set_row("contrast", T.VIOLET, "Theme",
+                "Switch between light and dark mode.",
+                theme_seg([("Dark", "dark_mode", True), ("Light", "light_mode", False)])),
+        set_row("visibility", T.VIOLET, "Color vision",
+                "Switch scores to a color-blind-safe palette.",
+                theme_seg([("Default", None, True), ("Color-safe", "contrast", False)])),
+    ])
+    account = set_section("Account", [
+        set_row("login", T.VIOLET, "Log in",
+                "Sync your code across devices.",
+                trail_button("Log in")),
+        set_row("person_add", T.VIOLET, "Create account",
+                "Save your code and pick up anywhere.",
+                trail_button("Sign up", solid=True)),
+    ])
+    location = set_section("Location", [
+        set_row("location_on", T.VIOLET, "Share location",
+                "Surface stores and picks near you.",
+                trail_button("Allow")),
+    ])
+    share = set_section("Share", [
+        set_row("ios_share", T.VIOLET, "Share the app",
+                "Send Personalized Nutrition to a friend.",
+                mi("chevron_right", size=20, color=T.FG_FAINT)),
+    ])
+
+    scroll = frame(
+        name="scroll",
+        width="fill_container",
+        height="fill_container",
+        fill="#00000000",
+        layout="vertical",
+        padding=[56, 0, 0, 0],
+        children=[
+            scr_header("Settings"),
+            frame(
+                extra={"width": "fill_container"},
+                layout="vertical",
+                gap=18,
+                fill="#00000000",
+                padding=[0, 20, 0, 20],
+                children=[appearance, account, location, share],
+            ),
+        ],
+    )
+
+    return [scroll, tabbar(active_index=3, defs=TAB_DEFS_HOME), status_bar_inst()]
 
 
 # ─── Assemble ────────────────────────────────────────────────────────────
 def build() -> dict:
     """Build the root .pen dict.
 
-    Layout: 7 screens × 2 themes = 14 phones, arranged as a 7-column ×
+    Layout: 10 screens × 2 themes = 20 phones, arranged as a 10-column ×
     2-row grid. Each column is one screen; the top row is the dark
     variant, the bottom row is the light variant. A per-column header
     sits above the dark phone with the screen index and name. This
@@ -2449,16 +3304,20 @@ def build() -> dict:
     PhoneFrame.light_slot = light_screen_node["id"]
 
     # ─── 3. Screen specs ─────────────────────────────────────────────
+    # Mirrors the screen-pair lineup in the latest screens2.html (the
+    # DS · Design System foundations board is excluded — it's a wide
+    # reference board, not a phone screen).
     phone_specs = [
-        ("1 · Your Code (Home)",
-         lambda: screen_1_your_code(status_label="In Progress")),
+        ("0 · Intro / Welcome",      screen_0_intro),
+        ("0b · Pick Your Personas",  screen_0b_personas),
+        ("1a · Your Code (Empty)",   screen_1a_empty),
+        ("1b · Your Code (Home)",    screen_1b_home),
         ("2 · Add Code (Pick)",      screen_2_pick),
         ("3 · Browse (Top Matches)", screen_3_browse),
         ("4 · Scan (Find a Food)",   screen_4_scan),
-        ("5 · Chat with WISE AI",    screen_5_chat),
-        ("6 · Your Code (Filled)",
-         lambda: screen_1_your_code(status_label="In Harmony")),
-        ("7 · Food Detail",          screen_7_food_detail),
+        ("5 · Chat",                 screen_5_chat),
+        ("6 · Food Detail",          screen_7_food_detail),
+        ("7 · Settings",             screen_8_settings),
     ]
 
     # ─── 4. Layout geometry ──────────────────────────────────────────
@@ -2561,7 +3420,7 @@ def build() -> dict:
 
     # ─── 6. Demo stage frame ─────────────────────────────────────────
     stage = frame(
-        name="Demo Stage — 7 screens × dark + light",
+        name="Demo Stage — 10 screens × dark + light",
         x=0,
         y=0,
         width=stage_w,
