@@ -7222,6 +7222,11 @@
           // hard-coded hex captions, so leave its swatches untouched —
           // remapping them would contradict their printed hex labels.
           function skip(el) { return el.closest(".ds-board"); }
+
+          // 1. Static inline hexes authored straight in the markup —
+          //    persona avatars, settings row icons, intro tiles, score
+          //    pills, verdict chips, etc. (anything not rebuilt from the
+          //    code catalog below).
           document.querySelectorAll("[style]").forEach(function (el) {
             if (skip(el)) return;
             var s = el.getAttribute("style");
@@ -7237,15 +7242,40 @@
               if (n !== v) el.setAttribute(a, n);
             });
           });
+
+          // 2. The JS source of truth for every *dynamically* rendered
+          //    chart. The code hero (donut / bubble / treemap), the Food
+          //    Detail viz, the Browse health bars, the slot tiles and the
+          //    priority chips all pull their colour from
+          //    WISE_CODES.CODE_CATALOG[id].color at render time — they do
+          //    NOT read the static data-slices attribute. So remap the
+          //    catalog hexes, then fan the change through the existing
+          //    pub/sub: every subscriber repaints from the updated catalog
+          //    in whatever chart mode it is currently showing, keeping all
+          //    variations in sync (not just the donut).
+          if (typeof WISE_CODES !== "undefined" && WISE_CODES.CODE_CATALOG) {
+            Object.keys(WISE_CODES.CODE_CATALOG).forEach(function (id) {
+              var meta = WISE_CODES.CODE_CATALOG[id];
+              if (meta && meta.color) meta.color = remap(meta.color, map);
+            });
+            if (typeof WISE_CODES.notify === "function") WISE_CODES.notify();
+          }
+
+          // 3. Any remaining pies authored straight in markup that aren't
+          //    catalog-driven. The catalog-driven ones were just rebuilt in
+          //    step 2 with the remapped colours, so their data-slices is
+          //    already current (n === s) and they're skipped here. Repaint
+          //    via renderDetailChart so bubble / treemap variants recolour
+          //    in place instead of snapping back to a donut.
           document.querySelectorAll(".pie-svg[data-slices]").forEach(function (svg) {
+            if (skip(svg)) return;
             var s = svg.getAttribute("data-slices");
             var n = remap(s, map);
             if (n === s) return;
             svg.setAttribute("data-slices", n);
             try {
-              var w = svg.closest(".pie-wrap");
-              if (w && w.classList.contains("is-bubble") && typeof renderBubbleChart === "function") {
-                renderBubbleChart(svg, { animate: false });
+              if (typeof renderDetailChart === "function") {
+                renderDetailChart(svg, { animate: false });
               } else if (typeof renderPieSvg === "function") {
                 renderPieSvg(svg, { animate: false });
               }
