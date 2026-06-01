@@ -1068,11 +1068,12 @@
          by the renderer from each bubble's radius. */
       .pie-slice-tag.bubble-tag { gap: 0; }
       .pie-slice-tag.bubble-tag .ico { width: auto; height: auto; }
-      /* The donut hole disc is meaningless under the bubble pack or the
-         treemap — hide it for both (tap-to-replay still works on the
-         wrap). */
+      /* The donut hole disc is meaningless under the bubble pack, the
+         treemap, or the focus matrix — hide it for all (tap-to-replay
+         still works on the wrap). */
       .pie-wrap.is-bubble .pie-center,
-      .pie-wrap.is-treemap .pie-center { display: none; }
+      .pie-wrap.is-treemap .pie-center,
+      .pie-wrap.is-matrix .pie-center { display: none; }
 
       /* Treemap tiles — squarified rectangles, area ∝ weight. Each scales
          from its own center for the pop-in (transform-box: fill-box). */
@@ -1087,6 +1088,31 @@
       }
       .pie-slice-tag.treemap-tag { gap: 2px; }
       .pie-slice-tag.treemap-tag .ico { width: auto; height: auto; }
+
+      /* ─── Hyper-focus dot matrix (alternate code viz) ─────────────────
+         A sunflower of dots radiating from a central focus. Each code
+         claims a concentric band of dots in its own hue (color status),
+         every dot carries a white core that brightens toward the center
+         (focus pull), and the count of lit dots tracks how complete the
+         code is — the rest stay as faint hollow rings until they fill in.
+         Shares the .pie-svg shell + the .pie-slice-tag cleanup path. */
+      .pie-svg circle.mx-fill {
+        cursor: pointer;
+        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
+      }
+      :root[data-theme="dark"] .pie-svg circle.mx-fill {
+        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45));
+      }
+      /* White core highlight — pointer-transparent so taps fall through to
+         the colored dot underneath (which carries the code-detail action). */
+      .pie-svg circle.mx-glow { pointer-events: none; }
+      /* Not-yet-filled positions: faint hollow rings in the neutral track
+         color, sitting under the lit dots. */
+      .pie-svg circle.mx-empty {
+        fill: none;
+        stroke: var(--track);
+        stroke-width: 1.5;
+      }
 
       /* ─── Chart-type toggle (pie-card top-left) ──────────────────────
          Mirrors the Rebalance pill in the opposite corner, but icon-only:
@@ -1839,7 +1865,15 @@
         min-width: 0;
         background: transparent;
         border: none;
+        font: inherit;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 120ms ease, opacity 120ms ease;
       }
+      @media (hover: hover) {
+        .prio-chip:hover { opacity: 0.85; }
+      }
+      .prio-chip:active { transform: scale(0.95); }
       .prio-chip .ico {
         width: 34px; height: 34px; border-radius: 50%;
         display: inline-flex; align-items: center; justify-content: center;
@@ -3034,6 +3068,28 @@
         top: 12px; right: 12px;
         z-index: 2;
       }
+      /* Empty code (Screen 1a) has nothing to rebalance — the pill is
+         shown for layout parity with the filled state but reads as a
+         muted, non-interactive "off" affordance until codes are added. */
+      .rebalance-pill.is-off,
+      .rebalance-pill[disabled] {
+        background: color-mix(in srgb, var(--fg-faint) 10%, transparent);
+        border-color: color-mix(in srgb, var(--fg-faint) 30%, var(--line));
+        color: var(--fg-faint);
+        cursor: default;
+        opacity: 0.55;
+      }
+      .phone-wrap:not(.theme-light) .rebalance-pill.is-off,
+      .phone-wrap:not(.theme-light) .rebalance-pill[disabled] {
+        color: var(--fg-faint);
+      }
+      @media (hover: hover) {
+        .rebalance-pill.is-off:hover,
+        .rebalance-pill[disabled]:hover {
+          background: color-mix(in srgb, var(--fg-faint) 10%, transparent);
+          border-color: color-mix(in srgb, var(--fg-faint) 30%, var(--line));
+        }
+      }
 
       /* ─── Reset link (bottom-right of code pie-card) ────────────────
          Reset used to be the loud rectangle in the top-right of the
@@ -3192,28 +3248,34 @@
       }
       .rebalance-sheet .rb-scroll::-webkit-scrollbar { display: none; }
 
-      /* One row per filled slot inside the sheet — now a draggable
-         priority card rather than a slider. A rank badge on the far left
-         shows the slot's importance position (1 = most important); the
-         user presses anywhere on the card and drags it up or down to
-         reorder, and the rest of the app re-weights from the new order
-         (priorityWeights). The whole card is a grab target (touch-action
-         none so a vertical drag doesn't scroll the sheet); the swap
-         button is the lone non-drag affordance inside it. */
+      /* One row per filled slot inside the sheet — a card with two
+         halves. The top strip (.rb-drag) is the reorder grab handle: a
+         rank badge (1 = most important) on the left, then the code
+         identity, its live percentage, and the swap button. Pressing
+         the strip and dragging up/down reorders the codes. The bottom
+         half is a slot-colored range slider that fine-tunes that code's
+         percentage (proportional rebalance, total stays 100). The two
+         gestures are kept apart: only the strip is a drag handle
+         (touch-action none); the slider keeps its native touch
+         behaviour so it still drags. */
       .rebalance-sheet .rb-row {
         position: relative;
-        display: flex; align-items: center; gap: 10px;
-        padding: 10px 12px;
+        display: flex; flex-direction: column; gap: 10px;
+        padding: 12px 14px 14px;
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 16px;
-        cursor: grab;
-        touch-action: none;
-        user-select: none; -webkit-user-select: none;
         transition: transform 200ms cubic-bezier(.2,.85,.25,1),
                     box-shadow 160ms ease, border-color 160ms ease,
                     background 160ms ease;
         will-change: transform;
+      }
+      /* Top strip = reorder grab handle. */
+      .rebalance-sheet .rb-drag {
+        display: flex; align-items: center; gap: 10px;
+        cursor: grab;
+        touch-action: none;
+        user-select: none; -webkit-user-select: none;
       }
       @media (hover: hover) {
         .rebalance-sheet .rb-row:hover { border-color: var(--line-strong); }
@@ -3223,13 +3285,13 @@
          is driven by JS (follows the pointer) so we suppress the CSS
          transition on it while dragging. */
       .rebalance-sheet .rb-row.is-dragging {
-        cursor: grabbing;
         z-index: 5;
         transition: none;
         box-shadow: 0 14px 30px -10px rgba(0,0,0,0.55);
         border-color: var(--line-strong);
         background: var(--surface-2);
       }
+      .rebalance-sheet .rb-row.is-dragging .rb-drag { cursor: grabbing; }
       /* Rank badge — the "number on the left" that reads as the slot's
          importance position. Tints to the slot colour so it pairs with
          the icon beside it. */
@@ -3302,6 +3364,59 @@
         }
       }
       .rebalance-sheet .rb-swap .material-symbols-outlined { font-size: 17px; }
+
+      /* Per-row percentage slider — restyled range input (no UA default).
+         The track inherits the slot's hue on the filled side and the
+         inner-well navy on the empty side; the thumb is a white circle
+         with a slot-colored stroke. Dragging it fine-tunes this code's
+         weight while the others rebalance proportionally so the total
+         holds at 100. Native touch-action so it still drags on touch
+         (the reorder handle is the strip above, not this slider). */
+      .rebalance-sheet .rb-slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 8px;
+        border-radius: 999px;
+        background: linear-gradient(
+          to right,
+          var(--rb-track-c, var(--violet)) 0%,
+          var(--rb-track-c, var(--violet)) var(--rb-fill, 0%),
+          var(--track-subtle) var(--rb-fill, 0%),
+          var(--track-subtle) 100%
+        );
+        outline: none;
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+      }
+      .rebalance-sheet .rb-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px; height: 18px;
+        border-radius: 50%;
+        background: var(--fg-bright);
+        border: 2px solid var(--rb-track-c, var(--violet));
+        box-shadow: var(--shadow-thumb);
+        cursor: pointer;
+        margin-top: 0;
+      }
+      .rebalance-sheet .rb-slider::-moz-range-thumb {
+        width: 18px; height: 18px;
+        border-radius: 50%;
+        background: var(--fg-bright);
+        border: 2px solid var(--rb-track-c, var(--violet));
+        box-shadow: var(--shadow-thumb);
+        cursor: pointer;
+      }
+      .rebalance-sheet .rb-slider:focus-visible::-webkit-slider-thumb {
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--rb-track-c, var(--violet)) 28%, transparent),
+                    var(--shadow-thumb);
+      }
+      .rebalance-sheet .rb-slider:focus-visible::-moz-range-thumb {
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--rb-track-c, var(--violet)) 28%, transparent),
+                    var(--shadow-thumb);
+      }
 
       /* Footer total — pinned below the priority list so the user always
          sees their running 100. Turns green when the code is in
@@ -3424,6 +3539,24 @@
       .code-detail-sheet .cd-meta .cd-pct b {
         font-size: 12px; font-weight: 800;
       }
+      /* "Rebalance" chip — the lead chip in the "Chat with WISE AI"
+         card (mounted only when the sheet is opened from a priority
+         chip). Inherits the .intent-chip shape but tints to the blue
+         action accent so it reads as a quick action rather than a
+         chat starter; tapping it swaps this sheet for the rebalance
+         bottom sheet. */
+      .code-detail-sheet .cd-rebalance-chip {
+        color: var(--blue);
+        border-color: color-mix(in srgb, var(--blue) 40%, var(--line));
+        background: color-mix(in srgb, var(--blue) 8%, var(--card));
+      }
+      .code-detail-sheet .cd-rebalance-chip .material-symbols-outlined { color: var(--blue); }
+      @media (hover: hover) {
+        .code-detail-sheet .cd-rebalance-chip:hover {
+          border-color: color-mix(in srgb, var(--blue) 60%, var(--line));
+          background: color-mix(in srgb, var(--blue) 14%, var(--card));
+        }
+      }
       .code-detail-sheet .cd-close {
         width: 36px; height: 36px;
         border-radius: 999px;
@@ -3462,6 +3595,18 @@
         color: var(--fg-muted);
         font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
         text-transform: uppercase;
+      }
+      /* "Chat with WISE AI about this" gets its own raised card so the
+         chat-starter chips read as a distinct, tappable surface lifted
+         off the sheet rather than another flat section. Soft inner
+         surface + border + a gentle drop shadow for the elevation. */
+      .code-detail-sheet .cd-chat-card {
+        gap: 10px;
+        padding: 14px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: 0 10px 24px -14px rgba(0,0,0,0.55);
       }
       .code-detail-sheet .cd-helps {
         list-style: none;
@@ -3813,6 +3958,44 @@
         justify-content: center;
       }
 
+      /* ─── Rail section divider ───────────────────────────────────────
+         A full-height vertical rule dropped into the horizontal rail as
+         its own flex item. Separates the canonical app screens (0–7)
+         from the "every applicable bottom sheet, shown open over its own
+         page" frames appended after Settings. The label rides centered
+         on the line, rotated to read up the rule. */
+      .rail-divider {
+        flex-shrink: 0;
+        align-self: stretch;
+        position: relative;
+        width: 2px;
+        margin: 8px 28px 32px;
+        background: linear-gradient(
+          180deg,
+          transparent 0%,
+          var(--line-strong) 12%,
+          var(--line-strong) 88%,
+          transparent 100%
+        );
+        border-radius: 999px;
+        scroll-snap-align: center;
+      }
+      .rail-divider .rail-divider-label {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(180deg);
+        writing-mode: vertical-rl;
+        white-space: nowrap;
+        padding: 14px 6px;
+        background: var(--bg);
+        color: var(--fg-faint);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
       /* ─── Design System board ────────────────────────────────────────
          The far-left frame of the rail: a "foundations" reference panel
          that documents the tokens every screen downstream is built from
@@ -3951,12 +4134,14 @@
         padding: 13px;
         transition: opacity 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
       }
-      /* default (CVD off) → Standard is the active palette */
-      .ds-cvd-col.is-safe { opacity: 0.5; }
+      /* default (CVD off) → Standard is the active palette. The
+         colour-safe column is never flagged active but always renders
+         its swatches in full regular colour (no dimming). */
+      .ds-cvd-col.is-safe { opacity: 1; }
       .ds-cvd-col.is-standard { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
-      /* CVD on → flip the emphasis to the colour-safe column */
+      /* CVD on → drop the standard column's active emphasis */
       [data-cvd="safe"] .ds-cvd-col.is-standard { opacity: 0.5; border-color: var(--line); box-shadow: none; }
-      [data-cvd="safe"] .ds-cvd-col.is-safe { opacity: 1; border-color: var(--score-good); box-shadow: 0 0 0 1px var(--score-good); }
+      [data-cvd="safe"] .ds-cvd-col.is-safe { opacity: 1; }
       .ds-cvd-tag {
         display: flex; align-items: center; gap: 7px; margin-bottom: 10px;
         color: var(--fg-faint);
@@ -3970,7 +4155,6 @@
       }
       .ds-cvd-col.is-standard .ds-cvd-active { display: inline-block; }
       [data-cvd="safe"] .ds-cvd-col.is-standard .ds-cvd-active { display: none; }
-      [data-cvd="safe"] .ds-cvd-col.is-safe .ds-cvd-active { display: inline-block; background: var(--score-good); }
       .ds-cvd-note {
         margin-top: 10px;
         color: var(--fg-muted); font-size: 11px; line-height: 1.45;
@@ -5084,7 +5268,7 @@
           </div>
         </div>
         <div class="ds-cvd-col is-safe">
-          <span class="ds-cvd-tag">Color-blind-safe (Okabe-Ito) <span class="ds-cvd-active">Active</span></span>
+          <span class="ds-cvd-tag">Color-blind-safe (Okabe-Ito)</span>
           <div class="ds-ramp">
             <div class="ds-swatch"><div class="chip" style="background:#009E73;"></div><div class="meta"><div class="nm">Green</div><div class="hx">#009E73</div></div></div>
             <div class="ds-swatch"><div class="chip" style="background:#0072B2;"></div><div class="meta"><div class="nm">Blue</div><div class="hx">#0072B2</div></div></div>
@@ -5558,6 +5742,8 @@
 
         <div class="px stack">
           <section class="pie-card">
+            <button class="chart-toggle" data-action="chart-toggle" aria-label="Switch to treemap chart"><span class="material-symbols-outlined">dashboard</span></button>
+            <button class="rebalance-pill is-off" data-action="rebalance-open" aria-label="Rebalance code weights" disabled aria-disabled="true"><span class="material-symbols-outlined">tune</span>Rebalance</button>
             <div class="pie-wrap" style="width:300px;height:300px;">
               <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
                    data-id="empty" data-size="280" data-stroke="88"
@@ -5569,6 +5755,8 @@
             </div>
             <div class="status" data-code-status>Empty</div>
             <div class="status-sub">Add codes to compose your code</div>
+            <button class="rename-link" data-action="rename-prompt" aria-label="Rename code">Rename</button>
+            <button class="reset-link" data-action="reset-prompt" aria-label="Reset code">Reset</button>
           </section>
 
           <div class="stack-sm" data-code-list>
@@ -6437,6 +6625,11 @@
       // weight). Assigned in the same IIFE as the other two so it shares
       // the icon-alias map + SVG namespace, exposed here for renderHero.
       var renderTreemap;
+      // Fourth code viz: a hyper-focus dot matrix (concentric sunflower of
+      // dots — colored by code, brightening toward the focus, filling in
+      // from hollow rings as the code gets more complete). Same IIFE so it
+      // shares the SVG namespace; exposed here for renderHero.
+      var renderMatrix;
       (function () {
         var SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -7178,6 +7371,183 @@
           svg._pieRaf = requestAnimationFrame(tick);
         };
 
+        // ─── Hyper-focus dot matrix renderer ───────────────────────────
+        // Reads the same `data-slices` JSON and lays the codes out as a
+        // sunflower (phyllotaxis) of dots radiating from a central focus.
+        // Three things encode the data at once:
+        //   • COLOR STATUS — each code claims a concentric band of dots in
+        //     its own hue, area ∝ weight, assigned from the center out.
+        //   • BRIGHTNESS — dots glow brighter the closer they sit to the
+        //     focus (white core highlight that fades to nothing at the rim),
+        //     so the eye is pulled into the center.
+        //   • FILL — how complete the code is (Σ weight vs 100) decides how
+        //     many dots fill in; the unfilled outer positions stay as faint
+        //     hollow rings ("round circles") waiting to be claimed.
+        // Tappable filled dots carry the same data-action/code-id as the
+        // other vizzes, and the .pie-slice-tag cleanup is shared for parity.
+        renderMatrix = function (svg, opts) {
+          opts = opts || {};
+          var animate = opts.animate === true;
+
+          var slices;
+          try { slices = JSON.parse(svg.getAttribute("data-slices")); }
+          catch (e) { return; }
+
+          var wrap = svg.parentElement;
+          if (svg._pieRaf) { cancelAnimationFrame(svg._pieRaf); svg._pieRaf = null; }
+          svg.innerHTML = "";
+          if (wrap) {
+            wrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
+          }
+          if (!Array.isArray(slices) || !slices.length) return;
+
+          var size = parseFloat(svg.getAttribute("data-size")) || 200;
+          var cx = size / 2, cy = size / 2;
+
+          var active = slices.filter(function (s) { return (s.value || 0) > 0; });
+          if (!active.length) return;
+          var total = active.reduce(function (s, x) { return s + x.value; }, 0);
+
+          // Completeness → how much of the matrix lights up. Weights that
+          // sum to 100 fill it edge-to-edge; a half-built code leaves the
+          // outer rings hollow.
+          var fillFrac = Math.max(0, Math.min(1, total / 100));
+
+          // Phyllotaxis layout — even dot density, naturally ordered
+          // center-out (r ∝ √index) so we can fill + ripple from the focus.
+          var N = 150;
+          var pad = 8;
+          var maxR = size / 2 - pad;
+          var GA = Math.PI * (3 - Math.sqrt(5));
+          var maxDot = size * 0.030, minDot = size * 0.0115;
+          var dots = [];
+          for (var i = 0; i < N; i++) {
+            var rr = maxR * Math.sqrt((i + 0.5) / N);
+            var ang = i * GA;
+            var tR = maxR > 0 ? rr / maxR : 0; // 0 at focus → 1 at rim
+            dots.push({
+              x: cx + rr * Math.cos(ang),
+              y: cy + rr * Math.sin(ang),
+              tR: tR,
+              dotR: maxDot - (maxDot - minDot) * tR
+            });
+          }
+
+          var filledCount = Math.round(fillFrac * N);
+
+          // Split the filled dots among the codes, area ∝ weight, via
+          // largest-remainder so the per-code counts sum exactly. Assigned
+          // center-out so each code owns one concentric band of its hue.
+          var counts = active.map(function (s) {
+            var exact = (s.value / total) * filledCount;
+            var fl = Math.floor(exact);
+            return { slice: s, count: fl, frac: exact - fl };
+          });
+          var assigned = counts.reduce(function (a, c) { return a + c.count; }, 0);
+          var leftover = filledCount - assigned;
+          counts.slice().sort(function (a, b) { return b.frac - a.frac; })
+            .forEach(function (c) { if (leftover > 0) { c.count++; leftover--; } });
+
+          var fill = [];
+          counts.forEach(function (c) {
+            for (var k = 0; k < c.count; k++) fill.push(c.slice);
+          });
+
+          dots.forEach(function (d, idx) {
+            var slice = idx < fill.length ? fill[idx] : null;
+            if (slice) {
+              // Brightest at the focus, easing down toward the band edge.
+              var op = 1 - 0.42 * d.tR;
+              var dot = document.createElementNS(SVG_NS, "circle");
+              dot.setAttribute("class", "mx mx-fill");
+              dot.setAttribute("cx", d.x.toFixed(2));
+              dot.setAttribute("cy", d.y.toFixed(2));
+              dot.setAttribute("r", animate ? "0" : d.dotR.toFixed(2));
+              dot.setAttribute("fill", slice.c);
+              dot.style.opacity = animate ? "0" : op.toFixed(3);
+              if (slice.codeId) {
+                dot.setAttribute("data-action", "code-detail");
+                dot.setAttribute("data-code-id", slice.codeId);
+              }
+              svg.appendChild(dot);
+              d.el = dot; d.op = op; d.baseR = d.dotR;
+
+              // White core that intensifies toward the focus, so the center
+              // literally glows brighter than its own hue.
+              var glowOp = 0.6 * Math.pow(1 - d.tR, 2);
+              if (glowOp > 0.04) {
+                var glow = document.createElementNS(SVG_NS, "circle");
+                glow.setAttribute("class", "mx mx-glow");
+                glow.setAttribute("cx", d.x.toFixed(2));
+                glow.setAttribute("cy", d.y.toFixed(2));
+                glow.setAttribute("r", animate ? "0" : (d.dotR * 0.5).toFixed(2));
+                glow.setAttribute("fill", "#FFFFFF");
+                glow.style.opacity = animate ? "0" : glowOp.toFixed(3);
+                svg.appendChild(glow);
+                d.glowEl = glow; d.glowOp = glowOp; d.glowR = d.dotR * 0.5;
+              }
+            } else {
+              // Not-yet-filled position — a faint hollow ring that fades
+              // toward the rim, so the matrix dissolves into the card edge.
+              var op2 = (1 - 0.5 * d.tR) * 0.5;
+              var ring = document.createElementNS(SVG_NS, "circle");
+              ring.setAttribute("class", "mx mx-empty");
+              ring.setAttribute("cx", d.x.toFixed(2));
+              ring.setAttribute("cy", d.y.toFixed(2));
+              ring.setAttribute("r", animate ? "0" : (d.dotR * 0.82).toFixed(2));
+              ring.style.opacity = animate ? "0" : op2.toFixed(3);
+              svg.appendChild(ring);
+              d.el = ring; d.op = op2; d.baseR = d.dotR * 0.82; d.empty = true;
+            }
+          });
+
+          if (!animate) return;
+
+          // Ripple-in from the focus: dots wake outward in radius order,
+          // each a quick scale-up + fade. Delay scales with radius so the
+          // wave reads as pulling focus from the center.
+          var DUR = 300, RIPPLE = 460, c1 = 1.70158, c3 = c1 + 1;
+          function easeOutBack(x) {
+            return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
+          }
+          var t0 = null;
+          function tick(now) {
+            if (t0 === null) t0 = now;
+            var elapsed = now - t0;
+            var allDone = true;
+            for (var i = 0; i < dots.length; i++) {
+              var d = dots[i];
+              if (!d.el) continue;
+              var local = elapsed - d.tR * RIPPLE;
+              var p = local <= 0 ? 0 : Math.min(local / DUR, 1);
+              var ease = p <= 0 ? 0 : easeOutBack(p);
+              var fade = Math.min(1, p * 1.4);
+              d.el.setAttribute("r", Math.max(0, d.baseR * ease).toFixed(2));
+              d.el.style.opacity = (d.op * fade).toFixed(3);
+              if (d.glowEl) {
+                d.glowEl.setAttribute("r", Math.max(0, d.glowR * ease).toFixed(2));
+                d.glowEl.style.opacity = (d.glowOp * fade).toFixed(3);
+              }
+              if (p < 1) allDone = false;
+            }
+            if (!allDone) {
+              svg._pieRaf = requestAnimationFrame(tick);
+            } else {
+              svg._pieRaf = null;
+              dots.forEach(function (d) {
+                if (!d.el) return;
+                d.el.setAttribute("r", d.baseR.toFixed(2));
+                d.el.style.opacity = d.op.toFixed(3);
+                if (d.glowEl) {
+                  d.glowEl.setAttribute("r", d.glowR.toFixed(2));
+                  d.glowEl.style.opacity = d.glowOp.toFixed(3);
+                }
+              });
+            }
+          }
+          svg._pieRaf = requestAnimationFrame(tick);
+        };
+
         // No initial paint here — the dark/light cloner below clones
         // empty <svg> shells, then the WISE_CODES code and product-
         // detail subscribers fire immediately on subscribe and paint
@@ -7193,9 +7563,9 @@
       // (Product Detail + Food Detail sheet). CHART_ICON is the glyph
       // shown ON the toggle button — a preview of the chart the NEXT tap
       // switches to.
-      var CHART_ORDER = ["donut", "bubble", "treemap"];
-      var CHART_ICON = { donut: "donut_large", bubble: "bubble_chart", treemap: "dashboard" };
-      var CHART_LABEL = { donut: "donut chart", bubble: "bubble chart", treemap: "treemap chart" };
+      var CHART_ORDER = ["donut", "bubble", "treemap", "matrix"];
+      var CHART_ICON = { donut: "donut_large", bubble: "bubble_chart", treemap: "dashboard", matrix: "blur_on" };
+      var CHART_LABEL = { donut: "donut chart", bubble: "bubble chart", treemap: "treemap chart", matrix: "focus matrix" };
 
       // Paint one pie-svg in whichever mode its .pie-wrap is set to
       // (data-chart), toggling the is-bubble / is-treemap classes that
@@ -7206,15 +7576,18 @@
         if (!pieSvg) return;
         var wrap = pieSvg.closest(".pie-wrap");
         var mode = wrap ? wrap.getAttribute("data-chart") : null;
-        if (mode !== "bubble" && mode !== "treemap") mode = "donut";
+        if (mode !== "bubble" && mode !== "treemap" && mode !== "matrix") mode = "donut";
         if (wrap) {
           wrap.classList.toggle("is-bubble", mode === "bubble");
           wrap.classList.toggle("is-treemap", mode === "treemap");
+          wrap.classList.toggle("is-matrix", mode === "matrix");
         }
         if (mode === "bubble" && typeof renderBubbleChart === "function") {
           renderBubbleChart(pieSvg, opts);
         } else if (mode === "treemap" && typeof renderTreemap === "function") {
           renderTreemap(pieSvg, opts);
+        } else if (mode === "matrix" && typeof renderMatrix === "function") {
+          renderMatrix(pieSvg, opts);
         } else {
           renderPieSvg(pieSvg, opts);
         }
@@ -7266,6 +7639,7 @@
         if (e.target.closest("path.seg")) return;
         if (e.target.closest("circle.bubble")) return;
         if (e.target.closest("rect.tm")) return;
+        if (e.target.closest("circle.mx-fill")) return;
         var wrap = e.target.closest(".pie-wrap");
         if (!wrap) return;
         var svg = wrap.querySelector(".pie-svg");
@@ -7273,12 +7647,14 @@
         var slices = svg.getAttribute("data-slices");
         if (!slices || slices === "[]") return; // nothing to animate
         // Replay in whichever mode the wrap is currently showing, so a
-        // tap on the bubble / treemap viz re-pops that one instead of
-        // snapping back to a donut.
+        // tap on the bubble / treemap / matrix viz re-pops that one instead
+        // of snapping back to a donut.
         if (wrap.classList.contains("is-bubble") && typeof renderBubbleChart === "function") {
           renderBubbleChart(svg, { animate: true });
         } else if (wrap.classList.contains("is-treemap") && typeof renderTreemap === "function") {
           renderTreemap(svg, { animate: true });
+        } else if (wrap.classList.contains("is-matrix") && typeof renderMatrix === "function") {
+          renderMatrix(svg, { animate: true });
         } else {
           renderPieSvg(svg, { animate: true });
         }
@@ -7317,6 +7693,8 @@
               renderBubbleChart(svg, { animate: true });
             } else if (w && w.classList.contains("is-treemap") && typeof renderTreemap === "function") {
               renderTreemap(svg, { animate: true });
+            } else if (w && w.classList.contains("is-matrix") && typeof renderMatrix === "function") {
+              renderMatrix(svg, { animate: true });
             } else {
               renderPieSvg(svg, { animate: true });
             }
@@ -8069,41 +8447,21 @@
           notify();
         }
 
-        // Derive a descending weight distribution for `n` ranked slots so
-        // the integers sum to exactly 100. Rank 1 (top of the priority
-        // list) gets the most; each step down gets less. Built from a
-        // linear ramp (n, n-1, … 1) normalized to 100, with any rounding
-        // leftover handed to the top ranks so the sequence stays strictly
-        // monotonic — the order the user sets visibly drives the weight.
-        function priorityWeights(n) {
-          if (n <= 0) return [];
-          if (n === 1) return [100];
-          var sum = (n * (n + 1)) / 2; // 1 + 2 + … + n
-          var out = [];
-          var allocated = 0;
-          for (var i = 0; i < n; i++) {
-            var raw = n - i; // rank 1 (i=0) → highest ramp value
-            var w = Math.floor((raw / sum) * 100);
-            out.push(w);
-            allocated += w;
-          }
-          var leftover = 100 - allocated;
-          for (var k = 0; k < leftover; k++) out[k % n] += 1; // top ranks first
-          return out;
-        }
-
         // Reorder the code by priority. `orderedIds` is the full list of
-        // filled codeIds in their new top-to-bottom importance order; we
-        // rebuild the slot array in that order and re-derive each slot's
-        // weight from its new rank (priorityWeights), so "most important"
-        // literally means "most weight". Fans out to every subscriber.
+        // filled codeIds in their new top-to-bottom importance order. We
+        // rebuild the slot array in that order while keeping each code's
+        // current weight attached to it — reordering is purely positional
+        // (rank), so the per-row sliders the user already tuned survive
+        // the move and the total stays at 100. Fans out to every
+        // subscriber. No-ops unless the id set matches the current slots.
         function reorderCodes(orderedIds) {
-          if (!orderedIds || !orderedIds.length) return;
-          var weights = priorityWeights(orderedIds.length);
+          if (!orderedIds || orderedIds.length !== state.slots.length) return;
+          var byId = {};
+          state.slots.forEach(function (s) { byId[s.codeId] = s.weight; });
           var next = [];
           for (var i = 0; i < orderedIds.length; i++) {
-            if (!CODE_CATALOG[orderedIds[i]]) return; // unknown code → bail
-            next.push({ codeId: orderedIds[i], weight: weights[i] });
+            if (byId[orderedIds[i]] == null) return; // unknown / mismatched id → bail
+            next.push({ codeId: orderedIds[i], weight: byId[orderedIds[i]] });
           }
           state.slots = next;
           notify();
@@ -8134,7 +8492,6 @@
           resetCode: resetCode,
           clearCode: clearCode,
           setSlotWeight: setSlotWeight,
-          priorityWeights: priorityWeights,
           reorderCodes: reorderCodes,
           productScore: productScore
         };
@@ -8396,7 +8753,7 @@
           // stay independent, like the rest of the prototype). The
           // pie-card's chart-toggle cycles donut → bubble → treemap.
           var chartMode = phoneWrap.getAttribute("data-chart");
-          if (chartMode !== "bubble" && chartMode !== "treemap") chartMode = "donut";
+          if (chartMode !== "bubble" && chartMode !== "treemap" && chartMode !== "matrix") chartMode = "donut";
 
           var pieSvg = phoneWrap.querySelector(".pie-svg");
           if (pieSvg && typeof renderPieSvg === "function") {
@@ -8414,12 +8771,15 @@
             if (pieWrap) {
               pieWrap.classList.toggle("is-bubble", chartMode === "bubble");
               pieWrap.classList.toggle("is-treemap", chartMode === "treemap");
+              pieWrap.classList.toggle("is-matrix", chartMode === "matrix");
             }
 
             if (chartMode === "bubble" && typeof renderBubbleChart === "function") {
               renderBubbleChart(pieSvg, opts);
             } else if (chartMode === "treemap" && typeof renderTreemap === "function") {
               renderTreemap(pieSvg, opts);
+            } else if (chartMode === "matrix" && typeof renderMatrix === "function") {
+              renderMatrix(pieSvg, opts);
             } else {
               renderPieSvg(pieSvg, opts);
             }
@@ -8858,17 +9218,18 @@
         // ─── Rebalance bottom-sheet ─────────────────────────────────────
         // Tapping the Rebalance pill on the code pie-card (or the
         // "Rebalance" text affordance above the Browse priority row)
-        // slides up a bottom sheet listing every filled slot as a
-        // draggable priority card, ranked top-to-bottom by importance.
-        // Dragging a card to a new rank calls WISE_CODES.reorderCodes,
-        // which re-derives each slot's weight from its rank and then
-        // notifies — every subscriber on the page (code pie + slot
-        // list, browse prio chips + food-row bars, product-detail
-        // donut + table, and any open rebalance sheet across the twin
-        // phone) re-renders in one pass. Both dark + light code phones
-        // each mount their own sheet via the .phone-wrap scope, so a
-        // reorder in dark also re-ranks the mirror sheet in the light
-        // twin.
+        // slides up a bottom sheet listing every filled slot as a card.
+        // Each card has a draggable top strip — drag it up/down to
+        // reorder codes by importance (WISE_CODES.reorderCodes, weights
+        // ride along with their code) — and a percentage slider below
+        // that fine-tunes the weight (WISE_CODES.setSlotWeight, the rest
+        // rebalance proportionally to hold 100). Both fan out through
+        // notify, so every subscriber on the page (code pie + slot list,
+        // browse prio chips + food-row bars, product-detail donut +
+        // table, and any open rebalance sheet across the twin phone)
+        // stays in sync. Both dark + light code phones mount their own
+        // sheet via the .phone-wrap scope, so a change in dark mirrors
+        // into the light twin.
         function openRebalanceSheet(phoneWrap) {
           if (!phoneWrap) return;
           if (phoneWrap.querySelector(".rebalance-overlay")) return;
@@ -8913,57 +9274,48 @@
           if (overlay) overlay.remove();
         }
 
-        // Priority display order: filled slots sorted by weight
-        // descending so the row at the top is the most important code
-        // (rank 1). Ties fall back to the slot's existing order. After a
-        // reorder this matches the order the user set (reorderCodes
-        // writes a strictly-descending weight per rank), so the list and
-        // the underlying weights always agree.
-        function rebalanceDisplayOrder(slots) {
-          return slots
-            .filter(function (s) { return s.codeId; })
-            .map(function (s, i) { return { s: s, i: i }; })
-            .sort(function (a, b) {
-              return (b.s.weight - a.s.weight) || (a.i - b.i);
-            })
-            .map(function (o) { return o.s; });
-        }
-
-        // Full re-render of the priority rows. Each card carries a rank
-        // badge (1 = most important), the code identity, its derived
-        // weight%, and a swap affordance. Called on open and on every
-        // state change (the subscriber re-renders rather than patching,
-        // since the only weight changes now come from a reorder / add /
-        // remove / reset — all of which can change row order). The drag
-        // controller is rewired after the markup lands.
+        // Full re-render of the priority rows. Each card has a draggable
+        // top strip (rank badge + identity + live percentage + swap) and
+        // a percentage slider below it. Rows render in the stored slot
+        // order so the rank reflects position and dragging a slider never
+        // reshuffles the list. Called on open and on structural changes
+        // (add / remove / reorder / swap / reset); the drag controller is
+        // rewired after the markup lands.
         function renderRebalanceSheet(overlay, slots) {
           if (!overlay) return;
           var rowsEl = overlay.querySelector("[data-rebalance-rows]");
           if (!rowsEl) return;
 
-          var ordered = rebalanceDisplayOrder(slots);
-          rowsEl.innerHTML = ordered.map(function (s, idx) {
+          var filled = slots.filter(function (s) { return s.codeId; });
+          rowsEl.innerHTML = filled.map(function (s, idx) {
             var meta = W.CODE_CATALOG[s.codeId];
             if (!meta) return "";
             return ''
               + '<div class="rb-row" data-rebalance-code="' + s.codeId + '">'
-              +   '<span class="rb-rank" aria-hidden="true" style="--rb-rank-c:' + meta.color + ';">' + (idx + 1) + '</span>'
-              +   '<div class="rb-meta">'
-              +     '<span class="rb-ico" style="background:' + meta.color + ';">'
-              +       '<span class="material-symbols-outlined">' + meta.icon + '</span>'
-              +     '</span>'
-              +     '<div class="rb-text">'
-              +       '<div class="rb-name">' + W.escapeHtml(meta.name) + '</div>'
-              +       '<div class="rb-cat">' + W.escapeHtml(meta.category) + '</div>'
+              +   '<div class="rb-drag">'
+              +     '<span class="rb-rank" aria-hidden="true" style="--rb-rank-c:' + meta.color + ';">' + (idx + 1) + '</span>'
+              +     '<div class="rb-meta">'
+              +       '<span class="rb-ico" style="background:' + meta.color + ';">'
+              +         '<span class="material-symbols-outlined">' + meta.icon + '</span>'
+              +       '</span>'
+              +       '<div class="rb-text">'
+              +         '<div class="rb-name">' + W.escapeHtml(meta.name) + '</div>'
+              +         '<div class="rb-cat">' + W.escapeHtml(meta.category) + '</div>'
+              +       '</div>'
               +     '</div>'
+              +     '<span class="rb-pct"><b data-rebalance-pct>' + s.weight + '</b><small>%</small></span>'
+              +     '<button type="button" class="rb-swap" data-action="rb-swap" '
+              +       'data-code-id="' + s.codeId + '" '
+              +       'aria-label="Swap out ' + W.escapeHtml(meta.name) + '" '
+              +       'title="Swap this code">'
+              +       '<span class="material-symbols-outlined">swap_horiz</span>'
+              +     '</button>'
               +   '</div>'
-              +   '<span class="rb-pct"><b data-rebalance-pct>' + s.weight + '</b><small>%</small></span>'
-              +   '<button type="button" class="rb-swap" data-action="rb-swap" '
-              +     'data-code-id="' + s.codeId + '" '
-              +     'aria-label="Swap out ' + W.escapeHtml(meta.name) + '" '
-              +     'title="Swap this code">'
-              +     '<span class="material-symbols-outlined">swap_horiz</span>'
-              +   '</button>'
+              +   '<input type="range" min="0" max="100" value="' + s.weight + '" '
+              +     'class="rb-slider" '
+              +     'style="--rb-track-c:' + meta.color + '; --rb-fill:' + s.weight + '%;" '
+              +     'data-rebalance-input '
+              +     'aria-label="Adjust weight for ' + W.escapeHtml(meta.name) + '" />'
               + '</div>';
           }).join("");
 
@@ -8971,15 +9323,27 @@
           setupRebalanceDrag(overlay);
         }
 
-        // Footer sync only — recompute the running total and the
-        // balanced (sum === 100) state. Row contents themselves are set
-        // by renderRebalanceSheet, which the subscriber calls on every
-        // change, so there's no per-row patching to do here anymore.
-        function updateRebalanceSheet(overlay, slots) {
+        // In-place sync: refresh each row's slider value, gradient fill,
+        // and percentage label from the latest state, plus the footer
+        // total / balanced flag. Skips the slider matching `skipCodeId`
+        // so we don't fight a finger actively dragging that input. Used
+        // for weight changes (slider drags) where a full re-render would
+        // tear down the live <input>.
+        function updateRebalanceSheet(overlay, slots, skipCodeId) {
           if (!overlay) return;
           var total = 0;
           slots.forEach(function (s) {
-            if (s.codeId) total += s.weight;
+            if (!s.codeId) return;
+            total += s.weight;
+            var row = overlay.querySelector('[data-rebalance-code="' + s.codeId + '"]');
+            if (!row) return;
+            var pctB = row.querySelector("[data-rebalance-pct]");
+            if (pctB) pctB.textContent = s.weight;
+            var slider = row.querySelector("[data-rebalance-input]");
+            if (slider) {
+              if (s.codeId !== skipCodeId) slider.value = s.weight;
+              slider.style.setProperty("--rb-fill", s.weight + "%");
+            }
           });
           var totalEl = overlay.querySelector("[data-rebalance-total]");
           if (totalEl) totalEl.textContent = String(total);
@@ -8994,7 +9358,7 @@
         // slot at a time with an eased transform — so the gap "snaps"
         // open at the spot the card will drop. On release the card
         // animates into that slot, then we commit the new order via
-        // WISE_CODES.reorderCodes (which re-derives weights from rank)
+        // WISE_CODES.reorderCodes (weights ride along with their code)
         // and the subscriber repaints both twins.
         function setupRebalanceDrag(overlay) {
           if (!overlay) return;
@@ -9002,9 +9366,12 @@
           if (!rowsEl) return;
 
           rowsEl.querySelectorAll(".rb-row").forEach(function (row) {
-            row.addEventListener("pointerdown", function (e) {
+            var handle = row.querySelector(".rb-drag");
+            if (!handle) return;
+            handle.addEventListener("pointerdown", function (e) {
               // Primary button / touch only, and never start a drag from
-              // the swap button (it's a tap target inside the card).
+              // the swap button (it's a tap target inside the strip).
+              // The slider lives below the strip, so it's untouched here.
               if (e.button != null && e.button !== 0) return;
               if (e.target.closest('[data-action="rb-swap"]')) return;
               beginRebalanceDrag(overlay, rowsEl, row, e);
@@ -9183,6 +9550,18 @@
                + '</button>')
             : '';
 
+          // Rebalance affordance — only when opened from a Browse
+          // priority chip and the code is actually in the user's code.
+          // Rendered as the lead chip in the "Chat with WISE AI" row
+          // (icon sets it apart from the text-only chat starters);
+          // tapping it swaps this sheet for the rebalance bottom sheet.
+          var showRebalance = !!opts.rebalance && inCode;
+          var rebalanceChipHtml = showRebalance
+            ? ('<button type="button" class="intent-chip cd-rebalance-chip" data-action="code-detail-rebalance" aria-label="Rebalance code weights">'
+               +   '<span class="material-symbols-outlined">tune</span>Rebalance'
+               + '</button>')
+            : '';
+
           var composerPlaceholder = W.escapeHtml("Message WISE AI about " + meta.name + "\u2026");
 
           var overlay = document.createElement("div");
@@ -9209,9 +9588,9 @@
             +       '<div class="cd-section-label">What it does for you</div>'
             +       '<ul class="cd-helps">' + helpsHtml + '</ul>'
             +     '</div>'
-            +     '<div class="cd-section">'
+            +     '<div class="cd-section cd-chat-card">'
             +       '<div class="cd-section-label">Chat with WISE AI about this</div>'
-            +       '<div class="cd-intent-row">' + intentsHtml + '</div>'
+            +       '<div class="cd-intent-row">' + rebalanceChipHtml + intentsHtml + '</div>'
             +     '</div>'
             +     addCtaHtml
             +   '</div>'
@@ -9428,7 +9807,8 @@
           var isCodeDetail = action === "code-detail"
                           || action === "code-detail-close"
                           || action === "code-detail-intent"
-                          || action === "code-detail-add";
+                          || action === "code-detail-add"
+                          || action === "code-detail-rebalance";
           var phoneWrap = isCodeDetail
             ? target.closest(".phone-wrap")
             : target.closest("[data-code]");
@@ -9590,7 +9970,11 @@
                          || (target.hasAttribute("data-code-id") ? target : null);
             if (detailRow) {
               ev.preventDefault();
-              openCodeDetail(phoneWrap, detailRow.getAttribute("data-code-id"), { context: "code" });
+              // Browse priority chips offer an inline rebalance hand-off;
+              // the Home slot rows / pie slices don't (rebalance lives on
+              // the pie card there).
+              var fromPrio = !!(target.closest && target.closest(".prio-chip"));
+              openCodeDetail(phoneWrap, detailRow.getAttribute("data-code-id"), { context: "code", rebalance: fromPrio });
             }
             return;
           }
@@ -9598,6 +9982,15 @@
           if (action === "code-detail-close" && phoneWrap) {
             ev.preventDefault();
             closeCodeDetail(phoneWrap);
+            return;
+          }
+
+          if (action === "code-detail-rebalance" && phoneWrap) {
+            // Swap the code-detail sheet for the rebalance bottom sheet
+            // in place — close one, open the other on the same phone.
+            ev.preventDefault();
+            closeCodeDetail(phoneWrap);
+            rebalanceApi.open(phoneWrap);
             return;
           }
 
@@ -9788,6 +10181,35 @@
           openPinWalkthrough(pinPhone);
         });
 
+        // Slider input handler — dragging a row's percentage slider in
+        // an open rebalance sheet calls setSlotWeight on that code, which
+        // redistributes proportionally and fans the change out to every
+        // subscriber. We stash the active code on the overlay so the
+        // post-notify in-place sync skips the slider the user is holding
+        // (no thumb jitter mid-drag). Reordering uses a separate pointer
+        // gesture on the row's drag strip, so the two never collide.
+        document.addEventListener("input", function (ev) {
+          var slider = ev.target.closest("[data-rebalance-input]");
+          if (!slider) return;
+          var row = slider.closest("[data-rebalance-code]");
+          var overlay = slider.closest(".rebalance-overlay");
+          if (!row || !overlay) return;
+          var codeId = row.getAttribute("data-rebalance-code");
+          overlay._dragCodeId = codeId;
+          W.setSlotWeight(codeId, parseInt(slider.value, 10) || 0);
+          // If setSlotWeight clamped the value (e.g. others all at 0),
+          // snap the thumb back to the committed integer so it tracks
+          // the actual state rather than the raw drag position.
+          var actualSlot = W.getSlots().filter(function (s) {
+            return s.codeId === codeId;
+          })[0];
+          if (actualSlot && parseInt(slider.value, 10) !== actualSlot.weight) {
+            slider.value = actualSlot.weight;
+            slider.style.setProperty("--rb-fill", actualSlot.weight + "%");
+          }
+          overlay._dragCodeId = null;
+        });
+
         // Subscribe to shared state. The cloner has already run by
         // this point, so both dark + light code twins exist; we
         // render them in one pass. (The picker overlays — both the
@@ -9810,14 +10232,32 @@
           firstCodePaint = false;
 
           // Any open rebalance sheet (on a code phone or the Browse
-          // phone) repaints from the new state so a reorder here also
-          // re-ranks the mirror sheet on the twin. We skip any overlay
-          // that's mid-drag so we never tear down the card a finger is
-          // holding — its own drop handler commits and repaints once
-          // the gesture ends.
+          // phone) syncs to the new state. We distinguish two cases:
+          //   • structural change (set of codes or their order differs
+          //     from the DOM) → full re-render so rows/ranks rebuild.
+          //   • weight-only change (slider drag) → in-place update that
+          //     leaves the live <input> the user is holding intact.
+          // Overlays mid-reorder (_dragging) are skipped entirely — the
+          // drop handler commits and the next notify repaints them.
           document.querySelectorAll(".rebalance-overlay").forEach(function (overlay) {
             if (overlay._dragging) return;
-            rebalanceApi.render(overlay, state.slots);
+            var rowsEl = overlay.querySelector("[data-rebalance-rows]");
+            var filled = state.slots.filter(function (s) { return s.codeId; });
+            var domCodes = rowsEl
+              ? Array.prototype.map.call(
+                  rowsEl.querySelectorAll(".rb-row"),
+                  function (r) { return r.getAttribute("data-rebalance-code"); }
+                )
+              : [];
+            // Same codes in the same order? → weight-only sync. Any drift
+            // in membership OR order means a structural rebuild.
+            var sameOrder = domCodes.length === filled.length
+              && filled.every(function (s, i) { return domCodes[i] === s.codeId; });
+            if (!sameOrder) {
+              rebalanceApi.render(overlay, state.slots);
+            } else {
+              rebalanceApi.update(overlay, state.slots, overlay._dragCodeId);
+            }
           });
         });
 
@@ -9873,13 +10313,13 @@
             var meta = W.CODE_CATALOG[s.codeId];
             if (!meta) return "";
             return ''
-              + '<span class="prio-chip">'
+              + '<button type="button" class="prio-chip" data-action="code-detail" data-code-id="' + s.codeId + '" aria-label="Open details for ' + W.escapeHtml(meta.name) + '">'
               +   '<span class="ico" style="background:' + meta.color + ';">'
               +     '<span class="material-symbols-outlined">' + meta.icon + '</span>'
               +   '</span>'
               +   '<span class="pct">' + s.weight + '%</span>'
               +   '<span class="nm">' + W.escapeHtml(meta.name) + '</span>'
-              + '</span>';
+              + '</button>';
           }).join("");
         }
 
@@ -10901,6 +11341,229 @@
           refreshSend: refreshSend,
           submitComposer: submitComposer
         };
+      })();
+    </script>
+
+    <!-- ─── Bottom-sheet catalog frames ─────────────────────────────────
+         Appends, to the far right of the rail (after Settings, behind a
+         vertical divider), one frame per applicable bottom sheet — each
+         is a live clone of the page that sheet opens over, with the sheet
+         driven open through the same delegated handlers the real app
+         uses. Cloning the already-hydrated source phone (after a short
+         settle delay so the donut + health-bar entrance animations have
+         landed) means each frame mirrors the canonical screen exactly,
+         then the sheet is mounted on top via a synthetic click on its
+         trigger. Dark + light twins are built here too, since the
+         dark/light cloner has already run by this point. -->
+    <script>
+      (function () {
+        // Fire a bubbling click so the document-level delegate that the
+        // app already wires up handles it (open picker / reset / rename /
+        // rebalance / code-detail / food-detail / filter / chat / pin).
+        function fire(el) {
+          if (!el) return;
+          el.dispatchEvent(
+            new MouseEvent("click", { bubbles: true, cancelable: true })
+          );
+        }
+
+        // Generic "click the first match" opener.
+        function clickSel(sel) {
+          return function (wrap) {
+            fire(wrap.querySelector(sel));
+          };
+        }
+
+        // Pick a code: the full Home has no "add" tile (it's full), so
+        // drop a throwaway add trigger in, fire it (openPicker mounts the
+        // sheet over this filled page without touching shared state), then
+        // remove the trigger.
+        function openPicker(wrap) {
+          var list = wrap.querySelector("[data-code-list]");
+          if (!list) return;
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "slot-add";
+          btn.setAttribute("data-action", "add");
+          btn.style.display = "none";
+          list.appendChild(btn);
+          fire(btn);
+          btn.remove();
+        }
+
+        // Swap a code: open the rebalance sheet, then tap the first row's
+        // swap control so the Pick-a-code sheet stacks on top of it.
+        function openSwap(wrap) {
+          fire(wrap.querySelector('[data-action="rebalance-open"]'));
+          var swap = wrap.querySelector(".rb-swap");
+          if (swap) {
+            fire(swap);
+          } else {
+            setTimeout(function () {
+              var s = wrap.querySelector(".rb-swap");
+              if (s) fire(s);
+            }, 60);
+          }
+        }
+
+        // Filter: open the Codes multi-select sheet over Browse.
+        function openFilter(wrap) {
+          fire(
+            wrap.querySelector('[data-filter-group="codes"] [data-filter-chip]')
+          );
+        }
+
+        var SHEET_SCREENS = [
+          {
+            label: "S1 · Pick a Code · sheet",
+            source: "1b · Your Code",
+            open: openPicker,
+            caption:
+              "The Pick-a-code bottom sheet riding over the filled Your Code home: search, group-by-category / A–Z toggle, then the catalog. The page dims behind the scrim; tapping a row pushes its slot detail onto the stack.",
+          },
+          {
+            label: "S2 · Code Detail · sheet",
+            source: "1b · Your Code",
+            open: clickSel('.slot-c[data-action="code-detail"]'),
+            caption:
+              "Tapping a slot row (or its pie slice) on Your Code slides up the per-code detail sheet — description, an inline rebalance hand-off, and chat-starter chips that grow the sheet into a WISE AI conversation about that code.",
+          },
+          {
+            label: "S3 · Rename · sheet",
+            source: "1b · Your Code",
+            open: clickSel('[data-action="rename-prompt"]'),
+            caption:
+              "Rename (bottom-left of the pie card, or the underlined name in the headline) opens this compact sheet: a single text field pre-filled with the current code name plus Cancel / Save.",
+          },
+          {
+            label: "S4 · Reset · sheet",
+            source: "1b · Your Code",
+            open: clickSel('[data-action="reset-prompt"]'),
+            caption:
+              "Reset double-confirms before wiping: the destructive bottom sheet explains it clears every slot and weight and restores the starting five codes, with Cancel and a red Reset action.",
+          },
+          {
+            label: "S5 · Rebalance · sheet",
+            source: "1b · Your Code",
+            open: clickSel('[data-action="rebalance-open"]'),
+            caption:
+              "The Rebalance sheet lists every filled slot as a card: drag the top strip to reorder by importance and slide to fine-tune each weight (the rest rebalance proportionally to hold 100), with a live running total.",
+          },
+          {
+            label: "S6 · Swap a Code · sheet",
+            source: "1b · Your Code",
+            open: openSwap,
+            caption:
+              "Tapping a rebalance row's swap control stacks the Pick-a-code sheet on top of the rebalance sheet — a sheet-on-sheet trade that swaps that one code out while the rebalance sheet stays mounted underneath.",
+          },
+          {
+            label: "S7 · Filter · sheet",
+            source: "3 · Browse",
+            open: openFilter,
+            caption:
+              "A Browse filter chip slides up a multi-select bottom sheet — here the Codes group, listing every code from the catalog. The chip's count badge reflects how many options are active once you choose.",
+          },
+          {
+            label: "S8 · Food Detail · sheet",
+            source: "3 · Browse",
+            open: clickSel('.food-row[data-action="food-detail"]'),
+            caption:
+              "Tapping a Top Match row opens the food-detail sheet over Browse: hero with image / brand / UPC, then the same contribution donut as your code — each slice now the amount that slot contributed to this food's composite score.",
+          },
+          {
+            label: "S9 · WISE AI Chat · sheet",
+            source: "1b · Your Code",
+            open: clickSel('[data-action="open-chat"]'),
+            caption:
+              "The floating WISEcode brand bug in any primary header opens a standalone WISE AI chat overlay — the same avatar + tinted-bubble rhythm as the Chat tab, surfaced as a sheet over the page you were on.",
+          },
+          {
+            label: "S10 · Pin to Home · sheet",
+            source: "0 · Intro",
+            open: clickSel('[data-action="pin-walkthrough"]'),
+            caption:
+              "The Intro screen's Pin card opens a guided, multi-step Add-to-Home-Screen walkthrough: each step renders a faux-iOS illustration of the real install gesture with Back / Next paging through them.",
+          },
+        ];
+
+        function setLabel(wrap, txt) {
+          var l = wrap.querySelector(".phone-label");
+          if (l) l.textContent = txt;
+        }
+
+        function findSource(marker) {
+          var labels = document.querySelectorAll(
+            ".pair-rail > .screen-pair > .screen-pair-label"
+          );
+          for (var i = 0; i < labels.length; i++) {
+            if (labels[i].textContent.indexOf(marker) !== -1) {
+              var pair = labels[i].closest(".screen-pair");
+              return pair ? pair.querySelector(".phone-wrap") : null;
+            }
+          }
+          return null;
+        }
+
+        function build() {
+          var rail = document.querySelector(".pair-rail");
+          if (!rail || rail.querySelector(".rail-divider")) return;
+
+          var divider = document.createElement("div");
+          divider.className = "rail-divider";
+          divider.innerHTML =
+            '<span class="rail-divider-label">Bottom sheets · open over their page</span>';
+          rail.appendChild(divider);
+
+          SHEET_SCREENS.forEach(function (spec) {
+            var src = findSource(spec.source);
+            if (!src) return;
+
+            var section = document.createElement("section");
+            section.className = "screen-pair sheet-pair";
+
+            var h = document.createElement("h3");
+            h.className = "screen-pair-label";
+            h.textContent = spec.label;
+
+            var row = document.createElement("div");
+            row.className = "pair-row";
+
+            var dark = src.cloneNode(true);
+            dark.classList.remove("theme-light");
+            setLabel(dark, "Dark");
+            var darkCap = dark.querySelector(".phone-caption");
+            if (darkCap) darkCap.textContent = spec.caption;
+
+            var light = dark.cloneNode(true);
+            light.classList.add("theme-light");
+            setLabel(light, "Light");
+
+            row.appendChild(dark);
+            row.appendChild(light);
+            section.appendChild(h);
+            section.appendChild(row);
+            rail.appendChild(section);
+
+            // Sheets mount into the phone's .screen, so both twins must be
+            // in the DOM before we drive them open.
+            try {
+              spec.open(dark);
+            } catch (e) {}
+            try {
+              spec.open(light);
+            } catch (e) {}
+          });
+        }
+
+        // Wait for the entrance animations on the source phones to settle
+        // before cloning, so each frame captures a finished render.
+        if (document.readyState === "complete") {
+          setTimeout(build, 700);
+        } else {
+          window.addEventListener("load", function () {
+            setTimeout(build, 700);
+          });
+        }
       })();
     </script>
 
