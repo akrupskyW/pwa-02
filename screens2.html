@@ -625,6 +625,43 @@
       @media (prefers-reduced-motion: reduce) {
         .wise-bug { animation: none; }
       }
+      /* Bug + caption stacked vertically so the "AI Insights" label sits
+         directly under the owl bug, both reading as one tap target. */
+      .wise-bug-stack {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        flex-shrink: 0;
+      }
+      .wise-bug-stack .wise-bug { display: block; }
+      /* Caption breathes through the same royal-blue tones as the bug, on
+         the same 6s cadence, so the pair pulse in sync. */
+      .wise-bug-label {
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        line-height: 1;
+        cursor: pointer;
+        white-space: nowrap;
+        color: var(--blue);
+        animation: wise-bug-label-pulse 6s ease-in-out infinite;
+        transition: opacity 140ms ease;
+      }
+      @media (hover: hover) {
+        .wise-bug-label:hover { opacity: 0.82; }
+      }
+      @keyframes wise-bug-label-pulse {
+        0%   { color: #1D4ED8; }
+        25%  { color: #3B82F6; }
+        50%  { color: #60A5FA; }
+        75%  { color: #3B82F6; }
+        100% { color: #1D4ED8; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .wise-bug-label { animation: none; }
+      }
       /* Full wordmark is authored dark — invert on the dark phone canvas. */
       .phone-wrap:not(.theme-light) .wise-logo-vertical {
         filter: brightness(0) invert(0.96);
@@ -3120,7 +3157,7 @@
       .rebalance-sheet .rb-head h2 {
         margin: 0;
         color: var(--fg-bright);
-        font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
+        font-size: 22px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.15;
       }
       .rebalance-sheet .rb-head p {
         margin: 4px 0 0;
@@ -3155,22 +3192,58 @@
       }
       .rebalance-sheet .rb-scroll::-webkit-scrollbar { display: none; }
 
-      /* One row per filled slot inside the sheet. Top half is a compact
-         identity strip (icon + name + category + live percentage); the
-         bottom half is a slot-colored range slider. The slider is fully
-         restyled (no UA default) so the track inherits the slot's hue
-         on the filled side and the inner-well navy on the empty side,
-         and the thumb is a white circle with a slot-colored stroke
-         mirroring the .slot-thumb rule above. */
+      /* One row per filled slot inside the sheet — now a draggable
+         priority card rather than a slider. A rank badge on the far left
+         shows the slot's importance position (1 = most important); the
+         user presses anywhere on the card and drags it up or down to
+         reorder, and the rest of the app re-weights from the new order
+         (priorityWeights). The whole card is a grab target (touch-action
+         none so a vertical drag doesn't scroll the sheet); the swap
+         button is the lone non-drag affordance inside it. */
       .rebalance-sheet .rb-row {
-        display: flex; flex-direction: column; gap: 8px;
-        padding: 12px 14px 14px;
+        position: relative;
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 12px;
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 16px;
+        cursor: grab;
+        touch-action: none;
+        user-select: none; -webkit-user-select: none;
+        transition: transform 200ms cubic-bezier(.2,.85,.25,1),
+                    box-shadow 160ms ease, border-color 160ms ease,
+                    background 160ms ease;
+        will-change: transform;
+      }
+      @media (hover: hover) {
+        .rebalance-sheet .rb-row:hover { border-color: var(--line-strong); }
+      }
+      /* The card the finger is holding: lifts off the surface, brightens
+         its border, and rides above its neighbours. Its inline transform
+         is driven by JS (follows the pointer) so we suppress the CSS
+         transition on it while dragging. */
+      .rebalance-sheet .rb-row.is-dragging {
+        cursor: grabbing;
+        z-index: 5;
+        transition: none;
+        box-shadow: 0 14px 30px -10px rgba(0,0,0,0.55);
+        border-color: var(--line-strong);
+        background: var(--surface-2);
+      }
+      /* Rank badge — the "number on the left" that reads as the slot's
+         importance position. Tints to the slot colour so it pairs with
+         the icon beside it. */
+      .rebalance-sheet .rb-rank {
+        flex-shrink: 0;
+        width: 22px; min-width: 22px;
+        text-align: center;
+        color: var(--rb-rank-c, var(--fg-muted));
+        font-size: 15px; font-weight: 800; letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
       }
       .rebalance-sheet .rb-meta {
         display: flex; align-items: center; gap: 10px;
+        flex: 1; min-width: 0;
       }
       .rebalance-sheet .rb-ico {
         width: 34px; height: 34px; border-radius: 10px;
@@ -3229,53 +3302,8 @@
         }
       }
       .rebalance-sheet .rb-swap .material-symbols-outlined { font-size: 17px; }
-      .rebalance-sheet .rb-slider {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 100%;
-        height: 8px;
-        border-radius: 999px;
-        background: linear-gradient(
-          to right,
-          var(--rb-track-c, var(--violet)) 0%,
-          var(--rb-track-c, var(--violet)) var(--rb-fill, 0%),
-          var(--track-subtle) var(--rb-fill, 0%),
-          var(--track-subtle) 100%
-        );
-        outline: none;
-        cursor: pointer;
-        margin: 0;
-        padding: 0;
-      }
-      .rebalance-sheet .rb-slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 18px; height: 18px;
-        border-radius: 50%;
-        background: var(--fg-bright);
-        border: 2px solid var(--rb-track-c, var(--violet));
-        box-shadow: var(--shadow-thumb);
-        cursor: pointer;
-        margin-top: 0;
-      }
-      .rebalance-sheet .rb-slider::-moz-range-thumb {
-        width: 18px; height: 18px;
-        border-radius: 50%;
-        background: var(--fg-bright);
-        border: 2px solid var(--rb-track-c, var(--violet));
-        box-shadow: var(--shadow-thumb);
-        cursor: pointer;
-      }
-      .rebalance-sheet .rb-slider:focus-visible::-webkit-slider-thumb {
-        box-shadow: 0 0 0 4px color-mix(in srgb, var(--rb-track-c, var(--violet)) 28%, transparent),
-                    var(--shadow-thumb);
-      }
-      .rebalance-sheet .rb-slider:focus-visible::-moz-range-thumb {
-        box-shadow: 0 0 0 4px color-mix(in srgb, var(--rb-track-c, var(--violet)) 28%, transparent),
-                    var(--shadow-thumb);
-      }
 
-      /* Footer total — pinned below the slider list so the user always
+      /* Footer total — pinned below the priority list so the user always
          sees their running 100. Turns green when the code is in
          harmony (sum === 100) so the affordance reads as a target. */
       .rebalance-sheet .rb-footer {
@@ -7508,7 +7536,11 @@
       // sheets (picker, code detail, rebalance, reset) never get it.
       // Runs after the dark/light cloner so both twins pick up the markup.
       (function () {
-        var bugHtml = '<button type="button" class="wise-bug" data-action="open-chat" aria-label="Chat with WISE AI"></button>';
+        var bugHtml =
+          '<span class="wise-bug-stack">' +
+          '<button type="button" class="wise-bug" data-action="open-chat" aria-label="Chat with WISE AI"></button>' +
+          '<span class="wise-bug-label" data-action="open-chat">AI Insights</span>' +
+          '</span>';
 
         function wrapHeadlineBlock(parent, block) {
           if (!block || parent.querySelector(".scr-hdr-headline")) return;
@@ -8037,6 +8069,46 @@
           notify();
         }
 
+        // Derive a descending weight distribution for `n` ranked slots so
+        // the integers sum to exactly 100. Rank 1 (top of the priority
+        // list) gets the most; each step down gets less. Built from a
+        // linear ramp (n, n-1, … 1) normalized to 100, with any rounding
+        // leftover handed to the top ranks so the sequence stays strictly
+        // monotonic — the order the user sets visibly drives the weight.
+        function priorityWeights(n) {
+          if (n <= 0) return [];
+          if (n === 1) return [100];
+          var sum = (n * (n + 1)) / 2; // 1 + 2 + … + n
+          var out = [];
+          var allocated = 0;
+          for (var i = 0; i < n; i++) {
+            var raw = n - i; // rank 1 (i=0) → highest ramp value
+            var w = Math.floor((raw / sum) * 100);
+            out.push(w);
+            allocated += w;
+          }
+          var leftover = 100 - allocated;
+          for (var k = 0; k < leftover; k++) out[k % n] += 1; // top ranks first
+          return out;
+        }
+
+        // Reorder the code by priority. `orderedIds` is the full list of
+        // filled codeIds in their new top-to-bottom importance order; we
+        // rebuild the slot array in that order and re-derive each slot's
+        // weight from its new rank (priorityWeights), so "most important"
+        // literally means "most weight". Fans out to every subscriber.
+        function reorderCodes(orderedIds) {
+          if (!orderedIds || !orderedIds.length) return;
+          var weights = priorityWeights(orderedIds.length);
+          var next = [];
+          for (var i = 0; i < orderedIds.length; i++) {
+            if (!CODE_CATALOG[orderedIds[i]]) return; // unknown code → bail
+            next.push({ codeId: orderedIds[i], weight: weights[i] });
+          }
+          state.slots = next;
+          notify();
+        }
+
         function productScore(codeId) {
           return PRODUCT_SCORES[codeId] != null
             ? PRODUCT_SCORES[codeId]
@@ -8062,6 +8134,8 @@
           resetCode: resetCode,
           clearCode: clearCode,
           setSlotWeight: setSlotWeight,
+          priorityWeights: priorityWeights,
+          reorderCodes: reorderCodes,
           productScore: productScore
         };
       })();
@@ -8784,16 +8858,17 @@
         // ─── Rebalance bottom-sheet ─────────────────────────────────────
         // Tapping the Rebalance pill on the code pie-card (or the
         // "Rebalance" text affordance above the Browse priority row)
-        // slides up a bottom sheet listing every filled slot with a
-        // slot-colored range slider. Dragging any slider calls
-        // WISE_CODES.setSlotWeight which runs the same proportional-
-        // rebalance algorithm as the live PWA, then notifies — every
-        // subscriber on the page (code pie + slot list, browse prio
-        // chips + food-row bars, product-detail donut + table, and
-        // any open rebalance sheet across the twin phone) re-renders
-        // in one pass. Both dark + light code phones each mount
-        // their own sheet via the .phone-wrap scope, so a drag in
-        // dark also moves the sliders mirrored in the light twin.
+        // slides up a bottom sheet listing every filled slot as a
+        // draggable priority card, ranked top-to-bottom by importance.
+        // Dragging a card to a new rank calls WISE_CODES.reorderCodes,
+        // which re-derives each slot's weight from its rank and then
+        // notifies — every subscriber on the page (code pie + slot
+        // list, browse prio chips + food-row bars, product-detail
+        // donut + table, and any open rebalance sheet across the twin
+        // phone) re-renders in one pass. Both dark + light code phones
+        // each mount their own sheet via the .phone-wrap scope, so a
+        // reorder in dark also re-ranks the mirror sheet in the light
+        // twin.
         function openRebalanceSheet(phoneWrap) {
           if (!phoneWrap) return;
           if (phoneWrap.querySelector(".rebalance-overlay")) return;
@@ -8806,7 +8881,7 @@
             +   '<div class="rb-head">'
             +     '<div class="rb-title">'
             +       '<h2 id="rebalance-sheet-title">Rebalance your code</h2>'
-            +       '<p>Drag a slider \u2014 the rest shift to keep your total at 100.</p>'
+            +       '<p>Drag to reorder \u2014 your top code counts the most.</p>'
             +     '</div>'
             +     '<button type="button" class="rb-close" data-action="rebalance-close" aria-label="Close rebalance">'
             +       '<span class="material-symbols-outlined">close</span>'
@@ -8838,22 +8913,41 @@
           if (overlay) overlay.remove();
         }
 
-        // Full re-render of the slider rows. Called once when the sheet
-        // opens; subsequent state changes (drag inside this sheet or
-        // any change from elsewhere — add/remove on the twin, reset)
-        // route through updateRebalanceSheet so we don't tear down the
-        // <input> the user might be actively dragging.
+        // Priority display order: filled slots sorted by weight
+        // descending so the row at the top is the most important code
+        // (rank 1). Ties fall back to the slot's existing order. After a
+        // reorder this matches the order the user set (reorderCodes
+        // writes a strictly-descending weight per rank), so the list and
+        // the underlying weights always agree.
+        function rebalanceDisplayOrder(slots) {
+          return slots
+            .filter(function (s) { return s.codeId; })
+            .map(function (s, i) { return { s: s, i: i }; })
+            .sort(function (a, b) {
+              return (b.s.weight - a.s.weight) || (a.i - b.i);
+            })
+            .map(function (o) { return o.s; });
+        }
+
+        // Full re-render of the priority rows. Each card carries a rank
+        // badge (1 = most important), the code identity, its derived
+        // weight%, and a swap affordance. Called on open and on every
+        // state change (the subscriber re-renders rather than patching,
+        // since the only weight changes now come from a reorder / add /
+        // remove / reset — all of which can change row order). The drag
+        // controller is rewired after the markup lands.
         function renderRebalanceSheet(overlay, slots) {
           if (!overlay) return;
           var rowsEl = overlay.querySelector("[data-rebalance-rows]");
           if (!rowsEl) return;
 
-          var filled = slots.filter(function (s) { return s.codeId; });
-          rowsEl.innerHTML = filled.map(function (s) {
+          var ordered = rebalanceDisplayOrder(slots);
+          rowsEl.innerHTML = ordered.map(function (s, idx) {
             var meta = W.CODE_CATALOG[s.codeId];
             if (!meta) return "";
             return ''
               + '<div class="rb-row" data-rebalance-code="' + s.codeId + '">'
+              +   '<span class="rb-rank" aria-hidden="true" style="--rb-rank-c:' + meta.color + ';">' + (idx + 1) + '</span>'
               +   '<div class="rb-meta">'
               +     '<span class="rb-ico" style="background:' + meta.color + ';">'
               +       '<span class="material-symbols-outlined">' + meta.icon + '</span>'
@@ -8862,45 +8956,30 @@
               +       '<div class="rb-name">' + W.escapeHtml(meta.name) + '</div>'
               +       '<div class="rb-cat">' + W.escapeHtml(meta.category) + '</div>'
               +     '</div>'
-              +     '<span class="rb-pct"><b data-rebalance-pct>' + s.weight + '</b><small>%</small></span>'
-              +     '<button type="button" class="rb-swap" data-action="rb-swap" '
-              +       'data-code-id="' + s.codeId + '" '
-              +       'aria-label="Swap out ' + W.escapeHtml(meta.name) + '" '
-              +       'title="Swap this code">'
-              +       '<span class="material-symbols-outlined">swap_horiz</span>'
-              +     '</button>'
               +   '</div>'
-              +   '<input type="range" min="0" max="100" value="' + s.weight + '" '
-              +     'class="rb-slider" '
-              +     'style="--rb-track-c:' + meta.color + '; --rb-fill:' + s.weight + '%;" '
-              +     'data-rebalance-input '
-              +     'aria-label="Adjust weight for ' + W.escapeHtml(meta.name) + '" />'
+              +   '<span class="rb-pct"><b data-rebalance-pct>' + s.weight + '</b><small>%</small></span>'
+              +   '<button type="button" class="rb-swap" data-action="rb-swap" '
+              +     'data-code-id="' + s.codeId + '" '
+              +     'aria-label="Swap out ' + W.escapeHtml(meta.name) + '" '
+              +     'title="Swap this code">'
+              +     '<span class="material-symbols-outlined">swap_horiz</span>'
+              +   '</button>'
               + '</div>';
           }).join("");
 
           updateRebalanceSheet(overlay, slots, null);
+          setupRebalanceDrag(overlay);
         }
 
-        // In-place sync: walk the rendered rows and refresh slider values,
-        // gradient fills, and pct labels from the latest state. Skips the
-        // slider matching `skipCodeId` so we don't fight a finger that's
-        // currently dragging that input. Pass null to sync every row
-        // (used on open and on state changes that didn't originate here).
-        function updateRebalanceSheet(overlay, slots, skipCodeId) {
+        // Footer sync only — recompute the running total and the
+        // balanced (sum === 100) state. Row contents themselves are set
+        // by renderRebalanceSheet, which the subscriber calls on every
+        // change, so there's no per-row patching to do here anymore.
+        function updateRebalanceSheet(overlay, slots) {
           if (!overlay) return;
           var total = 0;
           slots.forEach(function (s) {
-            if (!s.codeId) return;
-            total += s.weight;
-            var row = overlay.querySelector('[data-rebalance-code="' + s.codeId + '"]');
-            if (!row) return;
-            var pctB = row.querySelector("[data-rebalance-pct]");
-            if (pctB) pctB.textContent = s.weight;
-            var slider = row.querySelector("[data-rebalance-input]");
-            if (slider) {
-              if (s.codeId !== skipCodeId) slider.value = s.weight;
-              slider.style.setProperty("--rb-fill", s.weight + "%");
-            }
+            if (s.codeId) total += s.weight;
           });
           var totalEl = overlay.querySelector("[data-rebalance-total]");
           if (totalEl) totalEl.textContent = String(total);
@@ -8908,11 +8987,120 @@
           if (sheet) sheet.classList.toggle("is-balanced", total === 100);
         }
 
-        // Expose the open/close/update helpers on the code closure so
-        // the document-level click handler below + the slider input
-        // listener can all reach them without re-importing the closure.
-        // Hoisted here so the listeners declared later read the live
-        // function values rather than capturing undefined refs.
+        // ─── Drag-to-reorder controller ─────────────────────────────────
+        // Wires pointer-based vertical reordering onto the rows of one
+        // overlay. Press a card and drag: it lifts and follows the
+        // finger, while the cards it crosses slide out of the way one
+        // slot at a time with an eased transform — so the gap "snaps"
+        // open at the spot the card will drop. On release the card
+        // animates into that slot, then we commit the new order via
+        // WISE_CODES.reorderCodes (which re-derives weights from rank)
+        // and the subscriber repaints both twins.
+        function setupRebalanceDrag(overlay) {
+          if (!overlay) return;
+          var rowsEl = overlay.querySelector("[data-rebalance-rows]");
+          if (!rowsEl) return;
+
+          rowsEl.querySelectorAll(".rb-row").forEach(function (row) {
+            row.addEventListener("pointerdown", function (e) {
+              // Primary button / touch only, and never start a drag from
+              // the swap button (it's a tap target inside the card).
+              if (e.button != null && e.button !== 0) return;
+              if (e.target.closest('[data-action="rb-swap"]')) return;
+              beginRebalanceDrag(overlay, rowsEl, row, e);
+            });
+          });
+        }
+
+        function beginRebalanceDrag(overlay, rowsEl, row, downEvt) {
+          var rows = Array.prototype.slice.call(rowsEl.querySelectorAll(".rb-row"));
+          if (rows.length < 2) return; // nothing to reorder
+
+          var startIndex = rows.indexOf(row);
+          // Uniform row pitch (height + the 14px flex gap between cards).
+          var r0 = rows[0].getBoundingClientRect();
+          var step = rows.length > 1
+            ? rows[1].getBoundingClientRect().top - r0.top
+            : row.offsetHeight + 14;
+
+          var startY = downEvt.clientY;
+          var curIndex = startIndex;
+          overlay._dragging = true;
+
+          row.classList.add("is-dragging");
+          try { row.setPointerCapture(downEvt.pointerId); } catch (err) {}
+
+          // Slide the non-dragged cards to make room for the dragged card
+          // at target index `to`. Each crossed card shifts by exactly one
+          // pitch; the CSS transition on .rb-row gives the snap.
+          function layout(to) {
+            rows.forEach(function (r, i) {
+              if (r === row) return;
+              var shift = 0;
+              if (startIndex < to && i > startIndex && i <= to) shift = -step;
+              else if (startIndex > to && i < startIndex && i >= to) shift = step;
+              r.style.transform = shift ? "translateY(" + shift + "px)" : "";
+            });
+          }
+
+          function onMove(e) {
+            var dy = e.clientY - startY;
+            row.style.transform = "translateY(" + dy + "px) scale(1.03)";
+            var to = startIndex + Math.round(dy / step);
+            if (to < 0) to = 0;
+            if (to > rows.length - 1) to = rows.length - 1;
+            if (to !== curIndex) {
+              curIndex = to;
+              layout(curIndex);
+            }
+          }
+
+          function finish() {
+            row.removeEventListener("pointermove", onMove);
+            row.removeEventListener("pointerup", onUp);
+            row.removeEventListener("pointercancel", onUp);
+
+            // Settle the dragged card into its target slot, then commit.
+            var targetDy = (curIndex - startIndex) * step;
+            row.classList.remove("is-dragging");
+            row.style.transform = "translateY(" + targetDy + "px)";
+
+            var committed = false;
+            function commit() {
+              if (committed) return;
+              committed = true;
+              overlay._dragging = false;
+              if (curIndex === startIndex) {
+                // No move — just clear the inline transforms.
+                rows.forEach(function (r) { r.style.transform = ""; });
+                return;
+              }
+              var order = rows.map(function (r) {
+                return r.getAttribute("data-rebalance-code");
+              });
+              var moved = order.splice(startIndex, 1)[0];
+              order.splice(curIndex, 0, moved);
+              W.reorderCodes(order); // → notify → subscriber re-renders
+            }
+            // Commit once the transform settle finishes; the timeout is
+            // a fallback for the no-movement case where the transform
+            // never changes and transitionend wouldn't fire.
+            row.addEventListener("transitionend", function (te) {
+              if (te.propertyName === "transform") commit();
+            });
+            setTimeout(commit, 260);
+          }
+          function onUp() { finish(); }
+
+          row.addEventListener("pointermove", onMove);
+          row.addEventListener("pointerup", onUp);
+          row.addEventListener("pointercancel", onUp);
+        }
+
+        // Expose the open/close/render helpers on the code closure so the
+        // document-level click handler + the state subscriber can reach
+        // them. Hoisted here so the listeners declared later read the
+        // live function values rather than capturing undefined refs.
         var rebalanceApi = {
           open: openRebalanceSheet,
           close: closeRebalanceSheet,
@@ -9600,35 +9788,6 @@
           openPinWalkthrough(pinPhone);
         });
 
-        // Slider input handler — dragging any range input inside an
-        // open rebalance sheet calls setSlotWeight on the matching
-        // code, which redistributes proportionally and fans the
-        // change out to every subscriber. We stash the active code
-        // on the overlay so the post-notify update skips the slider
-        // the user is actively dragging (no thumb jitter mid-drag).
-        document.addEventListener("input", function (ev) {
-          var slider = ev.target.closest("[data-rebalance-input]");
-          if (!slider) return;
-          var row = slider.closest("[data-rebalance-code]");
-          var overlay = slider.closest(".rebalance-overlay");
-          if (!row || !overlay) return;
-          var codeId = row.getAttribute("data-rebalance-code");
-          overlay._dragCodeId = codeId;
-          W.setSlotWeight(codeId, parseInt(slider.value, 10) || 0);
-          // If setSlotWeight clamped the value (e.g. others all at 0),
-          // the slider thumb still sits at the user's drag position.
-          // Snap it back to the actual state so the thumb tracks
-          // the integer the code is now committed to.
-          var actualSlot = W.getSlots().filter(function (s) {
-            return s.codeId === codeId;
-          })[0];
-          if (actualSlot && parseInt(slider.value, 10) !== actualSlot.weight) {
-            slider.value = actualSlot.weight;
-            slider.style.setProperty("--rb-fill", actualSlot.weight + "%");
-          }
-          overlay._dragCodeId = null;
-        });
-
         // Subscribe to shared state. The cloner has already run by
         // this point, so both dark + light code twins exist; we
         // render them in one pass. (The picker overlays — both the
@@ -9650,33 +9809,15 @@
           });
           firstCodePaint = false;
 
-          // Any open rebalance sheet (could be on a code phone or
-          // on the Browse phone) gets an in-place sync so a drag here
-          // also updates the mirror sheet on the twin without tearing
-          // down the slider element the user might be holding. The
-          // count of filled slots could also have changed (add /
-          // remove on the twin, reset), so we full-render when the
-          // row count drifts from the DOM count.
+          // Any open rebalance sheet (on a code phone or the Browse
+          // phone) repaints from the new state so a reorder here also
+          // re-ranks the mirror sheet on the twin. We skip any overlay
+          // that's mid-drag so we never tear down the card a finger is
+          // holding — its own drop handler commits and repaints once
+          // the gesture ends.
           document.querySelectorAll(".rebalance-overlay").forEach(function (overlay) {
-            var rowsEl = overlay.querySelector("[data-rebalance-rows]");
-            var filled = state.slots.filter(function (s) { return s.codeId; });
-            var domCodes = rowsEl
-              ? Array.prototype.map.call(
-                  rowsEl.querySelectorAll(".rb-row"),
-                  function (r) { return r.getAttribute("data-rebalance-code"); }
-                )
-              : [];
-            // Full re-render when the set of codes drifts — covers add /
-            // remove (count changes) AND swap (count holds but a codeId
-            // changed). Otherwise an in-place sync keeps the slider the
-            // user may be dragging from being torn down.
-            var sameSet = domCodes.length === filled.length
-              && filled.every(function (s) { return domCodes.indexOf(s.codeId) !== -1; });
-            if (!sameSet) {
-              rebalanceApi.render(overlay, state.slots);
-            } else {
-              rebalanceApi.update(overlay, state.slots, overlay._dragCodeId);
-            }
+            if (overlay._dragging) return;
+            rebalanceApi.render(overlay, state.slots);
           });
         });
 
@@ -9967,8 +10108,22 @@
 
             var row = t.closest("[data-filter-opt]");
             if (row) {
-              var sel = getSel(wrap);
               var val = row.getAttribute("data-value");
+              var hitCheck = !!t.closest(".pick-check");
+
+              // Tapping the row body (name / icon / anywhere but the
+              // checkbox) opens the code's explanation sheet — the same
+              // detail bottom sheet the picker uses. Only the checkbox
+              // actually selects. Ingredients have no detail sheet, so
+              // the whole row toggles for them.
+              if (overlay._filter.group === "codes" && !hitCheck) {
+                if (window.CODE_DETAIL_SHEET) {
+                  window.CODE_DETAIL_SHEET.open(phone, val, { context: "code" });
+                }
+                return;
+              }
+
+              var sel = getSel(wrap);
               var nowOn = !sel[val];
               if (nowOn) sel[val] = true; else delete sel[val];
               row.classList.toggle("is-selected", nowOn);
