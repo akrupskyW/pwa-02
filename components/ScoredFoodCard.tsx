@@ -29,7 +29,7 @@ export const ScoredFoodCard = ({ composite }: { composite: number | null }) => {
         ? {
             label: "Excellent match for your code",
             icon: "check-circle",
-            color: "var(--color-score-excellent)",
+            color: "var(--color-accent-blue)",
           }
         : composite >= 75
           ? {
