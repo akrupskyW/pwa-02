@@ -92,6 +92,8 @@
         --shadow-card-soft: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
         --shadow-modal: 0 30px 60px -10px rgba(0, 0, 0, 0.66);
         --shadow-sheet: 0 -20px 60px -10px rgba(0, 0, 0, 0.66);
+        /* Bottom-sheet canvas — deep phone bg in dark; cards/inputs stay on --card. */
+        --sheet-bg: var(--bg);
         --shadow-thumb: 0 2px 6px rgba(0, 0, 0, 0.66);
 
         --stage-grad-1: rgba(79, 232, 155, 0.14);  /* signal-green-strong (dark) mint wash, top-left */
@@ -161,6 +163,8 @@
         --shadow-card-soft: 0 8px 24px -10px rgba(15, 10, 31, 0.18);
         --shadow-modal: 0 30px 60px -10px rgba(15, 10, 31, 0.26);
         --shadow-sheet: 0 -20px 60px -10px rgba(15, 10, 31, 0.22);
+        /* Bottom-sheet canvas — signal-paper linen (#FBF6ED); cards stay white. */
+        --sheet-bg: var(--bg);
         --shadow-thumb: 0 2px 6px rgba(15, 10, 31, 0.18);
 
         --stage-grad-1: rgba(24, 132, 67, 0.16);   /* signal-green-strong (light) forest wash, top-left */
@@ -1418,7 +1422,7 @@
       .sheet {
         position: absolute; left: 0; right: 0; bottom: 0;
         max-height: 75%;
-        background: var(--card);
+        background: var(--sheet-bg);
         border: 1px solid var(--line);
         border-bottom: none;
         border-top-left-radius: 28px;
@@ -1744,7 +1748,7 @@
         position: relative;
         width: 100%;
         max-height: calc(100% - 64px); /* status-bar peek above */
-        background: var(--card);
+        background: var(--sheet-bg);
         border-top: 1px solid var(--line);
         border-radius: 22px 22px 0 0;
         box-shadow: var(--shadow-sheet);
@@ -2303,13 +2307,15 @@
 
       /* ─── Food Detail (Screen 6) ────────────────────────────────────────
          Per-food drill-down reached from a Top Match row in Browse (or a
-         barcode result in Scan). Three stacked cards:
+         barcode result in Scan). Four stacked cards:
 
-           1. Product hero  — image + name/brand + UPC pill
-           2. Score card    — green "Excellent match" verdict, contribution
+           1. Score card    — "Excellent match" verdict, contribution
                               donut (re-using the code pie), and a
                               per-slot contribution table beneath
-           3. About card    — link to the score-math explainer
+           2. Product hero  — image + name/brand + UPC pill
+           3. AI Insights   — chat-starter chips (same raised card as the
+                              code-detail bottom sheet)
+           4. About card    — link to the score-math explainer
 
          Plus a centered "Last scanned at …" timestamp above the tab bar.
          Every surface uses var(--card)/var(--line) so the same markup
@@ -2472,6 +2478,27 @@
         display: inline-flex; align-items: center; justify-content: center;
       }
       .about-card .chev .material-symbols-outlined { font-size: 20px; }
+
+      /* AI Insights card — mirrors the code-detail bottom sheet's
+         .cd-chat-card: a raised surface with chat-starter intent chips.
+         Shared on Screen 6 and the food-detail sheet. */
+      .fd-ai-card {
+        display: flex; flex-direction: column; gap: 10px;
+        padding: 14px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: 0 10px 24px -14px rgba(0,0,0,0.55);
+      }
+      .fd-ai-card .fd-ai-label {
+        color: var(--fg-muted);
+        font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .fd-ai-card .fd-ai-intents {
+        display: flex; flex-wrap: wrap; gap: 6px;
+      }
+      .fd-ai-card .intent-chip { cursor: pointer; }
 
       /* Centered "Last scanned today at 9:41 AM" timestamp above the tab
          bar. history glyph + label, both in the faint text tier so it
@@ -3036,13 +3063,12 @@
       }
 
       /* ─── Reset confirmation bottom-sheet ────────────────────────────
-         Slides up from the bottom of the phone when the user taps the
-         Reset pill on the code pie-card. Mirrors the in-app bottom
-         sheet idiom: scrim + rounded-top sheet with a small drag handle,
-         destructive (red) confirm and neutral cancel sitting side-by-
-         side. Mounted into the .screen subtree at runtime — one sheet
-         per phone, so the dark and the cloned light twin can both run
-         their own reset flow without cross-talk. */
+         Slides up from the bottom of the phone when the user taps Reset
+         on the code pie-card. Scrim + rounded-top sheet with drag handle,
+         close X in the head, and a single destructive confirm pill.
+         Mounted into the .screen subtree at runtime — one sheet per
+         phone, so the dark and the cloned light twin can both run their
+         own reset flow without cross-talk. */
       .reset-overlay {
         position: absolute; inset: 0; z-index: 50;
         background: var(--scrim-strong);
@@ -3052,7 +3078,7 @@
       }
       .reset-sheet {
         width: 100%;
-        background: var(--card);
+        background: var(--sheet-bg);
         border-top: 1px solid var(--line);
         border-radius: 22px 22px 0 0;
         padding: 12px 20px 22px;
@@ -3071,32 +3097,73 @@
         opacity: 0.5;
         margin-bottom: 8px;
       }
-      .reset-sheet h2 {
+      .reset-sheet .sheet-head,
+      .rename-sheet .sheet-head,
+      .delete-sheet .sheet-head {
+        display: flex; align-items: flex-start; justify-content: space-between;
+        gap: 12px;
+      }
+      .reset-sheet .sheet-title,
+      .rename-sheet .sheet-title,
+      .delete-sheet .sheet-title {
+        flex: 1; min-width: 0;
+      }
+      .reset-sheet .sheet-title h2,
+      .rename-sheet .sheet-title h2,
+      .delete-sheet .sheet-title h2 {
         margin: 0;
         color: var(--fg-bright);
         font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
       }
-      .reset-sheet p {
-        margin: 0;
+      .reset-sheet .sheet-title p,
+      .rename-sheet .sheet-title p,
+      .delete-sheet .sheet-title p {
+        margin: 4px 0 0;
         color: var(--fg-muted);
         font-size: 13px; line-height: 1.5;
       }
-      .reset-sheet .actions {
-        display: flex; gap: 10px; margin-top: 12px;
+      .reset-sheet .sheet-close,
+      .rename-sheet .sheet-close,
+      .delete-sheet .sheet-close {
+        width: 32px; height: 32px;
+        border-radius: 999px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        color: var(--fg);
+        display: inline-flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        padding: 0;
+        transition: background 120ms ease, border-color 120ms ease;
       }
-      .reset-sheet .btn {
-        flex: 1;
+      @media (hover: hover) {
+        .reset-sheet .sheet-close:hover,
+        .rename-sheet .sheet-close:hover,
+        .delete-sheet .sheet-close:hover {
+          background: var(--surface-3);
+          border-color: var(--line-strong);
+        }
+      }
+      .reset-sheet .sheet-close .material-symbols-outlined,
+      .rename-sheet .sheet-close .material-symbols-outlined,
+      .delete-sheet .sheet-close .material-symbols-outlined {
+        font-size: 18px;
+      }
+      .reset-sheet .actions,
+      .rename-sheet .actions,
+      .delete-sheet .actions {
+        margin-top: 12px;
+      }
+      .reset-sheet .btn,
+      .rename-sheet .btn,
+      .delete-sheet .btn {
+        width: 100%;
         min-height: 44px;
         border-radius: 9999px;
         padding: 11px 16px;
         font-size: 14px; font-weight: 700; letter-spacing: 0;
         border: none; cursor: pointer;
         display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      }
-      .reset-sheet .btn-cancel {
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        color: var(--fg-bright);
       }
       .reset-sheet .btn-confirm {
         background: var(--code-red);
@@ -3108,10 +3175,10 @@
       /* ─── Rename bottom sheet ───────────────────────────────────────
          Tapping Rename on the code pie-card slides up this sheet: a
          single text input pre-filled with the current code name, plus
-         Cancel / Save. Reuses the reset-sheet scrim + rounded-top sheet
-         + rc-slide language; the confirm is brand-green (a save, not a
-         destructive action). One sheet per phone so the dark + cloned
-         light twin each run their own rename without cross-talk. */
+         Save. Close X in the head dismisses (same as rebalance / saved).
+         Reuses the reset-sheet scrim + rounded-top sheet + rc-slide
+         language. One sheet per phone so the dark + cloned light twin
+         each run their own rename without cross-talk. */
       .rename-overlay {
         position: absolute; inset: 0; z-index: 50;
         background: var(--scrim-strong);
@@ -3121,7 +3188,7 @@
       }
       .rename-sheet {
         width: 100%;
-        background: var(--card);
+        background: var(--sheet-bg);
         border-top: 1px solid var(--line);
         border-radius: 22px 22px 0 0;
         padding: 12px 20px 22px;
@@ -3136,55 +3203,30 @@
         opacity: 0.5;
         margin-bottom: 8px;
       }
-      .rename-sheet h2 {
-        margin: 0;
-        color: var(--fg-bright);
-        font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
-      }
-      .rename-sheet p {
-        margin: 0;
-        color: var(--fg-muted);
-        font-size: 13px; line-height: 1.5;
-      }
-      .rename-sheet .rn-input {
+      .rename-sheet .sheet-field {
         margin-top: 12px;
-        width: 100%;
-        box-sizing: border-box;
+        display: flex; align-items: center; gap: 8px;
         min-height: 44px;
         background: var(--card);
         border: 1px solid var(--line-subtle);
         border-radius: 14px;
-        padding: 12px 14px;
-        color: var(--fg-bright);
-        font-family: inherit;
-        font-size: 15px; font-weight: 500; letter-spacing: -0.01em;
-        outline: none;
+        padding: 0 12px;
         box-shadow: var(--shadow-card);
         transition: border-color 120ms ease;
       }
-      .rename-sheet .rn-input::placeholder {
-        color: var(--fg-faint);
-        font-weight: 500;
+      .rename-sheet .sheet-field:focus-within {
+        border-color: var(--line-strong);
       }
-      .rename-sheet .rn-input:focus {
-        border-color: var(--blue);
-      }
-      .rename-sheet .actions {
-        display: flex; gap: 10px; margin-top: 12px;
-      }
-      .rename-sheet .btn {
-        flex: 1;
-        min-height: 44px;
-        border-radius: 9999px;
-        padding: 11px 16px;
-        font-size: 14px; font-weight: 700; letter-spacing: 0;
-        border: none; cursor: pointer;
-        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      }
-      .rename-sheet .btn-cancel {
-        background: var(--surface-2);
-        border: 1px solid var(--line);
+      .rename-sheet .sheet-field input {
+        flex: 1; min-width: 0;
+        background: transparent; border: none; outline: none;
         color: var(--fg-bright);
+        font-family: inherit;
+        font-size: 14px; font-weight: 500;
+        padding: 0;
+      }
+      .rename-sheet .sheet-field input::placeholder {
+        color: var(--fg-faint);
       }
       .rename-sheet .btn-confirm {
         background: var(--blue);
@@ -3267,14 +3309,11 @@
         color: var(--fg-faint);
         font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
         cursor: pointer;
-        text-decoration: underline;
-        text-decoration-color: color-mix(in srgb, var(--fg-faint) 50%, transparent);
-        text-underline-offset: 3px;
+        text-decoration: none;
       }
       @media (hover: hover) {
         .reset-link:hover {
           color: var(--fg-bright);
-          text-decoration-color: var(--fg-bright);
         }
       }
       .pie-card .reset-link {
@@ -3297,14 +3336,11 @@
         color: var(--fg-faint);
         font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
         cursor: pointer;
-        text-decoration: underline;
-        text-decoration-color: color-mix(in srgb, var(--fg-faint) 50%, transparent);
-        text-underline-offset: 3px;
+        text-decoration: none;
       }
       @media (hover: hover) {
         .rename-link:hover {
           color: var(--fg-bright);
-          text-decoration-color: var(--fg-bright);
         }
       }
       .pie-card .rename-link {
@@ -3328,15 +3364,15 @@
         font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
         cursor: pointer;
         display: inline-flex; align-items: center; gap: 4px;
-        text-decoration: underline;
-        text-decoration-color: color-mix(in srgb, var(--fg-faint) 50%, transparent);
-        text-underline-offset: 3px;
+        text-decoration: none;
       }
-      .saved-link .material-symbols-outlined { font-size: 14px; text-decoration: none; }
+      .saved-link .material-symbols-outlined { font-size: 14px; }
+      .saved-link [data-saved-count] {
+        font-variant-numeric: tabular-nums;
+      }
       @media (hover: hover) {
         .saved-link:hover {
           color: var(--fg-bright);
-          text-decoration-color: var(--fg-bright);
         }
       }
       .pie-card .saved-link {
@@ -3383,7 +3419,7 @@
       .rebalance-sheet {
         width: 100%;
         max-height: 82%;
-        background: var(--card);
+        background: var(--sheet-bg);
         border-top: 1px solid var(--card-border);
         /* Floating rounded sheet — matches the code-detail sheet
            (wise-signal .wsc-code-detail-sheet): rounded shoulders + a
@@ -3461,7 +3497,7 @@
         position: relative;
         display: flex; flex-direction: column; gap: 10px;
         padding: 12px 14px 14px;
-        background: var(--surface);
+        background: var(--card);
         border: 1px solid var(--line);
         border-radius: 16px;
         transition: transform 200ms cubic-bezier(.2,.85,.25,1),
@@ -3488,7 +3524,7 @@
         transition: none;
         box-shadow: 0 14px 30px -10px rgba(0,0,0,0.55);
         border-color: var(--line-strong);
-        background: var(--surface-2);
+        background: var(--card);
       }
       .rebalance-sheet .rb-row.is-dragging .rb-drag { cursor: grabbing; }
       /* Rank badge — the "number on the left" that reads as the slot's
@@ -3663,7 +3699,7 @@
         position: relative;
         width: 100%;
         max-height: 82%;
-        background: var(--card);
+        background: var(--sheet-bg);
         border-top: 1px solid var(--card-border);
         /* Floating rounded sheet — mirrors wise-signal .wsc-code-detail-sheet
            (24px shoulders, 36px bottom so the sheet nests inside the phone's
@@ -3816,7 +3852,7 @@
       .code-detail-sheet .cd-card {
         display: flex; flex-direction: column; gap: 14px;
         padding: 14px 16px 16px;
-        background: var(--surface);
+        background: var(--card);
         border: 1px solid var(--card-border);
         border-radius: 16px;
         box-shadow: var(--shadow-card);
@@ -3839,7 +3875,7 @@
       .code-detail-sheet .cd-chat-card {
         gap: 10px;
         padding: 14px;
-        background: var(--surface);
+        background: var(--card);
         border: 1px solid var(--line);
         border-radius: 14px;
         box-shadow: 0 10px 24px -14px rgba(0,0,0,0.55);
@@ -3932,9 +3968,9 @@
       /* ─── Food detail bottom sheet ──────────────────────────────────
          Slides up from the bottom of the Browse phone when the user
          taps a food row. The sheet hosts the same per-food breakdown
-         that the standalone Product Detail screen shows — hero card
-         (thumb + name + brand + UPC), contribution donut, per-slot
-         table, "About this score" link, last-scanned timestamp — only
+         that the standalone Product Detail screen shows — contribution
+         donut, hero card (thumb + name + brand + UPC), AI Insights
+         card, "About this score" link, last-scanned timestamp — only
          compressed into a near-full-height sheet over the food list,
          so the user keeps their place in Browse instead of pushing a
          full screen. Same scrim + handle + rc-slide animation as the
@@ -3950,7 +3986,7 @@
       .food-detail-sheet {
         width: 100%;
         max-height: calc(100% - 56px);
-        background: var(--card);
+        background: var(--sheet-bg);
         border-top: 1px solid var(--line);
         border-radius: 22px 22px 0 0;
         padding: 10px 0 18px;
@@ -4697,7 +4733,7 @@
       }
       .pin-sheet {
         width: 100%;
-        background: var(--card);
+        background: var(--sheet-bg);
         border-top: 1px solid var(--line);
         border-radius: 22px 22px 0 0;
         padding: 12px 20px 22px;
@@ -4736,12 +4772,11 @@
         height: 188px;
         border-radius: 16px;
         border: 1px solid var(--line);
-        background: var(--ink-soft);
+        background: var(--card);
         overflow: hidden;
         display: flex; align-items: center; justify-content: center;
         padding: 14px;
       }
-      .theme-light .pin-stage { background: var(--surface); }
       .pin-stage-inner {
         width: 100%;
         animation: pin-pop 320ms cubic-bezier(.2,.85,.25,1);
@@ -5270,11 +5305,10 @@
 
       /* ─── Delete-code confirmation bottom-sheet ───────────────────────
          Tapping the minus on a code slot no longer removes the code
-         outright — it slides up this double-verify sheet first. Reuses
-         the reset-sheet's scrim + rounded-top sheet + drag-handle +
-         side-by-side cancel/destructive-confirm idiom so the two
-         destructive flows feel identical. One sheet per phone (mounted
-         into the .screen), so dark + light twins confirm independently. */
+         outright — it slides up this double-verify sheet first. Same
+         chrome as reset (scrim, handle, close X, single destructive CTA).
+         One sheet per phone (mounted into the .screen), so dark + light
+         twins confirm independently. */
       .delete-overlay {
         position: absolute; inset: 0; z-index: 50;
         background: var(--scrim-strong);
@@ -5284,7 +5318,7 @@
       }
       .delete-sheet {
         width: 100%;
-        background: var(--card);
+        background: var(--sheet-bg);
         border-top: 1px solid var(--line);
         border-radius: 22px 22px 0 0;
         padding: 12px 20px 22px;
@@ -5313,33 +5347,6 @@
         color: var(--fg-bright);
         font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
       }
-      .delete-sheet h2 {
-        margin: 0;
-        color: var(--fg-bright);
-        font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
-      }
-      .delete-sheet p {
-        margin: 0;
-        color: var(--fg-muted);
-        font-size: 13px; line-height: 1.5;
-      }
-      .delete-sheet .actions {
-        display: flex; gap: 10px; margin-top: 12px;
-      }
-      .delete-sheet .btn {
-        flex: 1;
-        min-height: 44px;
-        border-radius: 9999px;
-        padding: 11px 16px;
-        font-size: 14px; font-weight: 700; letter-spacing: 0;
-        border: none; cursor: pointer;
-        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      }
-      .delete-sheet .btn-cancel {
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        color: var(--fg-bright);
-      }
       .delete-sheet .btn-confirm {
         background: var(--code-red);
         color: #FFFFFF;
@@ -5365,7 +5372,7 @@
       .saved-sheet {
         width: 100%;
         max-height: 82%;
-        background: var(--card);
+        background: var(--sheet-bg);
         border-top: 1px solid var(--line);
         border-radius: 22px 22px 0 0;
         padding: 12px 20px 20px;
@@ -5417,12 +5424,12 @@
         display: flex; align-items: center; gap: 12px;
         padding: 12px 12px;
         border-radius: 16px;
-        background: var(--surface-2);
+        background: var(--card);
         border: 1px solid var(--line);
       }
       .saved-row.is-current {
         border-color: color-mix(in srgb, var(--blue) 60%, transparent);
-        background: color-mix(in srgb, var(--blue) 10%, var(--surface-2));
+        background: color-mix(in srgb, var(--blue) 10%, var(--card));
       }
       .saved-thumb {
         flex-shrink: 0;
@@ -5997,14 +6004,6 @@
           </div>
         </div>
       </div>
-      <nav class="tab-bar">
-        <div class="tab-pill">
-          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
-        </div>
-      </nav>
     </div>
   </div>
   <div class="phone-caption">First-run welcome: the WISEcode wordmark, a purpose-led headline and value prop (personalized scoring vs. one-size-fits-all), a 2×2 grid framing the why behind each capability (define your standard, see what fits, decide in the aisle, understand the why), a blue CTA directly beneath the grid, and a full-width card explaining how to pin the PWA to the device home screen.</div>
@@ -6118,14 +6117,6 @@
           <button type="button" class="persona-skip" data-action="persona-skip">Skip for now</button>
         </div>
       </div>
-      <nav class="tab-bar">
-        <div class="tab-pill">
-          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">settings</span><span>SETTINGS</span></a>
-        </div>
-      </nav>
     </div>
   </div>
   <div class="phone-caption">Persona picker: a swipeable carousel of food personas you can multi-select. Each tap toggles a card (filled "Selected" pill + blue ring); the footer "Show me my code" CTA stays inert until at least one persona is chosen, then lights up. Drawn from the same persona set as the WISEcode signal onboarding.</div>
@@ -6177,7 +6168,7 @@
             <div class="status" data-code-status>Empty</div>
             <div class="status-sub">Add codes to compose your code</div>
             <button class="rename-link" data-action="rename-prompt" aria-label="Rename code">Rename</button>
-            <button class="saved-link" data-action="saved-open" aria-label="Open saved codes"><span class="material-symbols-outlined">bookmarks</span>Saved</button>
+            <button class="saved-link" data-action="saved-open" aria-label="Open saved codes (3 saved)"><span class="material-symbols-outlined">bookmarks</span>Saved (<span data-saved-count>3</span>)</button>
             <button class="reset-link" data-action="reset-prompt" aria-label="Reset code">Reset</button>
           </section>
 
@@ -6242,7 +6233,7 @@
               </div>
             </div>
             <button class="rename-link" data-action="rename-prompt" aria-label="Rename code">Rename</button>
-            <button class="saved-link" data-action="saved-open" aria-label="Open saved codes"><span class="material-symbols-outlined">bookmarks</span>Saved</button>
+            <button class="saved-link" data-action="saved-open" aria-label="Open saved codes (3 saved)"><span class="material-symbols-outlined">bookmarks</span>Saved (<span data-saved-count>3</span>)</button>
             <button class="reset-link" data-action="reset-prompt" aria-label="Reset code">Reset</button>
           </section>
 
@@ -6749,40 +6740,6 @@
         </div>
 
         <div class="px stack">
-          <!-- ─── Product hero — thumb + name + brand + UPC pill ─── -->
-          <div class="card pad-l" style="display:flex;align-items:center;gap:14px;">
-            <div class="product-thumb">
-              <!-- Vital Choice "WILD SALMON" packaging illustration. Black
-                   box with a salmon-pink fillet inset on the bottom half;
-                   stylised brand wordmark sits along the top edge. -->
-              <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
-                <rect x="0" y="0" width="80" height="80" fill="#0F0F12"/>
-                <text x="40" y="14" text-anchor="middle"
-                      font-family="DM Sans, system-ui, sans-serif"
-                      font-size="6.5" font-weight="800"
-                      fill="#F4F2F6" letter-spacing="0.04em">VitalChoice</text>
-                <text x="40" y="22" text-anchor="middle"
-                      font-family="DM Sans, system-ui, sans-serif"
-                      font-size="4" font-weight="700"
-                      fill="#9C99A6" letter-spacing="0.18em">WILD SALMON</text>
-                <rect x="8" y="30" width="64" height="40" rx="3" fill="#1A1A22"/>
-                <path d="M12 50 L68 38 L68 64 L12 66 Z" fill="#E2613A"/>
-                <path d="M14 51 L66 40 L66 46 L14 56 Z" fill="#F08A5F" opacity="0.55"/>
-                <path d="M14 56 L66 46" stroke="#FBE4D5" stroke-width="0.8" opacity="0.55"/>
-                <path d="M18 60 L66 52" stroke="#FBE4D5" stroke-width="0.6" opacity="0.4"/>
-                <path d="M22 63 L66 56" stroke="#FBE4D5" stroke-width="0.5" opacity="0.3"/>
-              </svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-              <div class="product-name">Wild Atlantic<br/>Salmon Fillet</div>
-              <div class="product-brand">Vital Choice</div>
-              <div class="upc-pill">
-                <span class="material-symbols-outlined">barcode</span>
-                0028400064057
-              </div>
-            </div>
-          </div>
-
           <!-- ─── Score card — verdict, contribution donut, table ─── -->
           <div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">
             <button class="chart-toggle" data-action="detail-chart-toggle" aria-label="Switch to treemap chart"><span class="material-symbols-outlined">dashboard</span></button>
@@ -6828,6 +6785,51 @@
             </div>
           </div>
 
+          <!-- ─── Product hero — thumb + name + brand + UPC pill ─── -->
+          <div class="card pad-l" style="display:flex;align-items:center;gap:14px;">
+            <div class="product-thumb">
+              <!-- Vital Choice "WILD SALMON" packaging illustration. Black
+                   box with a salmon-pink fillet inset on the bottom half;
+                   stylised brand wordmark sits along the top edge. -->
+              <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
+                <rect x="0" y="0" width="80" height="80" fill="#0F0F12"/>
+                <text x="40" y="14" text-anchor="middle"
+                      font-family="DM Sans, system-ui, sans-serif"
+                      font-size="6.5" font-weight="800"
+                      fill="#F4F2F6" letter-spacing="0.04em">VitalChoice</text>
+                <text x="40" y="22" text-anchor="middle"
+                      font-family="DM Sans, system-ui, sans-serif"
+                      font-size="4" font-weight="700"
+                      fill="#9C99A6" letter-spacing="0.18em">WILD SALMON</text>
+                <rect x="8" y="30" width="64" height="40" rx="3" fill="#1A1A22"/>
+                <path d="M12 50 L68 38 L68 64 L12 66 Z" fill="#E2613A"/>
+                <path d="M14 51 L66 40 L66 46 L14 56 Z" fill="#F08A5F" opacity="0.55"/>
+                <path d="M14 56 L66 46" stroke="#FBE4D5" stroke-width="0.8" opacity="0.55"/>
+                <path d="M18 60 L66 52" stroke="#FBE4D5" stroke-width="0.6" opacity="0.4"/>
+                <path d="M22 63 L66 56" stroke="#FBE4D5" stroke-width="0.5" opacity="0.3"/>
+              </svg>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div class="product-name">Wild Atlantic<br/>Salmon Fillet</div>
+              <div class="product-brand">Vital Choice</div>
+              <div class="upc-pill">
+                <span class="material-symbols-outlined">barcode</span>
+                0028400064057
+              </div>
+            </div>
+          </div>
+
+          <!-- ─── AI Insights — chat starters (same card as code-detail sheet) ─── -->
+          <div class="fd-ai-card">
+            <div class="fd-ai-label">AI Insights</div>
+            <div class="fd-ai-intents">
+              <button type="button" class="intent-chip" data-intent>Why this score?</button>
+              <button type="button" class="intent-chip" data-intent>What holds it back?</button>
+              <button type="button" class="intent-chip" data-intent>Find better options</button>
+              <button type="button" class="intent-chip" data-intent>Compare similar foods</button>
+            </div>
+          </div>
+
           <!-- ─── About this score — link to the scoring explainer ─── -->
           <button class="about-card" type="button" aria-label="About this score">
             <div class="copy">
@@ -6853,7 +6855,7 @@
       </nav>
     </div>
   </div>
-  <div class="phone-caption">Tap any Top Match row in Browse (or land a barcode hit in Scan) to drill into the per-food drilldown: hero card with the product image / brand / UPC, then the same contribution donut as the user's code — only now each slice's value is what that slot contributed to the composite score for this specific food.</div>
+  <div class="phone-caption">Tap any Top Match row in Browse (or land a barcode hit in Scan) to drill into the per-food drilldown: contribution donut first (each slice is what that slot contributed to this food's composite score), then the hero card with product image / brand / UPC, then an AI Insights card with chat-starter chips.</div>
 </div>
   </div>
 </section>
@@ -7096,6 +7098,94 @@
           return ICON_ALIAS[slug] || slug;
         }
 
+        // Placeholder viz when data-slices is empty — one silhouette per
+        // chart mode so the Screen 1a chart toggle can cycle through all
+        // four types before any codes are added.
+        function renderChartEmptyState(svg, mode) {
+          var size = parseFloat(svg.getAttribute("data-size")) || 200;
+          var cx = size / 2;
+          var cy = size / 2;
+
+          if (mode === "bubble") {
+            var seeds = [
+              { ox: 0, oy: 0, r: size * 0.11 },
+              { ox: -size * 0.085, oy: size * 0.055, r: size * 0.082 },
+              { ox: size * 0.09, oy: size * 0.048, r: size * 0.072 },
+              { ox: -size * 0.038, oy: -size * 0.095, r: size * 0.066 },
+              { ox: size * 0.048, oy: -size * 0.078, r: size * 0.058 }
+            ];
+            seeds.forEach(function (b) {
+              var circle = document.createElementNS(SVG_NS, "circle");
+              circle.setAttribute("class", "bubble bubble-empty");
+              circle.setAttribute("cx", (cx + b.ox).toFixed(2));
+              circle.setAttribute("cy", (cy + b.oy).toFixed(2));
+              circle.setAttribute("r", b.r.toFixed(2));
+              circle.setAttribute("fill", "none");
+              circle.setAttribute("stroke", "var(--track)");
+              circle.setAttribute("stroke-width", "2");
+              circle.setAttribute("opacity", "0.55");
+              svg.appendChild(circle);
+            });
+            return;
+          }
+
+          if (mode === "treemap") {
+            var pad = size * 0.08;
+            var inner = size - pad * 2;
+            var gap = size * 0.02;
+            var cell = (inner - gap) / 2;
+            for (var row = 0; row < 2; row++) {
+              for (var col = 0; col < 2; col++) {
+                var rect = document.createElementNS(SVG_NS, "rect");
+                rect.setAttribute("class", "tm tm-empty");
+                rect.setAttribute("x", (pad + col * (cell + gap)).toFixed(2));
+                rect.setAttribute("y", (pad + row * (cell + gap)).toFixed(2));
+                rect.setAttribute("width", cell.toFixed(2));
+                rect.setAttribute("height", cell.toFixed(2));
+                rect.setAttribute("rx", Math.min(6, cell / 4).toFixed(2));
+                rect.setAttribute("fill", "none");
+                rect.setAttribute("stroke", "var(--track)");
+                rect.setAttribute("stroke-width", "2");
+                rect.setAttribute("opacity", "0.55");
+                svg.appendChild(rect);
+              }
+            }
+            return;
+          }
+
+          if (mode === "matrix") {
+            var N = 150;
+            var padM = 8;
+            var maxR = size / 2 - padM;
+            var GA = Math.PI * (3 - Math.sqrt(5));
+            var maxDot = size * 0.030;
+            var minDot = size * 0.0115;
+            for (var i = 0; i < N; i++) {
+              var rr = maxR * Math.sqrt((i + 0.5) / N);
+              var ang = i * GA;
+              var tR = maxR > 0 ? rr / maxR : 0;
+              var dotR = maxDot - (maxDot - minDot) * tR;
+              var x = cx + rr * Math.cos(ang);
+              var y = cy + rr * Math.sin(ang);
+              var op2 = (1 - 0.5 * tR) * 0.5;
+              var ring = document.createElementNS(SVG_NS, "circle");
+              ring.setAttribute("class", "mx mx-empty");
+              ring.setAttribute("cx", x.toFixed(2));
+              ring.setAttribute("cy", y.toFixed(2));
+              ring.setAttribute("r", (dotR * 0.82).toFixed(2));
+              ring.style.opacity = op2.toFixed(3);
+              svg.appendChild(ring);
+            }
+            return;
+          }
+
+          var emptyStroke = parseFloat(svg.getAttribute("data-stroke")) || 34;
+          var emptyR = size * 95 / 280;
+          svg.innerHTML = ''
+            + '<circle class="empty-track" cx="' + cx + '" cy="' + cy + '" r="' + emptyR + '"'
+            + ' fill="none" stroke="var(--track)" stroke-width="' + emptyStroke + '" opacity="0.6" />';
+        }
+
         function polar(cx, cy, rad, ang) {
           return { x: cx + rad * Math.cos(ang), y: cy + rad * Math.sin(ang) };
         }
@@ -7175,18 +7265,12 @@
             // kill any in-flight RAF so a fading-out pie doesn't keep
             // chewing through paintSlot() calls on detached nodes.
             if (svg._pieRaf) { cancelAnimationFrame(svg._pieRaf); svg._pieRaf = null; }
-            var emptySize = parseFloat(svg.getAttribute("data-size")) || 200;
-            var emptyStroke = parseFloat(svg.getAttribute("data-stroke")) || 34;
-            var emptyCx = emptySize / 2;
-            var emptyCy = emptySize / 2;
-            var emptyR = emptySize * 95 / 280;
-            svg.innerHTML = ''
-              + '<circle class="empty-track" cx="' + emptyCx + '" cy="' + emptyCy + '" r="' + emptyR + '"'
-              + ' fill="none" stroke="var(--track)" stroke-width="' + emptyStroke + '" opacity="0.6" />';
+            svg.innerHTML = "";
             var emptyWrap = svg.parentElement;
             if (emptyWrap) {
               emptyWrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
             }
+            renderChartEmptyState(svg, "donut");
             return;
           }
 
@@ -7452,13 +7536,19 @@
           if (wrap) {
             wrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
           }
-          if (!Array.isArray(slices) || !slices.length) return;
+          if (!Array.isArray(slices) || !slices.length) {
+            renderChartEmptyState(svg, "bubble");
+            return;
+          }
 
           var size = parseFloat(svg.getAttribute("data-size")) || 200;
           var cx = size / 2;
           var cy = size / 2;
           var total = slices.reduce(function (s, x) { return s + (x.value || 0); }, 0);
-          if (total <= 0) return;
+          if (total <= 0) {
+            renderChartEmptyState(svg, "bubble");
+            return;
+          }
 
           // One node per non-empty slice; relative radius ∝ √value so
           // AREA tracks the weight.
@@ -7620,11 +7710,17 @@
           if (wrap) {
             wrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
           }
-          if (!Array.isArray(slices) || !slices.length) return;
+          if (!Array.isArray(slices) || !slices.length) {
+            renderChartEmptyState(svg, "treemap");
+            return;
+          }
 
           var size = parseFloat(svg.getAttribute("data-size")) || 200;
           var total = slices.reduce(function (s, x) { return s + (x.value || 0); }, 0);
-          if (total <= 0) return;
+          if (total <= 0) {
+            renderChartEmptyState(svg, "treemap");
+            return;
+          }
 
           // Inset the whole map by 1px so the outer drop-shadow isn't
           // clipped at the viewBox edge.
@@ -7821,13 +7917,19 @@
           if (wrap) {
             wrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
           }
-          if (!Array.isArray(slices) || !slices.length) return;
+          if (!Array.isArray(slices) || !slices.length) {
+            renderChartEmptyState(svg, "matrix");
+            return;
+          }
 
           var size = parseFloat(svg.getAttribute("data-size")) || 200;
           var cx = size / 2, cy = size / 2;
 
           var active = slices.filter(function (s) { return (s.value || 0) > 0; });
-          if (!active.length) return;
+          if (!active.length) {
+            renderChartEmptyState(svg, "matrix");
+            return;
+          }
           var total = active.reduce(function (s, x) { return s + x.value; }, 0);
 
           // Completeness → how much of the matrix lights up. Weights that
@@ -8306,9 +8408,10 @@
       // .pair-row. We deep-clone that wrap, tag the clone with
       // .theme-light (which re-points every CSS var to the light
       // palette for that subtree), rewrite the small "Dark" label to
-      // "Light", and append the twin into the same row. This keeps
-      // every screen authored once while letting designers eyeball the
-      // dark + light renderings side by side.
+      // "Light", and insert the twin ahead of the dark source in the
+      // same row so Light renders first. This keeps every screen
+      // authored once while letting designers eyeball the light + dark
+      // renderings side by side.
       //
       // Cloning runs BEFORE the WISE_CODES subscribers, so both the
       // dark wrap and its freshly-cloned light twin are in the DOM
@@ -8326,7 +8429,7 @@
           light.classList.add("theme-light");
           var lightLabel = light.querySelector(".phone-label");
           if (lightLabel) lightLabel.textContent = "Light";
-          row.appendChild(light);
+          row.insertBefore(light, dark);
         });
       })();
 
@@ -9217,6 +9320,16 @@
           return slots;
         }
 
+        function updateSavedLinkCounts() {
+          var n = W.getSavedCodes().length;
+          document.querySelectorAll("[data-saved-count]").forEach(function (el) {
+            el.textContent = String(n);
+          });
+          document.querySelectorAll(".saved-link").forEach(function (btn) {
+            btn.setAttribute("aria-label", "Open saved codes (" + n + " saved)");
+          });
+        }
+
         function activateEmptyScreen(phoneWrap) {
           if (!phoneWrap || !phoneWrap.hasAttribute("data-code-empty")) return;
           document.querySelectorAll(".phone-wrap[data-code-empty]").forEach(function (wrap) {
@@ -9330,6 +9443,8 @@
           var pieNum = phoneWrap.querySelector(".pie-center .num [data-pie-num-val]")
                     || phoneWrap.querySelector(".pie-center .num");
           if (pieNum) pieNum.textContent = String(weightSum);
+
+          updateSavedLinkCounts();
         }
 
         function renderCodeWrap(phoneWrap, slots, opts) {
@@ -9425,10 +9540,16 @@
           overlay.innerHTML = ''
             + '<div class="reset-sheet" role="dialog" aria-modal="true" aria-labelledby="reset-sheet-title">'
             +   '<div class="handle" aria-hidden="true"></div>'
-            +   '<h2 id="reset-sheet-title">Reset your code?</h2>'
-            +   '<p>This wipes every slot and weight in your Personal Code and restores the starting five codes. You can\u2019t undo it.</p>'
+            +   '<div class="sheet-head">'
+            +     '<div class="sheet-title">'
+            +       '<h2 id="reset-sheet-title">Reset your code?</h2>'
+            +       '<p>This wipes every slot and weight in your Personal Code and restores the starting five codes. You can\u2019t undo it.</p>'
+            +     '</div>'
+            +     '<button type="button" class="sheet-close" data-action="reset-cancel" aria-label="Close">'
+            +       '<span class="material-symbols-outlined">close</span>'
+            +     '</button>'
+            +   '</div>'
             +   '<div class="actions">'
-            +     '<button type="button" class="btn btn-cancel" data-action="reset-cancel">Cancel</button>'
             +     '<button type="button" class="btn btn-confirm" data-action="reset-confirm">'
             +       '<span class="material-symbols-outlined">restart_alt</span>Reset'
             +     '</button>'
@@ -9641,12 +9762,20 @@
           overlay.innerHTML = ''
             + '<div class="rename-sheet" role="dialog" aria-modal="true" aria-labelledby="rename-sheet-title">'
             +   '<div class="handle" aria-hidden="true"></div>'
-            +   '<h2 id="rename-sheet-title">Rename your code</h2>'
-            +   '<p>Give your Personal Code a name. It shows in the Your Code headline.</p>'
-            +   '<input type="text" class="rn-input" data-rename-input maxlength="40" '
-            +     'placeholder="e.g. In Harmony" aria-label="Code name" value="' + W.escapeHtml(name) + '" />'
+            +   '<div class="sheet-head">'
+            +     '<div class="sheet-title">'
+            +       '<h2 id="rename-sheet-title">Rename your code</h2>'
+            +       '<p>Give your Personal Code a name. It shows in the Your Code headline.</p>'
+            +     '</div>'
+            +     '<button type="button" class="sheet-close" data-action="rename-cancel" aria-label="Close">'
+            +       '<span class="material-symbols-outlined">close</span>'
+            +     '</button>'
+            +   '</div>'
+            +   '<label class="sheet-field">'
+            +     '<input type="text" data-rename-input maxlength="40" '
+            +       'placeholder="e.g. In Harmony" aria-label="Code name" value="' + W.escapeHtml(name) + '" />'
+            +   '</label>'
             +   '<div class="actions">'
-            +     '<button type="button" class="btn btn-cancel" data-action="rename-cancel">Cancel</button>'
             +     '<button type="button" class="btn btn-confirm" data-action="rename-save">'
             +       '<span class="material-symbols-outlined">check</span>Save'
             +     '</button>'
@@ -9851,6 +9980,7 @@
             return;
           }
           renderSavedList(phoneWrap, overlay);
+          updateSavedLinkCounts();
           if (hint) {
             hint.classList.add("is-ok");
             hint.textContent = (existedAlready ? "Updated \u201C" : "Saved \u201C") + name + "\u201D to your codes.";
@@ -9877,6 +10007,7 @@
 
         function deleteSaved(phoneWrap, id) {
           W.deleteSavedCode(id);
+          updateSavedLinkCounts();
           var overlay = phoneWrap.querySelector(".saved-overlay");
           if (overlay) {
             renderSavedList(phoneWrap, overlay);
@@ -9910,10 +10041,16 @@
             +     '</span>'
             +     '<span class="nm">' + W.escapeHtml(meta.name) + '</span>'
             +   '</div>'
-            +   '<h2 id="delete-sheet-title">Remove this code?</h2>'
-            +   '<p>This drops \u201C' + W.escapeHtml(meta.name) + '\u201D from your Personal Code and re-balances the remaining codes to total 100. You can add it back anytime.</p>'
+            +   '<div class="sheet-head">'
+            +     '<div class="sheet-title">'
+            +       '<h2 id="delete-sheet-title">Remove this code?</h2>'
+            +       '<p>This drops \u201C' + W.escapeHtml(meta.name) + '\u201D from your Personal Code and re-balances the remaining codes to total 100. You can add it back anytime.</p>'
+            +     '</div>'
+            +     '<button type="button" class="sheet-close" data-action="delete-cancel" aria-label="Close">'
+            +       '<span class="material-symbols-outlined">close</span>'
+            +     '</button>'
+            +   '</div>'
             +   '<div class="actions">'
-            +     '<button type="button" class="btn btn-cancel" data-action="delete-cancel">Cancel</button>'
             +     '<button type="button" class="btn btn-confirm" data-action="delete-confirm">'
             +       '<span class="material-symbols-outlined">do_not_disturb_on</span>Remove'
             +     '</button>'
@@ -11540,11 +11677,11 @@
       // ─── Food Detail bottom sheet (Browse → tap a row) ───────────────
       // Tapping any .food-row on the Browse screen slides up a sheet
       // that mirrors the standalone Product Detail screen (Screen 6),
-      // only re-skinned for the row the user just tapped: same hero
-      // card (thumb + name + brand + UPC), same contribution donut,
-      // same per-slot table, same About / last-scanned tail. Hosted
-      // over the Browse phone so the user keeps their place in the
-      // food list instead of pushing a full screen.
+      // only re-skinned for the row the user just tapped: same
+      // contribution donut, hero card (thumb + name + brand + UPC),
+      // AI Insights card, About / last-scanned tail. Hosted over the
+      // Browse phone so the user keeps their place in the food list
+      // instead of pushing a full screen.
       //
       // The score math reuses WISE_CODES.productScore as the per-code
       // reference performance, then scales every per-slot score by
@@ -11576,15 +11713,31 @@
           return "0" + String(n).slice(0, 12);
         }
 
-        // Verdict copy + glyph keyed off the row score band. Mirrors
-        // the standalone Product Detail's "Excellent match" header
-        // but flexes down for lower-scoring rows.
         function verdictFor(score) {
           if (score >= 95) return { text: "Excellent match for your code", icon: "check_circle" };
           if (score >= 90) return { text: "Great match for your code",     icon: "check_circle" };
           if (score >= 80) return { text: "Solid match for your code",     icon: "thumb_up" };
           if (score >= 70) return { text: "Decent match for your code",    icon: "info" };
           return                  { text: "Mixed match for your code",    icon: "info" };
+        }
+
+        var FOOD_AI_INTENTS = [
+          "Why this score?",
+          "What holds it back?",
+          "Find better options",
+          "Compare similar foods"
+        ];
+
+        function foodAiCardHtml() {
+          var chips = FOOD_AI_INTENTS.map(function (i) {
+            return '<button type="button" class="intent-chip" data-intent>'
+              + W.escapeHtml(i) + '</button>';
+          }).join("");
+          return ''
+            + '<div class="fd-ai-card">'
+            +   '<div class="fd-ai-label">AI Insights</div>'
+            +   '<div class="fd-ai-intents">' + chips + '</div>'
+            + '</div>';
         }
 
         function renderFoodSheet(scrollEl, opts) {
@@ -11704,17 +11857,6 @@
             +     '<span class="material-symbols-outlined">close</span>'
             +   '</button>'
             +   '<div class="fd-scroll" data-food-detail data-row-score="' + rowScore + '">'
-            +     '<div class="card pad-l" style="display:flex;align-items:center;gap:14px;">'
-            +       thumbHtml
-            +       '<div style="flex:1;min-width:0;">'
-            +         '<div class="product-name" id="' + sheetTitleId + '">' + nameHtml + '</div>'
-            +         '<div class="product-brand">' + W.escapeHtml(brandText) + '</div>'
-            +         '<div class="upc-pill">'
-            +           '<span class="material-symbols-outlined">barcode</span>'
-            +           upc
-            +         '</div>'
-            +       '</div>'
-            +     '</div>'
             +     '<div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">'
             +       '<button class="chart-toggle" data-action="detail-chart-toggle" aria-label="Switch to treemap chart"><span class="material-symbols-outlined">dashboard</span></button>'
             +       '<div class="match-verdict-row">'
@@ -11733,6 +11875,18 @@
             +       '<div class="contrib-list" data-food-detail-contrib></div>'
             +       '<div class="contrib-summary" data-food-detail-summary></div>'
             +     '</div>'
+            +     '<div class="card pad-l" style="display:flex;align-items:center;gap:14px;">'
+            +       thumbHtml
+            +       '<div style="flex:1;min-width:0;">'
+            +         '<div class="product-name" id="' + sheetTitleId + '">' + nameHtml + '</div>'
+            +         '<div class="product-brand">' + W.escapeHtml(brandText) + '</div>'
+            +         '<div class="upc-pill">'
+            +           '<span class="material-symbols-outlined">barcode</span>'
+            +           upc
+            +         '</div>'
+            +       '</div>'
+            +     '</div>'
+            +     foodAiCardHtml()
             +     '<button class="about-card" type="button" aria-label="About this score">'
             +       '<div class="copy">'
             +         '<div class="ovl">ABOUT THIS SCORE</div>'
@@ -12223,7 +12377,7 @@
             source: "3 · Browse",
             open: clickSel('.food-row[data-action="food-detail"]'),
             caption:
-              "Tapping a Top Match row opens the food-detail sheet over Browse: hero with image / brand / UPC, then the same contribution donut as your code — each slice now the amount that slot contributed to this food's composite score.",
+              "Tapping a Top Match row opens the food-detail sheet over Browse: contribution donut first (each slice is what that slot contributed to this food's score), then the hero card with image / brand / UPC, then an AI Insights card with chat-starter chips.",
           },
           {
             label: "S9 · WISE AI Chat · sheet",
@@ -12293,8 +12447,8 @@
             light.classList.add("theme-light");
             setLabel(light, "Light");
 
-            row.appendChild(dark);
             row.appendChild(light);
+            row.appendChild(dark);
             section.appendChild(h);
             section.appendChild(row);
             rail.appendChild(section);
