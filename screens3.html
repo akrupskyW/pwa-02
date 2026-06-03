@@ -1829,7 +1829,7 @@
         border-color: var(--line-strong);
         color: var(--fg-bright);
       }
-      .code-picker-card .cp-search .material-symbols-outlined { font-size: 22px; flex-shrink: 0; color: var(--emerald); opacity: 0.85; }
+      .code-picker-card .cp-search .material-symbols-outlined { font-size: 22px; flex-shrink: 0; color: var(--blue); opacity: 0.85; }
       .code-picker-card .cp-search input {
         flex: 1; min-width: 0;
         background: transparent; border: none; outline: none;
@@ -1844,8 +1844,8 @@
          card vocabulary (44×44, 14px radius, card surface + hairline +
          shadow), mirroring wise-signal's pantry .pantry-scan-btn so the
          input and its trailing controls read as one toolbar. The active
-         mode lights its glyph in the brand green (same accent as the
-         search icon) over a faint surface fill. Icon-only by design. */
+         mode lights its glyph in royal blue (same accent as the search
+         icon) over a faint surface fill. Icon-only by design. */
       .code-picker-card .cp-sort {
         display: inline-flex; gap: 8px; flex-shrink: 0;
       }
@@ -1869,7 +1869,7 @@
       .code-picker-card .cp-sort-btn.is-active {
         background: var(--surface-2);
         border-color: var(--line-strong);
-        color: var(--emerald);
+        color: var(--blue);
       }
       .code-picker-card .cp-sort-btn .material-symbols-outlined { font-size: 22px; }
 
@@ -3310,6 +3310,39 @@
       .pie-card .rename-link {
         position: absolute;
         bottom: 10px; left: 14px;
+        z-index: 2;
+      }
+
+      /* ─── Saved-codes link (bottom-center of code pie-card) ──────────
+         Sits between Rename and Reset and opens the Saved Codes sheet —
+         the user's library of named compositions. Same quiet text
+         affordance as its siblings, with a small bookmark glyph so the
+         "this is a saved-state thing" reads at a glance. */
+      .saved-link {
+        background: transparent;
+        border: none;
+        padding: 4px 6px;
+        margin: 0;
+        font-family: inherit;
+        color: var(--fg-faint);
+        font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+        cursor: pointer;
+        display: inline-flex; align-items: center; gap: 4px;
+        text-decoration: underline;
+        text-decoration-color: color-mix(in srgb, var(--fg-faint) 50%, transparent);
+        text-underline-offset: 3px;
+      }
+      .saved-link .material-symbols-outlined { font-size: 14px; text-decoration: none; }
+      @media (hover: hover) {
+        .saved-link:hover {
+          color: var(--fg-bright);
+          text-decoration-color: var(--fg-bright);
+        }
+      }
+      .pie-card .saved-link {
+        position: absolute;
+        bottom: 10px; left: 50%;
+        transform: translateX(-50%);
         z-index: 2;
       }
 
@@ -5313,6 +5346,177 @@
         box-shadow: 0 8px 20px -8px rgba(202, 55, 31, 0.45);
       }
       .delete-sheet .btn-confirm .material-symbols-outlined { font-size: 18px; }
+
+      /* ─── Saved codes bottom sheet ──────────────────────────────────
+         Opened from the "Saved" link on the code pie-card. Lists the
+         user's named compositions (pre-seeded with three) so they can
+         flip between codes, and carries a primary "Save current code"
+         CTA in the footer that snapshots whatever's on screen now.
+         Reuses the reset/rename scrim + rounded-top + rc-slide idiom;
+         one sheet per phone so the dark + cloned light twin run their
+         own library without cross-talk. */
+      .saved-overlay {
+        position: absolute; inset: 0; z-index: 50;
+        background: var(--scrim-strong);
+        backdrop-filter: blur(8px);
+        display: flex; align-items: flex-end;
+        animation: cp-fade 160ms ease-out;
+      }
+      .saved-sheet {
+        width: 100%;
+        max-height: 82%;
+        background: var(--card);
+        border-top: 1px solid var(--line);
+        border-radius: 22px 22px 0 0;
+        padding: 12px 20px 20px;
+        box-shadow: var(--shadow-sheet);
+        display: flex; flex-direction: column; gap: 6px;
+        animation: rc-slide 260ms cubic-bezier(.2,.85,.25,1);
+      }
+      .saved-sheet .handle {
+        width: 38px; height: 4px; border-radius: 999px;
+        background: var(--line-strong);
+        align-self: center;
+        opacity: 0.5;
+        margin-bottom: 6px;
+      }
+      .saved-head {
+        display: flex; align-items: flex-start; justify-content: space-between;
+        gap: 10px;
+      }
+      .saved-head h2 {
+        margin: 0;
+        color: var(--fg-bright);
+        font-size: 18px; font-weight: 800; letter-spacing: -0.01em;
+      }
+      .saved-head p {
+        margin: 2px 0 0;
+        color: var(--fg-muted);
+        font-size: 13px; line-height: 1.45;
+      }
+      .saved-x {
+        flex-shrink: 0;
+        height: 30px; width: 30px; border-radius: 999px;
+        background: var(--surface-2); border: 1px solid var(--line);
+        color: var(--fg); cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center;
+      }
+      .saved-x .material-symbols-outlined { font-size: 18px; }
+      .saved-list {
+        margin-top: 12px;
+        display: flex; flex-direction: column; gap: 8px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .saved-empty {
+        color: var(--fg-faint);
+        font-size: 13px; text-align: center;
+        padding: 22px 8px;
+      }
+      .saved-row {
+        display: flex; align-items: center; gap: 12px;
+        padding: 12px 12px;
+        border-radius: 16px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+      }
+      .saved-row.is-current {
+        border-color: color-mix(in srgb, var(--blue) 60%, transparent);
+        background: color-mix(in srgb, var(--blue) 10%, var(--surface-2));
+      }
+      .saved-thumb {
+        flex-shrink: 0;
+        width: 40px; height: 40px; border-radius: 12px;
+        overflow: hidden;
+        display: flex; flex-direction: column;
+        border: 1px solid var(--line);
+      }
+      .saved-thumb .seg { width: 100%; }
+      .saved-info { flex: 1; min-width: 0; }
+      .saved-nm {
+        display: flex; align-items: center; gap: 7px;
+        color: var(--fg-bright);
+        font-size: 14px; font-weight: 800; letter-spacing: -0.01em;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .saved-badge {
+        flex-shrink: 0;
+        font-size: 9px; font-weight: 800; letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--blue);
+        background: color-mix(in srgb, var(--blue) 16%, transparent);
+        border-radius: 999px;
+        padding: 2px 7px;
+      }
+      .saved-sub {
+        color: var(--fg-muted);
+        font-size: 11.5px; font-weight: 500;
+        margin-top: 2px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      .saved-row-actions {
+        flex-shrink: 0;
+        display: flex; align-items: center; gap: 6px;
+      }
+      .saved-load {
+        min-height: 34px;
+        border-radius: 999px;
+        padding: 7px 14px;
+        font-family: inherit;
+        font-size: 12px; font-weight: 700; letter-spacing: 0;
+        border: 1px solid var(--line);
+        background: var(--card);
+        color: var(--fg-bright);
+        cursor: pointer;
+      }
+      .saved-load[disabled] {
+        opacity: 0.5; cursor: default;
+      }
+      @media (hover: hover) {
+        .saved-load:not([disabled]):hover { border-color: var(--blue); color: var(--blue); }
+      }
+      .saved-del {
+        flex-shrink: 0;
+        height: 34px; width: 34px; border-radius: 999px;
+        background: transparent; border: 1px solid var(--line);
+        color: var(--fg-faint); cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center;
+      }
+      .saved-del .material-symbols-outlined { font-size: 18px; }
+      @media (hover: hover) {
+        .saved-del:hover { color: var(--code-red); border-color: var(--code-red); }
+      }
+      .saved-foot {
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+        display: flex; flex-direction: column; gap: 8px;
+      }
+      .saved-save {
+        width: 100%;
+        min-height: 46px;
+        border-radius: 9999px;
+        padding: 12px 16px;
+        font-family: inherit;
+        font-size: 14px; font-weight: 700; letter-spacing: 0;
+        border: none; cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        background: var(--blue);
+        color: #FFFFFF;
+        box-shadow: 0 8px 20px -8px color-mix(in srgb, var(--blue) 55%, transparent);
+      }
+      .saved-save[disabled] {
+        opacity: 0.45; cursor: default; box-shadow: none;
+      }
+      .saved-save .material-symbols-outlined { font-size: 18px; }
+      .saved-hint {
+        text-align: center;
+        color: var(--fg-faint);
+        font-size: 11.5px; font-weight: 500;
+        min-height: 14px;
+        transition: color 140ms ease;
+      }
+      .saved-hint.is-ok { color: var(--emerald); }
     </style>
   </head>
   <body>
@@ -5973,6 +6177,7 @@
             <div class="status" data-code-status>Empty</div>
             <div class="status-sub">Add codes to compose your code</div>
             <button class="rename-link" data-action="rename-prompt" aria-label="Rename code">Rename</button>
+            <button class="saved-link" data-action="saved-open" aria-label="Open saved codes"><span class="material-symbols-outlined">bookmarks</span>Saved</button>
             <button class="reset-link" data-action="reset-prompt" aria-label="Reset code">Reset</button>
           </section>
 
@@ -6037,6 +6242,7 @@
               </div>
             </div>
             <button class="rename-link" data-action="rename-prompt" aria-label="Rename code">Rename</button>
+            <button class="saved-link" data-action="saved-open" aria-label="Open saved codes"><span class="material-symbols-outlined">bookmarks</span>Saved</button>
             <button class="reset-link" data-action="reset-prompt" aria-label="Reset code">Reset</button>
           </section>
 
@@ -8497,6 +8703,53 @@
         // sum of slot contributions.
         var OTHER_FACTORS = 4;
 
+        // ─── Saved codes library ────────────────────────────────────────
+        // Every Personal Code the user composes can be stashed here under
+        // a name so they can flip between several "codes" — a balanced
+        // everyday mix, a training-day push, a clean-eating week, etc.
+        // Pre-seeded with three already-saved codes so the Saved Codes
+        // sheet reads as a returning user's library on first open. The
+        // first entry mirrors INITIAL_SLOTS / the "In Harmony" headline
+        // so the code currently on screen shows as the active saved code.
+        // Each entry is { id, name, slots:[{codeId, weight}] } with
+        // weights summing to 100.
+        var SAVED_CODES = [
+          {
+            id: "saved_in_harmony",
+            name: "In Harmony",
+            slots: INITIAL_SLOTS.map(function (s) {
+              return { codeId: s.codeId, weight: s.weight };
+            })
+          },
+          {
+            id: "saved_peak_performance",
+            name: "Peak Performance",
+            slots: [
+              { codeId: "performance_score", weight: 22 },
+              { codeId: "muscle_health",     weight: 20 },
+              { codeId: "energy_stamina",    weight: 16 },
+              { codeId: "recovery_support",  weight: 14 },
+              { codeId: "nutrient_density",  weight: 12 },
+              { codeId: "heart_health",      weight: 9 },
+              { codeId: "clean_label",       weight: 7 }
+            ]
+          },
+          {
+            id: "saved_clean_simple",
+            name: "Clean & Simple",
+            slots: [
+              { codeId: "clean_label",        weight: 26 },
+              { codeId: "additive_free",      weight: 22 },
+              { codeId: "ingredient_quality", weight: 20 },
+              { codeId: "nutrient_density",   weight: 16 },
+              { codeId: "overall_quality",    weight: 16 }
+            ]
+          }
+        ];
+        // Monotonic counter for generating ids on newly saved codes —
+        // seeded past the pre-filled set so ids never collide.
+        var savedSeq = SAVED_CODES.length;
+
         var state = {
           slots: INITIAL_SLOTS.map(function (s) {
             return { codeId: s.codeId, weight: s.weight };
@@ -8689,6 +8942,75 @@
             : PRODUCT_SCORE_FALLBACK;
         }
 
+        // ─── Saved-codes API ────────────────────────────────────────────
+        // The saved library is plain data the Saved Codes sheet reads and
+        // mutates; only loadSavedCode touches the live composition (and so
+        // fans out through notify). Returns are defensive copies so the
+        // sheet can't mutate the store by reference.
+        function getSavedCodes() {
+          return SAVED_CODES.map(function (c) {
+            return {
+              id: c.id,
+              name: c.name,
+              slots: c.slots.map(function (s) {
+                return { codeId: s.codeId, weight: s.weight };
+              })
+            };
+          });
+        }
+
+        // Snapshot the current composition under `name`. If a saved code
+        // already carries that (case-insensitive) name we overwrite its
+        // slots in place — re-saving "In Harmony" updates it rather than
+        // spawning a duplicate. Otherwise a fresh entry is appended.
+        // Returns the saved entry's id, or null when there's nothing to
+        // save (no name, or an empty composition).
+        function saveCurrentCode(name) {
+          var clean = String(name == null ? "" : name).trim();
+          if (!clean) return null;
+          var snapshot = state.slots
+            .filter(function (s) { return s.codeId; })
+            .map(function (s) { return { codeId: s.codeId, weight: s.weight }; });
+          if (!snapshot.length) return null;
+
+          var existing = null;
+          for (var i = 0; i < SAVED_CODES.length; i++) {
+            if (SAVED_CODES[i].name.toLowerCase() === clean.toLowerCase()) {
+              existing = SAVED_CODES[i];
+              break;
+            }
+          }
+          if (existing) {
+            existing.name = clean;
+            existing.slots = snapshot;
+            return existing.id;
+          }
+          var entry = { id: "saved_" + (++savedSeq), name: clean, slots: snapshot };
+          SAVED_CODES.push(entry);
+          return entry.id;
+        }
+
+        function deleteSavedCode(id) {
+          SAVED_CODES = SAVED_CODES.filter(function (c) { return c.id !== id; });
+        }
+
+        // Make a saved code the live one: copy its slots into state and
+        // fan the change out to every screen. Returns the saved entry
+        // (so the caller can also push its name into the headline), or
+        // null when the id is unknown.
+        function loadSavedCode(id) {
+          var found = null;
+          for (var i = 0; i < SAVED_CODES.length; i++) {
+            if (SAVED_CODES[i].id === id) { found = SAVED_CODES[i]; break; }
+          }
+          if (!found) return null;
+          state.slots = found.slots.map(function (s) {
+            return { codeId: s.codeId, weight: s.weight };
+          });
+          notify();
+          return { id: found.id, name: found.name };
+        }
+
         return {
           MAX_SLOTS: MAX_SLOTS,
           CODE_CATALOG: CODE_CATALOG,
@@ -8709,7 +9031,11 @@
           clearCode: clearCode,
           setSlotWeight: setSlotWeight,
           reorderCodes: reorderCodes,
-          productScore: productScore
+          productScore: productScore,
+          getSavedCodes: getSavedCodes,
+          saveCurrentCode: saveCurrentCode,
+          deleteSavedCode: deleteSavedCode,
+          loadSavedCode: loadSavedCode
         };
       })();
 
@@ -9377,6 +9703,186 @@
           if (!phoneWrap) return;
           var overlay = phoneWrap.querySelector(".rename-overlay");
           if (overlay) overlay.remove();
+        }
+
+        // ─── Saved codes bottom-sheet ───────────────────────────────────
+        // The "Saved" link on the code pie-card opens this library of
+        // named compositions. Each row loads its code into the live
+        // composition (fanning out through WISE_CODES.notify); the footer
+        // CTA snapshots whatever's on screen now under the current code
+        // name. Pre-seeded with three saved codes (see SAVED_CODES). One
+        // sheet per phone so the dark + cloned light twin stay independent.
+
+        // Stable fingerprint of a slot list — codeId:weight pairs in code
+        // order, lowercased — so we can flag which saved code (if any) is
+        // exactly the one currently loaded and grey out its Load button.
+        function slotsSignature(slots) {
+          return (slots || [])
+            .filter(function (s) { return s.codeId; })
+            .map(function (s) { return s.codeId + ":" + s.weight; })
+            .join("|");
+        }
+
+        // Vertical stacked color bar standing in for the code's donut in
+        // the row thumbnail — each segment's height is its slot weight.
+        function savedThumb(slots) {
+          var html = "";
+          slots.forEach(function (s) {
+            var meta = W.CODE_CATALOG[s.codeId];
+            if (!meta) return;
+            html += '<span class="seg" style="height:' + s.weight + '%;background:' + meta.color + ';"></span>';
+          });
+          return '<span class="saved-thumb" aria-hidden="true">' + html + '</span>';
+        }
+
+        // "7 codes · Performance Score, Muscle Health" — count plus the two
+        // heaviest slots by name, so each row reads at a glance.
+        function savedSummary(slots) {
+          var filled = slots.filter(function (s) { return s.codeId; });
+          var top = filled.slice().sort(function (a, b) { return b.weight - a.weight; });
+          var names = top.slice(0, 2).map(function (s) {
+            var meta = W.CODE_CATALOG[s.codeId];
+            return meta ? meta.name : s.codeId;
+          });
+          var count = filled.length + (filled.length === 1 ? " code" : " codes");
+          return names.length ? count + " \u00B7 " + names.join(", ") : count;
+        }
+
+        function renderSavedList(phoneWrap, overlay) {
+          var listEl = overlay.querySelector(".saved-list");
+          if (!listEl) return;
+          var saved = W.getSavedCodes();
+          var liveSig = slotsSignature(W.getSlots());
+
+          if (!saved.length) {
+            listEl.innerHTML = '<div class="saved-empty">No saved codes yet. Tap \u201CSave current code\u201D to start your library.</div>';
+            return;
+          }
+
+          listEl.innerHTML = saved.map(function (c) {
+            var isCurrent = slotsSignature(c.slots) === liveSig;
+            return ''
+              + '<div class="saved-row' + (isCurrent ? " is-current" : "") + '" data-saved-id="' + c.id + '">'
+              +   savedThumb(c.slots)
+              +   '<div class="saved-info">'
+              +     '<div class="saved-nm">' + W.escapeHtml(c.name)
+              +       (isCurrent ? '<span class="saved-badge">On now</span>' : "")
+              +     '</div>'
+              +     '<div class="saved-sub">' + W.escapeHtml(savedSummary(c.slots)) + '</div>'
+              +   '</div>'
+              +   '<div class="saved-row-actions">'
+              +     '<button type="button" class="saved-load" data-action="saved-load" data-saved-id="' + c.id + '"'
+              +       (isCurrent ? " disabled" : "") + '>' + (isCurrent ? "Loaded" : "Load") + '</button>'
+              +     '<button type="button" class="saved-del" data-action="saved-delete" data-saved-id="' + c.id + '" aria-label="Delete ' + W.escapeHtml(c.name) + '"><span class="material-symbols-outlined">delete</span></button>'
+              +   '</div>'
+              + '</div>';
+          }).join("");
+        }
+
+        function syncSavedFooter(phoneWrap, overlay) {
+          var saveBtn = overlay.querySelector(".saved-save");
+          if (!saveBtn) return;
+          var hasSlots = W.getSlots().filter(function (s) { return s.codeId; }).length > 0;
+          var hasName = currentCodeName(phoneWrap).length > 0;
+          saveBtn.disabled = !(hasSlots && hasName);
+        }
+
+        function openSavedSheet(phoneWrap) {
+          if (!phoneWrap) return;
+          if (phoneWrap.querySelector(".saved-overlay")) return;
+
+          var name = currentCodeName(phoneWrap);
+          var label = name ? ("Save \u201C" + name + "\u201D") : "Save current code";
+
+          var overlay = document.createElement("div");
+          overlay.className = "saved-overlay";
+          overlay.innerHTML = ''
+            + '<div class="saved-sheet" role="dialog" aria-modal="true" aria-labelledby="saved-sheet-title">'
+            +   '<div class="handle" aria-hidden="true"></div>'
+            +   '<div class="saved-head">'
+            +     '<div>'
+            +       '<h2 id="saved-sheet-title">Saved codes</h2>'
+            +       '<p>Your library of Personal Codes. Tap one to load it, or save the code you\u2019re building now.</p>'
+            +     '</div>'
+            +     '<button type="button" class="saved-x" data-action="saved-close" aria-label="Close saved codes"><span class="material-symbols-outlined">close</span></button>'
+            +   '</div>'
+            +   '<div class="saved-list"></div>'
+            +   '<div class="saved-foot">'
+            +     '<button type="button" class="saved-save" data-action="saved-save-current">'
+            +       '<span class="material-symbols-outlined">bookmark_add</span><span data-saved-save-label>' + W.escapeHtml(label) + '</span>'
+            +     '</button>'
+            +     '<div class="saved-hint" data-saved-hint></div>'
+            +   '</div>'
+            + '</div>';
+
+          overlay.addEventListener("click", function (e) {
+            if (e.target === overlay) {
+              e.preventDefault();
+              closeSavedSheet(phoneWrap);
+            }
+          });
+
+          var screen = phoneWrap.querySelector(".screen");
+          if (screen) screen.appendChild(overlay);
+          renderSavedList(phoneWrap, overlay);
+          syncSavedFooter(phoneWrap, overlay);
+        }
+
+        function closeSavedSheet(phoneWrap) {
+          if (!phoneWrap) return;
+          var overlay = phoneWrap.querySelector(".saved-overlay");
+          if (overlay) overlay.remove();
+        }
+
+        function commitSaveCurrent(phoneWrap) {
+          var overlay = phoneWrap.querySelector(".saved-overlay");
+          if (!overlay) return;
+          var name = currentCodeName(phoneWrap);
+          var existedAlready = W.getSavedCodes().some(function (c) {
+            return c.name.toLowerCase() === name.toLowerCase();
+          });
+          var id = W.saveCurrentCode(name);
+          var hint = overlay.querySelector("[data-saved-hint]");
+          if (!id) {
+            if (hint) {
+              hint.classList.remove("is-ok");
+              hint.textContent = name ? "Add at least one code first." : "Name your code to save it.";
+            }
+            return;
+          }
+          renderSavedList(phoneWrap, overlay);
+          if (hint) {
+            hint.classList.add("is-ok");
+            hint.textContent = (existedAlready ? "Updated \u201C" : "Saved \u201C") + name + "\u201D to your codes.";
+          }
+        }
+
+        function loadSaved(phoneWrap, id) {
+          // On the pre-state (empty) phone the slot list stays blank until
+          // the screen is activated — flip it on first so the loaded code
+          // actually renders instead of staying behind the "0 of 100" ring.
+          if (phoneWrap.hasAttribute("data-code-empty") && !phoneWrap._emptyActivated) {
+            activateEmptyScreen(phoneWrap);
+          }
+          var entry = W.loadSavedCode(id);
+          if (!entry) return;
+          // Slots fan out through notify(); push the saved name into every
+          // headline so the dark + light twins relabel together (the name
+          // isn't part of the shared slot state — same as commitRename).
+          document.querySelectorAll("[data-code-name]").forEach(function (el) {
+            el.textContent = entry.name;
+          });
+          closeSavedSheet(phoneWrap);
+        }
+
+        function deleteSaved(phoneWrap, id) {
+          W.deleteSavedCode(id);
+          var overlay = phoneWrap.querySelector(".saved-overlay");
+          if (overlay) {
+            renderSavedList(phoneWrap, overlay);
+            var hint = overlay.querySelector("[data-saved-hint]");
+            if (hint) { hint.classList.remove("is-ok"); hint.textContent = ""; }
+          }
         }
 
         // ─── Delete-code confirmation bottom-sheet ──────────────────────
@@ -10270,6 +10776,36 @@
           if (action === "rename-save" && phoneWrap) {
             ev.preventDefault();
             commitRename(phoneWrap);
+            return;
+          }
+
+          if (action === "saved-open" && phoneWrap) {
+            ev.preventDefault();
+            openSavedSheet(phoneWrap);
+            return;
+          }
+
+          if (action === "saved-close" && phoneWrap) {
+            ev.preventDefault();
+            closeSavedSheet(phoneWrap);
+            return;
+          }
+
+          if (action === "saved-save-current" && phoneWrap) {
+            ev.preventDefault();
+            commitSaveCurrent(phoneWrap);
+            return;
+          }
+
+          if (action === "saved-load" && phoneWrap) {
+            ev.preventDefault();
+            loadSaved(phoneWrap, target.getAttribute("data-saved-id"));
+            return;
+          }
+
+          if (action === "saved-delete" && phoneWrap) {
+            ev.preventDefault();
+            deleteSaved(phoneWrap, target.getAttribute("data-saved-id"));
             return;
           }
 
