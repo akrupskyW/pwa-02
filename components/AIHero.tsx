@@ -36,7 +36,7 @@ export const AIEmptyHero = ({ onTalkToAI }: { onTalkToAI: () => void }) => {
       }}
     >
       <span
-        className="text-ink-soft flex h-[54px] w-[54px] items-center justify-center rounded-l"
+        className="text-ink-soft flex h-[54px] w-[54px] items-center justify-center rounded-full"
         style={{
           background:
             "linear-gradient(135deg, var(--color-accent-violet) 0%, var(--color-accent-emerald) 100%)",

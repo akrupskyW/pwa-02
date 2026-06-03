@@ -63,7 +63,7 @@ export const SlotCard = ({ slot, slotIdx, allCodes, onOpenPicker, compact }: Pro
           type="button"
           onClick={() => onOpenPicker(slotIdx)}
           aria-label={`Change code ${code.name}`}
-          className="text-ink-soft flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-s transition active:scale-95"
+          className="text-ink-soft flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-full transition active:scale-95"
           style={{
             background: `linear-gradient(135deg, ${identity.c1} 0%, ${identity.c2} 100%)`,
           }}

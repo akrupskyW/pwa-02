@@ -112,7 +112,7 @@ export const TalkToAISheet = ({ onClose }: Props) => {
         <div className="flex items-start justify-between gap-3 px-5 pt-2 pb-3">
           <div className="flex items-center gap-2.5">
             <span
-              className="text-ink-soft flex h-9 w-9 items-center justify-center rounded-s"
+              className="text-ink-soft flex h-9 w-9 items-center justify-center rounded-full"
               style={{
                 background:
                   "linear-gradient(135deg, var(--color-accent-violet) 0%, var(--color-accent-emerald) 100%)",

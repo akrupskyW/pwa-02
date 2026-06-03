@@ -105,7 +105,7 @@ export const CodePickerModal = ({ slotIdx, allCodes, onClose }: Props) => {
                       ].join(" ")}
                     >
                       <span
-                        className="text-ink-soft flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-s"
+                        className="text-ink-soft flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full"
                         style={{
                           background: `linear-gradient(135deg, ${id.c1} 0%, ${id.c2} 100%)`,
                         }}

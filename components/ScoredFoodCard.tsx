@@ -136,7 +136,7 @@ export const ScoredFoodCard = ({ composite }: { composite: number | null }) => {
               >
                 <div className="flex items-center gap-2.5">
                   <span
-                    className="text-ink-soft flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-s"
+                    className="text-ink-soft flex h-[30px] w-[30px] flex-shrink-0 items-center justify-center rounded-full"
                     style={{
                       background: `linear-gradient(135deg, ${id.c1} 0%, ${id.c2} 100%)`,
                     }}
