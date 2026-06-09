@@ -9809,7 +9809,7 @@
           if (screen) screen.appendChild(overlay);
 
           if (input) {
-            input.focus();
+            input.focus({ preventScroll: true });
             input.select();
           }
         }
@@ -10569,7 +10569,7 @@
           // Focus the composer so the user can start typing right away.
           setTimeout(function () {
             var input = overlay.querySelector("[data-composer-input]");
-            if (input && window.WISE_CHAT) { window.WISE_CHAT.autosize(input); input.focus(); }
+            if (input && window.WISE_CHAT) { window.WISE_CHAT.autosize(input); input.focus({ preventScroll: true }); }
           }, 320);
         }
 
@@ -10633,7 +10633,7 @@
             var input = overlay.querySelector("[data-composer-input]");
             if (input) {
               chat.autosize(input);
-              input.focus();
+              input.focus({ preventScroll: true });
             }
           }, 320);
         }
@@ -12463,6 +12463,19 @@
             } catch (e) {}
           });
         }
+
+        // Keep every (re)load anchored at the top-left Design System board.
+        // The browser would otherwise restore the previous scroll position
+        // on reload (and the live-reload poller below reloads on every
+        // save), so opt out and snap the window + rail back to origin.
+        if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+        function resetScroll() {
+          window.scrollTo(0, 0);
+          var r = document.querySelector(".pair-rail");
+          if (r) r.scrollLeft = 0;
+        }
+        resetScroll();
+        window.addEventListener("load", resetScroll);
 
         // Wait for the entrance animations on the source phones to settle
         // before cloning, so each frame captures a finished render.
