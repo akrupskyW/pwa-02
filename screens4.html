@@ -327,8 +327,6 @@
         font-size: 12.5px;
         font-weight: 600;
         letter-spacing: -0.01em;
-      }
-      .stage > header .section-list li {
         cursor: pointer;
         transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
       }
@@ -1159,111 +1157,6 @@
         font-variant-numeric: tabular-nums;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
       }
-      /* The "%" sign always rides high as superscript, half the size of
-         the number it trails — matches the center-disc "OF 100" treatment.
-         line-height:0 keeps it from adding to the tag's measured height. */
-      .pie-slice-tag .pct .pct-sym {
-        font-size: 0.6em;
-        font-weight: 700;
-        line-height: 0;
-        vertical-align: super;
-        margin-left: 0.5px;
-      }
-
-      /* ─── Clustered bubble chart (alternate code viz) ────────────────
-         The same code mix the donut paints, redrawn as a pack of
-         circles — one bubble per code, area ∝ its weight, colored by
-         the code's hue. Toggled in from the chart-type button in the
-         pie-card's top-left corner; shares the .pie-svg shell and the
-         .pie-slice-tag label nodes (icon + percentage) the donut uses,
-         so switching back and forth reuses the same cleanup path. The
-         center "OF 100" disc is hidden while bubbles are showing (the
-         bubbles fill the hole), via .pie-wrap.is-bubble below. */
-      .pie-svg circle.bubble {
-        cursor: pointer;
-        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.12));
-      }
-      :root[data-theme="dark"] .pie-svg circle.bubble {
-        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.40));
-      }
-      /* Bubble labels reuse .pie-slice-tag positioning but let the icon
-         box collapse to its glyph (no fixed 28px tile) so it scales down
-         cleanly on smaller bubbles. Per-bubble font sizes are set inline
-         by the renderer from each bubble's radius. */
-      .pie-slice-tag.bubble-tag { gap: 0; }
-      .pie-slice-tag.bubble-tag .ico { width: auto; height: auto; }
-      /* The donut hole disc is meaningless under the bubble pack, the
-         treemap, or the focus matrix — hide it for all (tap-to-replay
-         still works on the wrap). */
-      .pie-wrap.is-bubble .pie-center,
-      .pie-wrap.is-treemap .pie-center,
-      .pie-wrap.is-matrix .pie-center { display: none; }
-
-      /* Treemap tiles — squarified rectangles, area ∝ weight. Each scales
-         from its own center for the pop-in (transform-box: fill-box). */
-      .pie-svg rect.tm {
-        cursor: pointer;
-        transform-box: fill-box;
-        transform-origin: center;
-        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.10));
-      }
-      :root[data-theme="dark"] .pie-svg rect.tm {
-        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
-      }
-      .pie-slice-tag.treemap-tag { gap: 2px; }
-      .pie-slice-tag.treemap-tag .ico { width: auto; height: auto; }
-
-      /* ─── Hyper-focus dot matrix (alternate code viz) ─────────────────
-         A sunflower of dots radiating from a central focus. Each code
-         claims a concentric band of dots in its own hue (color status),
-         every dot carries a white core that brightens toward the center
-         (focus pull), and the count of lit dots tracks how complete the
-         code is — the rest stay as faint hollow rings until they fill in.
-         Shares the .pie-svg shell + the .pie-slice-tag cleanup path. */
-      .pie-svg circle.mx-fill {
-        cursor: pointer;
-        filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
-      }
-      :root[data-theme="dark"] .pie-svg circle.mx-fill {
-        filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.45));
-      }
-      /* White core highlight — pointer-transparent so taps fall through to
-         the colored dot underneath (which carries the code-detail action). */
-      .pie-svg circle.mx-glow { pointer-events: none; }
-      /* Not-yet-filled positions: faint hollow rings in the neutral track
-         color, sitting under the lit dots. */
-      .pie-svg circle.mx-empty {
-        fill: none;
-        stroke: var(--track);
-        stroke-width: 1.5;
-      }
-
-      /* ─── Chart-type toggle (pie-card top-left) ──────────────────────
-         Mirrors the Rebalance pill in the opposite corner, but icon-only:
-         a square chip that flips the code viz between the donut and the
-         clustered bubble chart. The glyph swaps to preview the OTHER
-         chart (bubble_chart while a donut shows, donut_large while
-         bubbles show). */
-      .chart-toggle {
-        position: absolute;
-        top: 12px; left: 12px;
-        z-index: 2;
-        display: inline-flex; align-items: center; justify-content: center;
-        width: 30px; height: 30px;
-        border-radius: 999px;
-        background: color-mix(in srgb, var(--violet) 14%, transparent);
-        border: 1px solid color-mix(in srgb, var(--violet) 45%, var(--line));
-        color: var(--violet);
-        cursor: pointer;
-      }
-      .chart-toggle .material-symbols-outlined { font-size: 17px; }
-      .phone-wrap:not(.theme-light) .chart-toggle { color: #FFFFFF; }
-      @media (hover: hover) {
-        .chart-toggle:hover {
-          background: color-mix(in srgb, var(--violet) 22%, transparent);
-          border-color: color-mix(in srgb, var(--violet) 65%, var(--line));
-        }
-      }
 
       /* ─── Empty pie placeholder ─────────────────────────────────────────
          Static SVG used on the Your Code (Empty) variant where no codes
@@ -1610,10 +1503,8 @@
          "In Progress" / "In Harmony" caption directly underneath. */
       /* Chart card is now frameless — no surface fill or border, just the
          viz floating on the page. Generous top + bottom bands reserve
-         clear space for the corner controls (chart-type toggle + Rebalance
-         up top, Rename + Reset along the bottom) so the square charts
-         (bubble pack / treemap) never slide under them the way they would
-         if they filled to the card edge. */
+         clear space for the corner controls (Rebalance up top, Rename +
+         Saved along the bottom) so the donut never slides under them. */
       .pie-card {
         display: flex; flex-direction: column; align-items: center;
         background: transparent;
@@ -2330,117 +2221,14 @@
         font-size: 13px; font-weight: 600; letter-spacing: 0;
       }
 
-      /* ─── Browse image cards (Top Matches) ──────────────────────────────
-         Image-forward product cards that replace the old thumb+row format:
-         a real packshot photo on top with a color-only contribution donut
-         tucked into the bottom-right quadrant of the photo, then product
-         name / brand / WISEscore beneath (the score styled like the Food
-         Detail card). The featured Top Match spans full width with a
-         taller photo; the ranked results sit in a 2-up grid. Packshots are
-         on white, so the photo well stays white in both themes. */
-      .food-card {
-        display: flex; flex-direction: column;
-        background: var(--card);
-        border: 1px solid var(--card-border);
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: var(--shadow-card);
-        text-align: left;
-        cursor: pointer;
-      }
-      .food-card .food-photo {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        background: #FFFFFF;
-        overflow: hidden;
-      }
-      .food-card .food-photo img {
-        width: 100%; height: 100%;
-        object-fit: contain;
-        display: block;
-        padding: 6px;
-      }
-      .food-card.featured .food-photo { aspect-ratio: 5 / 4; }
-
-      /* Color-only contribution donut over the photo's bottom-right
-         quadrant. A frosted white plate keeps the ring legible on any
-         packshot; the conic-gradient background (slot color × weight) is
-         written by the browse subscriber, and the center hole is masked
-         out so it reads as a donut. No icons, no labels — colors only. */
-      .food-donut-plate {
-        position: absolute;
-        right: 8px; bottom: 8px;
-        width: 42px; height: 42px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.9);
-        box-shadow: 0 2px 7px rgba(15, 18, 23, 0.22);
-        display: inline-flex; align-items: center; justify-content: center;
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
-      }
-      .food-card.featured .food-donut-plate {
-        width: 52px; height: 52px; right: 12px; bottom: 12px;
-      }
-      .food-donut {
-        width: 30px; height: 30px;
-        border-radius: 50%;
-        background: var(--surface-2);
-        -webkit-mask: radial-gradient(circle at center, transparent 0 40%, #000 41% 100%);
-                mask: radial-gradient(circle at center, transparent 0 40%, #000 41% 100%);
-      }
-      .food-card.featured .food-donut { width: 38px; height: 38px; }
-
-      .food-card-body {
-        display: flex; align-items: flex-end; justify-content: space-between;
-        gap: 10px;
-        padding: 12px;
-      }
-      .food-card-body .info { flex: 1; min-width: 0; }
-      .food-card-body .nm {
-        color: var(--fg-bright);
-        font-size: 13px; font-weight: 700;
-        letter-spacing: -0.01em; line-height: 1.25;
-        display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-      .food-card.featured .food-card-body .nm { font-size: 16px; }
-      .food-card-body .br {
-        color: var(--fg-muted);
-        font-size: 11px; font-weight: 500;
-        margin-top: 4px;
-      }
-      .food-card-body .wise-score-row {
-        display: inline-flex; align-items: baseline; gap: 2px;
-        flex-shrink: 0;
-      }
-      .food-card-body .wise-score-row .num {
-        color: var(--emerald);
-        font-size: 22px; font-weight: 800;
-        letter-spacing: -0.5px; line-height: 1;
-        font-variant-numeric: tabular-nums;
-      }
-      .food-card.featured .food-card-body .wise-score-row .num { font-size: 30px; }
-      .food-card-body .wise-score-row .denom {
-        color: var(--fg-faint);
-        font-size: 12px; font-weight: 600;
-      }
-
-      /* 2-up grid for ranked results below the featured Top Match. */
-      .food-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-
       /* ─── Food Detail (Screen 6) ────────────────────────────────────────
          Per-food drill-down reached from a Top Match row in Browse (or a
          barcode result in Scan). Four stacked cards:
 
-           1. Score card    — "Excellent match" verdict, contribution
-                              donut (re-using the code pie), and a
-                              per-slot contribution table beneath
-           2. Product hero  — image + name/brand + UPC pill
+           1. Product hero  — image + name/brand + UPC pill, with the
+                              WISEscore (composite score) floated right
+           2. Score card    — "Excellent match" verdict and a per-slot
+                              contribution table beneath
            3. AI Insights   — chat-starter chips (same raised card as the
                               code-detail bottom sheet)
            4. About card    — link to the score-math explainer
@@ -2465,16 +2253,6 @@
         border: 1px solid var(--line);
       }
       .product-thumb > svg { width: 100%; height: 100%; display: block; }
-      /* When the hero thumb carries a real packshot photo (Browse image
-         cards → Food Detail), white-back the frame so the on-white product
-         shot blends, and contain it so the whole jar stays visible. */
-      .product-thumb.has-photo { background: #FFFFFF; }
-      .product-thumb.has-photo img {
-        width: 100%; height: 100%;
-        object-fit: contain;
-        padding: 4px;
-        display: block;
-      }
 
       /* Product hero text — matches the Top Match food card (16/700 name,
          normal-case 12/500 brand) so the two cards are visually identical. */
@@ -2511,6 +2289,37 @@
         color: var(--fg-muted);
       }
 
+      /* WISEscore — the composite score (formerly the donut center) now
+         floated to the right of the product hero card. Big band-colored
+         numeral over a muted "/100" and a "WISEscore" caption. The
+         .num carries data-product-detail-score so the live subscriber
+         keeps rewriting it from the code + per-slot scores. */
+      .fd-wisescore {
+        flex-shrink: 0;
+        display: flex; flex-direction: column;
+        align-items: flex-end; justify-content: center;
+        text-align: right;
+      }
+      .fd-wisescore .score {
+        display: inline-flex; align-items: baseline; gap: 2px;
+      }
+      .fd-wisescore .num {
+        color: var(--emerald);
+        font-size: 40px; font-weight: 800;
+        letter-spacing: -1px; line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .fd-wisescore .denom {
+        color: var(--fg-faint);
+        font-size: 15px; font-weight: 600;
+      }
+      .fd-wisescore .lbl {
+        margin-top: 4px;
+        color: var(--fg-faint);
+        font-size: 9px; font-weight: 700;
+        letter-spacing: 0.12em; text-transform: uppercase;
+      }
+
       /* Centered "Excellent match for your code" verdict at the top of the
          score card. check_circle glyph + label, both in the primary brand
          blue (the app's primary accent) so the verdict reads as a branded
@@ -2520,10 +2329,24 @@
         color: var(--blue);
         font-size: 14px; font-weight: 800;
         letter-spacing: -0.005em;
+        appearance: none; -webkit-appearance: none;
+        background: none; border: 0; padding: 0;
+        font-family: inherit;
+        cursor: pointer;
+        transition: opacity 140ms ease;
+      }
+      @media (hover: hover) {
+        .match-verdict-row:hover { opacity: 0.82; }
       }
       .match-verdict-row .material-symbols-outlined {
         font-size: 20px;
         color: var(--blue);
+      }
+      /* WISEcode bug standing in for the old check glyph; currentColor
+         picks up the verdict's brand blue. */
+      .match-verdict-row .wise-bug-mark {
+        width: 26px;
+        flex-shrink: 0;
       }
 
       /* Per-slot contribution row beneath the donut. Icon + name on the
@@ -2651,110 +2474,72 @@
         font-size: 14px;
       }
 
-      /* Scan screen — large circular radar viewfinder. Three concentric
-         royal-blue-tinted rings (wise-nonupf-blue #1D4ED8 → rgb 29,78,216),
-         a brighter right-half sweep, and the dashed viewfinder square in
-         the middle. Same look in both themes; the blue hue carries
-         through unchanged because it's an identity color, not a surface. */
-      .scan-circle {
-        width: 260px; height: 260px;
-        margin: 12px auto 4px;
-        border-radius: 50%;
+      /* Scan screen — large live-camera viewport. Fills the column with a
+         tall rounded frame holding a real <video> of the device camera
+         (getUserMedia, rear-facing where available). Corner brackets
+         overlay the feed as a barcode viewfinder; a tap-to-enable prompt
+         covers the frame until the stream attaches (and re-shows on a
+         permission error). Same look in both themes — it's a black feed
+         either way. */
+      .scan-cam {
         position: relative;
-        background: radial-gradient(closest-side, rgba(29,78,216,0.10) 0%, rgba(29,78,216,0.04) 70%, transparent 100%);
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-        box-shadow: inset 0 0 0 1px rgba(29,78,216,0.22);
+        width: 100%;
+        flex: 1;
+        min-height: 360px;
+        margin: 12px 0 4px;
+        border-radius: 24px;
         overflow: hidden;
-      }
-      :root[data-theme="light"] .scan-circle,
-      .theme-light .scan-circle {
-        background: radial-gradient(closest-side, rgba(29,78,216,0.14) 0%, rgba(29,78,216,0.06) 70%, transparent 100%);
+        background: #000;
         box-shadow: inset 0 0 0 1px rgba(29,78,216,0.30);
       }
-      /* Middle ring */
-      .scan-circle::before {
-        content: "";
-        position: absolute; inset: 36px;
-        border-radius: 50%;
-        border: 1px solid rgba(29,78,216,0.22);
-      }
-      /* Inner filled ring */
-      .scan-circle::after {
-        content: "";
-        position: absolute; inset: 72px;
-        border-radius: 50%;
-        background: radial-gradient(closest-side, rgba(29,78,216,0.20) 0%, rgba(29,78,216,0.08) 100%);
-        border: 1px solid rgba(29,78,216,0.22);
-      }
-      /* Right-half sweep effect: a vertically split overlay that's
-         slightly brighter on the right side, mimicking the screenshot's
-         classic radar dial. The 1px vertical hairline at 50% reads as
-         the radar's center axis. */
-      .scan-circle .sweep {
+      .scan-cam-video {
         position: absolute; inset: 0;
-        border-radius: 50%;
-        background: linear-gradient(90deg,
-          transparent 0%,
-          transparent calc(50% - 0.5px),
-          rgba(29,78,216,0.30) calc(50% - 0.5px),
-          rgba(29,78,216,0.30) calc(50% + 0.5px),
-          rgba(29,78,216,0.10) calc(50% + 0.5px),
-          rgba(29,78,216,0.10) 100%);
+        width: 100%; height: 100%;
+        object-fit: cover;
+        display: block;
+        background: #000;
+      }
+      /* Viewfinder corner brackets over the feed. */
+      .scan-cam-frame {
+        position: absolute; inset: 18%;
+        z-index: 2;
         pointer-events: none;
-        z-index: 1;
       }
-      .scan-circle .vf-box {
-        position: relative; z-index: 2;
-        width: 56px; height: 56px;
-        color: var(--fg-bright);
-        opacity: 0.85;
-      }
-      :root[data-theme="light"] .scan-circle .vf-box,
-      .theme-light .scan-circle .vf-box { color: #413A4D; opacity: 0.55; }
-      .scan-circle .vf-box::before,
-      .scan-circle .vf-box::after {
-        content: "";
+      .scan-cam-frame span {
         position: absolute;
-        width: 18px; height: 18px;
+        width: 26px; height: 26px;
+        border: 3px solid rgba(255,255,255,0.92);
       }
-      /* Left cat ear: a filled triangle peeking up off the top-left of the
-         viewfinder box, leaning slightly outward like a real ear. */
-      .scan-circle .vf-box::before {
-        top: -16px; left: -3px;
-        width: 22px; height: 24px;
-        background: currentColor;
-        clip-path: polygon(8% 100%, 92% 100%, 22% 0%);
+      .scan-cam-frame .vf-tl { top: 0; left: 0; border-right: none; border-bottom: none; border-top-left-radius: 8px; }
+      .scan-cam-frame .vf-tr { top: 0; right: 0; border-left: none; border-bottom: none; border-top-right-radius: 8px; }
+      .scan-cam-frame .vf-bl { bottom: 0; left: 0; border-right: none; border-top: none; border-bottom-left-radius: 8px; }
+      .scan-cam-frame .vf-br { bottom: 0; right: 0; border-left: none; border-top: none; border-bottom-right-radius: 8px; }
+
+      /* Tap-to-enable prompt overlay. Shown until .scan-cam gets .is-live;
+         doubles as the permission-error / retry surface. */
+      .scan-cam-prompt {
+        position: absolute; inset: 0;
+        z-index: 3;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        gap: 6px;
+        border: none;
+        background: linear-gradient(180deg, rgba(13,13,18,0.78), rgba(13,13,18,0.92));
+        color: #FFFFFF;
+        text-align: center;
+        padding: 24px;
+        cursor: pointer;
       }
-      .scan-circle .vf-box::after {
-        bottom: 0; right: 0;
-        border-bottom: 2.5px solid currentColor;
-        border-right: 2.5px solid currentColor;
-        border-bottom-right-radius: 6px;
+      .scan-cam-prompt .material-symbols-outlined { font-size: 40px; margin-bottom: 6px; }
+      .scan-cam-prompt-title {
+        font-size: 16px; font-weight: 700; letter-spacing: -0.01em;
       }
-      /* Right cat ear: mirror of the left ear, peeking up off the
-         top-right of the viewfinder box and leaning outward. */
-      .scan-circle .vf-tr-corner {
-        position: absolute; z-index: 2;
-        top: calc(50% - 28px - 16px); right: calc(50% - 28px - 3px);
-        width: 22px; height: 24px;
-        background: currentColor;
-        clip-path: polygon(8% 100%, 92% 100%, 78% 0%);
-        color: var(--fg-bright); opacity: 0.85;
+      .scan-cam-prompt-sub {
+        font-size: 12px; font-weight: 500;
+        color: rgba(255,255,255,0.72);
+        max-width: 220px; line-height: 1.4;
       }
-      .scan-circle .vf-bl-corner {
-        position: absolute; z-index: 2;
-        bottom: calc(50% - 28px); left: calc(50% - 28px);
-        width: 18px; height: 18px;
-        border-bottom: 2.5px solid currentColor;
-        border-left: 2.5px solid currentColor;
-        border-bottom-left-radius: 6px;
-        color: var(--fg-bright); opacity: 0.85;
-      }
-      :root[data-theme="light"] .scan-circle .vf-tr-corner,
-      :root[data-theme="light"] .scan-circle .vf-bl-corner,
-      .theme-light .scan-circle .vf-tr-corner,
-      .theme-light .scan-circle .vf-bl-corner { color: #413A4D; opacity: 0.55; }
+      .scan-cam.is-live .scan-cam-prompt { display: none; }
 
       /* Scan-screen bottom action group — the "Scan a barcode" button,
          the "or enter UPC" divider, and the UPC lookup row sit in this
@@ -2788,6 +2573,218 @@
         box-shadow: 0 8px 20px color-mix(in srgb, var(--blue) 32%, transparent);
       }
       .cta-scan i { width: 18px; height: 18px; }
+
+      /* ─── Fresh Find — package photo capture (Steps 1–2) ─────────────
+         Two-step in-aisle flow when barcode scan isn't enough: photograph
+         the front of the package, then the back (nutrition / ingredients).
+         Everything lives inside the standard 390×844 .phone shell — the
+         capture layer is position:absolute; inset:0 and never stretches
+         the device bezel taller. */
+      .ff-capture {
+        position: absolute;
+        inset: 0;
+        z-index: 12;
+        display: flex;
+        flex-direction: column;
+        background: #050608;
+        color: #FFFFFF;
+        overflow: hidden;
+      }
+      .ff-capture .ff-top {
+        flex-shrink: 0;
+        padding: 58px 20px 0;
+      }
+      .ff-step-count {
+        color: rgba(255, 255, 255, 0.62);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .ff-title {
+        margin-top: 8px;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+      .ff-sub {
+        margin-top: 6px;
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 1.45;
+        max-width: 300px;
+      }
+      .ff-viewport {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 8px 24px 0;
+      }
+      .ff-frame {
+        position: relative;
+        width: min(100%, 260px);
+        aspect-ratio: 3 / 4;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.18);
+      }
+      /* Corner brackets — package framing, not barcode square */
+      .ff-frame::before,
+      .ff-frame::after {
+        content: "";
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        border-color: var(--emerald);
+        z-index: 2;
+        pointer-events: none;
+      }
+      .ff-frame::before {
+        top: 10px; left: 10px;
+        border-top: 2.5px solid;
+        border-left: 2.5px solid;
+        border-top-left-radius: 8px;
+      }
+      .ff-frame::after {
+        bottom: 10px; right: 10px;
+        border-bottom: 2.5px solid;
+        border-right: 2.5px solid;
+        border-bottom-right-radius: 8px;
+      }
+      .ff-mock {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 16px;
+        text-align: center;
+      }
+      .ff-mock-front {
+        background: linear-gradient(165deg, #1a2744 0%, #0d1528 55%, #12203a 100%);
+      }
+      .ff-mock-back {
+        background: linear-gradient(165deg, #f4f0e8 0%, #e8e2d6 100%);
+        color: #1a1a22;
+      }
+      .ff-mock .brand {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.92;
+      }
+      .ff-mock .product {
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+      }
+      .ff-mock .panel {
+        margin-top: 8px;
+        width: 100%;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 8px;
+        font-weight: 600;
+        line-height: 1.35;
+        text-align: left;
+      }
+      .ff-mock-front .panel {
+        background: rgba(255, 255, 255, 0.08);
+        color: rgba(255, 255, 255, 0.55);
+      }
+      .ff-mock-back .panel {
+        background: rgba(0, 0, 0, 0.06);
+        color: #413a4d;
+      }
+      .ff-hint {
+        color: rgba(255, 255, 255, 0.78);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-align: center;
+      }
+      .ff-thumb-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        align-self: flex-start;
+        width: min(100%, 260px);
+      }
+      .ff-thumb {
+        width: 44px;
+        height: 58px;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid var(--emerald);
+        flex-shrink: 0;
+        position: relative;
+      }
+      .ff-thumb-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.72);
+        line-height: 1.35;
+      }
+      .ff-foot {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px max(28px, env(safe-area-inset-bottom));
+        background: rgba(0, 0, 0, 0.88);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .ff-cancel {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        color: #FFFFFF;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .ff-shutter {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 4px solid rgba(255, 255, 255, 0.92);
+        background: transparent;
+        position: relative;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .ff-shutter::after {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border-radius: 50%;
+        background: #FFFFFF;
+      }
+      .ff-foot-spacer { width: 64px; flex-shrink: 0; }
+
+      /* Fresh Find phones — black canvas + light status chrome */
+      .ff-phone {
+        background: #000000 !important;
+      }
+      .ff-phone .status-bar { color: #FFFFFF; }
+      .ff-phone .status-bar .bars span { background: #FFFFFF; }
+      .ff-phone .status-bar .battery {
+        border-color: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.12);
+      }
+      .ff-phone .status-bar .battery i { background: #FFFFFF; }
 
       /* AI-compose example rows — small cards with an emoji-like icon on
          the left, italic quoted suggestion text on the right. Tappable. */
@@ -2872,48 +2869,6 @@
         cursor: pointer;
       }
       .footer-row .primary i { width: 14px; height: 14px; color: var(--emerald); }
-
-      /* Mono code pill for the UPC field on Scan. */
-      .upc-field {
-        flex: 1;
-        display: flex; align-items: center; gap: 8px;
-        min-height: 44px;
-        background: var(--card);
-        border: 1px solid var(--line-subtle);
-        border-radius: 14px;
-        padding: 0 10px 0 12px;
-        min-width: 0;
-        box-shadow: var(--shadow-card);
-      }
-      .upc-field i { color: var(--emerald); width: 14px; height: 14px; flex-shrink: 0; opacity: 0.85; }
-      .upc-field input {
-        flex: 1; min-width: 0;
-        background: transparent; border: none; outline: none;
-        font-family: "DM Sans", system-ui, sans-serif;
-        font-size: 13px; letter-spacing: 0.04em;
-        color: var(--fg-bright);
-      }
-      .upc-lookup {
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        color: var(--fg-bright);
-        border-radius: 9999px;
-        min-height: 44px;
-        padding: 10px 18px;
-        font-size: 13px; font-weight: 700;
-        cursor: pointer;
-        flex-shrink: 0;
-      }
-      .upc-divider {
-        display: flex; align-items: center; gap: 12px;
-        color: var(--fg-muted);
-        font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
-        text-transform: uppercase;
-      }
-      .upc-divider::before,
-      .upc-divider::after {
-        content: ""; flex: 1; height: 1px; background: var(--line);
-      }
 
       /* ─── Chat header overflow menu ─────────────────────────────────
          Three-dot ("kebab") icon button anchored to the right of the
@@ -3624,28 +3579,61 @@
       }
       .rebalance-sheet .rb-scroll::-webkit-scrollbar { display: none; }
 
-      /* One row per filled slot inside the sheet — a card with two
-         halves. The top strip (.rb-drag) is the reorder grab handle: a
-         rank badge (1 = most important) on the left, then the code
-         identity, its live percentage, and the swap button. Pressing
-         the strip and dragging up/down reorders the codes. The bottom
-         half is a slot-colored range slider that fine-tunes that code's
-         percentage (proportional rebalance, total stays 100). The two
-         gestures are kept apart: only the strip is a drag handle
-         (touch-action none); the slider keeps its native touch
-         behaviour so it still drags. */
+      /* One row per filled slot inside the sheet. The outer .rb-row is a
+         positioned shell that the reorder gesture translates vertically;
+         the visible card (.rb-row-inner) sits on top and is what the
+         left-swipe-to-remove gesture slides horizontally, revealing the
+         rose .rb-swipe-bg underneath. The inner card has two halves: the
+         top strip (.rb-drag) is the reorder grab handle (rank badge +
+         code identity + live percentage + swap), and the bottom half is a
+         slot-colored range slider that fine-tunes that code's percentage
+         (proportional rebalance, total stays 100). The gestures are kept
+         apart: pressing the strip and moving locks to reorder (vertical)
+         or remove (left); the slider keeps its native touch behaviour. */
       .rebalance-sheet .rb-row {
         position: relative;
+        transition: transform 200ms cubic-bezier(.2,.85,.25,1);
+        will-change: transform;
+      }
+      /* The rose "remove" backdrop revealed as the card slides left.
+         Fades in with the swipe progress (--rb-swipe 0→1) and goes solid
+         once past the release-to-remove threshold. */
+      .rebalance-sheet .rb-swipe-bg {
+        position: absolute; inset: 0;
+        border-radius: 16px;
+        background: var(--rose);
+        display: flex; align-items: center; justify-content: flex-end;
+        padding-right: 22px;
+        color: #FFFFFF;
+        opacity: var(--rb-swipe, 0);
+        pointer-events: none;
+      }
+      .rebalance-sheet .rb-swipe-bg .material-symbols-outlined {
+        font-size: 22px;
+        transition: transform 140ms cubic-bezier(.2,.85,.25,1);
+      }
+      /* Past the release-to-remove threshold: pin the backdrop fully on
+         and pop the trash glyph so the gesture reads as "let go to drop". */
+      .rebalance-sheet .rb-row.is-swipe-armed .rb-swipe-bg { opacity: 1; }
+      .rebalance-sheet .rb-row.is-swipe-armed .rb-swipe-bg .material-symbols-outlined {
+        transform: scale(1.18);
+      }
+      /* The visible card surface — slides horizontally on swipe. */
+      .rebalance-sheet .rb-row-inner {
+        position: relative;
+        z-index: 1;
         display: flex; flex-direction: column; gap: 10px;
         padding: 12px 14px 14px;
         background: var(--card);
         border: 1px solid var(--line);
         border-radius: 16px;
-        transition: transform 200ms cubic-bezier(.2,.85,.25,1),
+        transition: transform 240ms cubic-bezier(.2,.85,.25,1),
                     box-shadow 160ms ease, border-color 160ms ease,
                     background 160ms ease;
-        will-change: transform;
       }
+      /* While a finger is actively swiping the card tracks 1:1 (no easing);
+         on release the transition above springs it back or flings it off. */
+      .rebalance-sheet .rb-row.is-swiping .rb-row-inner { transition: none; }
       /* Top strip = reorder grab handle. */
       .rebalance-sheet .rb-drag {
         display: flex; align-items: center; gap: 10px;
@@ -3654,15 +3642,17 @@
         user-select: none; -webkit-user-select: none;
       }
       @media (hover: hover) {
-        .rebalance-sheet .rb-row:hover { border-color: var(--line-strong); }
+        .rebalance-sheet .rb-row:hover .rb-row-inner { border-color: var(--line-strong); }
       }
-      /* The card the finger is holding: lifts off the surface, brightens
-         its border, and rides above its neighbours. Its inline transform
-         is driven by JS (follows the pointer) so we suppress the CSS
-         transition on it while dragging. */
+      /* The card the finger is holding for reorder: lifts off the surface,
+         brightens its border, and rides above its neighbours. The outer
+         row's inline transform (driven by JS) follows the pointer, so we
+         suppress its CSS transition while dragging. */
       .rebalance-sheet .rb-row.is-dragging {
         z-index: 5;
         transition: none;
+      }
+      .rebalance-sheet .rb-row.is-dragging .rb-row-inner {
         box-shadow: 0 14px 30px -10px rgba(0,0,0,0.55);
         border-color: var(--line-strong);
         background: var(--card);
@@ -3820,6 +3810,30 @@
         font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
       }
       .rebalance-sheet.is-balanced .rb-total { color: var(--emerald); }
+
+      /* ─── Inline rebalance surface (Your Code Home) ──────────────────
+         The Your Code (Home) screen renders the rebalance rows directly
+         under the donut instead of behind a bottom sheet, so reorder /
+         swap / remove / weight controls are always visible. It reuses
+         every `.rebalance-sheet .rb-*` row style by carrying the
+         `rebalance-sheet` class; this modifier strips the sheet chrome
+         (fixed positioning, scrim padding, slide animation, scroll
+         clipping) so the cards flow inline in the page. */
+      .rb-inline-sheet {
+        max-height: none;
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
+        animation: none;
+        gap: 0;
+      }
+      .rb-inline-sheet .rb-scroll {
+        overflow: visible;
+        margin: 0;
+        padding: 0;
+      }
 
       /* ─── Code detail bottom sheet ─────────────────────────────────
          Slides up from the bottom of the Your Code phone when the
@@ -5623,17 +5637,6 @@
       @media (hover: hover) {
         .saved-load:not([disabled]):hover { border-color: var(--blue); color: var(--blue); }
       }
-      .saved-del {
-        flex-shrink: 0;
-        height: 34px; width: 34px; border-radius: 999px;
-        background: transparent; border: 1px solid var(--line);
-        color: var(--fg-faint); cursor: pointer;
-        display: inline-flex; align-items: center; justify-content: center;
-      }
-      .saved-del .material-symbols-outlined { font-size: 18px; }
-      @media (hover: hover) {
-        .saved-del:hover { color: var(--code-red); border-color: var(--code-red); }
-      }
       .saved-foot {
         margin-top: 14px;
         padding-top: 14px;
@@ -5737,6 +5740,8 @@
         3.  BROWSE            — priorities row + featured + ranked olives
         4.  SCAN              — viewfinder up top, barcode CTA + UPC field
                                 anchored to the bottom (thumb-reach zone)
+        4a. FRESH FIND · FRONT — Step 1 of 2 · photograph package front
+        4b. FRESH FIND · BACK  — Step 2 of 2 · photograph package back
         5.  CHAT              — header kebab (new / share / export
                                 conversation), textarea, intent chips, send
         6.  FOOD DETAIL       — product hero (thumb + brand + UPC) over a
@@ -5745,7 +5750,7 @@
                                 in Browse or a barcode result in Scan
       -->
       <div class="pair-rail-hint">
-        <span>Design system + 9 frames · dark + light side-by-side</span>
+        <span>Design system + 11 frames · dark + light side-by-side</span>
         <span class="arrows">Scroll <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
       </div>
       <div class="pair-rail-frame">
@@ -6290,13 +6295,13 @@
     <div class="screen">
       <div class="scroll">
         <div class="scr-hdr">
-          <h1>Your code</h1>
+          <div class="intro-brand" style="padding:0;">
+            <img class="wise-logo-vertical" src="assets/WISEcode-logo-vertical.svg" alt="WISEcoach" />
+          </div>
         </div>
 
         <div class="px stack">
           <section class="pie-card">
-            <button class="chart-toggle" data-action="chart-toggle" aria-label="Switch to treemap chart"><span class="material-symbols-outlined">dashboard</span></button>
-            <button class="rebalance-pill is-off" data-action="rebalance-open" aria-label="Rebalance code weights" disabled aria-disabled="true"><span class="material-symbols-outlined">tune</span>Rebalance</button>
             <div class="pie-wrap" style="width:300px;height:300px;">
               <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
                    data-id="empty" data-size="280" data-stroke="88"
@@ -6307,10 +6312,7 @@
               </div>
             </div>
             <div class="status" data-code-status>Empty</div>
-            <div class="status-sub">Add codes to compose your code</div>
-            <button class="rename-link" data-action="rename-prompt" aria-label="Rename code">Rename</button>
-            <button class="saved-link" data-action="saved-open" aria-label="Open saved codes (3 saved)"><span class="material-symbols-outlined">bookmarks</span>Saved (<span data-saved-count>3</span>)</button>
-            <button class="reset-link" data-action="reset-prompt" aria-label="Reset code">Reset</button>
+            <div class="status-sub"></div>
           </section>
 
           <div class="stack-sm" data-code-list>
@@ -6325,7 +6327,7 @@
         <div class="tab-pill">
           <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
@@ -6340,7 +6342,7 @@
 <section class="screen-pair">
   <h3 class="screen-pair-label">1b · Your Code (Home)</h3>
   <div class="pair-row">
-<div class="phone-wrap" data-code data-chart="bubble">
+<div class="phone-wrap" data-code>
   <div class="phone-label">Dark</div>
   <div class="phone">
     <div class="island"></div>
@@ -6356,13 +6358,13 @@
     <div class="screen">
       <div class="scroll">
         <div class="scr-hdr">
-          <h1>Your <span class="code-name" data-code-name data-action="rename-prompt" role="button" tabindex="0" aria-label="Rename code">In Harmony</span> code</h1>
+          <div class="intro-brand" style="padding:0;">
+            <img class="wise-logo-vertical" src="assets/WISEcode-logo-vertical.svg" alt="WISEcoach" />
+          </div>
         </div>
 
         <div class="px stack">
           <section class="pie-card">
-            <button class="chart-toggle" data-action="chart-toggle" aria-label="Switch to treemap chart"><span class="material-symbols-outlined">dashboard</span></button>
-            <button class="rebalance-pill" data-action="rebalance-open" aria-label="Rebalance code weights"><span class="material-symbols-outlined">tune</span>Rebalance</button>
             <div class="pie-wrap" style="width:300px;height:300px;">
               <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
                    data-id="home" data-size="280" data-stroke="88"
@@ -6373,86 +6375,25 @@
                 <div class="lbl">OF 100</div>
               </div>
             </div>
-            <button class="rename-link" data-action="rename-prompt" aria-label="Rename code">Rename</button>
-            <button class="saved-link" data-action="saved-open" aria-label="Open saved codes (3 saved)"><span class="material-symbols-outlined">bookmarks</span>Saved (<span data-saved-count>3</span>)</button>
-            <button class="reset-link" data-action="reset-prompt" aria-label="Reset code">Reset</button>
           </section>
 
-          <div class="stack-sm" data-code-list>
-            <div class="slot-c" data-code-id="clean_label" data-action="code-detail">
-              <span class="ico" style="background:#188443;"><span class="material-symbols-outlined">auto_awesome</span></span>
-              <div class="meta"><div class="nm">Clean Label</div></div>
-              <span class="pct"><b>20</b><small>%</small></span>
-              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
-            </div>
-            <div class="slot-c" data-code-id="overall_quality" data-action="code-detail">
-              <span class="ico" style="background:#D8610C;"><span class="material-symbols-outlined">workspace_premium</span></span>
-              <div class="meta"><div class="nm">Overall Quality</div></div>
-              <span class="pct"><b>15</b><small>%</small></span>
-              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
-            </div>
-            <div class="slot-c" data-code-id="heart_health" data-action="code-detail">
-              <span class="ico" style="background:#CA371F;"><span class="material-symbols-outlined">monitor_heart</span></span>
-              <div class="meta"><div class="nm">Heart Health</div></div>
-              <span class="pct"><b>12</b><small>%</small></span>
-              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
-            </div>
-            <div class="slot-c" data-code-id="performance_score" data-action="code-detail">
-              <span class="ico" style="background:#0A6630;"><span class="material-symbols-outlined">speed</span></span>
-              <div class="meta"><div class="nm">Performance Score</div></div>
-              <span class="pct"><b>11</b><small>%</small></span>
-              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
-            </div>
-            <div class="slot-c" data-code-id="muscle_health" data-action="code-detail">
-              <span class="ico" style="background:#FFC434;"><span class="material-symbols-outlined">fitness_center</span></span>
-              <div class="meta"><div class="nm">Muscle Health</div></div>
-              <span class="pct"><b>10</b><small>%</small></span>
-              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
-            </div>
-            <div class="slot-c" data-code-id="gut_health" data-action="code-detail">
-              <span class="ico" style="background:#CA371F;"><span class="material-symbols-outlined">eco</span></span>
-              <div class="meta"><div class="nm">Gut Health</div></div>
-              <span class="pct"><b>8</b><small>%</small></span>
-              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
-            </div>
-            <div class="slot-c" data-code-id="nutrient_density" data-action="code-detail">
-              <span class="ico" style="background:#D8610C;"><span class="material-symbols-outlined">restaurant_menu</span></span>
-              <div class="meta"><div class="nm">Nutrient Density</div></div>
-              <span class="pct"><b>8</b><small>%</small></span>
-              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
-            </div>
-            <div class="slot-c" data-code-id="brain_health" data-action="code-detail">
-              <span class="ico" style="background:#0A6630;"><span class="material-symbols-outlined">psychology</span></span>
-              <div class="meta"><div class="nm">Brain Health</div></div>
-              <span class="pct"><b>6</b><small>%</small></span>
-              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
-            </div>
-            <div class="slot-c" data-code-id="energy_stamina" data-action="code-detail">
-              <span class="ico" style="background:#FFC434;"><span class="material-symbols-outlined">bolt</span></span>
-              <div class="meta"><div class="nm">Energy &amp; Stamina</div></div>
-              <span class="pct"><b>5</b><small>%</small></span>
-              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
-            </div>
-            <div class="slot-c" data-code-id="longevity_score" data-action="code-detail">
-              <span class="ico" style="background:#0A6630;"><span class="material-symbols-outlined">all_inclusive</span></span>
-              <div class="meta"><div class="nm">Longevity Score</div></div>
-              <span class="pct"><b>5</b><small>%</small></span>
-              <button class="close" data-action="remove" aria-label="Remove"><span class="material-symbols-outlined">do_not_disturb_on</span></button>
-            </div>
-          </div>
+          <!-- Rebalance rows render inline here (drag to reorder, swap,
+               remove, slider to fine-tune) — the renderSlotList renderer
+               replaces this on first paint from WISE_CODES.getSlots(). -->
+          <div class="stack-sm" data-code-list></div>
         </div>
       </div>
       <nav class="tab-bar">
         <div class="tab-pill">
           <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
   </div>
-  <div class="phone-caption">Personal Code in its filled, in-harmony state: pie chart visualises every slot's weight, the list under it lets the user fine-tune. The underlined phrase in the headline ("In Harmony") is the user-given name for this code — Rename in the bottom-left of the pie-card edits it; Reset in the bottom-right wipes the code. Tap a row to read the code's description and start a chat with WISE AI about it.</div>
+  <div class="phone-caption">Personal Code in its filled, in-harmony state: donut chart visualises every slot's weight, the list under it lets the user fine-tune. The WISEcoach wordmark heads the screen. Tap a row to read the code's description and start a chat with WISE AI about it.</div>
 </div>
   </div>
 </section>
@@ -6587,17 +6528,31 @@
               <span class="top-match-tag">TOP MATCH</span>
               <button type="button" class="reevaluate-link" data-action="reevaluate" aria-label="Re-evaluate matches against your updated code balance"><span class="material-symbols-outlined">autorenew</span>Reevaluate</button>
             </div>
-            <div class="food-card featured" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Divina Kalamata Olives Pitted">
-              <div class="food-photo">
-                <img src="assets/browse/divina-kalamata.jpg" alt="Divina Pitted Kalamata Olives jar" loading="lazy" />
-                <span class="food-donut-plate"><span class="food-donut" data-browse-donut aria-hidden="true"></span></span>
-              </div>
-              <div class="food-card-body">
+            <div class="food-row featured wise-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Divina Kalamata Olives Pitted">
+              <div class="main">
+                <div class="food-thumb" style="background:linear-gradient(135deg,#5C7148 0%,#2F4225 100%);">
+                  <svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true">
+                    <ellipse cx="14" cy="22" rx="6" ry="8" fill="#1F2A14"/>
+                    <ellipse cx="14" cy="22" rx="6" ry="8" fill="url(#oliveSheen)"/>
+                    <ellipse cx="25" cy="18" rx="6" ry="8" fill="#1F2A14"/>
+                    <ellipse cx="25" cy="18" rx="6" ry="8" fill="url(#oliveSheen)"/>
+                    <defs>
+                      <radialGradient id="oliveSheen" cx="35%" cy="30%" r="50%">
+                        <stop offset="0%" stop-color="#5C7148" stop-opacity="0.7"/>
+                        <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+                      </radialGradient>
+                    </defs>
+                  </svg>
+                </div>
                 <div class="info">
                   <div class="nm">Divina Kalamata Olives Pitted</div>
                   <div class="br">Divina</div>
+                  <div class="wise-score-row"><span class="num">98</span><span class="denom">/100</span></div>
                 </div>
-                <div class="wise-score-row"><span class="num">98</span><span class="denom">/100</span></div>
+              </div>
+              <div class="bar-row">
+                <div class="health-bar" data-browse-bar></div>
+                <span class="chev"><span class="material-symbols-outlined">chevron_right</span></span>
               </div>
             </div>
           </div>
@@ -6607,57 +6562,78 @@
             <button class="rhs">Best Match <span class="material-symbols-outlined" style="font-size:14px;">expand_more</span></button>
           </div>
 
-          <div class="food-grid">
-            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for 2× Divina Organic Pitted Green Olives">
-              <div class="food-photo">
-                <img src="assets/browse/divina-green.jpg" alt="Divina Organic Pitted Green Olives jar" loading="lazy" />
-                <span class="food-donut-plate"><span class="food-donut" data-browse-donut aria-hidden="true"></span></span>
-              </div>
-              <div class="food-card-body">
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div class="food-row" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for 2× Divina Organic Pitted Green Olives">
+              <div class="main">
+                <div class="food-thumb" style="background:linear-gradient(135deg,#7DA45D 0%,#3F5128 100%);">
+                  <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true">
+                    <ellipse cx="14" cy="20" rx="6" ry="8" fill="#3F5128"/>
+                    <ellipse cx="25" cy="22" rx="6" ry="8" fill="#3F5128"/>
+                    <ellipse cx="19" cy="14" rx="5" ry="6" fill="#3F5128"/>
+                  </svg>
+                </div>
                 <div class="info">
                   <div class="nm">2× Divina Organic Pitted Green Olives</div>
                   <div class="br">Divina</div>
                 </div>
-                <div class="wise-score-row"><span class="num">95</span><span class="denom">/100</span></div>
+                <div class="score"><div class="n">95</div><div class="of">OF 100</div></div>
+              </div>
+              <div class="bar-row">
+                <div class="health-bar" data-browse-bar></div>
               </div>
             </div>
-            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Castelvetrano Olives Pitted">
-              <div class="food-photo">
-                <img src="assets/browse/divina-castelvetrano.jpg" alt="Divina Pitted Castelvetrano Olives jar" loading="lazy" />
-                <span class="food-donut-plate"><span class="food-donut" data-browse-donut aria-hidden="true"></span></span>
-              </div>
-              <div class="food-card-body">
+            <div class="food-row" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Castelvetrano Olives Pitted">
+              <div class="main">
+                <div class="food-thumb" style="background:linear-gradient(135deg,#A4B26C 0%,#566D2C 100%);">
+                  <svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true">
+                    <ellipse cx="14" cy="20" rx="6" ry="8" fill="#566D2C"/>
+                    <ellipse cx="25" cy="22" rx="6" ry="8" fill="#566D2C"/>
+                  </svg>
+                </div>
                 <div class="info">
                   <div class="nm">Castelvetrano Olives Pitted</div>
                   <div class="br">Divina</div>
                 </div>
-                <div class="wise-score-row"><span class="num">93</span><span class="denom">/100</span></div>
+                <div class="score"><div class="n">93</div><div class="of">OF 100</div></div>
+              </div>
+              <div class="bar-row">
+                <div class="health-bar" data-browse-bar></div>
               </div>
             </div>
-            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Castelvetrano Organic Olives Pitted">
-              <div class="food-photo">
-                <img src="assets/browse/divina-castelvetrano-organic.jpg" alt="Divina Organic Pitted Castelvetrano Olives jar" loading="lazy" />
-                <span class="food-donut-plate"><span class="food-donut" data-browse-donut aria-hidden="true"></span></span>
-              </div>
-              <div class="food-card-body">
+            <div class="food-row" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Castelvetrano Organic Olives Pitted">
+              <div class="main">
+                <div class="food-thumb" style="background:linear-gradient(135deg,#B5C481 0%,#6E8634 100%);">
+                  <svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true">
+                    <ellipse cx="14" cy="20" rx="6" ry="8" fill="#6E8634"/>
+                    <ellipse cx="25" cy="22" rx="6" ry="8" fill="#6E8634"/>
+                  </svg>
+                </div>
                 <div class="info">
                   <div class="nm">Castelvetrano Organic Olives Pitted</div>
                   <div class="br">Divina</div>
                 </div>
-                <div class="wise-score-row"><span class="num">91</span><span class="denom">/100</span></div>
+                <div class="score"><div class="n">91</div><div class="of">OF 100</div></div>
+              </div>
+              <div class="bar-row">
+                <div class="health-bar" data-browse-bar></div>
               </div>
             </div>
-            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for GAEA Organic Olives Pitted">
-              <div class="food-photo">
-                <img src="assets/browse/gaea-green.jpg" alt="GAEA Organic Pitted Green Olives jar" loading="lazy" />
-                <span class="food-donut-plate"><span class="food-donut" data-browse-donut aria-hidden="true"></span></span>
-              </div>
-              <div class="food-card-body">
+            <div class="food-row" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for GAEA Organic Olives Pitted">
+              <div class="main">
+                <div class="food-thumb" style="background:linear-gradient(135deg,#8FA257 0%,#465525 100%);">
+                  <svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true">
+                    <ellipse cx="14" cy="20" rx="6" ry="8" fill="#465525"/>
+                    <ellipse cx="25" cy="22" rx="6" ry="8" fill="#465525"/>
+                  </svg>
+                </div>
                 <div class="info">
                   <div class="nm">GAEA Organic Olives Pitted</div>
                   <div class="br">Gaea</div>
                 </div>
-                <div class="wise-score-row"><span class="num">89</span><span class="denom">/100</span></div>
+                <div class="score"><div class="n">89</div><div class="of">OF 100</div></div>
+              </div>
+              <div class="bar-row">
+                <div class="health-bar" data-browse-bar></div>
               </div>
             </div>
           </div>
@@ -6667,7 +6643,7 @@
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
@@ -6700,30 +6676,29 @@
         <div class="scr-hdr">
           <div>
             <h1>Find a food</h1>
-            <div class="sub">Live weighted to your code.</div>
           </div>
         </div>
 
         <div class="px stack" style="flex:1;display:flex;flex-direction:column;">
-          <div class="scan-circle">
-            <div class="sweep"></div>
-            <div class="vf-box"></div>
-            <div class="vf-tr-corner"></div>
-            <div class="vf-bl-corner"></div>
+          <!-- Live camera viewport. The <video> is fed a real getUserMedia
+               stream by the scan-camera script below; until permission is
+               granted the .scan-cam-prompt overlay covers it and acts as
+               the tap-to-enable / retry control. -->
+          <div class="scan-cam" data-scan-cam>
+            <video class="scan-cam-video" data-scan-video autoplay muted playsinline></video>
+            <div class="scan-cam-frame" aria-hidden="true">
+              <span class="vf-tl"></span><span class="vf-tr"></span>
+              <span class="vf-bl"></span><span class="vf-br"></span>
+            </div>
+            <button type="button" class="scan-cam-prompt" data-action="start-camera">
+              <span class="material-symbols-outlined">photo_camera</span>
+              <span class="scan-cam-prompt-title">Enable camera</span>
+              <span class="scan-cam-prompt-sub">Tap to allow camera access and start scanning</span>
+            </button>
           </div>
 
           <div class="scan-actions">
-            <button class="cta-scan"><span class="material-symbols-outlined">photo_camera</span>Scan a barcode</button>
-
-            <div class="upc-divider">or enter UPC</div>
-
-            <form style="display:flex;gap:8px;align-items:center;" onsubmit="event.preventDefault();">
-              <label class="upc-field">
-                <span class="material-symbols-outlined">barcode</span>
-                <input type="text" inputmode="numeric" value="0028400064057" />
-              </label>
-              <button type="submit" class="upc-lookup">Look up</button>
-            </form>
+            <button class="cta-scan"><span class="material-symbols-outlined">barcode</span>Scan a barcode</button>
           </div>
         </div>
       </div>
@@ -6731,16 +6706,112 @@
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab active"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
   </div>
-  <div class="phone-caption">Two paths to the same place: live camera scan via WebRTC, or a typed UPC. The viewfinder sits at the top; the scan button and UPC lookup field anchor to the bottom, within thumb reach above the tab bar.</div>
+  <div class="phone-caption">A real device camera fills the screen via getUserMedia (rear-facing where available); tapping the viewport requests permission and starts the live feed, with corner brackets framing the barcode. The dismiss button anchors to the bottom, within thumb reach above the tab bar.</div>
 </div>
   </div>
 </section>
+
+<!-- ─── 4a. FRESH FIND — Step 1 · Front of package ───────────────────── -->
+<!-- HIDDEN
+<section class="screen-pair">
+  <h3 class="screen-pair-label">4a · Fresh Find · Front (Step 1 of 2)</h3>
+  <div class="pair-row">
+<div class="phone-wrap">
+  <div class="phone-label">Dark</div>
+  <div class="phone ff-phone">
+    <div class="island"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:#FFFFFF;">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="ff-capture" aria-label="Fresh Find — photograph the front of the package">
+      <div class="ff-top">
+        <div class="ff-step-count">Step 1 of 2</div>
+        <div class="ff-title">Front of package</div>
+        <div class="ff-sub">Center the front panel — brand name and product title should be readable.</div>
+      </div>
+      <div class="ff-viewport">
+        <div class="ff-frame" aria-hidden="true">
+          <div class="ff-mock ff-mock-front">
+            <div class="brand">VitalChoice</div>
+            <div class="product">Wild Salmon</div>
+            <div class="panel">Front panel · hero shot</div>
+          </div>
+        </div>
+        <div class="ff-hint">Photograph the front</div>
+      </div>
+      <div class="ff-foot">
+        <button type="button" class="ff-cancel">Cancel</button>
+        <button type="button" class="ff-shutter" aria-label="Capture front of package"></button>
+        <span class="ff-foot-spacer" aria-hidden="true"></span>
+      </div>
+    </div>
+  </div>
+  <div class="phone-caption">Fresh Find step 1: full-screen camera layer inside the standard device shell. The user frames the front of the package; tapping the shutter advances to the back-of-package step.</div>
+</div>
+  </div>
+</section>
+
+     ─── 4b. FRESH FIND — Step 2 · Back of package ──────────────────────
+<section class="screen-pair">
+  <h3 class="screen-pair-label">4b · Fresh Find · Back (Step 2 of 2)</h3>
+  <div class="pair-row">
+<div class="phone-wrap">
+  <div class="phone-label">Dark</div>
+  <div class="phone ff-phone">
+    <div class="island"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:#FFFFFF;">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="ff-capture" aria-label="Fresh Find — photograph the back of the package">
+      <div class="ff-top">
+        <div class="ff-step-count">Step 2 of 2</div>
+        <div class="ff-title">Back of package</div>
+        <div class="ff-sub">Capture the nutrition facts and ingredient list on the back panel.</div>
+      </div>
+      <div class="ff-viewport">
+        <div class="ff-thumb-row">
+          <div class="ff-thumb" aria-hidden="true">
+            <div class="ff-mock ff-mock-front" style="position:absolute;inset:0;padding:6px;font-size:7px;">
+              <div class="brand">VitalChoice</div>
+              <div class="product" style="font-size:9px;">Wild Salmon</div>
+            </div>
+          </div>
+          <div class="ff-thumb-label">Front captured<br>Now flip the package</div>
+        </div>
+        <div class="ff-frame" aria-hidden="true">
+          <div class="ff-mock ff-mock-back">
+            <div class="brand" style="color:#544e61;">Nutrition Facts</div>
+            <div class="panel">Serving size 3 oz (85g)<br>Calories 120 · Protein 17g<br>Ingredients: Wild sockeye salmon, sea salt.</div>
+          </div>
+        </div>
+        <div class="ff-hint">Photograph the back</div>
+      </div>
+      <div class="ff-foot">
+        <button type="button" class="ff-cancel">Cancel</button>
+        <button type="button" class="ff-shutter" aria-label="Capture back of package"></button>
+        <span class="ff-foot-spacer" aria-hidden="true"></span>
+      </div>
+    </div>
+  </div>
+  <div class="phone-caption">Fresh Find step 2: the front thumbnail confirms what was captured; the user frames the back panel (nutrition + ingredients). Submitting both photos kicks off identification and scoring.</div>
+</div>
+  </div>
+</section>
+HIDDEN -->
 
 <!-- ─── 5. CHAT — full page, accessible from the bottom tab-bar ──────── -->
 <section class="screen-pair">
@@ -6811,7 +6882,7 @@
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab active violet"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab active violet"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
@@ -6846,52 +6917,8 @@
         </div>
 
         <div class="px stack">
-          <!-- ─── Score card — verdict, contribution donut, table ─── -->
-          <div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">
-            <button class="chart-toggle" data-action="detail-chart-toggle" aria-label="Switch to treemap chart"><span class="material-symbols-outlined">dashboard</span></button>
-            <div class="match-verdict-row">
-              <span class="material-symbols-outlined">check_circle</span>
-              Excellent match for your code
-            </div>
-
-            <!-- Contribution donut — same renderer as the code pie on
-                 Screens 1 & 6, just smaller per-slice tags (only the icon
-                 + percent show, the slot name lives in the table below).
-                 Center reads the composite score as "{score} / OF 100".
-                 The pie's data-slices, the center number, the contrib
-                 list, and the totals are all rewritten by the
-                 product-detail subscriber from WISE_CODES.getSlots()
-                 plus the per-slot SALMON_SCORES table, so a change to
-                 the code on Screens 1/6 (or a pick on Screen 2) flows
-                 through here in one pass. -->
-            <div class="pie-wrap" data-chart="bubble" style="width:310px;height:310px;margin:4px 0 8px;">
-              <svg viewBox="0 0 280 280" width="310" height="310" class="pie-svg"
-                   data-id="product-detail" data-size="280" data-stroke="88"
-                   data-slices='[]'
-                   aria-hidden="true"></svg>
-              <div class="pie-center" style="width:140px;height:140px;">
-                <div class="num" style="font-size:52px;" data-product-detail-score>94</div>
-                <div class="lbl" style="font-size:11px;">OF 100</div>
-              </div>
-            </div>
-
-            <!-- Per-slot contribution table. Order, names + icons mirror
-                 the user's code (Screen 1) so the eye can match each
-                 slice to its row. Values sum (with rounding) to the
-                 Total Contribution shown in the summary row underneath. -->
-            <div class="contrib-list" data-product-detail-contrib></div>
-
-            <div class="contrib-summary" data-product-detail-summary>
-              <span>Total Contribution: <b>90 of 100</b></span>
-              <span>Other Factors: <b>4 of 100</b>
-                <span class="info" aria-label="What are other factors?">
-                  <span class="material-symbols-outlined">info</span>
-                </span>
-              </span>
-            </div>
-          </div>
-
-          <!-- ─── Product hero — thumb + name + brand + UPC pill ─── -->
+          <!-- ─── Product hero — thumb + name + brand, with the WISEscore
+               (formerly the donut center) floated to the right ─── -->
           <div class="card pad-l" style="display:flex;align-items:center;gap:14px;">
             <div class="product-thumb">
               <!-- Vital Choice "WILD SALMON" packaging illustration. Black
@@ -6918,10 +6945,46 @@
             <div style="flex:1;min-width:0;">
               <div class="product-name">Wild Atlantic<br/>Salmon Fillet</div>
               <div class="product-brand">Vital Choice</div>
-              <div class="upc-pill">
-                <span class="material-symbols-outlined">barcode</span>
-                0028400064057
+            </div>
+            <!-- WISEscore — the composite score that used to read in the
+                 donut center. data-product-detail-score keeps it live. -->
+            <div class="fd-wisescore">
+              <div class="score">
+                <span class="num" data-product-detail-score>94</span>
               </div>
+              <div class="lbl">WISEscore</div>
+            </div>
+          </div>
+
+          <!-- ─── Score card — verdict + per-slot contribution table.
+               Sits below the food card now; the donut has been removed and
+               the composite score lives in the food card's WISEscore. The
+               contrib list + totals are rewritten by the product-detail
+               subscriber from WISE_CODES.getSlots() plus the per-slot
+               SALMON_SCORES table, so a change to the code on Screens 1/6
+               (or a pick on Screen 2) flows through here in one pass. -->
+          <div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">
+            <!-- Verdict doubles as an AI Insights entry point — same
+                 data-action as the WISEcode bug above the AI Insights card,
+                 so tapping it opens the WISE AI chat overlay. -->
+            <button type="button" class="match-verdict-row" data-action="open-chat">
+              <span class="wise-bug-mark"></span>
+              Excellent match for your code
+            </button>
+
+            <!-- Per-slot contribution table. Order, names + icons mirror
+                 the user's code (Screen 1) so the eye can match each
+                 row to the WISEscore. Values sum (with rounding) to the
+                 Total Contribution shown in the summary row underneath. -->
+            <div class="contrib-list" data-product-detail-contrib></div>
+
+            <div class="contrib-summary" data-product-detail-summary>
+              <span>Total Contribution: <b>90 of 100</b></span>
+              <span>Other Factors: <b>4 of 100</b>
+                <span class="info" aria-label="What are other factors?">
+                  <span class="material-symbols-outlined">info</span>
+                </span>
+              </span>
             </div>
           </div>
 
@@ -6955,13 +7018,13 @@
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
   </div>
-  <div class="phone-caption">Tap any Top Match row in Browse (or land a barcode hit in Scan) to drill into the per-food drilldown: contribution donut first (each slice is what that slot contributed to this food's composite score), then the hero card with product image / brand / UPC, then an AI Insights card with chat-starter chips.</div>
+  <div class="phone-caption">Tap any Top Match row in Browse (or land a barcode hit in Scan) to drill into the per-food drilldown: the hero card with product image / brand / UPC and the WISEscore floated to the right, then the score card with the "Excellent match" verdict and the per-slot contribution table (each row is what that slot contributed to this food's composite score), then an AI Insights card with chat-starter chips.</div>
 </div>
   </div>
 </section>
@@ -7078,7 +7141,7 @@
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">grid_view</span><span>BROWSE</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab active"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
@@ -7145,21 +7208,6 @@
       // re-renders during interaction use the default (no animation)
       // so live weight adjustments stay tight and predictable.
       var renderPieSvg;
-      // Companion renderer that paints the same code mix as a clustered
-      // bubble chart instead of a donut. Exposed at outer scope so the
-      // code hero's renderHero can dispatch to it when the pie-card is
-      // toggled into bubble mode. Assigned inside the same IIFE as
-      // renderPieSvg so it shares the icon-alias map and SVG namespace.
-      var renderBubbleChart;
-      // Third code viz: a squarified treemap (tiled rectangles, area ∝
-      // weight). Assigned in the same IIFE as the other two so it shares
-      // the icon-alias map + SVG namespace, exposed here for renderHero.
-      var renderTreemap;
-      // Fourth code viz: a hyper-focus dot matrix (concentric sunflower of
-      // dots — colored by code, brightening toward the focus, filling in
-      // from hollow rings as the code gets more complete). Same IIFE so it
-      // shares the SVG namespace; exposed here for renderHero.
-      var renderMatrix;
       (function () {
         var SVG_NS = "http://www.w3.org/2000/svg";
 
@@ -7204,98 +7252,11 @@
           return ICON_ALIAS[slug] || slug;
         }
 
-        // Fill a .pct span with a rounded number and a superscript "%".
-        // Shared by the donut / bubble / treemap tag builders so the
-        // percent sign always rides high (styled via .pct .pct-sym).
-        function setPctLabel(el, value) {
-          el.textContent = Math.round(value);
-          var sym = document.createElement("sup");
-          sym.className = "pct-sym";
-          sym.textContent = "%";
-          el.appendChild(sym);
-        }
-
-        // Placeholder viz when data-slices is empty — one silhouette per
-        // chart mode so the Screen 1a chart toggle can cycle through all
-        // four types before any codes are added.
-        function renderChartEmptyState(svg, mode) {
+        // Placeholder viz when data-slices is empty — faint donut ring.
+        function renderChartEmptyState(svg) {
           var size = parseFloat(svg.getAttribute("data-size")) || 200;
           var cx = size / 2;
           var cy = size / 2;
-
-          if (mode === "bubble") {
-            var seeds = [
-              { ox: 0, oy: 0, r: size * 0.11 },
-              { ox: -size * 0.085, oy: size * 0.055, r: size * 0.082 },
-              { ox: size * 0.09, oy: size * 0.048, r: size * 0.072 },
-              { ox: -size * 0.038, oy: -size * 0.095, r: size * 0.066 },
-              { ox: size * 0.048, oy: -size * 0.078, r: size * 0.058 }
-            ];
-            seeds.forEach(function (b) {
-              var circle = document.createElementNS(SVG_NS, "circle");
-              circle.setAttribute("class", "bubble bubble-empty");
-              circle.setAttribute("cx", (cx + b.ox).toFixed(2));
-              circle.setAttribute("cy", (cy + b.oy).toFixed(2));
-              circle.setAttribute("r", b.r.toFixed(2));
-              circle.setAttribute("fill", "none");
-              circle.setAttribute("stroke", "var(--track)");
-              circle.setAttribute("stroke-width", "2");
-              circle.setAttribute("opacity", "0.55");
-              svg.appendChild(circle);
-            });
-            return;
-          }
-
-          if (mode === "treemap") {
-            var pad = size * 0.08;
-            var inner = size - pad * 2;
-            var gap = size * 0.02;
-            var cell = (inner - gap) / 2;
-            for (var row = 0; row < 2; row++) {
-              for (var col = 0; col < 2; col++) {
-                var rect = document.createElementNS(SVG_NS, "rect");
-                rect.setAttribute("class", "tm tm-empty");
-                rect.setAttribute("x", (pad + col * (cell + gap)).toFixed(2));
-                rect.setAttribute("y", (pad + row * (cell + gap)).toFixed(2));
-                rect.setAttribute("width", cell.toFixed(2));
-                rect.setAttribute("height", cell.toFixed(2));
-                rect.setAttribute("rx", Math.min(6, cell / 4).toFixed(2));
-                rect.setAttribute("fill", "none");
-                rect.setAttribute("stroke", "var(--track)");
-                rect.setAttribute("stroke-width", "2");
-                rect.setAttribute("opacity", "0.55");
-                svg.appendChild(rect);
-              }
-            }
-            return;
-          }
-
-          if (mode === "matrix") {
-            var N = 150;
-            var padM = 8;
-            var maxR = size / 2 - padM;
-            var GA = Math.PI * (3 - Math.sqrt(5));
-            var maxDot = size * 0.030;
-            var minDot = size * 0.0115;
-            for (var i = 0; i < N; i++) {
-              var rr = maxR * Math.sqrt((i + 0.5) / N);
-              var ang = i * GA;
-              var tR = maxR > 0 ? rr / maxR : 0;
-              var dotR = maxDot - (maxDot - minDot) * tR;
-              var x = cx + rr * Math.cos(ang);
-              var y = cy + rr * Math.sin(ang);
-              var op2 = (1 - 0.5 * tR) * 0.5;
-              var ring = document.createElementNS(SVG_NS, "circle");
-              ring.setAttribute("class", "mx mx-empty");
-              ring.setAttribute("cx", x.toFixed(2));
-              ring.setAttribute("cy", y.toFixed(2));
-              ring.setAttribute("r", (dotR * 0.82).toFixed(2));
-              ring.style.opacity = op2.toFixed(3);
-              svg.appendChild(ring);
-            }
-            return;
-          }
-
           var emptyStroke = parseFloat(svg.getAttribute("data-stroke")) || 34;
           var emptyR = size * 95 / 280;
           svg.innerHTML = ''
@@ -7387,7 +7348,7 @@
             if (emptyWrap) {
               emptyWrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
             }
-            renderChartEmptyState(svg, "donut");
+            renderChartEmptyState(svg);
             return;
           }
 
@@ -7477,81 +7438,61 @@
             svg.appendChild(path);
             slot.pathEl = path;
 
-            var tag = document.createElement("div");
-            tag.className = "pie-slice-tag";
-            if (slot.slice.icon) {
-              var ico = document.createElement("span");
-              ico.className = "ico";
-              var glyph = document.createElement("span");
-              glyph.className = "material-symbols-outlined";
-              glyph.textContent = msName(slot.slice.icon);
-              ico.appendChild(glyph);
-              tag.appendChild(ico);
-            }
-            var pct = document.createElement("span");
-            pct.className = "pct";
-            setPctLabel(pct, slot.v);
-            tag.appendChild(pct);
+            // Label density scales with how much of the donut the slice
+            // owns, so thin slivers don't get cramped, clipped labels:
+            //   ≥ 10%  → icon + percentage
+            //   5–10%  → icon only (no room for the number)
+            //   < 5%   → no label at all
+            var pctShare = total > 0 ? (slot.v / total) * 100 : 0;
+            if (pctShare >= 5) {
+              var tag = document.createElement("div");
+              tag.className = "pie-slice-tag";
+              if (slot.slice.icon) {
+                var ico = document.createElement("span");
+                ico.className = "ico";
+                var glyph = document.createElement("span");
+                glyph.className = "material-symbols-outlined";
+                glyph.textContent = msName(slot.slice.icon);
+                ico.appendChild(glyph);
+                tag.appendChild(ico);
+              }
+              if (pctShare >= 10) {
+                var pct = document.createElement("span");
+                pct.className = "pct";
+                pct.textContent = Math.round(slot.v) + "%";
+                tag.appendChild(pct);
+              }
 
-            var midA = (slot.a1Final + slot.a2Final) / 2;
-            var lx = cx + midRing * Math.cos(midA);
-            var ly = cy + midRing * Math.sin(midA);
-            tag.style.left = ((lx / size) * 100).toFixed(3) + "%";
-            tag.style.top  = ((ly / size) * 100).toFixed(3) + "%";
-            wrap.appendChild(tag);
-            slot.tagEl = tag;
+              var midA = (slot.a1Final + slot.a2Final) / 2;
+              var lx = cx + midRing * Math.cos(midA);
+              var ly = cy + midRing * Math.sin(midA);
+              tag.style.left = ((lx / size) * 100).toFixed(3) + "%";
+              tag.style.top  = ((ly / size) * 100).toFixed(3) + "%";
+              wrap.appendChild(tag);
+              slot.tagEl = tag;
+            }
           });
 
-          // Fit test + radial placement, evaluated once on each slot's
-          // resting geometry. Tags that won't physically fit get dropped
-          // now so we don't fade one in only to remove it after the
-          // bounce settles. The icon + pct span are both CSS-sized via
-          // the Material Symbols font, so the bounding box is stable as
-          // soon as the font has loaded.
-          //
-          // A donut sector is wedge-shaped: the arc grows with radius, so
-          // the OUTER edge is the wide side and the inner edge is the
-          // pinch. getBoundingClientRect reports screen px; convert to
-          // SVG user units via the rendered scale so the comparison is
-          // apples-to-apples with the geometry below.
-          var svgRect   = svg.getBoundingClientRect();
-          var pxPerUnit = svgRect.width > 0 ? svgRect.width / size : 1;
+          // Fit test, evaluated once on each slot's resting geometry.
+          // Tags that won't physically fit get dropped now so we
+          // don't fade one in only to remove it after the bounce
+          // settles. Pad is small — labels stay visible whenever
+          // they really do fit. The icon + pct span are both
+          // CSS-sized via the Material Symbols font, so the
+          // bounding box is stable as soon as the font has loaded.
           slots.forEach(function (slot) {
             if (!slot.tagEl) return;
-            var rect  = slot.tagEl.getBoundingClientRect();
-            var tagW  = rect.width  / pxPerUnit;
-            var tagH  = rect.height / pxPerUnit;
-            var aSpan = slot.a2Final - slot.a1Final;
-
-            // Push the label toward the wider (outer) edge when the slice
-            // is too narrow to seat it at the radial midline. Arc length
-            // at radius x is aSpan*x, so the tightest radius that clears
-            // the tag width is (tagW + pad)/aSpan; bias out to there, but
-            // never inside the midline and never so far the tag spills
-            // past the rim (or inside the hole).
-            var minR = r + tagH / 2;
-            var maxR = R - tagH / 2;
-            var needR = aSpan > 0 ? (tagW + 4) / aSpan : maxR;
-            var pr = Math.max(needR, midRing);
-            if (maxR >= minR) {
-              pr = Math.min(pr, maxR);
-              pr = Math.max(pr, minR);
-            } else {
-              pr = midRing;
-            }
-            slot.pr = pr;
-
-            // Re-anchor the resting tag at the chosen radius.
-            var midA = (slot.a1Final + slot.a2Final) / 2;
-            slot.tagEl.style.left = (((cx + pr * Math.cos(midA)) / size) * 100).toFixed(3) + "%";
-            slot.tagEl.style.top  = (((cy + pr * Math.sin(midA)) / size) * 100).toFixed(3) + "%";
-
-            // Fit test at the pushed radius — the wider seat lets more
-            // narrow slices keep their label than the midline would.
-            var fitPad   = 2;
-            var angularW = aSpan * pr;
+            // Icon-only labels (the 5–10% slices) are kept regardless —
+            // the percent rule already decided they belong, and the lone
+            // glyph reads fine even on a thin sliver. Only the wider
+            // icon + percentage labels get the physical fit check so the
+            // number never clips its slice.
+            if (!slot.tagEl.querySelector(".pct")) return;
+            var rect     = slot.tagEl.getBoundingClientRect();
+            var angularW = (slot.a2Final - slot.a1Final) * midRing;
             var radialW  = R - r;
-            var fits     = (angularW >= tagW + fitPad) && (radialW >= tagH + fitPad);
+            var fitPad   = 2;
+            var fits     = (angularW >= rect.width + fitPad) && (radialW >= rect.height + fitPad);
             if (!fits) {
               slot.tagEl.remove();
               slot.tagEl = null;
@@ -7579,9 +7520,8 @@
             slot.pathEl.setAttribute("d", donutSlicePath(cx, cy, R, r, a1, a2, cornerR));
             if (slot.tagEl) {
               var midA = (a1 + a2) / 2;
-              var pr = slot.pr || midRing;
-              var lx = cx + pr * Math.cos(midA);
-              var ly = cy + pr * Math.sin(midA);
+              var lx = cx + midRing * Math.cos(midA);
+              var ly = cy + midRing * Math.sin(midA);
               slot.tagEl.style.left = ((lx / size) * 100).toFixed(3) + "%";
               slot.tagEl.style.top  = ((ly / size) * 100).toFixed(3) + "%";
             }
@@ -7665,566 +7605,6 @@
           svg._pieRaf = requestAnimationFrame(tick);
         };
 
-        // ─── Clustered bubble chart renderer ───────────────────────────
-        // Reads the same `data-slices` JSON the donut uses and lays the
-        // codes out as a tight pack of circles (area ∝ weight). Packing
-        // is a simple force relaxation: seed each bubble on a golden-angle
-        // spiral, then iterate gravity-toward-center + pairwise collision
-        // resolution until the cluster settles, and finally scale/center
-        // the whole pack to fit the SVG viewBox. With ≤10 bubbles the
-        // O(n²·iters) loop is trivially cheap. Labels (icon + percentage)
-        // reuse the donut's .pie-slice-tag nodes — same positioning model,
-        // same teardown — tagged .bubble-tag and sized per-bubble.
-        renderBubbleChart = function (svg, opts) {
-          opts = opts || {};
-          var animate = opts.animate === true;
-
-          var slices;
-          try {
-            slices = JSON.parse(svg.getAttribute("data-slices"));
-          } catch (e) { return; }
-
-          var wrap = svg.parentElement;
-          if (svg._pieRaf) { cancelAnimationFrame(svg._pieRaf); svg._pieRaf = null; }
-          svg.innerHTML = "";
-          if (wrap) {
-            wrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
-          }
-          if (!Array.isArray(slices) || !slices.length) {
-            renderChartEmptyState(svg, "bubble");
-            return;
-          }
-
-          var size = parseFloat(svg.getAttribute("data-size")) || 200;
-          var cx = size / 2;
-          var cy = size / 2;
-          var total = slices.reduce(function (s, x) { return s + (x.value || 0); }, 0);
-          if (total <= 0) {
-            renderChartEmptyState(svg, "bubble");
-            return;
-          }
-
-          // One node per non-empty slice; relative radius ∝ √value so
-          // AREA tracks the weight.
-          var nodes = slices
-            .filter(function (s) { return (s.value || 0) > 0; })
-            .map(function (s) { return { slice: s, r: Math.sqrt(s.value) }; });
-          if (!nodes.length) return;
-
-          // Seed positions on a golden-angle spiral so the relaxation
-          // starts already roughly spread out (avoids a degenerate
-          // all-stacked-at-origin start that resolves into a line).
-          var GA = Math.PI * (3 - Math.sqrt(5));
-          nodes.forEach(function (nd, i) {
-            var ang = i * GA;
-            var rad = nd.r * 1.4 * Math.sqrt(i + 0.5);
-            nd.x = Math.cos(ang) * rad;
-            nd.y = Math.sin(ang) * rad;
-          });
-
-          // Relaxation. Gentle inward pull each pass keeps the pack tight;
-          // pairwise push-apart enforces a small gap between bubbles.
-          var gapU = 0.6;
-          var n = nodes.length;
-          for (var iter = 0; iter < 400; iter++) {
-            for (var g = 0; g < n; g++) { nodes[g].x *= 0.985; nodes[g].y *= 0.985; }
-            for (var i = 0; i < n; i++) {
-              for (var j = i + 1; j < n; j++) {
-                var a = nodes[i], b = nodes[j];
-                var dx = b.x - a.x, dy = b.y - a.y;
-                var d = Math.sqrt(dx * dx + dy * dy) || 0.0001;
-                var minD = a.r + b.r + gapU;
-                if (d < minD) {
-                  var push = (minD - d) / 2;
-                  var ux = dx / d, uy = dy / d;
-                  a.x -= ux * push; a.y -= uy * push;
-                  b.x += ux * push; b.y += uy * push;
-                }
-              }
-            }
-          }
-
-          // Fit the settled pack to a circle inside the viewBox.
-          var pad = 6;
-          var targetR = size / 2 - pad;
-          var maxExt = 0;
-          nodes.forEach(function (nd) {
-            var ext = Math.sqrt(nd.x * nd.x + nd.y * nd.y) + nd.r;
-            if (ext > maxExt) maxExt = ext;
-          });
-          var scale = maxExt > 0 ? targetR / maxExt : 1;
-          nodes.forEach(function (nd) {
-            nd.fx = cx + nd.x * scale;
-            nd.fy = cy + nd.y * scale;
-            nd.fr = nd.r * scale;
-          });
-
-          // Mount each bubble + its label. The icon shows only on bubbles
-          // big enough to carry it; the percentage shows a bit lower.
-          nodes.forEach(function (nd) {
-            var circle = document.createElementNS(SVG_NS, "circle");
-            circle.setAttribute("class", "bubble");
-            circle.setAttribute("cx", nd.fx.toFixed(2));
-            circle.setAttribute("cy", nd.fy.toFixed(2));
-            circle.setAttribute("r", animate ? "0" : nd.fr.toFixed(2));
-            circle.setAttribute("fill", nd.slice.c);
-            if (nd.slice.codeId) {
-              circle.setAttribute("data-action", "code-detail");
-              circle.setAttribute("data-code-id", nd.slice.codeId);
-            }
-            svg.appendChild(circle);
-            nd.circleEl = circle;
-
-            var tag = document.createElement("div");
-            tag.className = "pie-slice-tag bubble-tag";
-            var scaleF = Math.max(0.5, Math.min(1, nd.fr / 34));
-            if (nd.slice.icon && nd.fr >= 16) {
-              var ico = document.createElement("span");
-              ico.className = "ico";
-              var glyph = document.createElement("span");
-              glyph.className = "material-symbols-outlined";
-              glyph.textContent = msName(nd.slice.icon);
-              glyph.style.fontSize = (22 * scaleF).toFixed(1) + "px";
-              ico.appendChild(glyph);
-              tag.appendChild(ico);
-            }
-            if (nd.fr >= 12) {
-              var pct = document.createElement("span");
-              pct.className = "pct";
-              setPctLabel(pct, nd.slice.value);
-              pct.style.fontSize = (16 * scaleF).toFixed(1) + "px";
-              tag.appendChild(pct);
-            }
-            if (tag.childNodes.length) {
-              tag.style.left = ((nd.fx / size) * 100).toFixed(3) + "%";
-              tag.style.top = ((nd.fy / size) * 100).toFixed(3) + "%";
-              tag.style.opacity = animate ? "0" : "1";
-              wrap.appendChild(tag);
-              nd.tagEl = tag;
-            }
-          });
-
-          if (!animate) return;
-
-          // Staggered pop-in: each bubble scales up from r=0 with a small
-          // overshoot, its label fading in over the back of the pop.
-          var DUR = 360, STAG = 70, c1 = 1.70158, c3 = c1 + 1;
-          function easeOutBack(x) {
-            return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-          }
-          var t0 = null;
-          function tick(now) {
-            if (t0 === null) t0 = now;
-            var elapsed = now - t0;
-            var allDone = true;
-            for (var i = 0; i < nodes.length; i++) {
-              var nd = nodes[i];
-              var local = elapsed - i * STAG;
-              var x = local <= 0 ? 0 : Math.min(local / DUR, 1);
-              var ease = x <= 0 ? 0 : easeOutBack(x);
-              nd.circleEl.setAttribute("r", Math.max(0, nd.fr * ease).toFixed(2));
-              if (nd.tagEl) {
-                nd.tagEl.style.opacity = Math.max(0, Math.min(1, (x - 0.4) / 0.6)).toFixed(3);
-              }
-              if (x < 1) allDone = false;
-            }
-            if (!allDone) {
-              svg._pieRaf = requestAnimationFrame(tick);
-            } else {
-              svg._pieRaf = null;
-              nodes.forEach(function (nd) {
-                nd.circleEl.setAttribute("r", nd.fr.toFixed(2));
-                if (nd.tagEl) nd.tagEl.style.opacity = "1";
-              });
-            }
-          }
-          svg._pieRaf = requestAnimationFrame(tick);
-        };
-
-        // ─── Squarified treemap renderer ───────────────────────────────
-        // Reads the same `data-slices` JSON and tiles the full viewBox
-        // with rectangles, each one's AREA proportional to its weight,
-        // laid out with the squarified algorithm (Bruls/Huizing/van Wijk)
-        // so tiles stay close to square instead of degenerating into thin
-        // strips. Tiles carry the same data-action/code-id as the donut
-        // slices (tap → code sheet) and reuse the .pie-slice-tag label
-        // nodes for cleanup parity.
-        renderTreemap = function (svg, opts) {
-          opts = opts || {};
-          var animate = opts.animate === true;
-
-          var slices;
-          try {
-            slices = JSON.parse(svg.getAttribute("data-slices"));
-          } catch (e) { return; }
-
-          var wrap = svg.parentElement;
-          if (svg._pieRaf) { cancelAnimationFrame(svg._pieRaf); svg._pieRaf = null; }
-          svg.innerHTML = "";
-          if (wrap) {
-            wrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
-          }
-          if (!Array.isArray(slices) || !slices.length) {
-            renderChartEmptyState(svg, "treemap");
-            return;
-          }
-
-          var size = parseFloat(svg.getAttribute("data-size")) || 200;
-          var total = slices.reduce(function (s, x) { return s + (x.value || 0); }, 0);
-          if (total <= 0) {
-            renderChartEmptyState(svg, "treemap");
-            return;
-          }
-
-          // Inset the whole map by 1px so the outer drop-shadow isn't
-          // clipped at the viewBox edge.
-          var X0 = 1, Y0 = 1, AREA_W = size - 2, AREA_H = size - 2;
-
-          // Scale each weight to a pixel area so the tiles exactly fill
-          // the map rectangle.
-          var scaleArea = (AREA_W * AREA_H) / total;
-          var items = slices
-            .filter(function (s) { return (s.value || 0) > 0; })
-            .map(function (s) { return { slice: s, area: s.value * scaleArea }; })
-            .sort(function (a, b) { return b.area - a.area; });
-          if (!items.length) return;
-
-          // "Worst" aspect ratio of a candidate row laid along `length`.
-          function worst(row, length) {
-            var sum = 0, max = 0, min = Infinity;
-            for (var i = 0; i < row.length; i++) {
-              var a = row[i].area;
-              sum += a;
-              if (a > max) max = a;
-              if (a < min) min = a;
-            }
-            if (sum <= 0) return Infinity;
-            var s2 = sum * sum, l2 = length * length;
-            return Math.max((l2 * max) / s2, s2 / (l2 * min));
-          }
-
-          // Squarified layout → array of { slice, x, y, w, h }.
-          var rects = [];
-          var x = X0, y = Y0, w = AREA_W, h = AREA_H;
-          var idx = 0;
-          while (idx < items.length) {
-            var shortSide = Math.min(w, h);
-            if (shortSide <= 0) break;
-            var row = [items[idx]];
-            var next = idx + 1;
-            while (next < items.length) {
-              var withNext = row.concat([items[next]]);
-              if (worst(withNext, shortSide) <= worst(row, shortSide)) {
-                row = withNext;
-                next++;
-              } else break;
-            }
-            var rowSum = row.reduce(function (a, r) { return a + r.area; }, 0);
-            var thickness = rowSum / shortSide;
-            if (w >= h) {
-              // Row becomes a vertical column on the left edge.
-              var offY = y;
-              for (var k = 0; k < row.length; k++) {
-                var cellH = row[k].area / thickness;
-                rects.push({ slice: row[k].slice, x: x, y: offY, w: thickness, h: cellH });
-                offY += cellH;
-              }
-              x += thickness; w -= thickness;
-            } else {
-              // Row becomes a horizontal band across the top edge.
-              var offX = x;
-              for (var k2 = 0; k2 < row.length; k2++) {
-                var cellW = row[k2].area / thickness;
-                rects.push({ slice: row[k2].slice, x: offX, y: y, w: cellW, h: thickness });
-                offX += cellW;
-              }
-              y += thickness; h -= thickness;
-            }
-            idx = next;
-          }
-
-          // Mount each tile + label. Tiles inset by a small gap so they
-          // read as separate chips.
-          var gap = 2.5;
-          rects.forEach(function (rc) {
-            var rx = Math.max(0, rc.x + gap / 2);
-            var ry = Math.max(0, rc.y + gap / 2);
-            var rw = Math.max(1, rc.w - gap);
-            var rh = Math.max(1, rc.h - gap);
-
-            var rect = document.createElementNS(SVG_NS, "rect");
-            rect.setAttribute("class", "tm");
-            rect.setAttribute("x", rx.toFixed(2));
-            rect.setAttribute("y", ry.toFixed(2));
-            rect.setAttribute("width", rw.toFixed(2));
-            rect.setAttribute("height", rh.toFixed(2));
-            rect.setAttribute("rx", Math.min(6, rw / 2, rh / 2).toFixed(2));
-            rect.setAttribute("fill", rc.slice.c);
-            if (rc.slice.codeId) {
-              rect.setAttribute("data-action", "code-detail");
-              rect.setAttribute("data-code-id", rc.slice.codeId);
-            }
-            if (animate) {
-              rect.style.opacity = "0";
-              rect.style.transform = "scale(0.6)";
-            }
-            svg.appendChild(rect);
-            rc.rectEl = rect;
-
-            var minDim = Math.min(rw, rh);
-            var tag = document.createElement("div");
-            tag.className = "pie-slice-tag treemap-tag";
-            var scaleF = Math.max(0.5, Math.min(1, minDim / 64));
-            if (rc.slice.icon && minDim >= 40) {
-              var ico = document.createElement("span");
-              ico.className = "ico";
-              var glyph = document.createElement("span");
-              glyph.className = "material-symbols-outlined";
-              glyph.textContent = msName(rc.slice.icon);
-              glyph.style.fontSize = (22 * scaleF).toFixed(1) + "px";
-              ico.appendChild(glyph);
-              tag.appendChild(ico);
-            }
-            if (minDim >= 22) {
-              var pct = document.createElement("span");
-              pct.className = "pct";
-              setPctLabel(pct, rc.slice.value);
-              pct.style.fontSize = (16 * scaleF).toFixed(1) + "px";
-              tag.appendChild(pct);
-            }
-            if (tag.childNodes.length) {
-              var ccx = rx + rw / 2;
-              var ccy = ry + rh / 2;
-              tag.style.left = ((ccx / size) * 100).toFixed(3) + "%";
-              tag.style.top = ((ccy / size) * 100).toFixed(3) + "%";
-              tag.style.opacity = animate ? "0" : "1";
-              wrap.appendChild(tag);
-              rc.tagEl = tag;
-            }
-          });
-
-          if (!animate) return;
-
-          // Staggered pop-in: each tile scales up from 0.6 with a small
-          // overshoot while fading in, label following on the back half.
-          var DUR = 340, STAG = 55, c1 = 1.70158, c3 = c1 + 1;
-          function easeOutBack(t) {
-            return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
-          }
-          var t0 = null;
-          function tick(now) {
-            if (t0 === null) t0 = now;
-            var elapsed = now - t0;
-            var allDone = true;
-            for (var i = 0; i < rects.length; i++) {
-              var rc = rects[i];
-              var local = elapsed - i * STAG;
-              var p = local <= 0 ? 0 : Math.min(local / DUR, 1);
-              var ease = p <= 0 ? 0 : easeOutBack(p);
-              var sc = 0.6 + 0.4 * ease;
-              rc.rectEl.style.opacity = Math.min(1, p * 1.6).toFixed(3);
-              rc.rectEl.style.transform = "scale(" + sc.toFixed(3) + ")";
-              if (rc.tagEl) {
-                rc.tagEl.style.opacity = Math.max(0, Math.min(1, (p - 0.4) / 0.6)).toFixed(3);
-              }
-              if (p < 1) allDone = false;
-            }
-            if (!allDone) {
-              svg._pieRaf = requestAnimationFrame(tick);
-            } else {
-              svg._pieRaf = null;
-              rects.forEach(function (rc) {
-                rc.rectEl.style.opacity = "1";
-                rc.rectEl.style.transform = "scale(1)";
-                if (rc.tagEl) rc.tagEl.style.opacity = "1";
-              });
-            }
-          }
-          svg._pieRaf = requestAnimationFrame(tick);
-        };
-
-        // ─── Hyper-focus dot matrix renderer ───────────────────────────
-        // Reads the same `data-slices` JSON and lays the codes out as a
-        // sunflower (phyllotaxis) of dots radiating from a central focus.
-        // Three things encode the data at once:
-        //   • COLOR STATUS — each code claims a concentric band of dots in
-        //     its own hue, area ∝ weight, assigned from the center out.
-        //   • BRIGHTNESS — dots glow brighter the closer they sit to the
-        //     focus (white core highlight that fades to nothing at the rim),
-        //     so the eye is pulled into the center.
-        //   • FILL — how complete the code is (Σ weight vs 100) decides how
-        //     many dots fill in; the unfilled outer positions stay as faint
-        //     hollow rings ("round circles") waiting to be claimed.
-        // Tappable filled dots carry the same data-action/code-id as the
-        // other vizzes, and the .pie-slice-tag cleanup is shared for parity.
-        renderMatrix = function (svg, opts) {
-          opts = opts || {};
-          var animate = opts.animate === true;
-
-          var slices;
-          try { slices = JSON.parse(svg.getAttribute("data-slices")); }
-          catch (e) { return; }
-
-          var wrap = svg.parentElement;
-          if (svg._pieRaf) { cancelAnimationFrame(svg._pieRaf); svg._pieRaf = null; }
-          svg.innerHTML = "";
-          if (wrap) {
-            wrap.querySelectorAll(".pie-slice-tag").forEach(function (n) { n.remove(); });
-          }
-          if (!Array.isArray(slices) || !slices.length) {
-            renderChartEmptyState(svg, "matrix");
-            return;
-          }
-
-          var size = parseFloat(svg.getAttribute("data-size")) || 200;
-          var cx = size / 2, cy = size / 2;
-
-          var active = slices.filter(function (s) { return (s.value || 0) > 0; });
-          if (!active.length) {
-            renderChartEmptyState(svg, "matrix");
-            return;
-          }
-          var total = active.reduce(function (s, x) { return s + x.value; }, 0);
-
-          // Completeness → how much of the matrix lights up. Weights that
-          // sum to 100 fill it edge-to-edge; a half-built code leaves the
-          // outer rings hollow.
-          var fillFrac = Math.max(0, Math.min(1, total / 100));
-
-          // Phyllotaxis layout — even dot density, naturally ordered
-          // center-out (r ∝ √index) so we can fill + ripple from the focus.
-          var N = 150;
-          var pad = 8;
-          var maxR = size / 2 - pad;
-          var GA = Math.PI * (3 - Math.sqrt(5));
-          var maxDot = size * 0.030, minDot = size * 0.0115;
-          var dots = [];
-          for (var i = 0; i < N; i++) {
-            var rr = maxR * Math.sqrt((i + 0.5) / N);
-            var ang = i * GA;
-            var tR = maxR > 0 ? rr / maxR : 0; // 0 at focus → 1 at rim
-            dots.push({
-              x: cx + rr * Math.cos(ang),
-              y: cy + rr * Math.sin(ang),
-              tR: tR,
-              dotR: maxDot - (maxDot - minDot) * tR
-            });
-          }
-
-          var filledCount = Math.round(fillFrac * N);
-
-          // Split the filled dots among the codes, area ∝ weight, via
-          // largest-remainder so the per-code counts sum exactly. Assigned
-          // center-out so each code owns one concentric band of its hue.
-          var counts = active.map(function (s) {
-            var exact = (s.value / total) * filledCount;
-            var fl = Math.floor(exact);
-            return { slice: s, count: fl, frac: exact - fl };
-          });
-          var assigned = counts.reduce(function (a, c) { return a + c.count; }, 0);
-          var leftover = filledCount - assigned;
-          counts.slice().sort(function (a, b) { return b.frac - a.frac; })
-            .forEach(function (c) { if (leftover > 0) { c.count++; leftover--; } });
-
-          var fill = [];
-          counts.forEach(function (c) {
-            for (var k = 0; k < c.count; k++) fill.push(c.slice);
-          });
-
-          dots.forEach(function (d, idx) {
-            var slice = idx < fill.length ? fill[idx] : null;
-            if (slice) {
-              // Brightest at the focus, easing down toward the band edge.
-              var op = 1 - 0.42 * d.tR;
-              var dot = document.createElementNS(SVG_NS, "circle");
-              dot.setAttribute("class", "mx mx-fill");
-              dot.setAttribute("cx", d.x.toFixed(2));
-              dot.setAttribute("cy", d.y.toFixed(2));
-              dot.setAttribute("r", animate ? "0" : d.dotR.toFixed(2));
-              dot.setAttribute("fill", slice.c);
-              dot.style.opacity = animate ? "0" : op.toFixed(3);
-              if (slice.codeId) {
-                dot.setAttribute("data-action", "code-detail");
-                dot.setAttribute("data-code-id", slice.codeId);
-              }
-              svg.appendChild(dot);
-              d.el = dot; d.op = op; d.baseR = d.dotR;
-
-              // White core that intensifies toward the focus, so the center
-              // literally glows brighter than its own hue.
-              var glowOp = 0.6 * Math.pow(1 - d.tR, 2);
-              if (glowOp > 0.04) {
-                var glow = document.createElementNS(SVG_NS, "circle");
-                glow.setAttribute("class", "mx mx-glow");
-                glow.setAttribute("cx", d.x.toFixed(2));
-                glow.setAttribute("cy", d.y.toFixed(2));
-                glow.setAttribute("r", animate ? "0" : (d.dotR * 0.5).toFixed(2));
-                glow.setAttribute("fill", "#FFFFFF");
-                glow.style.opacity = animate ? "0" : glowOp.toFixed(3);
-                svg.appendChild(glow);
-                d.glowEl = glow; d.glowOp = glowOp; d.glowR = d.dotR * 0.5;
-              }
-            } else {
-              // Not-yet-filled position — a faint hollow ring that fades
-              // toward the rim, so the matrix dissolves into the card edge.
-              var op2 = (1 - 0.5 * d.tR) * 0.5;
-              var ring = document.createElementNS(SVG_NS, "circle");
-              ring.setAttribute("class", "mx mx-empty");
-              ring.setAttribute("cx", d.x.toFixed(2));
-              ring.setAttribute("cy", d.y.toFixed(2));
-              ring.setAttribute("r", animate ? "0" : (d.dotR * 0.82).toFixed(2));
-              ring.style.opacity = animate ? "0" : op2.toFixed(3);
-              svg.appendChild(ring);
-              d.el = ring; d.op = op2; d.baseR = d.dotR * 0.82; d.empty = true;
-            }
-          });
-
-          if (!animate) return;
-
-          // Ripple-in from the focus: dots wake outward in radius order,
-          // each a quick scale-up + fade. Delay scales with radius so the
-          // wave reads as pulling focus from the center.
-          var DUR = 300, RIPPLE = 460, c1 = 1.70158, c3 = c1 + 1;
-          function easeOutBack(x) {
-            return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
-          }
-          var t0 = null;
-          function tick(now) {
-            if (t0 === null) t0 = now;
-            var elapsed = now - t0;
-            var allDone = true;
-            for (var i = 0; i < dots.length; i++) {
-              var d = dots[i];
-              if (!d.el) continue;
-              var local = elapsed - d.tR * RIPPLE;
-              var p = local <= 0 ? 0 : Math.min(local / DUR, 1);
-              var ease = p <= 0 ? 0 : easeOutBack(p);
-              var fade = Math.min(1, p * 1.4);
-              d.el.setAttribute("r", Math.max(0, d.baseR * ease).toFixed(2));
-              d.el.style.opacity = (d.op * fade).toFixed(3);
-              if (d.glowEl) {
-                d.glowEl.setAttribute("r", Math.max(0, d.glowR * ease).toFixed(2));
-                d.glowEl.style.opacity = (d.glowOp * fade).toFixed(3);
-              }
-              if (p < 1) allDone = false;
-            }
-            if (!allDone) {
-              svg._pieRaf = requestAnimationFrame(tick);
-            } else {
-              svg._pieRaf = null;
-              dots.forEach(function (d) {
-                if (!d.el) return;
-                d.el.setAttribute("r", d.baseR.toFixed(2));
-                d.el.style.opacity = d.op.toFixed(3);
-                if (d.glowEl) {
-                  d.glowEl.setAttribute("r", d.glowR.toFixed(2));
-                  d.glowEl.style.opacity = d.glowOp.toFixed(3);
-                }
-              });
-            }
-          }
-          svg._pieRaf = requestAnimationFrame(tick);
-        };
 
         // No initial paint here — the dark/light cloner below clones
         // empty <svg> shells, then the WISE_CODES code and product-
@@ -8235,70 +7615,14 @@
         // clobber the in-flight RAF a tick later.
       })();
 
-      // ─── Shared chart-type cycle config + dispatcher ─────────────────
-      // One source of truth for the donut → bubble → treemap cycle, used
-      // by the code hero toggle (Screen 1) and the detail-screen toggles
-      // (Product Detail + Food Detail sheet). CHART_ICON is the glyph
-      // shown ON the toggle button — a preview of the chart the NEXT tap
-      // switches to.
-      var CHART_ORDER = ["donut", "bubble", "treemap", "matrix"];
-      var CHART_ICON = { donut: "donut_large", bubble: "bubble_chart", treemap: "dashboard", matrix: "blur_on" };
-      var CHART_LABEL = { donut: "donut chart", bubble: "bubble chart", treemap: "treemap chart", matrix: "focus matrix" };
-
-      // Paint one pie-svg in whichever mode its .pie-wrap is set to
-      // (data-chart), toggling the is-bubble / is-treemap classes that
-      // hide the center disc. Reads the slices already written onto the
-      // svg, so callers just set data-slices then call this. Shared by
-      // the Product Detail + Food Detail renderers.
+      // ─── Detail-screen donut dispatcher ──────────────────────────────
+      // Thin alias so Product Detail + Food Detail share the same entry
+      // point as the code hero donut renderer.
       function renderDetailChart(pieSvg, opts) {
-        if (!pieSvg) return;
-        var wrap = pieSvg.closest(".pie-wrap");
-        var mode = wrap ? wrap.getAttribute("data-chart") : null;
-        if (mode !== "bubble" && mode !== "treemap" && mode !== "matrix") mode = "donut";
-        if (wrap) {
-          wrap.classList.toggle("is-bubble", mode === "bubble");
-          wrap.classList.toggle("is-treemap", mode === "treemap");
-          wrap.classList.toggle("is-matrix", mode === "matrix");
-        }
-        if (mode === "bubble" && typeof renderBubbleChart === "function") {
-          renderBubbleChart(pieSvg, opts);
-        } else if (mode === "treemap" && typeof renderTreemap === "function") {
-          renderTreemap(pieSvg, opts);
-        } else if (mode === "matrix" && typeof renderMatrix === "function") {
-          renderMatrix(pieSvg, opts);
-        } else {
+        if (pieSvg && typeof renderPieSvg === "function") {
           renderPieSvg(pieSvg, opts);
         }
       }
-
-      // Toggle handler for the detail-screen chart buttons. Cycles the
-      // pie-wrap's data-chart, updates the button glyph to preview the
-      // next chart, and repaints that one pie with the entrance
-      // animation. Scoped by action name so it never collides with the
-      // code hero's own [data-code]-scoped toggle.
-      document.addEventListener("click", function (ev) {
-        var btn = ev.target.closest && ev.target.closest('[data-action="detail-chart-toggle"]');
-        if (!btn) return;
-        ev.preventDefault();
-        var scope = btn.closest(".card") || btn.parentElement;
-        var pieSvg = scope ? scope.querySelector(".pie-svg") : null;
-        if (!pieSvg) return;
-        var wrap = pieSvg.closest(".pie-wrap");
-        if (!wrap) return;
-
-        var cur = wrap.getAttribute("data-chart");
-        var idx = CHART_ORDER.indexOf(cur);
-        if (idx < 0) idx = 0;
-        var nextMode = CHART_ORDER[(idx + 1) % CHART_ORDER.length];
-        var afterNext = CHART_ORDER[(idx + 2) % CHART_ORDER.length];
-        wrap.setAttribute("data-chart", nextMode);
-
-        var glyph = btn.querySelector(".material-symbols-outlined");
-        if (glyph) glyph.textContent = CHART_ICON[afterNext];
-        btn.setAttribute("aria-label", "Switch to " + CHART_LABEL[afterNext]);
-
-        renderDetailChart(pieSvg, { animate: true });
-      });
 
       // ─── Tap-to-replay the donut animation ────────────────────────────
       // Tapping any rendered donut replays its bounce-in entrance. Used
@@ -8311,31 +7635,14 @@
         if (!e.target.closest) return;
         // Slice taps open the per-code bottom sheet (handled elsewhere);
         // only the donut hole / center disc replays the entrance bounce.
-        // Slice / bubble / tile taps open the per-code sheet (handled by
-        // the action delegate) — only a tap on the hole / empty space
-        // replays the entrance.
         if (e.target.closest("path.seg")) return;
-        if (e.target.closest("circle.bubble")) return;
-        if (e.target.closest("rect.tm")) return;
-        if (e.target.closest("circle.mx-fill")) return;
         var wrap = e.target.closest(".pie-wrap");
         if (!wrap) return;
         var svg = wrap.querySelector(".pie-svg");
         if (!svg || typeof renderPieSvg !== "function") return;
         var slices = svg.getAttribute("data-slices");
         if (!slices || slices === "[]") return; // nothing to animate
-        // Replay in whichever mode the wrap is currently showing, so a
-        // tap on the bubble / treemap / matrix viz re-pops that one instead
-        // of snapping back to a donut.
-        if (wrap.classList.contains("is-bubble") && typeof renderBubbleChart === "function") {
-          renderBubbleChart(svg, { animate: true });
-        } else if (wrap.classList.contains("is-treemap") && typeof renderTreemap === "function") {
-          renderTreemap(svg, { animate: true });
-        } else if (wrap.classList.contains("is-matrix") && typeof renderMatrix === "function") {
-          renderMatrix(svg, { animate: true });
-        } else {
-          renderPieSvg(svg, { animate: true });
-        }
+        renderPieSvg(svg, { animate: true });
       });
 
       // ─── Replay-all button (catalog header) ────────────────────────────
@@ -8366,16 +7673,7 @@
 
         function playAll() {
           pies.forEach(function (svg) {
-            var w = svg.closest(".pie-wrap");
-            if (w && w.classList.contains("is-bubble") && typeof renderBubbleChart === "function") {
-              renderBubbleChart(svg, { animate: true });
-            } else if (w && w.classList.contains("is-treemap") && typeof renderTreemap === "function") {
-              renderTreemap(svg, { animate: true });
-            } else if (w && w.classList.contains("is-matrix") && typeof renderMatrix === "function") {
-              renderMatrix(svg, { animate: true });
-            } else {
-              renderPieSvg(svg, { animate: true });
-            }
+            renderPieSvg(svg, { animate: true });
           });
         }
 
@@ -8464,9 +7762,8 @@
           });
 
           // 2. The JS source of truth for every *dynamically* rendered
-          //    chart. The code hero (donut / bubble / treemap), the Food
-          //    Detail viz, the Browse health bars, the slot tiles and the
-          //    priority chips all pull their colour from
+          //    donut. The code hero, Food Detail viz, Browse health bars,
+          //    slot tiles and priority chips all pull their colour from
           //    WISE_CODES.CODE_CATALOG[id].color at render time — they do
           //    NOT read the static data-slices attribute. So remap the
           //    catalog hexes, then fan the change through the existing
@@ -8485,8 +7782,7 @@
           //    catalog-driven. The catalog-driven ones were just rebuilt in
           //    step 2 with the remapped colours, so their data-slices is
           //    already current (n === s) and they're skipped here. Repaint
-          //    via renderDetailChart so bubble / treemap variants recolour
-          //    in place instead of snapping back to a donut.
+          //    already current (n === s) and they're skipped here.
           document.querySelectorAll(".pie-svg[data-slices]").forEach(function (svg) {
             if (skip(svg)) return;
             var s = svg.getAttribute("data-slices");
@@ -8494,9 +7790,7 @@
             if (n === s) return;
             svg.setAttribute("data-slices", n);
             try {
-              if (typeof renderDetailChart === "function") {
-                renderDetailChart(svg, { animate: false });
-              } else if (typeof renderPieSvg === "function") {
+              if (typeof renderPieSvg === "function") {
                 renderPieSvg(svg, { animate: false });
               }
             } catch (err) {}
@@ -8585,6 +7879,65 @@
           if (lightLabel) lightLabel.textContent = "Light";
           row.insertBefore(light, dark);
         });
+      })();
+
+      // ─── Scan screen — live device camera ────────────────────────────
+      // The Find-a-Food viewport shows a real camera feed. We request the
+      // rear camera with getUserMedia and attach the single stream to every
+      // .scan-cam-video on the page (the dark phone + its cloned light twin,
+      // so this runs after the cloner above). getUserMedia needs a secure
+      // context (https or localhost) and, on some browsers, a user gesture —
+      // hence the tap-to-enable prompt, which also drives manual retries on
+      // denial. We still attempt once on load so browsers that allow a
+      // gesture-free prompt surface the permission dialog immediately.
+      (function () {
+        var cams = document.querySelectorAll("[data-scan-cam]");
+        if (!cams.length) return;
+        var videos = document.querySelectorAll("[data-scan-video]");
+        var starting = false;
+
+        function setPrompt(msg) {
+          cams.forEach(function (cam) {
+            cam.classList.remove("is-live");
+            var sub = cam.querySelector(".scan-cam-prompt-sub");
+            if (sub && msg) sub.textContent = msg;
+          });
+        }
+
+        function startCamera() {
+          if (starting) return;
+          if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setPrompt("Camera isn't supported on this device or browser.");
+            return;
+          }
+          starting = true;
+          navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: "environment" } },
+            audio: false
+          }).then(function (stream) {
+            videos.forEach(function (v) {
+              try { v.srcObject = stream; } catch (e) { /* older browsers */ }
+              if (v.play) { v.play().catch(function () {}); }
+            });
+            cams.forEach(function (cam) { cam.classList.add("is-live"); });
+            starting = false;
+          }).catch(function (err) {
+            starting = false;
+            var msg = "Tap to allow camera access and start scanning.";
+            if (err && (err.name === "NotAllowedError" || err.name === "SecurityError")) {
+              msg = "Camera permission denied — tap to try again.";
+            } else if (err && err.name === "NotFoundError") {
+              msg = "No camera found on this device.";
+            }
+            setPrompt(msg);
+          });
+        }
+
+        document.querySelectorAll('[data-action="start-camera"]').forEach(function (btn) {
+          btn.addEventListener("click", startCamera);
+        });
+
+        startCamera();
       })();
 
       // ─── WISEcode brand mark on primary screen headlines ─────────────
@@ -9492,6 +8845,23 @@
           W.clearCode();
         }
 
+        // The Your Code (Home) list under the donut is now a live
+        // rebalance surface: an "Add a code" tile on top, then the
+        // rebalance rows (reorder by dragging the strip, swap, remove,
+        // and a weight slider) rendered inline rather than in a bottom
+        // sheet. We reuse the rebalance render/update/drag machinery by
+        // mounting a `.rb-inline-sheet` (which carries the
+        // `rebalance-sheet` class for row styling) and treating it like
+        // an always-open sheet.
+        //
+        // The scaffold (add tile + empty surface) is built once and then
+        // left in place; subsequent renders patch it in two modes,
+        // mirroring the bottom-sheet subscriber:
+        //   • structural change (membership / order) → full row rebuild
+        //   • weight-only change (slider drag) → in-place sync that keeps
+        //     the live <input> the finger is holding intact
+        // A surface mid-reorder (_dragging) is skipped — the drop commits
+        // and the next notify repaints it.
         function renderSlotList(phoneWrap, slots) {
           var listEl = phoneWrap.querySelector("[data-code-list]");
           if (!listEl) return;
@@ -9499,38 +8869,49 @@
           slots = resolveSlots(phoneWrap, slots);
           var filledCount = W.filledSignature(slots);
 
-          var html = "";
-
-          // Add tile always sits above the code rows, so removing a code
-          // never shuffles the "Add a code" affordance down the list.
-          if (filledCount < W.MAX_SLOTS) {
-            html += ""
+          var surface = listEl.querySelector(".rb-inline-sheet");
+          if (!surface) {
+            listEl.innerHTML = ''
               + '<button type="button" class="slot-add" data-action="add">'
               +   '<span class="material-symbols-outlined">add</span>'
-              +   '<span>' + (filledCount === 0 ? "Add your first code" : "Add a code") + '</span>'
-              + '</button>';
+              +   '<span class="slot-add-label"></span>'
+              + '</button>'
+              + '<div class="rebalance-sheet rb-inline-sheet" data-rb-inline>'
+              +   '<div class="rb-scroll" data-rebalance-rows></div>'
+              + '</div>';
+            surface = listEl.querySelector(".rb-inline-sheet");
           }
 
-          slots.forEach(function (s) {
-            if (!s.codeId) return;
-            var meta = W.CODE_CATALOG[s.codeId];
-            if (!meta) return;
-            html += ""
-              + '<div class="slot-c" data-code-id="' + s.codeId + '" data-action="code-detail">'
-              +   '<span class="ico" style="background:' + meta.color + ';">'
-              +     '<span class="material-symbols-outlined">' + meta.icon + '</span>'
-              +   '</span>'
-              +   '<div class="meta">'
-              +     '<div class="nm">' + W.escapeHtml(meta.name) + '</div>'
-              +   '</div>'
-              +   '<span class="pct"><b>' + s.weight + '</b><small>%</small></span>'
-              +   '<button class="close" data-action="remove" aria-label="Remove ' + W.escapeHtml(meta.name) + '">'
-              +     '<span class="material-symbols-outlined">do_not_disturb_on</span>'
-              +   '</button>'
-              + '</div>';
-          });
+          // Add tile always sits above the rows, so removing a code never
+          // shuffles the "Add a code" affordance down the list.
+          var addBtn = listEl.querySelector(".slot-add");
+          if (addBtn) {
+            addBtn.style.display = filledCount < W.MAX_SLOTS ? "" : "none";
+            var addLabel = addBtn.querySelector(".slot-add-label");
+            if (addLabel) {
+              addLabel.textContent = filledCount === 0 ? "Add your first code" : "Add a code";
+            }
+          }
 
-          listEl.innerHTML = html;
+          // Don't fight a finger actively reordering this surface.
+          if (surface._dragging) return;
+
+          var rowsEl = surface.querySelector("[data-rebalance-rows]");
+          var filled = slots.filter(function (s) { return s.codeId; });
+          var domCodes = rowsEl
+            ? Array.prototype.map.call(
+                rowsEl.querySelectorAll(".rb-row"),
+                function (r) { return r.getAttribute("data-rebalance-code"); }
+              )
+            : [];
+          var sameOrder = domCodes.length === filled.length
+            && filled.every(function (s, i) { return domCodes[i] === s.codeId; });
+
+          if (!sameOrder) {
+            renderRebalanceSheet(surface, slots);
+          } else {
+            updateRebalanceSheet(surface, slots, surface._dragCodeId);
+          }
         }
 
         function renderHero(phoneWrap, slots, opts) {
@@ -9554,15 +8935,9 @@
           var statusSubEl = phoneWrap.querySelector(".status-sub");
           if (statusSubEl) {
             statusSubEl.textContent = filled.length === 0
-              ? "Add codes to compose your code"
+              ? ""
               : (inHarmony ? "Your weights are balanced" : "Balance weights to reach 100");
           }
-
-          // Chart type is held per phone-wrap (so the dark + light twins
-          // stay independent, like the rest of the prototype). The
-          // pie-card's chart-toggle cycles donut → bubble → treemap.
-          var chartMode = phoneWrap.getAttribute("data-chart");
-          if (chartMode !== "bubble" && chartMode !== "treemap" && chartMode !== "matrix") chartMode = "donut";
 
           var pieSvg = phoneWrap.querySelector(".pie-svg");
           if (pieSvg && typeof renderPieSvg === "function") {
@@ -9573,25 +8948,7 @@
                 : null;
             }).filter(Boolean);
             pieSvg.setAttribute("data-slices", JSON.stringify(slices));
-
-            // The bubble pack / treemap fill the donut hole, so hide the
-            // center "OF 100" disc unless we're showing the donut.
-            var pieWrap = pieSvg.closest(".pie-wrap");
-            if (pieWrap) {
-              pieWrap.classList.toggle("is-bubble", chartMode === "bubble");
-              pieWrap.classList.toggle("is-treemap", chartMode === "treemap");
-              pieWrap.classList.toggle("is-matrix", chartMode === "matrix");
-            }
-
-            if (chartMode === "bubble" && typeof renderBubbleChart === "function") {
-              renderBubbleChart(pieSvg, opts);
-            } else if (chartMode === "treemap" && typeof renderTreemap === "function") {
-              renderTreemap(pieSvg, opts);
-            } else if (chartMode === "matrix" && typeof renderMatrix === "function") {
-              renderMatrix(pieSvg, opts);
-            } else {
-              renderPieSvg(pieSvg, opts);
-            }
+            renderPieSvg(pieSvg, opts);
           }
 
           var pieNum = phoneWrap.querySelector(".pie-center .num [data-pie-num-val]")
@@ -9678,51 +9035,6 @@
 
         function closePicker(phoneWrap) {
           var overlay = phoneWrap.querySelector(".code-picker-overlay");
-          if (overlay) overlay.remove();
-        }
-
-        // ─── Reset confirmation bottom-sheet ────────────────────────────
-        // Tapping Reset on the code pie-card no longer wipes the
-        // composition outright — it slides up a bottom sheet that asks
-        // the user to double-confirm. Cancel dismisses; Reset calls
-        // WISE_CODES.resetCode() which propagates to every screen.
-        function openResetSheet(phoneWrap) {
-          if (phoneWrap.querySelector(".reset-overlay")) return;
-
-          var overlay = document.createElement("div");
-          overlay.className = "reset-overlay";
-          overlay.innerHTML = ''
-            + '<div class="reset-sheet" role="dialog" aria-modal="true" aria-labelledby="reset-sheet-title">'
-            +   '<div class="handle" aria-hidden="true"></div>'
-            +   '<div class="sheet-head">'
-            +     '<div class="sheet-title">'
-            +       '<h2 id="reset-sheet-title">Reset your code?</h2>'
-            +       '<p>This wipes every slot and weight in your Personal Code and restores the starting five codes. You can\u2019t undo it.</p>'
-            +     '</div>'
-            +     '<button type="button" class="sheet-close" data-action="reset-cancel" aria-label="Close">'
-            +       '<span class="material-symbols-outlined">close</span>'
-            +     '</button>'
-            +   '</div>'
-            +   '<div class="actions">'
-            +     '<button type="button" class="btn btn-confirm" data-action="reset-confirm">'
-            +       '<span class="material-symbols-outlined">restart_alt</span>Reset'
-            +     '</button>'
-            +   '</div>'
-            + '</div>';
-
-          overlay.addEventListener("click", function (e) {
-            if (e.target === overlay) {
-              e.preventDefault();
-              closeResetSheet(phoneWrap);
-            }
-          });
-
-          var screen = phoneWrap.querySelector(".screen");
-          if (screen) screen.appendChild(overlay);
-        }
-
-        function closeResetSheet(phoneWrap) {
-          var overlay = phoneWrap.querySelector(".reset-overlay");
           if (overlay) overlay.remove();
         }
 
@@ -10056,7 +9368,6 @@
               +   '<div class="saved-row-actions">'
               +     '<button type="button" class="saved-load" data-action="saved-load" data-saved-id="' + c.id + '"'
               +       (isCurrent ? " disabled" : "") + '>' + (isCurrent ? "Loaded" : "Load") + '</button>'
-              +     '<button type="button" class="saved-del" data-action="saved-delete" data-saved-id="' + c.id + '" aria-label="Delete ' + W.escapeHtml(c.name) + '"><span class="material-symbols-outlined">delete</span></button>'
               +   '</div>'
               + '</div>';
           }).join("");
@@ -10157,17 +9468,6 @@
             el.textContent = entry.name;
           });
           closeSavedSheet(phoneWrap);
-        }
-
-        function deleteSaved(phoneWrap, id) {
-          W.deleteSavedCode(id);
-          updateSavedLinkCounts();
-          var overlay = phoneWrap.querySelector(".saved-overlay");
-          if (overlay) {
-            renderSavedList(phoneWrap, overlay);
-            var hint = overlay.querySelector("[data-saved-hint]");
-            if (hint) { hint.classList.remove("is-ok"); hint.textContent = ""; }
-          }
         }
 
         // ─── Delete-code confirmation bottom-sheet ──────────────────────
@@ -10305,30 +9605,35 @@
             if (!meta) return "";
             return ''
               + '<div class="rb-row" data-rebalance-code="' + s.codeId + '">'
-              +   '<div class="rb-drag">'
-              +     '<span class="rb-rank" aria-hidden="true" style="--rb-rank-c:' + meta.color + ';">' + (idx + 1) + '</span>'
-              +     '<div class="rb-meta">'
-              +       '<span class="rb-ico" style="background:' + meta.color + ';">'
-              +         '<span class="material-symbols-outlined">' + meta.icon + '</span>'
-              +       '</span>'
-              +       '<div class="rb-text">'
-              +         '<div class="rb-name">' + W.escapeHtml(meta.name) + '</div>'
-              +         '<div class="rb-cat">' + W.escapeHtml(meta.category) + '</div>'
-              +       '</div>'
-              +     '</div>'
-              +     '<span class="rb-pct"><b data-rebalance-pct>' + s.weight + '</b><small>%</small></span>'
-              +     '<button type="button" class="rb-swap" data-action="rb-swap" '
-              +       'data-code-id="' + s.codeId + '" '
-              +       'aria-label="Swap out ' + W.escapeHtml(meta.name) + '" '
-              +       'title="Swap this code">'
-              +       '<span class="material-symbols-outlined">swap_horiz</span>'
-              +     '</button>'
+              +   '<div class="rb-swipe-bg" aria-hidden="true">'
+              +     '<span class="material-symbols-outlined">delete</span>'
               +   '</div>'
-              +   '<input type="range" min="0" max="100" value="' + s.weight + '" '
-              +     'class="rb-slider" '
-              +     'style="--rb-track-c:' + meta.color + '; --rb-fill:' + s.weight + '%;" '
-              +     'data-rebalance-input '
-              +     'aria-label="Adjust weight for ' + W.escapeHtml(meta.name) + '" />'
+              +   '<div class="rb-row-inner">'
+              +     '<div class="rb-drag">'
+              +       '<span class="rb-rank" aria-hidden="true" style="--rb-rank-c:' + meta.color + ';">' + (idx + 1) + '</span>'
+              +       '<div class="rb-meta">'
+              +         '<span class="rb-ico" style="background:' + meta.color + ';">'
+              +           '<span class="material-symbols-outlined">' + meta.icon + '</span>'
+              +         '</span>'
+              +         '<div class="rb-text">'
+              +           '<div class="rb-name">' + W.escapeHtml(meta.name) + '</div>'
+              +           '<div class="rb-cat">' + W.escapeHtml(meta.category) + '</div>'
+              +         '</div>'
+              +       '</div>'
+              +       '<span class="rb-pct"><b data-rebalance-pct>' + s.weight + '</b><small>%</small></span>'
+              +       '<button type="button" class="rb-swap" data-action="rb-swap" '
+              +         'data-code-id="' + s.codeId + '" '
+              +         'aria-label="Swap out ' + W.escapeHtml(meta.name) + '" '
+              +         'title="Swap this code">'
+              +         '<span class="material-symbols-outlined">swap_horiz</span>'
+              +       '</button>'
+              +     '</div>'
+              +     '<input type="range" min="0" max="100" value="' + s.weight + '" '
+              +       'class="rb-slider" '
+              +       'style="--rb-track-c:' + meta.color + '; --rb-fill:' + s.weight + '%;" '
+              +       'data-rebalance-input '
+              +       'aria-label="Adjust weight for ' + W.escapeHtml(meta.name) + '" />'
+              +   '</div>'
               + '</div>';
           }).join("");
 
@@ -10382,14 +9687,117 @@
             var handle = row.querySelector(".rb-drag");
             if (!handle) return;
             handle.addEventListener("pointerdown", function (e) {
-              // Primary button / touch only, and never start a drag from
-              // the swap button (it's a tap target inside the strip).
+              // Primary button / touch only, and never start a gesture
+              // from the swap button (it's a tap target inside the strip).
               // The slider lives below the strip, so it's untouched here.
               if (e.button != null && e.button !== 0) return;
               if (e.target.closest('[data-action="rb-swap"]')) return;
-              beginRebalanceDrag(overlay, rowsEl, row, e);
+              beginRowGesture(overlay, rowsEl, row, e);
             });
           });
+        }
+
+        // Axis-locking gesture on a row's grab strip. The first decisive
+        // move picks one of two intents and hands off — never both:
+        //   • mostly vertical → reorder (beginRebalanceDrag)
+        //   • mostly horizontal & leftward → swipe-to-remove (beginRowSwipe)
+        // We don't transform anything during detection, so the hand-off is
+        // seamless (the chosen controller reads from the original
+        // pointerdown). A press with no move falls through as a plain tap.
+        function beginRowGesture(overlay, rowsEl, row, downEvt) {
+          var startX = downEvt.clientX;
+          var startY = downEvt.clientY;
+          var LOCK = 8; // px of travel before we commit to an axis
+          var decided = false;
+
+          function cleanup() {
+            row.removeEventListener("pointermove", onMove);
+            row.removeEventListener("pointerup", onUp);
+            row.removeEventListener("pointercancel", onUp);
+          }
+          function onMove(e) {
+            if (decided) return;
+            var dx = e.clientX - startX;
+            var dy = e.clientY - startY;
+            if (Math.abs(dx) < LOCK && Math.abs(dy) < LOCK) return;
+            decided = true;
+            cleanup();
+            if (Math.abs(dx) > Math.abs(dy) && dx < 0) {
+              beginRowSwipe(overlay, row, downEvt, e);
+            } else {
+              beginRebalanceDrag(overlay, rowsEl, row, downEvt);
+            }
+          }
+          function onUp() { cleanup(); }
+
+          try { row.setPointerCapture(downEvt.pointerId); } catch (err) {}
+          row.addEventListener("pointermove", onMove);
+          row.addEventListener("pointerup", onUp);
+          row.addEventListener("pointercancel", onUp);
+        }
+
+        // Swipe-to-remove: the visible card (.rb-row-inner) tracks the
+        // finger leftward, fading in the rose backdrop. Released past the
+        // threshold it flings off and drops the code (W.removeCode → the
+        // rest re-balance to 100 and every screen repaints); short of it,
+        // the card springs back. We hold overlay._dragging while the
+        // gesture runs so an incidental notify never rebuilds the row
+        // out from under the finger.
+        function beginRowSwipe(overlay, row, downEvt, moveEvt) {
+          var inner = row.querySelector(".rb-row-inner");
+          if (!inner) return;
+          overlay._dragging = true;
+          var startX = downEvt.clientX;
+          var width = row.offsetWidth || 280;
+          var REMOVE_AT = Math.max(96, width * 0.45);
+          row.classList.add("is-swiping");
+
+          function apply(dx) {
+            if (dx > 0) dx = 0; // left-only
+            inner.style.transform = "translateX(" + dx + "px)";
+            var prog = Math.min(1, -dx / REMOVE_AT);
+            row.style.setProperty("--rb-swipe", prog.toFixed(3));
+            row.classList.toggle("is-swipe-armed", -dx >= REMOVE_AT);
+          }
+
+          apply(moveEvt.clientX - startX);
+
+          function onMove(e) { apply(e.clientX - startX); }
+          function onUp(e) {
+            row.removeEventListener("pointermove", onMove);
+            row.removeEventListener("pointerup", onUp);
+            row.removeEventListener("pointercancel", onUp);
+            var dx = e.clientX - startX;
+            if (dx > 0) dx = 0;
+            row.classList.remove("is-swiping");
+
+            if (-dx >= REMOVE_AT) {
+              // Fling the card off the left edge, then commit the removal.
+              inner.style.transform = "translateX(-110%)";
+              var codeId = row.getAttribute("data-rebalance-code");
+              var committed = false;
+              function commit() {
+                if (committed) return;
+                committed = true;
+                overlay._dragging = false;
+                if (codeId) W.removeCode(codeId); // → notify → re-render
+              }
+              inner.addEventListener("transitionend", function (te) {
+                if (te.propertyName === "transform") commit();
+              });
+              setTimeout(commit, 300);
+            } else {
+              // Snap back to rest.
+              overlay._dragging = false;
+              inner.style.transform = "";
+              row.style.removeProperty("--rb-swipe");
+              row.classList.remove("is-swipe-armed");
+            }
+          }
+
+          row.addEventListener("pointermove", onMove);
+          row.addEventListener("pointerup", onUp);
+          row.addEventListener("pointercancel", onUp);
         }
 
         function beginRebalanceDrag(overlay, rowsEl, row, downEvt) {
@@ -10953,12 +10361,19 @@
 
           if (action === "remove") {
             if (!phoneWrap) return;
+            // The minus lives on two row types: the legacy .slot-c list
+            // and the inline / sheet rebalance rows (the rb-del button
+            // carries its own data-code-id). Resolve from whichever
+            // fired so both paths open the same delete-confirm sheet.
             var row = target.closest(".slot-c[data-code-id]");
-            if (row) {
+            var rmId = row
+              ? row.getAttribute("data-code-id")
+              : target.getAttribute("data-code-id");
+            if (rmId) {
               ev.preventDefault();
               // Double-verify: slide up the delete-confirm sheet instead
               // of dropping the code on the first tap.
-              openDeleteSheet(phoneWrap, row.getAttribute("data-code-id"));
+              openDeleteSheet(phoneWrap, rmId);
             }
             return;
           }
@@ -11094,12 +10509,6 @@
             return;
           }
 
-          if (action === "saved-delete" && phoneWrap) {
-            ev.preventDefault();
-            deleteSaved(phoneWrap, target.getAttribute("data-saved-id"));
-            return;
-          }
-
           // Pin-to-home walkthrough lives on the Intro screen, which is
           // not a [data-code] phone — resolve the phone generically.
           if (action === "pin-walkthrough") {
@@ -11126,30 +10535,9 @@
             return;
           }
 
-          if (action === "reset-prompt" && phoneWrap) {
-            ev.preventDefault();
-            openResetSheet(phoneWrap);
-            return;
-          }
-
-          if (action === "reset-cancel" && phoneWrap) {
-            ev.preventDefault();
-            closeResetSheet(phoneWrap);
-            return;
-          }
-
-          if (action === "reset-confirm" && phoneWrap) {
-            ev.preventDefault();
-            W.resetCode();
-            closeResetSheet(phoneWrap);
-            return;
-          }
-
-          // Rebalance-open is allowed on any .phone-wrap (not just the
-          // [data-code] code phones) so the "Rebalance" affordance
-          // in the Browse priorities header (Screen 3) opens the same
-          // sheet as the Rebalance pill on Screen 1.
           if (action === "rebalance-open") {
+            // Allowed on any .phone-wrap (not just [data-code] phones) so
+            // the Browse priorities header opens the same sheet as Screen 1.
             var rebPhone = target.closest(".phone-wrap");
             if (!rebPhone) return;
             ev.preventDefault();
@@ -11203,12 +10591,10 @@
             return;
           }
 
-          // Back-compat: any leftover data-action="reset" still fires
-          // the immediate reset (no prompt) so older static markup
-          // keeps working.
+          // Back-compat: any leftover data-action="reset" is ignored now
+          // that the Reset affordance was removed from the pie-card.
           if (action === "reset") {
             ev.preventDefault();
-            W.resetCode();
             return;
           }
         });
@@ -11237,7 +10623,7 @@
           var slider = ev.target.closest("[data-rebalance-input]");
           if (!slider) return;
           var row = slider.closest("[data-rebalance-code]");
-          var overlay = slider.closest(".rebalance-overlay");
+          var overlay = slider.closest(".rebalance-overlay, .rb-inline-sheet");
           if (!row || !overlay) return;
           var codeId = row.getAttribute("data-rebalance-code");
           overlay._dragCodeId = codeId;
@@ -11305,37 +10691,6 @@
             }
           });
         });
-
-        // ─── Chart-type toggle (donut → bubble → treemap → donut) ──────
-        // The icon button in the pie-card's top-left corner cycles that
-        // phone-wrap through the three code vizzes. State lives on the
-        // wrap (data-chart) so renderHero — driven from shared slot
-        // state — keeps painting the right viz on every later add /
-        // remove / rebalance. We re-render this one wrap with the entrance
-        // animation so the new chart pops in, and set the button's glyph
-        // + label to preview the chart the NEXT tap will switch to.
-        // (Cycle config + glyphs come from the shared CHART_ORDER /
-        // CHART_ICON / CHART_LABEL defined above.)
-        document.addEventListener("click", function (ev) {
-          var btn = ev.target.closest && ev.target.closest('[data-action="chart-toggle"]');
-          if (!btn) return;
-          var wrap = btn.closest(".phone-wrap[data-code]");
-          if (!wrap) return;
-          ev.preventDefault();
-
-          var cur = wrap.getAttribute("data-chart");
-          var idx = CHART_ORDER.indexOf(cur);
-          if (idx < 0) idx = 0; // unset → treat as donut
-          var nextMode = CHART_ORDER[(idx + 1) % CHART_ORDER.length];
-          var afterNext = CHART_ORDER[(idx + 2) % CHART_ORDER.length];
-          wrap.setAttribute("data-chart", nextMode);
-
-          var glyph = btn.querySelector(".material-symbols-outlined");
-          if (glyph) glyph.textContent = CHART_ICON[afterNext];
-          btn.setAttribute("aria-label", "Switch to " + CHART_LABEL[afterNext]);
-
-          renderCodeWrap(wrap, W.getSlots(), { animate: true });
-        });
       })();
 
       // ─── Browse (Screen 3) — priority chips + food-row bars ──────────
@@ -11376,36 +10731,12 @@
           }).join("");
         }
 
-        // Color-only contribution donut on each Browse card photo. Same
-        // slot color × weight mix as the health bar, painted as a single
-        // conic-gradient (the center is masked to a hole via CSS). No
-        // icons or labels — just the colors.
-        function renderDonut(donutEl, slots) {
-          var active = slots.filter(function (s) {
-            return s.codeId && s.weight > 0 && W.CODE_CATALOG[s.codeId];
-          });
-          var total = active.reduce(function (a, s) { return a + s.weight; }, 0);
-          if (!total) { donutEl.style.background = "var(--surface-2)"; return; }
-          var acc = 0;
-          var stops = active.map(function (s) {
-            var color = W.CODE_CATALOG[s.codeId].color;
-            var from = (acc / total) * 360;
-            acc += s.weight;
-            var to = (acc / total) * 360;
-            return color + " " + from.toFixed(2) + "deg " + to.toFixed(2) + "deg";
-          });
-          donutEl.style.background = "conic-gradient(" + stops.join(",") + ")";
-        }
-
         WISE_CODES.subscribe(function (state) {
           document.querySelectorAll("[data-browse-prio]").forEach(function (el) {
             renderPrioRow(el, state.slots);
           });
           document.querySelectorAll("[data-browse-bar]").forEach(function (el) {
             renderHealthBar(el, state.slots);
-          });
-          document.querySelectorAll("[data-browse-donut]").forEach(function (el) {
-            renderDonut(el, state.slots);
           });
         });
       })();
@@ -11791,8 +11122,7 @@
           var totalContribution = Math.round(totalRaw);
           var composite = totalContribution + W.OTHER_FACTORS;
 
-          // Chart — feeds the shared dispatcher so it honors the
-          // pie-wrap's data-chart (donut / bubble / treemap toggle).
+          // Chart — contribution donut, same renderer as the code hero.
           var pieSvg = phoneWrap.querySelector(".pie-svg[data-id='product-detail']");
           if (pieSvg && typeof renderDetailChart === "function") {
             var slices = filled.map(function (s) {
@@ -11949,11 +11279,7 @@
           var totalContribution = Math.round(totalRaw);
           var composite = totalContribution + W.OTHER_FACTORS;
 
-          // Chart — routes through the shared dispatcher so it honors
-          // the pie-wrap's data-chart (donut / bubble / treemap toggle),
-          // matching the code hero + Product Detail. Slice values are
-          // slot weights, not contributions, so the shape mirrors the
-          // user's code pie 1:1.
+          // Chart — same segmented donut as the code hero and Product Detail.
           var pieSvg = scrollEl.querySelector(".pie-svg[data-id='food-detail']");
           if (pieSvg && typeof renderDetailChart === "function") {
             var slices = filled.map(function (s) {
@@ -12010,26 +11336,17 @@
           // wise-card moved it into an inline .wise-score-row .num.
           var scoreEl = row.querySelector(".score .n") || row.querySelector(".wise-score-row .num");
           var thumbEl = row.querySelector(".food-thumb");
-          var photoImg = row.querySelector(".food-photo img");
-          if (!nameEl || !brandEl || !scoreEl || (!thumbEl && !photoImg)) return;
+          if (!nameEl || !brandEl || !scoreEl || !thumbEl) return;
 
           var nameHtml = nameEl.innerHTML;
           var brandText = brandEl.textContent;
           var rowScore = parseInt(scoreEl.textContent, 10) || 0;
 
-          // Build the hero thumb. Older rows carry an inline-SVG
-          // .food-thumb we clone + re-class; the new Browse image cards
-          // carry a real packshot <img>, which we wrap in the
-          // .product-thumb hero frame (white-backed for the packshot).
-          var thumbHtml;
-          if (thumbEl) {
-            var thumbClone = thumbEl.cloneNode(true);
-            thumbClone.classList.add("fd-thumb");
-            thumbHtml = thumbClone.outerHTML;
-          } else {
-            thumbHtml = '<div class="product-thumb has-photo"><img src="'
-              + photoImg.getAttribute("src") + '" alt="" /></div>';
-          }
+          // Clone the thumb so we can re-class it for the larger
+          // hero frame without disturbing the row's own thumb.
+          var thumbClone = thumbEl.cloneNode(true);
+          thumbClone.classList.add("fd-thumb");
+          var thumbHtml = thumbClone.outerHTML;
 
           var verdict = verdictFor(rowScore);
           var upc = fakeUpc(brandText + "|" + nameEl.textContent);
@@ -12045,12 +11362,11 @@
             +   '</button>'
             +   '<div class="fd-scroll" data-food-detail data-row-score="' + rowScore + '">'
             +     '<div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">'
-            +       '<button class="chart-toggle" data-action="detail-chart-toggle" aria-label="Switch to treemap chart"><span class="material-symbols-outlined">dashboard</span></button>'
             +       '<div class="match-verdict-row">'
             +         '<span class="material-symbols-outlined">' + verdict.icon + '</span>'
             +         W.escapeHtml(verdict.text)
             +       '</div>'
-            +       '<div class="pie-wrap" data-chart="bubble" style="width:240px;height:240px;margin:4px 0 8px;">'
+            +       '<div class="pie-wrap" style="width:240px;height:240px;margin:4px 0 8px;">'
             +         '<svg viewBox="0 0 240 240" width="240" height="240" class="pie-svg"'
             +              ' data-id="food-detail" data-size="240" data-stroke="72"'
             +              ' data-slices="[]" aria-hidden="true"></svg>'
@@ -12122,7 +11438,7 @@
 
           if (action === "food-detail") {
             var phoneWrap = target.closest("[data-browse]");
-            var row = target.closest(".food-row, .food-card");
+            var row = target.closest(".food-row");
             if (phoneWrap && row) {
               ev.preventDefault();
               openFoodDetail(phoneWrap, row);
@@ -12145,7 +11461,7 @@
         // tabindex on the row already make it focusable.
         document.addEventListener("keydown", function (ev) {
           if (ev.key !== "Enter" && ev.key !== " ") return;
-          var row = ev.target.closest && ev.target.closest('.food-row[data-action="food-detail"], .food-card[data-action="food-detail"]');
+          var row = ev.target.closest && ev.target.closest('.food-row[data-action="food-detail"]');
           if (!row) return;
           var phoneWrap = row.closest("[data-browse]");
           if (!phoneWrap) return;
@@ -12520,27 +11836,20 @@
           {
             label: "S2 · Code Detail · sheet",
             source: "1b · Your Code",
-            open: clickSel('.slot-c[data-action="code-detail"]'),
+            open: clickSel('.pie-svg [data-action="code-detail"]'),
             caption:
-              "Tapping a slot row (or its pie slice) on Your Code slides up the per-code detail sheet — description, an inline rebalance hand-off, and chat-starter chips that grow the sheet into a WISE AI conversation about that code.",
+              "Tapping a pie slice on Your Code slides up the per-code detail sheet — description, an inline rebalance hand-off, and chat-starter chips that grow the sheet into a WISE AI conversation about that code.",
           },
           {
-            label: "S3 · Rename · sheet",
-            source: "1b · Your Code",
-            open: clickSel('[data-action="rename-prompt"]'),
+            label: "S4 · Rebalance · sheet",
+            source: "3 · Browse",
+            open: clickSel('[data-action="rebalance-open"]'),
             caption:
-              "Rename (bottom-left of the pie card, or the underlined name in the headline) opens this compact sheet: a single text field pre-filled with the current code name plus Cancel / Save.",
-          },
-          {
-            label: "S4 · Reset · sheet",
-            source: "1b · Your Code",
-            open: clickSel('[data-action="reset-prompt"]'),
-            caption:
-              "Reset double-confirms before wiping: the destructive bottom sheet explains it clears every slot and weight and restores the starting five codes, with Cancel and a red Reset action.",
+              "The Rebalance sheet lists every filled slot as a card: drag the top strip to reorder by importance and slide to fine-tune each weight (the rest rebalance proportionally to hold 100), with a live running total.",
           },
           {
             label: "S5 · Swap a Code · sheet",
-            source: "1b · Your Code",
+            source: "3 · Browse",
             open: openSwap,
             caption:
               "Tapping a rebalance row's swap control stacks the Pick-a-code sheet on top of the rebalance sheet — a sheet-on-sheet trade that swaps that one code out while the rebalance sheet stays mounted underneath.",
@@ -12555,19 +11864,19 @@
           {
             label: "S7 · Food Detail · sheet",
             source: "3 · Browse",
-            open: clickSel('.food-card[data-action="food-detail"]'),
+            open: clickSel('.food-row[data-action="food-detail"]'),
             caption:
               "Tapping a Top Match row opens the food-detail sheet over Browse: contribution donut first (each slice is what that slot contributed to this food's score), then the hero card with image / brand / UPC, then an AI Insights card with chat-starter chips.",
           },
           {
-            label: "S8 · WISE AI Chat · sheet",
+            label: "S9 · WISE AI Chat · sheet",
             source: "1b · Your Code",
             open: clickSel('[data-action="open-chat"]'),
             caption:
               "The floating WISEcode brand bug in any primary header opens a standalone WISE AI chat overlay — the same avatar + tinted-bubble rhythm as the Chat tab, surfaced as a sheet over the page you were on.",
           },
           {
-            label: "S9 · Pin to Home · sheet",
+            label: "S10 · Pin to Home · sheet",
             source: "0 · Intro",
             open: clickSel('[data-action="pin-walkthrough"]'),
             caption:
@@ -12644,22 +11953,35 @@
           });
         }
 
-        // Header section-list → jump to the matching frame. The pills are
-        // authored in the same order as the .screen-pair frames in the rail,
-        // so a positional index maps each one to its target. Clicking scrolls
-        // that frame to the centre of the horizontal rail (and the rail itself
-        // into view if the page has been scrolled past the header).
+        // Header section-list pills → smooth-scroll to the matching frame.
+        // We can't map by position because the rail carries extra frames
+        // (4a / 4b) that the pill row doesn't list, so match each pill's
+        // .idx marker ("DS", "1b", "4"…) against the marker that prefixes
+        // every .screen-pair-label ("4 · Scan (Find a Food)"). Clicking
+        // scrolls the rail into view, then centres the frame in the rail.
         (function wireSectionNav() {
           var items = Array.prototype.slice.call(
             document.querySelectorAll(".section-list li")
           );
-          var frames = Array.prototype.slice.call(
-            document.querySelectorAll(".pair-rail > .screen-pair")
-          );
-          if (!items.length || !frames.length) return;
+          if (!items.length) return;
 
-          function jumpTo(idx) {
-            var frame = frames[idx];
+          function markerOf(text) {
+            return (text || "").split("·")[0].trim().toLowerCase();
+          }
+
+          function frameForMarker(marker) {
+            var frames = document.querySelectorAll(".pair-rail > .screen-pair");
+            for (var i = 0; i < frames.length; i++) {
+              var label = frames[i].querySelector(".screen-pair-label");
+              if (label && markerOf(label.textContent) === marker) {
+                return frames[i];
+              }
+            }
+            return null;
+          }
+
+          function jumpTo(marker) {
+            var frame = frameForMarker(marker);
             if (!frame) return;
             var rail = frame.closest(".pair-rail");
             if (rail && rail.scrollIntoView) {
@@ -12674,16 +11996,18 @@
             }
           }
 
-          items.forEach(function (li, i) {
+          items.forEach(function (li) {
+            var idx = li.querySelector(".idx");
+            var marker = markerOf(idx ? idx.textContent : li.textContent);
             li.setAttribute("role", "button");
             li.setAttribute("tabindex", "0");
             li.addEventListener("click", function () {
-              jumpTo(i);
+              jumpTo(marker);
             });
             li.addEventListener("keydown", function (e) {
               if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
                 e.preventDefault();
-                jumpTo(i);
+                jumpTo(marker);
               }
             });
           });
