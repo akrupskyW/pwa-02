@@ -1521,8 +1521,12 @@
       }
       .pie-card .status-sub {
         color: var(--fg-muted);
-        font-size: 11px; font-weight: 500;
+        font-size: 13px; font-weight: 500;
+        line-height: 1.45;
         margin-top: 2px;
+        text-align: center;
+        max-width: 280px;
+        margin-left: auto; margin-right: auto;
       }
 
       /* Compact slot row used in the Code screen — no slider track, just
@@ -1639,6 +1643,40 @@
       .slot-add .material-symbols-outlined { color: var(--blue); font-size: 18px; }
       @media (hover: hover) {
         .slot-add:hover { border-color: color-mix(in srgb, var(--blue) 50%, var(--line)); }
+      }
+
+      /* ─── AI-compose empty-state button (Screen 1a) ─────────────────
+         The descriptive copy lives in the donut's status / sub-status;
+         this is just the primary action below it. Tapping "Compose with
+         AI" opens the WISE AI chat overlay (same data-action="open-chat"
+         entry as the header brand bug). The button and its "or" divider
+         live outside [data-code-list] so renderSlotList never wipes them,
+         and both hide the moment the code gains a slot. */
+      .cc-btn {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 100%;
+        background: var(--blue);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 999px;
+        padding: 14px 16px;
+        font-size: 14px; font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 8px 20px color-mix(in srgb, var(--blue) 30%, transparent);
+      }
+      .cc-btn:active { transform: scale(.99); }
+
+      /* "or" divider between the compose button and the manual add tile. */
+      .code-compose-or {
+        display: flex; align-items: center; gap: 10px;
+        margin-left: 4px; margin-right: 4px;
+        color: var(--fg-faint);
+        font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .code-compose-or::before,
+      .code-compose-or::after {
+        content: ""; flex: 1; height: 1px; background: var(--line);
       }
 
       /* In-phone code picker — a true bottom sheet. Slides up from the
@@ -4095,6 +4133,81 @@
         color: var(--fg-muted);
         font-size: 14px; line-height: 1.5;
       }
+
+      /* ─── Code-usage toggles (code-detail sheet, opened from Browse) ──
+         Above the description: a single-select segmented control for how
+         the code participates in Browse — Code (ranks results), Filter
+         (hides results under a score tier), or Both — and a single-select
+         row of score-tier pills (Poor … Excellent) for the minimum the
+         Filter enforces. Token-driven so the dark sheet and its cloned
+         light twin both read correctly. */
+      .code-detail-sheet .cd-mode {
+        display: flex; flex-direction: column; gap: 10px;
+        margin-bottom: 16px;
+      }
+      .code-detail-sheet .cd-mode-seg {
+        display: flex;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px;
+        gap: 4px;
+      }
+      .code-detail-sheet .cd-seg-opt {
+        flex: 1;
+        border: none;
+        background: transparent;
+        color: var(--fg-muted);
+        border-radius: 999px;
+        padding: 10px 12px;
+        font-size: 13px; font-weight: 800; letter-spacing: -0.005em;
+        cursor: pointer;
+      }
+      .code-detail-sheet .cd-seg-opt[aria-pressed="true"] {
+        background: var(--card-elev);
+        color: var(--blue);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.30);
+      }
+      /* Light twin: white track collapses contrast, so darken the track
+         and keep the selected pill white with a soft lift. */
+      .theme-light .code-detail-sheet .cd-mode-seg { background: var(--track); }
+      .theme-light .code-detail-sheet .cd-seg-opt[aria-pressed="true"] {
+        background: #FFFFFF;
+        box-shadow: 0 1px 3px rgba(15, 10, 31, 0.14);
+      }
+      /* Minimum-score tiers as a single connected segmented toggle —
+         same vocabulary as the Code / Filter / Both control above, just
+         smaller so all five tiers fit on one row. */
+      .code-detail-sheet .cd-score-row {
+        display: flex;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 3px;
+        gap: 3px;
+      }
+      .code-detail-sheet .cd-score-chip {
+        flex: 1; min-width: 0;
+        border: none;
+        background: transparent;
+        color: var(--fg-muted);
+        border-radius: 999px;
+        padding: 7px 4px;
+        font-size: 10.5px; font-weight: 800; letter-spacing: -0.01em;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+      .code-detail-sheet .cd-score-chip[aria-pressed="true"] {
+        background: var(--card-elev);
+        color: var(--blue);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.30);
+      }
+      .theme-light .code-detail-sheet .cd-score-row { background: var(--track); }
+      .theme-light .code-detail-sheet .cd-score-chip[aria-pressed="true"] {
+        background: #FFFFFF;
+        box-shadow: 0 1px 3px rgba(15, 10, 31, 0.14);
+      }
+
       .code-detail-sheet .cd-section { display: flex; flex-direction: column; gap: 8px; }
       .code-detail-sheet .cd-section-label {
         color: var(--fg-muted);
@@ -4137,10 +4250,10 @@
 
       /* Primary "Add to my code" CTA — only mounted when the sheet is
          opened from the Pick-a-code picker (i.e. the code isn't in the
-         user's code yet). Sits at the end of the cd-scroll so it
-         reads as the commit step after the user has skimmed the
-         description, helps, and chat-starters. Fully-rounded pill
-         per the app-wide rule that buttons are pills. */
+         user's code yet). Sits at the top of the cd-scroll, above the
+         description card, so the commit action is the first thing in
+         reach. Fully-rounded pill per the app-wide rule that buttons
+         are pills. */
       .code-detail-sheet .cd-add-btn {
         flex-shrink: 0;
         display: inline-flex; align-items: center; justify-content: center;
@@ -6389,9 +6502,12 @@
                 <div class="lbl">OF 100</div>
               </div>
             </div>
-            <div class="status" data-code-status>Empty</div>
-            <div class="status-sub"></div>
+            <div class="status-sub">Tell us what matters about your food, and we&rsquo;ll set up your slots and priorities.</div>
           </section>
+
+          <button type="button" class="cc-btn" data-action="open-chat" data-compose-cta>Compose with AI</button>
+
+          <div class="code-compose-or" data-compose-cta>or</div>
 
           <div class="stack-sm" data-code-list>
             <button type="button" class="slot-add" data-action="add">
@@ -6453,12 +6569,15 @@
                 <div class="lbl">OF 100</div>
               </div>
             </div>
+            <div class="status-sub">This is how WISEcoach weights your priorities &mdash; drag to reorder, or tap a code to fine-tune it and chat with WISE AI.</div>
           </section>
 
           <!-- Rebalance rows render inline here (drag to reorder, swap,
                remove, slider to fine-tune) — the renderSlotList renderer
                replaces this on first paint from WISE_CODES.getSlots(). -->
           <div class="stack-sm" data-code-list></div>
+
+          <button type="button" class="cc-btn" data-action="open-chat">Compose with AI</button>
         </div>
       </div>
       <nav class="tab-bar">
@@ -8931,6 +9050,15 @@ HIDDEN -->
             }
           }
 
+          // The AI-compose hero + its "or" divider only belong on the
+          // genuinely-empty Screen 1a — they live outside [data-code-list]
+          // (so this renderer never wipes them), but we hide them the
+          // moment the code picks up a slot, whether via the AI compose
+          // flow or the manual "Add your first code" tile below.
+          phoneWrap.querySelectorAll("[data-compose-cta]").forEach(function (el) {
+            el.style.display = filledCount === 0 ? "" : "none";
+          });
+
           // Don't fight a finger actively reordering this surface.
           if (surface._dragging) return;
 
@@ -8965,16 +9093,14 @@ HIDDEN -->
 
           var statusEl = phoneWrap.querySelector("[data-code-status]");
           if (statusEl) {
-            statusEl.textContent = filled.length === 0
-              ? "Empty"
-              : (inHarmony ? "In Harmony" : "In Progress");
+            statusEl.textContent = inHarmony ? "In Harmony" : "In Progress";
           }
 
           var statusSubEl = phoneWrap.querySelector(".status-sub");
           if (statusSubEl) {
             statusSubEl.textContent = filled.length === 0
-              ? ""
-              : (inHarmony ? "Your weights are balanced" : "Balance weights to reach 100");
+              ? "Tell us what matters about your food, and we\u2019ll set up your slots and priorities."
+              : "This is how WISEcoach weights your priorities \u2014 drag to reorder, or tap a code to fine-tune it and chat with WISE AI.";
           }
 
           var pieSvg = phoneWrap.querySelector(".pie-svg");
@@ -9980,20 +10106,6 @@ HIDDEN -->
               + '</li>';
           }).join("");
 
-          // Bottom-sheet intent chips match the chat's intent chips
-          // exactly — text-only buttons (no icon) that inherit every
-          // typographic and surface property from the shared
-          // .intent-chip rule. Anything else creates a visual seam
-          // between the two surfaces. Each chip carries its label as
-          // data-intent-text so enterChatMode can read it back out
-          // when the user taps to start a chat.
-          var intentsHtml = detail.intents.map(function (i) {
-            return ''
-              + '<button type="button" class="intent-chip" data-action="code-detail-intent" data-intent-text="' + W.escapeHtml(i) + '">'
-              +   W.escapeHtml(i)
-              + '</button>';
-          }).join("");
-
           // Meta row: live weight% when the code is in the code;
           // category only when previewing an unsaved pick.
           var metaHtml = inCode
@@ -10023,6 +10135,26 @@ HIDDEN -->
 
           var composerPlaceholder = W.escapeHtml("Message WISE AI about " + meta.name + "\u2026");
 
+          // "How this code is used in Browse" controls, shown above the
+          // description: a single-select Code / Filter / Both segmented
+          // control + a single-select minimum-score tier row. Defaults
+          // mirror the design reference (Filter active, no tier picked).
+          var cdModeHtml = ''
+            + '<div class="cd-mode">'
+            +   '<div class="cd-mode-seg" role="group" aria-label="How this code is used in Browse">'
+            +     '<button type="button" class="cd-seg-opt" data-action="cd-mode" data-mode="code" aria-pressed="false">Code</button>'
+            +     '<button type="button" class="cd-seg-opt" data-action="cd-mode" data-mode="filter" aria-pressed="true">Filter</button>'
+            +     '<button type="button" class="cd-seg-opt" data-action="cd-mode" data-mode="both" aria-pressed="false">Both</button>'
+            +   '</div>'
+            +   '<div class="cd-score-row" role="group" aria-label="Minimum score">'
+            +     '<button type="button" class="cd-score-chip" data-action="cd-score" data-tier="poor" aria-pressed="false">Poor</button>'
+            +     '<button type="button" class="cd-score-chip" data-action="cd-score" data-tier="fair" aria-pressed="false">Fair</button>'
+            +     '<button type="button" class="cd-score-chip" data-action="cd-score" data-tier="ok" aria-pressed="false">OK</button>'
+            +     '<button type="button" class="cd-score-chip" data-action="cd-score" data-tier="good" aria-pressed="false">Good</button>'
+            +     '<button type="button" class="cd-score-chip" data-action="cd-score" data-tier="excellent" aria-pressed="false">Excellent</button>'
+            +   '</div>'
+            + '</div>';
+
           var overlay = document.createElement("div");
           overlay.className = "code-detail-overlay";
           overlay.setAttribute("data-context", context);
@@ -10043,6 +10175,9 @@ HIDDEN -->
             +   '</div>'
             +   '<div class="cd-rule" aria-hidden="true"></div>'
             +   '<div class="cd-scroll">'
+            +     addCtaHtml
+            +     (showRebalance ? '<div class="cd-intent-row">' + rebalanceChipHtml + '</div>' : '')
+            +     cdModeHtml
             +     '<div class="cd-card">'
             +       '<p class="cd-blurb">' + W.escapeHtml(detail.blurb) + '</p>'
             +       '<div class="cd-section">'
@@ -10050,11 +10185,6 @@ HIDDEN -->
             +         '<ul class="cd-helps">' + helpsHtml + '</ul>'
             +       '</div>'
             +     '</div>'
-            +     '<div class="cd-section cd-chat-card">'
-            +       '<div class="cd-section-label">Chat with WISE AI about this</div>'
-            +       '<div class="cd-intent-row">' + rebalanceChipHtml + intentsHtml + '</div>'
-            +     '</div>'
-            +     addCtaHtml
             +   '</div>'
             +   '<div class="cd-chat-pane">'
             +     '<div class="chat-log" data-chat-log></div>'
@@ -10281,6 +10411,36 @@ HIDDEN -->
           if (action === "open-chat") {
             ev.preventDefault();
             openChatOverlay(target.closest(".phone-wrap"));
+            return;
+          }
+
+          // Code-detail "how this code is used" segmented control —
+          // single-select among Code / Filter / Both. Scoped to the
+          // tapped segment's own group so the dark sheet and its cloned
+          // light twin toggle independently.
+          if (action === "cd-mode") {
+            ev.preventDefault();
+            var seg = target.closest(".cd-mode-seg");
+            if (seg) {
+              seg.querySelectorAll(".cd-seg-opt").forEach(function (b) {
+                b.setAttribute("aria-pressed", b === target ? "true" : "false");
+              });
+            }
+            return;
+          }
+
+          // Code-detail minimum-score pills — single-select tier; tapping
+          // the active tier again clears it (so "no minimum" is reachable).
+          if (action === "cd-score") {
+            ev.preventDefault();
+            var scoreRow = target.closest(".cd-score-row");
+            if (scoreRow) {
+              var wasOn = target.getAttribute("aria-pressed") === "true";
+              scoreRow.querySelectorAll(".cd-score-chip").forEach(function (b) {
+                b.setAttribute("aria-pressed", "false");
+              });
+              target.setAttribute("aria-pressed", wasOn ? "false" : "true");
+            }
             return;
           }
 
