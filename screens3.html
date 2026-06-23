@@ -2175,19 +2175,17 @@
         .health-bar.hb-armed.hb-in { clip-path: none; animation: none; }
       }
 
-      /* "TOP MATCH" pill + "Reevaluate" link sit on one row above the
-         featured card. The pill is left-aligned; the link floats right. */
-      .top-match-head {
-        display: flex; align-items: center; justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 6px;
-      }
-      .top-match-tag {
+      /* "TOP MATCH" pill — tucked into the top-left of the card photo,
+         same footprint as the grid cards below (no separate hero row). */
+      .food-photo .top-match-tag {
+        position: absolute;
+        top: 8px; left: 8px;
+        z-index: 2;
         display: inline-flex; align-items: center;
         background: var(--blue);
         color: #FFFFFF;
-        font-size: 9px; font-weight: 800; letter-spacing: 0.14em;
-        padding: 3px 8px;
+        font-size: 8px; font-weight: 800; letter-spacing: 0.12em;
+        padding: 3px 7px;
         border-radius: 4px;
       }
       /* "Reevaluate" — re-scores the list against the current code mix.
@@ -2335,9 +2333,9 @@
          a real packshot photo on top with a color-only contribution donut
          tucked into the bottom-right quadrant of the photo, then product
          name / brand / WISEscore beneath (the score styled like the Food
-         Detail card). The featured Top Match spans full width with a
-         taller photo; the ranked results sit in a 2-up grid. Packshots are
-         on white, so the photo well stays white in both themes. */
+         Detail card). Top Match uses the same card shell as the ranked
+         results in the 2-up grid below — only the blue pill differs.
+         Packshots are on white, so the photo well stays white in both themes. */
       .food-card {
         display: flex; flex-direction: column;
         background: var(--card);
@@ -2361,8 +2359,6 @@
         display: block;
         padding: 6px;
       }
-      .food-card.featured .food-photo { aspect-ratio: 5 / 4; }
-
       /* Color-only contribution donut over the photo's bottom-right
          quadrant. A frosted white plate keeps the ring legible on any
          packshot; the conic-gradient background (slot color × weight) is
@@ -2379,17 +2375,13 @@
         backdrop-filter: blur(2px);
         -webkit-backdrop-filter: blur(2px);
       }
-      .food-card.featured .food-donut-plate {
-        width: 52px; height: 52px; right: 12px; bottom: 12px;
-      }
       .food-donut {
         width: 30px; height: 30px;
         border-radius: 50%;
         background: var(--surface-2);
-        -webkit-mask: radial-gradient(circle at center, transparent 0 40%, #000 41% 100%);
-                mask: radial-gradient(circle at center, transparent 0 40%, #000 41% 100%);
+        -webkit-mask: radial-gradient(circle at center, transparent 0 42%, #000 43% 100%);
+                mask: radial-gradient(circle at center, transparent 0 42%, #000 43% 100%);
       }
-      .food-card.featured .food-donut { width: 38px; height: 38px; }
 
       .food-card-body {
         display: flex; align-items: flex-end; justify-content: space-between;
@@ -2404,7 +2396,6 @@
         display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical;
         overflow: hidden;
       }
-      .food-card.featured .food-card-body .nm { font-size: 16px; }
       .food-card-body .br {
         color: var(--fg-muted);
         font-size: 11px; font-weight: 500;
@@ -2420,13 +2411,12 @@
         letter-spacing: -0.5px; line-height: 1;
         font-variant-numeric: tabular-nums;
       }
-      .food-card.featured .food-card-body .wise-score-row .num { font-size: 30px; }
       .food-card-body .wise-score-row .denom {
         color: var(--fg-faint);
         font-size: 12px; font-weight: 600;
       }
 
-      /* 2-up grid for ranked results below the featured Top Match. */
+      /* 2-up grid for Top Match + ranked results. */
       .food-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -6582,13 +6572,15 @@
             </div>
           </div>
 
-          <div>
-            <div class="top-match-head">
-              <span class="top-match-tag">TOP MATCH</span>
-              <button type="button" class="reevaluate-link" data-action="reevaluate" aria-label="Re-evaluate matches against your updated code balance"><span class="material-symbols-outlined">autorenew</span>Reevaluate</button>
-            </div>
-            <div class="food-card featured" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Divina Kalamata Olives Pitted">
+          <div class="meta-row">
+            <div class="lhs">ALL RESULTS · 183</div>
+            <button class="rhs">Best Match <span class="material-symbols-outlined" style="font-size:14px;">expand_more</span></button>
+          </div>
+
+          <div class="food-grid">
+            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Divina Kalamata Olives Pitted">
               <div class="food-photo">
+                <span class="top-match-tag">TOP MATCH</span>
                 <img src="assets/browse/divina-kalamata.jpg" alt="Divina Pitted Kalamata Olives jar" loading="lazy" />
                 <span class="food-donut-plate"><span class="food-donut" data-browse-donut aria-hidden="true"></span></span>
               </div>
@@ -6600,14 +6592,6 @@
                 <div class="wise-score-row"><span class="num">98</span><span class="denom">/100</span></div>
               </div>
             </div>
-          </div>
-
-          <div class="meta-row">
-            <div class="lhs">ALL RESULTS · 183</div>
-            <button class="rhs">Best Match <span class="material-symbols-outlined" style="font-size:14px;">expand_more</span></button>
-          </div>
-
-          <div class="food-grid">
             <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for 2× Divina Organic Pitted Green Olives">
               <div class="food-photo">
                 <img src="assets/browse/divina-green.jpg" alt="Divina Organic Pitted Green Olives jar" loading="lazy" />
@@ -6673,7 +6657,7 @@
       </nav>
     </div>
   </div>
-  <div class="phone-caption">Priority chips reflect your live code weights. The featured Top Match has a stronger card; the rest sort by composite score.</div>
+  <div class="phone-caption">Priority chips reflect your live code weights. Top Match and ranked results share the same image card — the mini donut on each photo shows that food's per-slot contribution mix.</div>
 </div>
   </div>
 </section>
@@ -11376,23 +11360,45 @@
           }).join("");
         }
 
-        // Color-only contribution donut on each Browse card photo. Same
-        // slot color × weight mix as the health bar, painted as a single
-        // conic-gradient (the center is masked to a hole via CSS). No
-        // icons or labels — just the colors.
+        // Color-only contribution donut on each Browse card photo. Slice
+        // sizes follow that row's per-slot contribution (weight × scaled
+        // product score), not the raw code weights — so the ring reads as
+        // food-specific. Colors come from CODE_CATALOG; the center hole
+        // is masked via CSS.
         function renderDonut(donutEl, slots) {
+          var card = donutEl.closest(".food-card");
+          var scoreEl = card && card.querySelector(".wise-score-row .num");
+          var rowScore = scoreEl ? parseInt(scoreEl.textContent, 10) : 0;
+
           var active = slots.filter(function (s) {
             return s.codeId && s.weight > 0 && W.CODE_CATALOG[s.codeId];
           });
-          var total = active.reduce(function (a, s) { return a + s.weight; }, 0);
+          if (!active.length) { donutEl.style.background = "var(--surface-2)"; return; }
+
+          var refTotal = active.reduce(function (acc, s) {
+            return acc + s.weight * W.productScore(s.codeId) / 100;
+          }, 0);
+          var targetTotal = Math.max(0, rowScore - W.OTHER_FACTORS);
+          var scale = refTotal > 0 ? targetTotal / refTotal : 0;
+
+          var segments = active.map(function (s) {
+            var base = W.productScore(s.codeId);
+            var scaled = Math.max(0, Math.min(100, base * scale));
+            return {
+              color: W.CODE_CATALOG[s.codeId].color,
+              value: s.weight * scaled / 100
+            };
+          });
+
+          var total = segments.reduce(function (a, seg) { return a + seg.value; }, 0);
           if (!total) { donutEl.style.background = "var(--surface-2)"; return; }
+
           var acc = 0;
-          var stops = active.map(function (s) {
-            var color = W.CODE_CATALOG[s.codeId].color;
+          var stops = segments.map(function (seg) {
             var from = (acc / total) * 360;
-            acc += s.weight;
+            acc += seg.value;
             var to = (acc / total) * 360;
-            return color + " " + from.toFixed(2) + "deg " + to.toFixed(2) + "deg";
+            return seg.color + " " + from.toFixed(2) + "deg " + to.toFixed(2) + "deg";
           });
           donutEl.style.background = "conic-gradient(" + stops.join(",") + ")";
         }

@@ -2221,6 +2221,84 @@
         font-size: 13px; font-weight: 600; letter-spacing: 0;
       }
 
+      /* ─── Browse image cards (Top Matches) ──────────────────────────────
+         Horizontal product cards: a small real packshot thumbnail on the
+         left, the product name / brand in the middle, and the WISEscore
+         (band-colored numeral + muted "/100") on the right. The featured
+         Top Match uses a slightly larger thumb + score; the ranked results
+         stack in a single column beneath. Packshots are on white, so the
+         thumb well stays white in both themes. */
+      .food-card {
+        display: flex; align-items: center; gap: 12px;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 14px;
+        box-shadow: var(--shadow-card);
+        text-align: left;
+        cursor: pointer;
+        padding: 10px 12px;
+      }
+      .food-card.featured { padding: 12px; border-radius: 18px; }
+      .food-card .food-photo {
+        position: relative;
+        flex-shrink: 0;
+        width: 56px; height: 56px;
+        border-radius: 12px;
+        background: #FFFFFF;
+        border: 1px solid var(--line);
+        overflow: hidden;
+      }
+      .food-card.featured .food-photo {
+        width: 72px; height: 72px; border-radius: 14px;
+      }
+      .food-card .food-photo img {
+        width: 100%; height: 100%;
+        object-fit: contain;
+        display: block;
+        padding: 4px;
+      }
+
+      .food-card-body {
+        flex: 1; min-width: 0;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 10px;
+      }
+      .food-card-body .info { flex: 1; min-width: 0; }
+      .food-card-body .nm {
+        color: var(--fg-bright);
+        font-size: 13px; font-weight: 700;
+        letter-spacing: -0.01em; line-height: 1.25;
+        display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .food-card.featured .food-card-body .nm { font-size: 16px; }
+      .food-card-body .br {
+        color: var(--fg-muted);
+        font-size: 11px; font-weight: 500;
+        margin-top: 4px;
+      }
+      .food-card-body .wise-score-row {
+        display: inline-flex; align-items: baseline; gap: 2px;
+        flex-shrink: 0;
+      }
+      .food-card-body .wise-score-row .num {
+        color: var(--emerald);
+        font-size: 22px; font-weight: 800;
+        letter-spacing: -0.5px; line-height: 1;
+        font-variant-numeric: tabular-nums;
+      }
+      .food-card.featured .food-card-body .wise-score-row .num { font-size: 30px; }
+      .food-card-body .wise-score-row .denom {
+        color: var(--fg-faint);
+        font-size: 12px; font-weight: 600;
+      }
+
+      /* Single-column stack for ranked results below the featured Top Match. */
+      .food-grid {
+        display: flex; flex-direction: column;
+        gap: 8px;
+      }
+
       /* ─── Food Detail (Screen 6) ────────────────────────────────────────
          Per-food drill-down reached from a Top Match row in Browse (or a
          barcode result in Scan). Four stacked cards:
@@ -6528,31 +6606,16 @@
               <span class="top-match-tag">TOP MATCH</span>
               <button type="button" class="reevaluate-link" data-action="reevaluate" aria-label="Re-evaluate matches against your updated code balance"><span class="material-symbols-outlined">autorenew</span>Reevaluate</button>
             </div>
-            <div class="food-row featured wise-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Divina Kalamata Olives Pitted">
-              <div class="main">
-                <div class="food-thumb" style="background:linear-gradient(135deg,#5C7148 0%,#2F4225 100%);">
-                  <svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true">
-                    <ellipse cx="14" cy="22" rx="6" ry="8" fill="#1F2A14"/>
-                    <ellipse cx="14" cy="22" rx="6" ry="8" fill="url(#oliveSheen)"/>
-                    <ellipse cx="25" cy="18" rx="6" ry="8" fill="#1F2A14"/>
-                    <ellipse cx="25" cy="18" rx="6" ry="8" fill="url(#oliveSheen)"/>
-                    <defs>
-                      <radialGradient id="oliveSheen" cx="35%" cy="30%" r="50%">
-                        <stop offset="0%" stop-color="#5C7148" stop-opacity="0.7"/>
-                        <stop offset="100%" stop-color="#000" stop-opacity="0"/>
-                      </radialGradient>
-                    </defs>
-                  </svg>
-                </div>
+            <div class="food-card featured" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Divina Kalamata Olives Pitted">
+              <div class="food-photo">
+                <img src="assets/browse/divina-kalamata.jpg" alt="Divina Pitted Kalamata Olives jar" loading="lazy" />
+              </div>
+              <div class="food-card-body">
                 <div class="info">
                   <div class="nm">Divina Kalamata Olives Pitted</div>
                   <div class="br">Divina</div>
-                  <div class="wise-score-row"><span class="num">98</span><span class="denom">/100</span></div>
                 </div>
-              </div>
-              <div class="bar-row">
-                <div class="health-bar" data-browse-bar></div>
-                <span class="chev"><span class="material-symbols-outlined">chevron_right</span></span>
+                <div class="wise-score-row"><span class="num">98</span><span class="denom">/100</span></div>
               </div>
             </div>
           </div>
@@ -6562,78 +6625,53 @@
             <button class="rhs">Best Match <span class="material-symbols-outlined" style="font-size:14px;">expand_more</span></button>
           </div>
 
-          <div style="display:flex;flex-direction:column;gap:6px;">
-            <div class="food-row" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for 2× Divina Organic Pitted Green Olives">
-              <div class="main">
-                <div class="food-thumb" style="background:linear-gradient(135deg,#7DA45D 0%,#3F5128 100%);">
-                  <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true">
-                    <ellipse cx="14" cy="20" rx="6" ry="8" fill="#3F5128"/>
-                    <ellipse cx="25" cy="22" rx="6" ry="8" fill="#3F5128"/>
-                    <ellipse cx="19" cy="14" rx="5" ry="6" fill="#3F5128"/>
-                  </svg>
-                </div>
+          <div class="food-grid">
+            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for 2× Divina Organic Pitted Green Olives">
+              <div class="food-photo">
+                <img src="assets/browse/divina-green.jpg" alt="Divina Organic Pitted Green Olives jar" loading="lazy" />
+              </div>
+              <div class="food-card-body">
                 <div class="info">
                   <div class="nm">2× Divina Organic Pitted Green Olives</div>
                   <div class="br">Divina</div>
                 </div>
-                <div class="score"><div class="n">95</div><div class="of">OF 100</div></div>
-              </div>
-              <div class="bar-row">
-                <div class="health-bar" data-browse-bar></div>
+                <div class="wise-score-row"><span class="num">95</span><span class="denom">/100</span></div>
               </div>
             </div>
-            <div class="food-row" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Castelvetrano Olives Pitted">
-              <div class="main">
-                <div class="food-thumb" style="background:linear-gradient(135deg,#A4B26C 0%,#566D2C 100%);">
-                  <svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true">
-                    <ellipse cx="14" cy="20" rx="6" ry="8" fill="#566D2C"/>
-                    <ellipse cx="25" cy="22" rx="6" ry="8" fill="#566D2C"/>
-                  </svg>
-                </div>
+            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Castelvetrano Olives Pitted">
+              <div class="food-photo">
+                <img src="assets/browse/divina-castelvetrano.jpg" alt="Divina Pitted Castelvetrano Olives jar" loading="lazy" />
+              </div>
+              <div class="food-card-body">
                 <div class="info">
                   <div class="nm">Castelvetrano Olives Pitted</div>
                   <div class="br">Divina</div>
                 </div>
-                <div class="score"><div class="n">93</div><div class="of">OF 100</div></div>
-              </div>
-              <div class="bar-row">
-                <div class="health-bar" data-browse-bar></div>
+                <div class="wise-score-row"><span class="num">93</span><span class="denom">/100</span></div>
               </div>
             </div>
-            <div class="food-row" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Castelvetrano Organic Olives Pitted">
-              <div class="main">
-                <div class="food-thumb" style="background:linear-gradient(135deg,#B5C481 0%,#6E8634 100%);">
-                  <svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true">
-                    <ellipse cx="14" cy="20" rx="6" ry="8" fill="#6E8634"/>
-                    <ellipse cx="25" cy="22" rx="6" ry="8" fill="#6E8634"/>
-                  </svg>
-                </div>
+            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Castelvetrano Organic Olives Pitted">
+              <div class="food-photo">
+                <img src="assets/browse/divina-castelvetrano-organic.jpg" alt="Divina Organic Pitted Castelvetrano Olives jar" loading="lazy" />
+              </div>
+              <div class="food-card-body">
                 <div class="info">
                   <div class="nm">Castelvetrano Organic Olives Pitted</div>
                   <div class="br">Divina</div>
                 </div>
-                <div class="score"><div class="n">91</div><div class="of">OF 100</div></div>
-              </div>
-              <div class="bar-row">
-                <div class="health-bar" data-browse-bar></div>
+                <div class="wise-score-row"><span class="num">91</span><span class="denom">/100</span></div>
               </div>
             </div>
-            <div class="food-row" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for GAEA Organic Olives Pitted">
-              <div class="main">
-                <div class="food-thumb" style="background:linear-gradient(135deg,#8FA257 0%,#465525 100%);">
-                  <svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true">
-                    <ellipse cx="14" cy="20" rx="6" ry="8" fill="#465525"/>
-                    <ellipse cx="25" cy="22" rx="6" ry="8" fill="#465525"/>
-                  </svg>
-                </div>
+            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for GAEA Organic Olives Pitted">
+              <div class="food-photo">
+                <img src="assets/browse/gaea-green.jpg" alt="GAEA Organic Pitted Green Olives jar" loading="lazy" />
+              </div>
+              <div class="food-card-body">
                 <div class="info">
                   <div class="nm">GAEA Organic Olives Pitted</div>
                   <div class="br">Gaea</div>
                 </div>
-                <div class="score"><div class="n">89</div><div class="of">OF 100</div></div>
-              </div>
-              <div class="bar-row">
-                <div class="health-bar" data-browse-bar></div>
+                <div class="wise-score-row"><span class="num">89</span><span class="denom">/100</span></div>
               </div>
             </div>
           </div>
