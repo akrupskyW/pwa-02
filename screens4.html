@@ -794,6 +794,24 @@
         color: var(--fg-bright);
         font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1;
       }
+      /* Drill-down screens (Product Detail, etc.) — back affordance left
+         of the headline; the WISEcode bug still floats right via
+         .scr-hdr-headline. */
+      .scr-hdr-nav { gap: 4px; }
+      .scr-hdr-nav .scr-hdr-headline { flex: 1; min-width: 0; }
+      .scr-back {
+        flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 36px; height: 36px;
+        margin: 0 2px 0 -6px;
+        padding: 0;
+        border: none; border-radius: 50%;
+        background: transparent;
+        color: var(--fg-bright);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .scr-back .material-symbols-outlined { font-size: 22px; }
       .scr-hdr .sub {
         color: var(--fg-muted); font-size: 12px; font-weight: 500; margin-top: 4px;
       }
@@ -2341,7 +2359,7 @@
          Per-food drill-down reached from a Top Match row in Browse (or a
          barcode result in Scan). Four stacked cards:
 
-           1. Product hero  — image + name/brand + UPC pill, with the
+           1. Product hero  — image + name/brand, with the
                               WISEscore (composite score) floated right
            2. Score card    — "Excellent match" verdict and a per-slot
                               contribution table beneath
@@ -2385,31 +2403,7 @@
         margin-top: 5px;
       }
 
-      /* UPC pill under the brand — barcode glyph + monospaced UPC. Sits
-         in a rounded chip with the standard surface-2 background so it
-         reads as a metadata badge, not interactive. */
-      .upc-pill {
-        display: inline-flex; align-items: center; gap: 6px;
-        margin-top: 8px;
-        padding: 4px 10px;
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        color: var(--fg);
-        font-size: 11px; font-weight: 600;
-        font-variant-numeric: tabular-nums;
-        letter-spacing: 0.02em;
-      }
-      .upc-pill .material-symbols-outlined {
-        font-size: 14px;
-        color: var(--fg-muted);
-      }
-
-      /* WISEscore — the composite score (formerly the donut center) now
-         floated to the right of the product hero card. Big band-colored
-         numeral over a muted "/100" and a "WISEscore" caption. The
-         .num carries data-product-detail-score so the live subscriber
-         keeps rewriting it from the code + per-slot scores. */
+      /* WISEscore — composite score floated right on the product hero. */
       .fd-wisescore {
         flex-shrink: 0;
         display: flex; flex-direction: column;
@@ -2436,48 +2430,143 @@
         letter-spacing: 0.12em; text-transform: uppercase;
       }
 
-      /* Centered "Excellent match for your code" verdict at the top of the
-         score card. check_circle glyph + label, both in the primary brand
-         blue (the app's primary accent) so the verdict reads as a branded
-         match callout rather than another score-tier green. */
-      .match-verdict-row {
-        display: inline-flex; align-items: center; gap: 8px;
-        color: var(--blue);
-        font-size: 14px; font-weight: 800;
-        letter-spacing: -0.005em;
-        appearance: none; -webkit-appearance: none;
-        background: none; border: 0; padding: 0;
-        font-family: inherit;
-        cursor: pointer;
-        transition: opacity 140ms ease;
+      /* Product hero card — thumb + WISEscore on top, expandable score
+         breakdown tucked behind a Details link (accordion). */
+      .food-hero-card {
+        display: flex; flex-direction: column;
+        gap: 0;
       }
-      @media (hover: hover) {
-        .match-verdict-row:hover { opacity: 0.82; }
+      .food-hero-main {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 14px;
+        flex-wrap: nowrap;
       }
-      .match-verdict-row .material-symbols-outlined {
-        font-size: 20px;
-        color: var(--blue);
+      .food-hero-body {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
       }
-      /* WISEcode bug standing in for the old check glyph; currentColor
-         picks up the verdict's brand blue. */
-      .match-verdict-row .wise-bug-mark {
-        width: 26px;
+      .food-hero-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .product-thumb,
+      .food-hero-main .food-photo {
         flex-shrink: 0;
+        order: 0;
+      }
+      .product-thumb > img,
+      .food-hero-main .food-photo > img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+        padding: 4px;
+      }
+      .fd-details-toggle {
+        display: flex; align-items: center; justify-content: space-between;
+        width: 100%;
+        margin-top: 12px;
+        padding: 10px 0 0;
+        border: none;
+        border-top: 1px solid var(--line);
+        background: transparent;
+        color: var(--blue);
+        font: inherit;
+        font-size: 13px; font-weight: 700; letter-spacing: -0.01em;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .fd-details-toggle .material-symbols-outlined {
+        font-size: 20px;
+        transition: transform 220ms cubic-bezier(.2,.85,.25,1);
+      }
+      .food-hero-card.is-details-open .fd-details-toggle .material-symbols-outlined {
+        transform: rotate(180deg);
+      }
+      .fd-details-panel {
+        display: grid;
+        grid-template-rows: 0fr;
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          grid-template-rows 280ms cubic-bezier(.2,.85,.25,1),
+          max-height 280ms cubic-bezier(.2,.85,.25,1);
+      }
+      .food-hero-card.is-details-open .fd-details-panel {
+        grid-template-rows: 1fr;
+        max-height: 2400px;
+      }
+      .fd-details-panel-inner {
+        overflow: hidden;
+        min-height: 0;
+        display: flex; flex-direction: column; align-items: stretch;
+        gap: 8px;
+        width: 100%;
+      }
+      .food-hero-card.is-details-open .fd-details-panel-inner {
+        padding-top: 14px;
       }
 
-      /* Per-slot contribution row beneath the donut. Icon + name on the
-         left, percent + contribution value on the right. Subtle border
-         under each row reads as the table-style divider in the mock. */
+      /* Scan History — groups of product-detail-style hero cards. */
+      .scan-history-list {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+      .scan-history-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .scan-history-group-title {
+        margin: 0;
+        padding: 0 2px;
+        color: var(--fg-muted);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+      .scan-history-group-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .scan-history-card {
+        display: block;
+        width: 100%;
+        cursor: pointer;
+        text-align: left;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 120ms ease, border-color 120ms ease;
+      }
+      @media (hover: hover) {
+        .scan-history-card:hover { border-color: var(--line-strong); }
+      }
+      .scan-history-card:active { transform: scale(0.995); }
+      .scan-history-card .food-hero-main { align-items: center; }
+
+      /* Per-slot contribution row in the Details accordion. Icon + name +
+         score on the head row; a single-code health bar (fill = score out
+         of 100) sits beneath. No weight percentage. */
       .contrib-list {
         width: 100%;
         margin-top: 4px;
       }
       .contrib-row {
-        display: flex; align-items: center; gap: 12px;
+        display: flex; flex-direction: column; gap: 8px;
         padding: 10px 2px;
         border-bottom: 1px solid var(--line-subtle);
       }
       .contrib-row:last-child { border-bottom: none; }
+      .contrib-row-head {
+        display: flex; align-items: center; gap: 12px;
+      }
       .contrib-row .ico {
         width: 22px; height: 22px;
         display: inline-flex; align-items: center; justify-content: center;
@@ -2490,17 +2579,25 @@
         font-size: 14px; font-weight: 600;
         letter-spacing: -0.005em;
       }
-      .contrib-row .pct {
-        color: var(--fg-muted);
-        font-size: 13px; font-weight: 700;
-        font-variant-numeric: tabular-nums;
-        min-width: 36px; text-align: right;
+      .contrib-row .code-score {
+        display: inline-flex; align-items: baseline; gap: 2px;
+        flex-shrink: 0;
       }
-      .contrib-row .val {
+      .contrib-row .code-score .n {
         color: var(--fg-bright);
-        font-size: 14px; font-weight: 700;
+        font-size: 16px; font-weight: 800;
+        letter-spacing: -0.02em; line-height: 1;
         font-variant-numeric: tabular-nums;
-        min-width: 38px; text-align: right;
+      }
+      .contrib-row .code-score .of {
+        color: var(--fg-faint);
+        font-size: 12px; font-weight: 600;
+        letter-spacing: 0;
+      }
+      .contrib-row .contrib-code-bar { margin-top: 0; }
+      .contrib-row .contrib-code-bar .seg-track {
+        background: var(--surface-2);
+        opacity: 0.9;
       }
 
       /* Footer line under the contribution table — "Total Contribution"
@@ -2571,6 +2668,11 @@
         color: var(--fg-muted);
         font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
         text-transform: uppercase;
+      }
+      .fd-ai-card .fd-ai-synopsis {
+        margin: 0;
+        color: var(--fg-muted);
+        font-size: 14px; font-weight: 500; line-height: 1.5;
       }
       .fd-ai-card .fd-ai-intents {
         display: flex; flex-wrap: wrap; gap: 6px;
@@ -4355,12 +4457,13 @@
         right: 16px;
         width: 36px; height: 36px;
         border-radius: 999px;
-        background: var(--surface-2);
+        background: var(--card);
         border: 1px solid var(--line);
         color: var(--fg);
         display: inline-flex; align-items: center; justify-content: center;
         cursor: pointer;
-        z-index: 1;
+        z-index: 5;
+        pointer-events: auto;
         transition: background 120ms ease, border-color 120ms ease;
       }
       @media (hover: hover) {
@@ -4384,13 +4487,18 @@
          inner SVG isn't resized via attribute (those are inline on
          the source markup); a transform-scale gives the icon
          proportionally bigger presence inside the bigger frame. */
-      .food-detail-sheet .food-thumb.fd-thumb {
-        width: 80px; height: 80px;
+      .food-detail-sheet .food-thumb.fd-thumb,
+      .food-detail-sheet .product-thumb.fd-thumb {
+        width: 84px; height: 84px;
         border-radius: 18px;
       }
-      .food-detail-sheet .food-thumb.fd-thumb > svg {
+      .food-detail-sheet .food-thumb.fd-thumb > svg,
+      .food-detail-sheet .product-thumb.fd-thumb > svg {
         transform: scale(1.4);
         transform-origin: center;
+      }
+      .food-detail-sheet .product-thumb.fd-thumb > img {
+        transform: none;
       }
       /* Tighter card padding inside the sheet vs the full Product
          Detail screen — the sheet is narrower visually and the user
@@ -5887,8 +5995,8 @@
           <li><span class="idx">1a</span>Your Code (Empty)</li>
           <li><span class="idx">1b</span>Your Code (Home)</li>
           <li><span class="idx">2</span>Add Code (Pick)</li>
-          <li><span class="idx">3</span>Browse (Top Matches)</li>
           <li><span class="idx">4</span>Scan (Find a Food)</li>
+          <li><span class="idx">4c</span>Scan History</li>
           <li><span class="idx">5</span>Chat</li>
           <li><span class="idx">6</span>Food Detail</li>
           <li><span class="idx">7</span>Settings</li>
@@ -5928,20 +6036,20 @@
                                 list; underlined code-name woven into the h1
                                 (Rename in the pie-card edits it)
         2.  ADD CODE (PICK)   — full-screen picker, 4 categories
-        3.  BROWSE            — priorities row + featured + ranked olives
         4.  SCAN              — viewfinder up top, barcode CTA + UPC field
                                 anchored to the bottom (thumb-reach zone)
-        4a. FRESH FIND · FRONT — Step 1 of 2 · photograph package front
-        4b. FRESH FIND · BACK  — Step 2 of 2 · photograph package back
+        4c. SCAN HISTORY      — scans grouped by day / week / month; each
+                                group title heads a stack of product-detail
+                                hero cards from past barcode scans
         5.  CHAT              — header kebab (new / share / export
                                 conversation), textarea, intent chips, send
-        6.  FOOD DETAIL       — product hero (thumb + brand + UPC) over a
-                                contribution donut and per-slot breakdown
-                                table; reached by tapping a Top Match row
-                                in Browse or a barcode result in Scan
+        6.  FOOD DETAIL       — product hero (thumb + brand + WISEscore) with
+                                expandable Details accordion; reached by
+                                tapping a barcode result in Scan or any
+                                card in Scan History
       -->
       <div class="pair-rail-hint">
-        <span>Design system + 11 frames · dark + light side-by-side</span>
+        <span>Design system + 12 frames · dark + light side-by-side</span>
         <span class="arrows">Scroll <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
       </div>
       <div class="pair-rail-frame">
@@ -6521,6 +6629,7 @@
         <div class="tab-pill">
           <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
@@ -6584,6 +6693,7 @@
         <div class="tab-pill">
           <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
@@ -6625,7 +6735,7 @@
            rendered at boot from CODE_CATALOG + WISE_CODES.getSlots(),
            so a code that's already in the code (Screens 1/6) shows as
            "In your code" here, and tapping an available row adds it to
-           the code — propagating to Screens 1, 3, 6, and 7 in one
+           the code — propagating to Screens 1, 6, and 7 in one
            pass. -->
       <div class="code-picker-overlay code-picker-static">
         <div class="code-picker-card">
@@ -6656,157 +6766,6 @@
     </div>
   </div>
   <div class="phone-caption">Bottom sheet over the code — search at the top, group-by-category / A–Z toggle next to it, then the catalog grouped by family. Each row pushes the slot detail (weight + composition) onto the stack.</div>
-</div>
-  </div>
-</section>
-
-<!-- ─── 3. BROWSE — Top Matches ──────────────────────────────────────── -->
-<section class="screen-pair">
-  <h3 class="screen-pair-label">3 · Browse (Top Matches)</h3>
-  <div class="pair-row">
-<div class="phone-wrap" data-browse>
-  <div class="phone-label">Dark</div>
-  <div class="phone">
-    <div class="island"></div>
-    <div class="glow-l" style="background:radial-gradient(closest-side, rgba(29, 78, 216, 0.22), transparent 70%);"></div>
-    <div class="glow-r"></div>
-    <div class="status-bar"><span>9:41</span>
-      <span class="right">
-        <span class="bars"><span></span><span></span><span></span><span></span></span>
-        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
-        <span class="battery"><i></i></span>
-      </span>
-    </div>
-    <div class="screen">
-      <div class="scroll">
-        <div class="scr-hdr">
-          <h1>Top Matches</h1>
-        </div>
-
-        <div class="px stack">
-          <div class="prio-head">
-            <span class="prio-head-label">Your priorities</span>
-            <button class="prio-rebalance-btn" type="button" data-action="rebalance-open" aria-label="Rebalance code weights"><span class="material-symbols-outlined">tune</span>Rebalance</button>
-          </div>
-          <div class="prio-row-wrap">
-            <!-- Priority chips are populated by the browse subscriber from
-                 WISE_CODES.getSlots(), sorted by descending weight, so
-                 they always mirror the code on Screens 1/6. -->
-            <div class="prio-row" data-browse-prio></div>
-          </div>
-
-          <!-- Filter chips — sit directly below the 5×2 priority grid and
-               above the TOP MATCH badge. Tapping a chip slides up a bottom
-               sheet of multi-select options (codes from
-               WISE_CODES.CODE_CATALOG, ingredients from a static list),
-               mounted at runtime by the browse-filters controller. The
-               count badge on the chip shows how many options are active. -->
-          <div class="browse-filters" data-browse-filters>
-            <div class="filter-chip-wrap" data-filter-group="ingredients">
-              <button type="button" class="filter-chip" data-filter-chip aria-haspopup="dialog" aria-expanded="false">
-                <span class="material-symbols-outlined fc-lead">nutrition</span>
-                <span class="fc-text">Ingredients</span>
-                <span class="fc-count" data-filter-count hidden>0</span>
-                <span class="material-symbols-outlined fc-caret">expand_more</span>
-              </button>
-            </div>
-            <div class="filter-chip-wrap" data-filter-group="codes">
-              <button type="button" class="filter-chip" data-filter-chip aria-haspopup="dialog" aria-expanded="false">
-                <span class="material-symbols-outlined fc-lead">category</span>
-                <span class="fc-text">Codes</span>
-                <span class="fc-count" data-filter-count hidden>0</span>
-                <span class="material-symbols-outlined fc-caret">expand_more</span>
-              </button>
-            </div>
-          </div>
-
-          <div>
-            <div class="top-match-head">
-              <span class="top-match-tag">TOP MATCH</span>
-              <button type="button" class="reevaluate-link" data-action="reevaluate" aria-label="Re-evaluate matches against your updated code balance"><span class="material-symbols-outlined">autorenew</span>Reevaluate</button>
-            </div>
-            <div class="food-card featured" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Divina Kalamata Olives Pitted">
-              <div class="food-photo">
-                <img src="assets/browse/divina-kalamata.jpg" alt="Divina Pitted Kalamata Olives jar" loading="lazy" />
-              </div>
-              <div class="food-card-body">
-                <div class="info">
-                  <div class="nm">Divina Kalamata Olives Pitted</div>
-                  <div class="br">Divina</div>
-                </div>
-                <div class="wise-score-row"><span class="num">98</span><span class="denom">/100</span></div>
-              </div>
-            </div>
-          </div>
-
-          <div class="meta-row">
-            <div class="lhs">ALL RESULTS · 183</div>
-            <button class="rhs">Best Match <span class="material-symbols-outlined" style="font-size:14px;">expand_more</span></button>
-          </div>
-
-          <div class="food-grid">
-            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for 2× Divina Organic Pitted Green Olives">
-              <div class="food-photo">
-                <img src="assets/browse/divina-green.jpg" alt="Divina Organic Pitted Green Olives jar" loading="lazy" />
-              </div>
-              <div class="food-card-body">
-                <div class="info">
-                  <div class="nm">2× Divina Organic Pitted Green Olives</div>
-                  <div class="br">Divina</div>
-                </div>
-                <div class="wise-score-row"><span class="num">95</span><span class="denom">/100</span></div>
-              </div>
-            </div>
-            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Castelvetrano Olives Pitted">
-              <div class="food-photo">
-                <img src="assets/browse/divina-castelvetrano.jpg" alt="Divina Pitted Castelvetrano Olives jar" loading="lazy" />
-              </div>
-              <div class="food-card-body">
-                <div class="info">
-                  <div class="nm">Castelvetrano Olives Pitted</div>
-                  <div class="br">Divina</div>
-                </div>
-                <div class="wise-score-row"><span class="num">93</span><span class="denom">/100</span></div>
-              </div>
-            </div>
-            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for Castelvetrano Organic Olives Pitted">
-              <div class="food-photo">
-                <img src="assets/browse/divina-castelvetrano-organic.jpg" alt="Divina Organic Pitted Castelvetrano Olives jar" loading="lazy" />
-              </div>
-              <div class="food-card-body">
-                <div class="info">
-                  <div class="nm">Castelvetrano Organic Olives Pitted</div>
-                  <div class="br">Divina</div>
-                </div>
-                <div class="wise-score-row"><span class="num">91</span><span class="denom">/100</span></div>
-              </div>
-            </div>
-            <div class="food-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open food detail for GAEA Organic Olives Pitted">
-              <div class="food-photo">
-                <img src="assets/browse/gaea-green.jpg" alt="GAEA Organic Pitted Green Olives jar" loading="lazy" />
-              </div>
-              <div class="food-card-body">
-                <div class="info">
-                  <div class="nm">GAEA Organic Olives Pitted</div>
-                  <div class="br">Gaea</div>
-                </div>
-                <div class="wise-score-row"><span class="num">89</span><span class="denom">/100</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <nav class="tab-bar">
-        <div class="tab-pill">
-          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
-        </div>
-      </nav>
-    </div>
-  </div>
-  <div class="phone-caption">Priority chips reflect your live code weights. The featured Top Match has a stronger card; the rest sort by composite score.</div>
 </div>
   </div>
 </section>
@@ -6863,6 +6822,7 @@
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab active"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
@@ -6870,6 +6830,147 @@
     </div>
   </div>
   <div class="phone-caption">A real device camera fills the screen via getUserMedia (rear-facing where available); tapping the viewport requests permission and starts the live feed, with corner brackets framing the barcode. The dismiss button anchors to the bottom, within thumb reach above the tab bar.</div>
+</div>
+  </div>
+</section>
+
+<!-- ─── 4c. SCAN HISTORY — past scans as product-detail-style cards ─── -->
+<section class="screen-pair">
+  <h3 class="screen-pair-label">4c · Scan History</h3>
+  <div class="pair-row">
+<div class="phone-wrap" data-scan-history>
+  <div class="phone-label">Dark</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <h1>Scan History</h1>
+        </div>
+
+        <div class="px stack">
+          <div class="scan-history-list">
+            <section class="scan-history-group">
+              <h2 class="scan-history-group-title">Today</h2>
+              <div class="scan-history-group-cards">
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Wild Atlantic Salmon Fillet" data-row-score="94">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
+                        <rect x="0" y="0" width="80" height="80" fill="#0F0F12"/>
+                        <text x="40" y="14" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="6.5" font-weight="800" fill="#F4F2F6" letter-spacing="0.04em">VitalChoice</text>
+                        <text x="40" y="22" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="4" font-weight="700" fill="#9C99A6" letter-spacing="0.18em">WILD SALMON</text>
+                        <rect x="8" y="30" width="64" height="40" rx="3" fill="#1A1A22"/>
+                        <path d="M12 50 L68 38 L68 64 L12 66 Z" fill="#E2613A"/>
+                      </svg>
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">Wild Atlantic Salmon Fillet</div>
+                        <div class="product-brand">Vital Choice</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">94</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="scan-history-group">
+              <h2 class="scan-history-group-title">Yesterday</h2>
+              <div class="scan-history-group-cards">
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Divina Kalamata Olives Pitted" data-row-score="98">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <img src="assets/browse/divina-kalamata.jpg" alt="" loading="lazy" />
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">Divina Kalamata Olives Pitted</div>
+                        <div class="product-brand">Divina</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">98</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="scan-history-group">
+              <h2 class="scan-history-group-title">This week</h2>
+              <div class="scan-history-group-cards">
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Divina Organic Pitted Green Olives" data-row-score="95">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <img src="assets/browse/divina-green.jpg" alt="" loading="lazy" />
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">Divina Organic Pitted Green Olives</div>
+                        <div class="product-brand">Divina</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">95</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="scan-history-group">
+              <h2 class="scan-history-group-title">Last month</h2>
+              <div class="scan-history-group-cards">
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Castelvetrano Olives Pitted" data-row-score="93">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <img src="assets/browse/divina-castelvetrano.jpg" alt="" loading="lazy" />
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">Castelvetrano Olives Pitted</div>
+                        <div class="product-brand">Divina</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">93</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab active"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Reached from the History tab in primary navigation. Past scans are grouped by day, week, and month — each section title sits above a stack of product-detail hero cards (packshot, name, brand, WISEscore). Tap any card to open the full food-detail sheet with the Details accordion.</div>
 </div>
   </div>
 </section>
@@ -7039,6 +7140,7 @@ HIDDEN -->
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
           <a class="tab active violet"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
@@ -7050,7 +7152,7 @@ HIDDEN -->
   </div>
 </section>
 
-<!-- ─── 6. FOOD DETAIL — per-food drill-down from Top Matches ────────── -->
+<!-- ─── 6. FOOD DETAIL — per-food drill-down from Scan / History ─────── -->
 <section class="screen-pair">
   <h3 class="screen-pair-label">6 · Food Detail</h3>
   <div class="pair-row">
@@ -7069,85 +7171,75 @@ HIDDEN -->
     </div>
     <div class="screen">
       <div class="scroll">
-        <div class="scr-hdr">
+        <div class="scr-hdr scr-hdr-nav">
+          <button type="button" class="scr-back" aria-label="Back">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
           <h1>Product Detail</h1>
         </div>
 
         <div class="px stack">
-          <!-- ─── Product hero — thumb + name + brand, with the WISEscore
-               (formerly the donut center) floated to the right ─── -->
-          <div class="card pad-l" style="display:flex;align-items:center;gap:14px;">
-            <div class="product-thumb">
-              <!-- Vital Choice "WILD SALMON" packaging illustration. Black
-                   box with a salmon-pink fillet inset on the bottom half;
-                   stylised brand wordmark sits along the top edge. -->
-              <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
-                <rect x="0" y="0" width="80" height="80" fill="#0F0F12"/>
-                <text x="40" y="14" text-anchor="middle"
-                      font-family="DM Sans, system-ui, sans-serif"
-                      font-size="6.5" font-weight="800"
-                      fill="#F4F2F6" letter-spacing="0.04em">VitalChoice</text>
-                <text x="40" y="22" text-anchor="middle"
-                      font-family="DM Sans, system-ui, sans-serif"
-                      font-size="4" font-weight="700"
-                      fill="#9C99A6" letter-spacing="0.18em">WILD SALMON</text>
-                <rect x="8" y="30" width="64" height="40" rx="3" fill="#1A1A22"/>
-                <path d="M12 50 L68 38 L68 64 L12 66 Z" fill="#E2613A"/>
-                <path d="M14 51 L66 40 L66 46 L14 56 Z" fill="#F08A5F" opacity="0.55"/>
-                <path d="M14 56 L66 46" stroke="#FBE4D5" stroke-width="0.8" opacity="0.55"/>
-                <path d="M18 60 L66 52" stroke="#FBE4D5" stroke-width="0.6" opacity="0.4"/>
-                <path d="M22 63 L66 56" stroke="#FBE4D5" stroke-width="0.5" opacity="0.3"/>
-              </svg>
-            </div>
-            <div style="flex:1;min-width:0;">
-              <div class="product-name">Wild Atlantic<br/>Salmon Fillet</div>
-              <div class="product-brand">Vital Choice</div>
-            </div>
-            <!-- WISEscore — the composite score that used to read in the
-                 donut center. data-product-detail-score keeps it live. -->
-            <div class="fd-wisescore">
-              <div class="score">
-                <span class="num" data-product-detail-score>94</span>
+          <!-- ─── Product hero — thumb + name + brand + WISEscore + Details accordion ─── -->
+          <div class="card pad-l food-hero-card">
+            <div class="food-hero-main">
+              <div class="product-thumb">
+                <!-- Vital Choice "WILD SALMON" packaging illustration. Black
+                     box with a salmon-pink fillet inset on the bottom half;
+                     stylised brand wordmark sits along the top edge. -->
+                <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
+                  <rect x="0" y="0" width="80" height="80" fill="#0F0F12"/>
+                  <text x="40" y="14" text-anchor="middle"
+                        font-family="DM Sans, system-ui, sans-serif"
+                        font-size="6.5" font-weight="800"
+                        fill="#F4F2F6" letter-spacing="0.04em">VitalChoice</text>
+                  <text x="40" y="22" text-anchor="middle"
+                        font-family="DM Sans, system-ui, sans-serif"
+                        font-size="4" font-weight="700"
+                        fill="#9C99A6" letter-spacing="0.18em">WILD SALMON</text>
+                  <rect x="8" y="30" width="64" height="40" rx="3" fill="#1A1A22"/>
+                  <path d="M12 50 L68 38 L68 64 L12 66 Z" fill="#E2613A"/>
+                  <path d="M14 51 L66 40 L66 46 L14 56 Z" fill="#F08A5F" opacity="0.55"/>
+                  <path d="M14 56 L66 46" stroke="#FBE4D5" stroke-width="0.8" opacity="0.55"/>
+                  <path d="M18 60 L66 52" stroke="#FBE4D5" stroke-width="0.6" opacity="0.4"/>
+                  <path d="M22 63 L66 56" stroke="#FBE4D5" stroke-width="0.5" opacity="0.3"/>
+                </svg>
               </div>
-              <div class="lbl">WISEscore</div>
+              <div class="food-hero-body">
+                <div class="food-hero-info">
+                  <div class="product-name">Wild Atlantic Salmon Fillet</div>
+                  <div class="product-brand">Vital Choice</div>
+                </div>
+                <div class="fd-wisescore">
+                  <div class="score">
+                    <span class="num" data-product-detail-score>94</span>
+                  </div>
+                  <div class="lbl">WISEscore</div>
+                </div>
+              </div>
             </div>
-          </div>
-
-          <!-- ─── Score card — verdict + per-slot contribution table.
-               Sits below the food card now; the donut has been removed and
-               the composite score lives in the food card's WISEscore. The
-               contrib list + totals are rewritten by the product-detail
-               subscriber from WISE_CODES.getSlots() plus the per-slot
-               SALMON_SCORES table, so a change to the code on Screens 1/6
-               (or a pick on Screen 2) flows through here in one pass. -->
-          <div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">
-            <!-- Verdict doubles as an AI Insights entry point — same
-                 data-action as the WISEcode bug above the AI Insights card,
-                 so tapping it opens the WISE AI chat overlay. -->
-            <button type="button" class="match-verdict-row" data-action="open-chat">
-              <span class="wise-bug-mark"></span>
-              Excellent match for your code
+            <button type="button" class="fd-details-toggle" data-action="fd-details-toggle" aria-expanded="false">
+              <span>Details</span>
+              <span class="material-symbols-outlined">expand_more</span>
             </button>
-
-            <!-- Per-slot contribution table. Order, names + icons mirror
-                 the user's code (Screen 1) so the eye can match each
-                 row to the WISEscore. Values sum (with rounding) to the
-                 Total Contribution shown in the summary row underneath. -->
-            <div class="contrib-list" data-product-detail-contrib></div>
-
-            <div class="contrib-summary" data-product-detail-summary>
-              <span>Total Contribution: <b>90 of 100</b></span>
-              <span>Other Factors: <b>4 of 100</b>
-                <span class="info" aria-label="What are other factors?">
-                  <span class="material-symbols-outlined">info</span>
-                </span>
-              </span>
+            <div class="fd-details-panel">
+              <div class="fd-details-panel-inner">
+                <div class="contrib-list" data-product-detail-contrib></div>
+                <div class="contrib-summary" data-product-detail-summary>
+                  <span>Total Contribution: <b>90/100</b></span>
+                  <span>Other Factors: <b>4/100</b>
+                    <span class="info" aria-label="What are other factors?">
+                      <span class="material-symbols-outlined">info</span>
+                    </span>
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
           <!-- ─── AI Insights — chat starters (same card as code-detail sheet) ─── -->
           <div class="fd-ai-card">
             <div class="fd-ai-label">AI Insights</div>
+            <p class="fd-ai-synopsis" data-food-ai-synopsis></p>
             <div class="fd-ai-intents">
               <button type="button" class="intent-chip" data-intent>Why this score?</button>
               <button type="button" class="intent-chip" data-intent>What holds it back?</button>
@@ -7175,13 +7267,14 @@ HIDDEN -->
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
   </div>
-  <div class="phone-caption">Tap any Top Match row in Browse (or land a barcode hit in Scan) to drill into the per-food drilldown: the hero card with product image / brand / UPC and the WISEscore floated to the right, then the score card with the "Excellent match" verdict and the per-slot contribution table (each row is what that slot contributed to this food's composite score), then an AI Insights card with chat-starter chips.</div>
+  <div class="phone-caption">Tap a scan-history card in History (or land a barcode hit in Scan) to drill into the per-food detail: hero card with product image / brand and WISEscore, a Details link that expands the per-code score breakdown (health bars + totals), then AI Insights with chat-starter chips.</div>
 </div>
   </div>
 </section>
@@ -7298,6 +7391,7 @@ HIDDEN -->
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab active"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
@@ -8028,7 +8122,8 @@ HIDDEN -->
       // glyph rewiring needed.
       (function () {
         document.querySelectorAll(".pair-row").forEach(function (row) {
-          var dark = row.querySelector(".phone-wrap");
+          if (row.querySelector(".phone-wrap.theme-light")) return;
+          var dark = row.querySelector(".phone-wrap:not(.theme-light)");
           if (!dark) return;
           var light = dark.cloneNode(true);
           light.classList.add("theme-light");
@@ -8037,6 +8132,28 @@ HIDDEN -->
           row.insertBefore(light, dark);
         });
       })();
+
+      // ─── Product Detail — Details accordion toggle ───────────────────
+      // Global delegate so Screen 6 and the Browse food-detail sheet both
+      // work. Kept outside the browse IIFE so a failure there can't
+      // silence the handler.
+      document.addEventListener("click", function (ev) {
+        var btn = ev.target.closest && ev.target.closest('[data-action="fd-details-toggle"]');
+        if (!btn) return;
+        var card = btn.closest(".food-hero-card");
+        if (!card) return;
+        ev.preventDefault();
+        var open = card.classList.toggle("is-details-open");
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+        if (open) {
+          var scrollHost = card.closest(".scroll") || card.closest(".fd-scroll");
+          if (scrollHost && typeof card.scrollIntoView === "function") {
+            requestAnimationFrame(function () {
+              card.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            });
+          }
+        }
+      });
 
       // ─── Scan screen — live device camera ────────────────────────────
       // The Find-a-Food viewport shows a real camera feed. We request the
@@ -8709,6 +8826,62 @@ HIDDEN -->
             : PRODUCT_SCORE_FALLBACK;
         }
 
+        // One-paragraph read of how a food lines up against the user's
+        // current code mix — surfaced in the AI Insights card on Product
+        // Detail and the Browse food-detail sheet.
+        function foodSynopsis(slots, foodLabel) {
+          var filled = slots.filter(function (s) {
+            return s.codeId && s.weight > 0 && CODE_CATALOG[s.codeId];
+          });
+          if (!filled.length) {
+            return "Add codes to your rubric to see how this food lines up with what matters to you.";
+          }
+
+          var scored = filled.map(function (s) {
+            var meta = CODE_CATALOG[s.codeId];
+            var ps = productScore(s.codeId);
+            return { name: meta.name, weight: s.weight, score: ps, impact: s.weight * ps };
+          });
+
+          var strengths = scored.filter(function (e) { return e.score >= 88; });
+          var weaknesses = scored.filter(function (e) { return e.score < 78; });
+
+          var subject = String(foodLabel || "food").trim();
+          if (!/^this /i.test(subject)) subject = "This " + subject.charAt(0).toLowerCase() + subject.slice(1);
+
+          function nameList(items, max) {
+            var names = items.slice(0, max || 2).map(function (e) { return e.name; });
+            if (names.length === 1) return names[0];
+            if (names.length === 2) return names[0] + " and " + names[1];
+            return names.slice(0, -1).join(", ") + ", and " + names[names.length - 1];
+          }
+
+          if (strengths.length && weaknesses.length) {
+            var strongNames = nameList(
+              strengths.slice().sort(function (a, b) { return b.impact - a.impact; }),
+              2
+            );
+            var weak = weaknesses.slice().sort(function (a, b) { return b.weight - a.weight; })[0];
+            return subject + " is a strong fit for your " + strongNames
+              + " priorities — it scores well where you care most. It carries less for "
+              + weak.name + " (" + weak.score + "/100) where you weight " + weak.weight + "%.";
+          }
+          if (strengths.length) {
+            var top = nameList(
+              strengths.slice().sort(function (a, b) { return b.impact - a.impact; }),
+              3
+            );
+            return subject + " aligns well with your rubric — especially " + top
+              + " — clearing the bar on your highest-weight slots.";
+          }
+          if (weaknesses.length) {
+            var w = weaknesses.slice().sort(function (a, b) { return b.weight - a.weight; })[0];
+            return subject + " is a mixed read against your code — watch " + w.name
+              + " (" + w.score + "/100) where you have " + w.weight + "% allocated.";
+          }
+          return subject + " lands in a solid middle band across your weighted codes — balanced, not dominant in any one slot.";
+        }
+
         // ─── Saved-codes API ────────────────────────────────────────────
         // The saved library is plain data the Saved Codes sheet reads and
         // mutates; only loadSavedCode touches the live composition (and so
@@ -8799,6 +8972,7 @@ HIDDEN -->
           setSlotWeight: setSlotWeight,
           reorderCodes: reorderCodes,
           productScore: productScore,
+          foodSynopsis: foodSynopsis,
           getSavedCodes: getSavedCodes,
           saveCurrentCode: saveCurrentCode,
           deleteSavedCode: deleteSavedCode,
@@ -11287,17 +11461,29 @@ HIDDEN -->
 
       // ─── Product Detail (Screen 6) — donut + contribution table ──────
       // Recomputes the per-slot contribution numbers, the totals row,
-      // and the composite score in the donut center whenever the
-      // code changes. Uses WISE_CODES.productScore(codeId) as the
-      // per-code performance of the example food (Wild Atlantic
-      // Salmon Fillet) so the math is:
-      //
-      //   contribution_i = weight_i × productScore(codeId_i) / 100
-      //   totalContribution = round(Σ contribution_i)
-      //   composite = totalContribution + OTHER_FACTORS
-      //
-      // This mirrors the live scoring pipeline: a re-weight is a
-      // re-score, never a re-fetch.
+      // and the composite score whenever the code changes.
+      function contribCodeRowHtml(W, meta, codeScore) {
+        var score = Math.round(Math.max(0, Math.min(100, codeScore)));
+        var rest = Math.max(0, 100 - score);
+        return ''
+          + '<div class="contrib-row">'
+          +   '<div class="contrib-row-head">'
+          +     '<span class="ico" style="color:' + meta.color + ';">'
+          +       '<span class="material-symbols-outlined">' + meta.icon + '</span>'
+          +     '</span>'
+          +     '<div class="nm">' + W.escapeHtml(meta.name) + '</div>'
+          +     '<div class="code-score">'
+          +       '<span class="n">' + score + '</span>'
+          +       '<span class="of">/100</span>'
+          +     '</div>'
+          +   '</div>'
+          +   '<div class="health-bar contrib-code-bar">'
+          +     '<div class="seg" style="flex:' + score + ';background:' + meta.color + ';"></div>'
+          +     '<div class="seg seg-track" style="flex:' + rest + ';"></div>'
+          +   '</div>'
+          + '</div>';
+      }
+
       (function () {
         var W = WISE_CODES;
 
@@ -11306,12 +11492,13 @@ HIDDEN -->
 
           var contribEntries = filled.map(function (s) {
             var meta = W.CODE_CATALOG[s.codeId];
-            var score = W.productScore(s.codeId);
-            var raw = s.weight * score / 100;
+            var codeScore = W.productScore(s.codeId);
+            var raw = s.weight * codeScore / 100;
             return {
               codeId: s.codeId,
               meta: meta,
               weight: s.weight,
+              codeScore: codeScore,
               raw: raw
             };
           });
@@ -11320,37 +11507,20 @@ HIDDEN -->
           var totalContribution = Math.round(totalRaw);
           var composite = totalContribution + W.OTHER_FACTORS;
 
-          // Chart — contribution donut, same renderer as the code hero.
-          var pieSvg = phoneWrap.querySelector(".pie-svg[data-id='product-detail']");
-          if (pieSvg && typeof renderDetailChart === "function") {
-            var slices = filled.map(function (s) {
-              var meta = W.CODE_CATALOG[s.codeId];
-              return meta
-                ? { value: s.weight, c: meta.color, icon: meta.icon, codeId: s.codeId }
-                : null;
-            }).filter(Boolean);
-            pieSvg.setAttribute("data-slices", JSON.stringify(slices));
-            renderDetailChart(pieSvg, opts);
-          }
-
-          // Composite score in the donut center.
           var scoreEl = phoneWrap.querySelector("[data-product-detail-score]");
           if (scoreEl) scoreEl.textContent = String(composite);
+
+          var synopsisEl = phoneWrap.querySelector("[data-food-ai-synopsis]");
+          if (synopsisEl) {
+            synopsisEl.textContent = W.foodSynopsis(slots, "wild Atlantic salmon fillet");
+          }
 
           // Per-slot contribution rows.
           var listEl = phoneWrap.querySelector("[data-product-detail-contrib]");
           if (listEl) {
             listEl.innerHTML = contribEntries.map(function (e) {
               if (!e.meta) return "";
-              return ''
-                + '<div class="contrib-row">'
-                +   '<span class="ico" style="color:' + e.meta.color + ';">'
-                +     '<span class="material-symbols-outlined">' + e.meta.icon + '</span>'
-                +   '</span>'
-                +   '<div class="nm">' + W.escapeHtml(e.meta.name) + '</div>'
-                +   '<div class="pct">' + e.weight + '%</div>'
-                +   '<div class="val">' + e.raw.toFixed(1) + '</div>'
-                + '</div>';
+              return contribCodeRowHtml(W, e.meta, e.codeScore);
             }).join("");
           }
 
@@ -11358,8 +11528,8 @@ HIDDEN -->
           var summaryEl = phoneWrap.querySelector("[data-product-detail-summary]");
           if (summaryEl) {
             summaryEl.innerHTML = ''
-              + '<span>Total Contribution: <b>' + totalContribution + ' of 100</b></span>'
-              + '<span>Other Factors: <b>' + W.OTHER_FACTORS + ' of 100</b>'
+              + '<span>Total Contribution: <b>' + totalContribution + '/100</b></span>'
+              + '<span>Other Factors: <b>' + W.OTHER_FACTORS + '/100</b>'
               +   '<span class="info" aria-label="What are other factors?">'
               +     '<span class="material-symbols-outlined">info</span>'
               +   '</span>'
@@ -11406,27 +11576,6 @@ HIDDEN -->
       (function () {
         var W = WISE_CODES;
 
-        // Synthesises a stable 13-digit UPC string from the food's
-        // brand + name so each row gets its own pill text without
-        // re-authoring metadata in the catalog. Pure hash → never
-        // changes between opens of the same row.
-        function fakeUpc(seed) {
-          var h = 7;
-          for (var i = 0; i < seed.length; i++) {
-            h = ((h * 31) + seed.charCodeAt(i)) >>> 0;
-          }
-          var n = 28400000000 + (h % 999999999);
-          return "0" + String(n).slice(0, 12);
-        }
-
-        function verdictFor(score) {
-          if (score >= 95) return { text: "Excellent match for your code", icon: "check_circle" };
-          if (score >= 90) return { text: "Great match for your code",     icon: "check_circle" };
-          if (score >= 80) return { text: "Solid match for your code",     icon: "thumb_up" };
-          if (score >= 70) return { text: "Decent match for your code",    icon: "info" };
-          return                  { text: "Mixed match for your code",    icon: "info" };
-        }
-
         var FOOD_AI_INTENTS = [
           "Why this score?",
           "What holds it back?",
@@ -11434,14 +11583,50 @@ HIDDEN -->
           "Compare similar foods"
         ];
 
-        function foodAiCardHtml() {
+        function foodHeroAccordionHtml(opts) {
+          opts = opts || {};
+          var scoreAttr = opts.scoreAttr || "data-food-detail-score";
+          var contribAttr = opts.contribAttr || "data-food-detail-contrib";
+          var summaryAttr = opts.summaryAttr || "data-food-detail-summary";
+          var score = opts.score != null ? opts.score : "";
+          return ''
+            + '<div class="card pad-l food-hero-card">'
+            +   '<div class="food-hero-main">'
+            +     opts.thumbHtml
+            +     '<div class="food-hero-body">'
+            +       '<div class="food-hero-info">'
+            +         '<div class="product-name"' + (opts.titleId ? ' id="' + opts.titleId + '"' : '') + '>' + opts.nameHtml + '</div>'
+            +         '<div class="product-brand">' + W.escapeHtml(opts.brandText) + '</div>'
+            +       '</div>'
+            +       '<div class="fd-wisescore">'
+            +         '<div class="score"><span class="num" ' + scoreAttr + '>' + score + '</span></div>'
+            +         '<div class="lbl">WISEscore</div>'
+            +       '</div>'
+            +     '</div>'
+            +   '</div>'
+            +   '<button type="button" class="fd-details-toggle" data-action="fd-details-toggle" aria-expanded="false">'
+            +     '<span>Details</span>'
+            +     '<span class="material-symbols-outlined">expand_more</span>'
+            +   '</button>'
+            +   '<div class="fd-details-panel">'
+            +     '<div class="fd-details-panel-inner">'
+            +       '<div class="contrib-list" ' + contribAttr + '></div>'
+            +       '<div class="contrib-summary" ' + summaryAttr + '></div>'
+            +     '</div>'
+            +   '</div>'
+            + '</div>';
+        }
+
+        function foodAiCardHtml(foodLabel) {
           var chips = FOOD_AI_INTENTS.map(function (i) {
             return '<button type="button" class="intent-chip" data-intent>'
               + W.escapeHtml(i) + '</button>';
           }).join("");
+          var synopsis = W.foodSynopsis(W.getSlots(), foodLabel);
           return ''
             + '<div class="fd-ai-card">'
             +   '<div class="fd-ai-label">AI Insights</div>'
+            +   '<p class="fd-ai-synopsis" data-food-ai-synopsis>' + W.escapeHtml(synopsis) + '</p>'
             +   '<div class="fd-ai-intents">' + chips + '</div>'
             + '</div>';
         }
@@ -11469,6 +11654,7 @@ HIDDEN -->
               codeId: s.codeId,
               meta: W.CODE_CATALOG[s.codeId],
               weight: s.weight,
+              codeScore: scaled,
               raw: raw
             };
           });
@@ -11477,19 +11663,6 @@ HIDDEN -->
           var totalContribution = Math.round(totalRaw);
           var composite = totalContribution + W.OTHER_FACTORS;
 
-          // Chart — same segmented donut as the code hero and Product Detail.
-          var pieSvg = scrollEl.querySelector(".pie-svg[data-id='food-detail']");
-          if (pieSvg && typeof renderDetailChart === "function") {
-            var slices = filled.map(function (s) {
-              var meta = W.CODE_CATALOG[s.codeId];
-              return meta
-                ? { value: s.weight, c: meta.color, icon: meta.icon, codeId: s.codeId }
-                : null;
-            }).filter(Boolean);
-            pieSvg.setAttribute("data-slices", JSON.stringify(slices));
-            renderDetailChart(pieSvg, opts);
-          }
-
           var scoreEl = scrollEl.querySelector("[data-food-detail-score]");
           if (scoreEl) scoreEl.textContent = String(composite);
 
@@ -11497,27 +11670,28 @@ HIDDEN -->
           if (listEl) {
             listEl.innerHTML = contribEntries.map(function (e) {
               if (!e.meta) return "";
-              return ''
-                + '<div class="contrib-row">'
-                +   '<span class="ico" style="color:' + e.meta.color + ';">'
-                +     '<span class="material-symbols-outlined">' + e.meta.icon + '</span>'
-                +   '</span>'
-                +   '<div class="nm">' + W.escapeHtml(e.meta.name) + '</div>'
-                +   '<div class="pct">' + e.weight + '%</div>'
-                +   '<div class="val">' + e.raw.toFixed(1) + '</div>'
-                + '</div>';
+              return contribCodeRowHtml(W, e.meta, e.codeScore);
             }).join("");
           }
 
           var summaryEl = scrollEl.querySelector("[data-food-detail-summary]");
           if (summaryEl) {
             summaryEl.innerHTML = ''
-              + '<span>Total Contribution: <b>' + totalContribution + ' of 100</b></span>'
-              + '<span>Other Factors: <b>' + W.OTHER_FACTORS + ' of 100</b>'
+              + '<span>Total Contribution: <b>' + totalContribution + '/100</b></span>'
+              + '<span>Other Factors: <b>' + W.OTHER_FACTORS + '/100</b>'
               +   '<span class="info" aria-label="What are other factors?">'
               +     '<span class="material-symbols-outlined">info</span>'
               +   '</span>'
               + '</span>';
+          }
+
+          var synopsisEl = scrollEl.querySelector("[data-food-ai-synopsis]");
+          if (synopsisEl) {
+            var foodNameEl = scrollEl.querySelector(".product-name");
+            var foodLabel = foodNameEl
+              ? foodNameEl.textContent.replace(/\s+/g, " ").trim()
+              : "";
+            synopsisEl.textContent = W.foodSynopsis(slots, foodLabel);
           }
         }
 
@@ -11526,28 +11700,32 @@ HIDDEN -->
 
           // Pull display data straight off the row markup so the
           // sheet doesn't need a parallel catalog of food metadata —
-          // any new row authored into Browse picks up the sheet for
-          // free. innerHTML preserves the <br/> in multi-line names.
-          var nameEl = row.querySelector(".info .nm");
-          var brandEl = row.querySelector(".info .br");
+          // any new row authored into Browse or Scan History picks up
+          // the sheet for free.
+          var nameEl = row.querySelector(".info .nm") || row.querySelector(".product-name");
+          var brandEl = row.querySelector(".info .br") || row.querySelector(".product-brand");
           // Ranked rows carry the score in .score .n; the Top Match
-          // wise-card moved it into an inline .wise-score-row .num.
-          var scoreEl = row.querySelector(".score .n") || row.querySelector(".wise-score-row .num");
-          var thumbEl = row.querySelector(".food-thumb");
+          // wise-card moved it into an inline .wise-score-row .num;
+          // Scan History / product-detail heroes use .fd-wisescore .num.
+          var scoreEl = row.querySelector(".score .n")
+            || row.querySelector(".wise-score-row .num")
+            || row.querySelector(".fd-wisescore .num");
+          var thumbEl = row.querySelector(".food-photo") || row.querySelector(".food-thumb") || row.querySelector(".product-thumb");
           if (!nameEl || !brandEl || !scoreEl || !thumbEl) return;
 
           var nameHtml = nameEl.innerHTML;
           var brandText = brandEl.textContent;
-          var rowScore = parseInt(scoreEl.textContent, 10) || 0;
+          var rowScore = parseInt(row.getAttribute("data-row-score"), 10)
+            || parseInt(scoreEl.textContent, 10)
+            || 0;
 
-          // Clone the thumb so we can re-class it for the larger
-          // hero frame without disturbing the row's own thumb.
           var thumbClone = thumbEl.cloneNode(true);
+          thumbClone.classList.add("product-thumb");
+          if (thumbClone.classList.contains("food-photo")) {
+            thumbClone.classList.remove("food-photo");
+          }
           thumbClone.classList.add("fd-thumb");
           var thumbHtml = thumbClone.outerHTML;
-
-          var verdict = verdictFor(rowScore);
-          var upc = fakeUpc(brandText + "|" + nameEl.textContent);
 
           var sheetTitleId = "fd-title-" + Math.random().toString(36).slice(2, 8);
           var overlay = document.createElement("div");
@@ -11559,35 +11737,14 @@ HIDDEN -->
             +     '<span class="material-symbols-outlined">close</span>'
             +   '</button>'
             +   '<div class="fd-scroll" data-food-detail data-row-score="' + rowScore + '">'
-            +     '<div class="card pad-l" style="display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;">'
-            +       '<div class="match-verdict-row">'
-            +         '<span class="material-symbols-outlined">' + verdict.icon + '</span>'
-            +         W.escapeHtml(verdict.text)
-            +       '</div>'
-            +       '<div class="pie-wrap" style="width:240px;height:240px;margin:4px 0 8px;">'
-            +         '<svg viewBox="0 0 240 240" width="240" height="240" class="pie-svg"'
-            +              ' data-id="food-detail" data-size="240" data-stroke="72"'
-            +              ' data-slices="[]" aria-hidden="true"></svg>'
-            +         '<div class="pie-center" style="width:120px;height:120px;">'
-            +           '<div class="num" style="font-size:48px;" data-food-detail-score>' + rowScore + '</div>'
-            +           '<div class="lbl" style="font-size:10px;">OF 100</div>'
-            +         '</div>'
-            +       '</div>'
-            +       '<div class="contrib-list" data-food-detail-contrib></div>'
-            +       '<div class="contrib-summary" data-food-detail-summary></div>'
-            +     '</div>'
-            +     '<div class="card pad-l" style="display:flex;align-items:center;gap:14px;">'
-            +       thumbHtml
-            +       '<div style="flex:1;min-width:0;">'
-            +         '<div class="product-name" id="' + sheetTitleId + '">' + nameHtml + '</div>'
-            +         '<div class="product-brand">' + W.escapeHtml(brandText) + '</div>'
-            +         '<div class="upc-pill">'
-            +           '<span class="material-symbols-outlined">barcode</span>'
-            +           upc
-            +         '</div>'
-            +       '</div>'
-            +     '</div>'
-            +     foodAiCardHtml()
+            +     foodHeroAccordionHtml({
+                  thumbHtml: thumbHtml,
+                  nameHtml: nameHtml,
+                  brandText: brandText,
+                  score: rowScore,
+                  titleId: sheetTitleId
+                })
+            +     foodAiCardHtml(nameEl.textContent.replace(/\s+/g, " ").trim())
             +     '<button class="about-card" type="button" aria-label="About this score">'
             +       '<div class="copy">'
             +         '<div class="ovl">ABOUT THIS SCORE</div>'
@@ -11609,6 +11766,12 @@ HIDDEN -->
               e.preventDefault();
               closeFoodDetail(phoneWrap);
             }
+          });
+
+          overlay.querySelector(".fd-close").addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeFoodDetail(phoneWrap);
           });
 
           var screen = phoneWrap.querySelector(".screen");
@@ -11635,8 +11798,9 @@ HIDDEN -->
           var action = target.getAttribute("data-action");
 
           if (action === "food-detail") {
-            var phoneWrap = target.closest("[data-browse]");
-            var row = target.closest(".food-row");
+            if (target.closest(".food-detail-overlay")) return;
+            var phoneWrap = target.closest("[data-browse]") || target.closest("[data-scan-history]");
+            var row = target.closest(".food-card") || target.closest(".food-row") || target.closest(".scan-history-card");
             if (phoneWrap && row) {
               ev.preventDefault();
               openFoodDetail(phoneWrap, row);
@@ -11645,9 +11809,11 @@ HIDDEN -->
           }
 
           if (action === "food-detail-close") {
-            var phoneWrap2 = target.closest("[data-browse]");
+            var overlayEl = target.closest(".food-detail-overlay");
+            var phoneWrap2 = overlayEl && overlayEl.closest(".phone-wrap");
             if (phoneWrap2) {
               ev.preventDefault();
+              ev.stopPropagation();
               closeFoodDetail(phoneWrap2);
             }
             return;
@@ -11659,9 +11825,13 @@ HIDDEN -->
         // tabindex on the row already make it focusable.
         document.addEventListener("keydown", function (ev) {
           if (ev.key !== "Enter" && ev.key !== " ") return;
-          var row = ev.target.closest && ev.target.closest('.food-row[data-action="food-detail"]');
+          var row = ev.target.closest && (
+            ev.target.closest('.food-card[data-action="food-detail"]')
+            || ev.target.closest('.food-row[data-action="food-detail"]')
+            || ev.target.closest('.scan-history-card[data-action="food-detail"]')
+          );
           if (!row) return;
-          var phoneWrap = row.closest("[data-browse]");
+          var phoneWrap = row.closest("[data-browse]") || row.closest("[data-scan-history]");
           if (!phoneWrap) return;
           ev.preventDefault();
           openFoodDetail(phoneWrap, row);
@@ -12039,32 +12209,11 @@ HIDDEN -->
               "Tapping a pie slice on Your Code slides up the per-code detail sheet — description, an inline rebalance hand-off, and chat-starter chips that grow the sheet into a WISE AI conversation about that code.",
           },
           {
-            label: "S4 · Rebalance · sheet",
-            source: "3 · Browse",
-            open: clickSel('[data-action="rebalance-open"]'),
-            caption:
-              "The Rebalance sheet lists every filled slot as a card: drag the top strip to reorder by importance and slide to fine-tune each weight (the rest rebalance proportionally to hold 100), with a live running total.",
-          },
-          {
-            label: "S5 · Swap a Code · sheet",
-            source: "3 · Browse",
-            open: openSwap,
-            caption:
-              "Tapping a rebalance row's swap control stacks the Pick-a-code sheet on top of the rebalance sheet — a sheet-on-sheet trade that swaps that one code out while the rebalance sheet stays mounted underneath.",
-          },
-          {
-            label: "S6 · Filter · sheet",
-            source: "3 · Browse",
-            open: openFilter,
-            caption:
-              "A Browse filter chip slides up a multi-select bottom sheet — here the Codes group, listing every code from the catalog. The chip's count badge reflects how many options are active once you choose.",
-          },
-          {
             label: "S7 · Food Detail · sheet",
-            source: "3 · Browse",
-            open: clickSel('.food-row[data-action="food-detail"]'),
+            source: "4c · Scan History",
+            open: clickSel('.scan-history-card[data-action="food-detail"]'),
             caption:
-              "Tapping a Top Match row opens the food-detail sheet over Browse: contribution donut first (each slice is what that slot contributed to this food's score), then the hero card with image / brand / UPC, then an AI Insights card with chat-starter chips.",
+              "Tapping a scan-history card opens the food-detail sheet: product hero with image / brand / WISEscore, a Details accordion with per-code health bars + totals, then an AI Insights card with chat-starter chips.",
           },
           {
             label: "S9 · WISE AI Chat · sheet",
