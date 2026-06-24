@@ -2422,36 +2422,12 @@
       }
 
       /* Product hero card — thumb + WISEscore on top, expandable score
-         breakdown tucked behind a Details link (accordion). */
+         breakdown tucked behind a Details link (accordion).
+         Screens 6 and 6b scroll the hero card with the page — not sticky.
+         Scan History reuses this card style for list rows. */
       .food-hero-card {
         display: flex; flex-direction: column;
         gap: 0;
-      }
-      /* On the Product Detail screen and the Browse food-detail sheet the
-         hero card pins to the top of its scroll area, so the product name +
-         WISEscore stay anchored while the Details / AI Insights / About tail
-         scroll beneath it. Scan History reuses .food-hero-card for its list
-         items, so it's excluded there — those rows must scroll normally. */
-      .food-hero-card:not(.scan-history-card) {
-        position: sticky;
-        top: 56px; /* clear the absolute status-bar overlay on full screens */
-        z-index: 2;
-        background: var(--card);
-      }
-      /* The bottom sheet already starts below the status bar, so its hero
-         pins flush to the top of the sheet's own scroll area. */
-      .food-detail-sheet .food-hero-card {
-        top: 0;
-      }
-      /* When the Details accordion is open the card grows taller than the
-         viewport. A sticky element that exceeds the viewport height pins in
-         a way that leaves the content below it unreachable — the sticky card
-         eats all the visible space and scroll is effectively blocked.
-         Drop sticky the moment the accordion opens so the expanded card
-         scrolls normally; the compact card re-sticks when it collapses. */
-      .food-hero-card.is-details-open:not(.scan-history-card) {
-        position: relative;
-        top: 0;
       }
       .food-hero-main {
         display: flex;
@@ -5129,19 +5105,11 @@
         .ds-theme-row, .ds-type-grid, .ds-a11y-grid { grid-template-columns: 1fr; }
       }
 
-      /* ─── Intro / Welcome screen ──────────────────────────────────────
-         The far-left screen the user lands on before any code exists.
-         WISEcode wordmark top-left, a purpose-driven headline + value
-         prop, a 2×2 grid framing the why behind each capability, a full-
-         width blue CTA, then a card explaining how to pin the PWA to
-         the home screen. Pure presentation — no data hooks, so the
-         code / picker subscribers leave it untouched and the cloner
-         still mints its light twin. */
+      /* ─── Onboarding hero (persona picker) ────────────────────────────
+         Shared headline block used by the persona-picker onboarding step.
+         Pure presentation — no data hooks. */
       .intro-hero {
         padding: 4px 2px 2px;
-        /* Locked height so the Intro and Persona heroes occupy the same
-           vertical space despite different copy — keeps the CTA below them
-           on an identical Y across both onboarding screens. */
         box-sizing: border-box;
         min-height: 171px;
       }
@@ -5162,417 +5130,11 @@
         color: var(--fg-muted);
         font-size: 13px; font-weight: 500; line-height: 1.5;
       }
-      /* ─── Intro feature carousel ───────────────────────────────────
-         Six cards on an infinite, gently auto-scrolling marquee. The
-         track holds the six cards TWICE; a JS rAF loop nudges the
-         container's scrollLeft and wraps by exactly one set's width
-         (6 × (card 216 + margin 12) = 1368px) so the loop is seamless.
-         Because the motion is real native scroll (not a transform),
-         hovering pauses the drift and lets you grab / swipe to pan it
-         yourself. It bleeds past the .px 20px gutter with fade masks on
-         both sides. Honors prefers-reduced-motion. */
-      .intro-carousel {
-        margin: 0 -20px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        cursor: grab;
-        -webkit-mask: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
-        mask: linear-gradient(90deg, transparent, #000 24px, #000 calc(100% - 24px), transparent);
-      }
-      .intro-carousel::-webkit-scrollbar { display: none; }
-      .intro-carousel:active { cursor: grabbing; }
-      .intro-carousel-track {
-        display: flex;
-        width: max-content;
-        padding: 4px 0 4px 20px;
-      }
-      .intro-tile {
-        width: 216px;
-        margin-right: 12px;
-        background: var(--card);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        padding: 16px 14px;
-        display: flex; flex-direction: column; gap: 10px;
-        min-height: 128px;
-        box-sizing: border-box;
-        flex-shrink: 0;
-      }
-      .intro-tile .tile-ico {
-        width: 40px; height: 40px; border-radius: 12px;
-        display: inline-flex; align-items: center; justify-content: center;
-        background: var(--blue);
-        color: #FFFFFF;
-        flex-shrink: 0;
-      }
-      .intro-tile .tile-ico .material-symbols-outlined { font-size: 22px; }
-      .intro-tile .tile-title {
-        color: var(--fg-bright);
-        font-size: 14px; font-weight: 800; letter-spacing: -0.01em;
-      }
-      .intro-tile .tile-sub {
-        color: var(--fg-muted);
-        font-size: 11.5px; font-weight: 500; line-height: 1.4;
-      }
-      /* Full-width "pin to home screen" card below the CTA. Acts as a
-         button (role="button") — tapping it opens the walkthrough sheet. */
-      .intro-pin {
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        padding: 16px;
-        display: flex; align-items: flex-start; gap: 14px;
-        cursor: pointer;
-        transition: border-color 140ms ease, background 140ms ease, transform 120ms ease;
-      }
-      @media (hover: hover) {
-        .intro-pin:hover {
-          border-color: var(--line-strong);
-          background: color-mix(in srgb, var(--blue) 7%, var(--surface-2));
-        }
-        .intro-pin:hover .pin-hint { color: var(--blue); }
-        .intro-pin:hover .pin-hint .material-symbols-outlined { transform: translateX(2px); }
-      }
-      .intro-pin:active { transform: scale(0.99); }
-      .intro-pin:focus-visible {
-        outline: 2px solid var(--blue);
-        outline-offset: 2px;
-      }
-      .intro-pin .pin-hint {
-        display: inline-flex; align-items: center; gap: 2px;
-        margin-top: 10px;
-        color: color-mix(in srgb, var(--blue) 85%, var(--fg));
-        font-size: 12px; font-weight: 800; letter-spacing: -0.01em;
-        transition: color 140ms ease;
-      }
-      .intro-pin .pin-hint .material-symbols-outlined {
-        font-size: 16px;
-        transition: transform 140ms ease;
-      }
-      .intro-pin .pin-ico {
-        width: 44px; height: 44px; border-radius: 13px;
-        display: inline-flex; align-items: center; justify-content: center;
-        background: color-mix(in srgb, var(--blue) 16%, transparent);
-        color: var(--blue);
-        flex-shrink: 0;
-      }
-      .intro-pin .pin-ico .material-symbols-outlined { font-size: 24px; }
-      .intro-pin .pin-copy { flex: 1; min-width: 0; }
-      .intro-pin .pin-title {
-        color: var(--fg-bright);
-        font-size: 14px; font-weight: 800; letter-spacing: -0.01em;
-      }
-      .intro-pin .pin-steps {
-        margin: 8px 0 0; padding: 0; list-style: none;
-        display: flex; flex-direction: column; gap: 6px;
-      }
-      .intro-pin .pin-steps li {
-        display: flex; align-items: center; gap: 8px;
-        color: var(--fg-muted);
-        font-size: 12px; font-weight: 500; line-height: 1.4;
-      }
-      .intro-pin .pin-steps .material-symbols-outlined {
-        font-size: 17px; color: var(--fg-faint); flex-shrink: 0;
-      }
-      .intro-cta {
-        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-        width: 100%;
-        min-height: 52px;
-        background: var(--blue);
-        color: #FFFFFF;
-        border: none;
-        border-radius: 9999px;
-        padding: 15px 20px;
-        font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
-        box-shadow: 0 8px 20px color-mix(in srgb, var(--blue) 32%, transparent);
-      }
-      .intro-cta .material-symbols-outlined { font-size: 20px; }
 
-      /* ─── "Add to Home Screen" walkthrough sheet ──────────────────────
-         Tapping the Pin card on the Intro screen slides up this guided,
-         multi-step sheet. Each step pairs a faux-iOS illustration (browser
-         toolbar → share sheet → confirm dialog → home screen) with a short
-         instruction, a progress rail, and Back / Next navigation. Reuses
-         the reset-sheet scrim + rounded-top + rc-slide idiom. One sheet per
-         phone so the dark + cloned light twin run independently. */
-      .pin-overlay {
-        position: absolute; inset: 0; z-index: 55;
-        background: var(--scrim-strong);
-        backdrop-filter: blur(8px);
-        display: flex; align-items: flex-end;
-        animation: cp-fade 160ms ease-out;
-      }
-      .pin-sheet {
-        width: 100%;
-        background: var(--sheet-bg);
-        border-top: 1px solid var(--line);
-        border-radius: 22px 22px 0 0;
-        padding: 12px 20px 22px;
-        box-shadow: var(--shadow-sheet);
-        display: flex; flex-direction: column; gap: 0;
-        animation: rc-slide 280ms cubic-bezier(.2,.85,.25,1);
-      }
-      .pin-sheet .handle {
-        width: 38px; height: 4px; border-radius: 999px;
-        background: var(--line-strong);
-        align-self: center;
-        opacity: 0.5;
-        margin-bottom: 10px;
-      }
-      .pin-sheet .pin-sheet-top {
-        display: flex; align-items: center; justify-content: space-between;
-        margin-bottom: 12px;
-      }
-      .pin-sheet .pin-step-count {
-        font-size: 11px; font-weight: 800; letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--blue);
-      }
-      .pin-sheet .pin-x {
-        width: 28px; height: 28px; border-radius: 999px;
-        display: inline-flex; align-items: center; justify-content: center;
-        border: 1px solid var(--line);
-        background: var(--surface-2);
-        color: var(--fg-muted);
-        cursor: pointer; padding: 0;
-      }
-      .pin-sheet .pin-x .material-symbols-outlined { font-size: 17px; }
-
-      /* Illustration stage — a small device-chrome mock per step. */
-      .pin-stage {
-        height: 188px;
-        border-radius: 16px;
-        border: 1px solid var(--line);
-        background: var(--card);
-        overflow: hidden;
-        display: flex; align-items: center; justify-content: center;
-        padding: 14px;
-      }
-      .pin-stage-inner {
-        width: 100%;
-        animation: pin-pop 320ms cubic-bezier(.2,.85,.25,1);
-      }
-      @keyframes pin-pop {
-        from { opacity: 0; transform: translateY(8px) scale(0.97); }
-        to   { opacity: 1; transform: translateY(0) scale(1); }
-      }
-
-      /* Highlight ring + pointer used to call out the active tap target. */
-      .pin-pulse { position: relative; }
-      .pin-pulse::after {
-        content: ""; position: absolute; inset: -5px;
-        border-radius: inherit;
-        border: 2px solid var(--blue);
-        animation: pin-ring 1.6s ease-out infinite;
-        pointer-events: none;
-      }
-      @keyframes pin-ring {
-        0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--blue) 55%, transparent); opacity: 1; }
-        70%  { box-shadow: 0 0 0 9px color-mix(in srgb, var(--blue) 0%, transparent); opacity: 1; }
-        100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--blue) 0%, transparent); opacity: 1; }
-      }
-
-      /* Mock: Safari-style bottom toolbar (step 1). */
-      .pin-browser {
-        display: flex; align-items: center; gap: 10px;
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 10px 12px;
-      }
-      .pin-browser .pin-url {
-        flex: 1; min-width: 0;
-        background: var(--card);
-        border: 1px solid var(--line);
-        border-radius: 9px;
-        padding: 7px 10px;
-        color: var(--fg-muted);
-        font-size: 11.5px; font-weight: 600;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        text-align: center;
-      }
-      .pin-browser .pin-tool {
-        width: 34px; height: 34px; border-radius: 10px;
-        display: inline-flex; align-items: center; justify-content: center;
-        color: var(--fg-faint); flex-shrink: 0;
-      }
-      .pin-browser .pin-tool.is-target {
-        background: color-mix(in srgb, var(--blue) 16%, transparent);
-        color: var(--blue);
-      }
-      .pin-browser .pin-tool .material-symbols-outlined { font-size: 21px; }
-      .pin-browser-caption {
-        margin-top: 12px; text-align: center;
-        color: var(--fg-faint); font-size: 11px; font-weight: 600;
-      }
-
-      /* Mock: iOS share sheet rows (step 2). */
-      .pin-share {
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        overflow: hidden;
-      }
-      .pin-share .pin-share-row {
-        display: flex; align-items: center; gap: 11px;
-        padding: 11px 13px;
-        color: var(--fg);
-        font-size: 12.5px; font-weight: 600;
-        border-top: 1px solid var(--line-subtle);
-      }
-      .pin-share .pin-share-row:first-child { border-top: none; }
-      .pin-share .pin-share-row .material-symbols-outlined {
-        font-size: 19px; color: var(--fg-muted); margin-left: auto;
-      }
-      .pin-share .pin-share-row.is-muted { color: var(--fg-faint); }
-      .pin-share .pin-share-row.is-muted .material-symbols-outlined { color: var(--fg-faint); }
-      .pin-share .pin-share-row.is-target {
-        background: color-mix(in srgb, var(--blue) 14%, transparent);
-        color: var(--blue);
-        font-weight: 800;
-      }
-      .pin-share .pin-share-row.is-target .material-symbols-outlined { color: var(--blue); }
-
-      /* Mock: "Add to Home Screen" confirm dialog (step 3). */
-      .pin-dialog {
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        overflow: hidden;
-      }
-      .pin-dialog .pin-dialog-bar {
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 10px 14px;
-        border-bottom: 1px solid var(--line-subtle);
-        font-size: 12.5px; font-weight: 700;
-      }
-      .pin-dialog .pin-dialog-bar .pin-cancel { color: var(--fg-muted); }
-      .pin-dialog .pin-dialog-bar .pin-add { color: var(--blue); font-weight: 800; }
-      .pin-dialog .pin-dialog-body {
-        display: flex; align-items: center; gap: 12px;
-        padding: 14px;
-      }
-      .pin-dialog .pin-app-icon {
-        width: 46px; height: 46px; border-radius: 11px;
-        background: var(--blue);
-        display: inline-flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-        box-shadow: 0 6px 16px -6px rgba(29, 78, 216, 0.6);
-      }
-      .pin-dialog .pin-app-icon .pin-bug {
-        display: block; width: 26px; height: 14px;
-        background-color: #FFFFFF;
-        -webkit-mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
-        mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
-      }
-      .pin-dialog .pin-name-field {
-        flex: 1; min-width: 0;
-      }
-      .pin-dialog .pin-name-field .pin-name {
-        background: var(--card);
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        padding: 7px 10px;
-        color: var(--fg-bright);
-        font-size: 13px; font-weight: 700;
-      }
-      .pin-dialog .pin-name-field .pin-name-url {
-        margin-top: 5px;
-        color: var(--fg-faint);
-        font-size: 11px; font-weight: 500;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      }
-
-      /* Mock: home-screen grid with the freshly-pinned app (step 4). */
-      .pin-home {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 14px 10px;
-        padding: 4px 6px;
-      }
-      .pin-home .pin-app {
-        display: flex; flex-direction: column; align-items: center; gap: 6px;
-      }
-      .pin-home .pin-app .pin-tile {
-        width: 100%; aspect-ratio: 1; border-radius: 12px;
-        background: var(--surface-3);
-      }
-      .pin-home .pin-app.is-new .pin-tile {
-        background: var(--blue);
-        display: inline-flex; align-items: center; justify-content: center;
-        box-shadow: 0 8px 18px -6px rgba(29, 78, 216, 0.65);
-      }
-      .pin-home .pin-app.is-new .pin-tile .pin-bug {
-        display: block; width: 60%; height: 32%;
-        background-color: #FFFFFF;
-        -webkit-mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
-        mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
-      }
-      .pin-home .pin-app .pin-app-label {
-        font-size: 9.5px; font-weight: 600; color: var(--fg-muted);
-        max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      }
-      .pin-home .pin-app.is-new .pin-app-label { color: var(--fg-bright); font-weight: 800; }
-
-      .pin-sheet .pin-copy-block { margin-top: 16px; }
-      .pin-sheet .pin-copy-block h2 {
-        margin: 0;
-        color: var(--fg-bright);
-        font-size: 18px; font-weight: 800; letter-spacing: -0.015em;
-      }
-      .pin-sheet .pin-copy-block p {
-        margin: 7px 0 0;
-        color: var(--fg-muted);
-        font-size: 13px; line-height: 1.5;
-      }
-
-      /* Progress rail — one segment per step, the done/active ones filled. */
-      .pin-sheet .pin-rail {
-        display: flex; gap: 6px; margin-top: 16px;
-      }
-      .pin-sheet .pin-rail span {
-        flex: 1; height: 4px; border-radius: 999px;
-        background: var(--track);
-        transition: background 200ms ease;
-      }
-      .pin-sheet .pin-rail span.is-on { background: var(--blue); }
-
-      .pin-sheet .pin-nav {
-        display: flex; gap: 10px; margin-top: 16px;
-      }
-      .pin-sheet .pin-nav .btn {
-        border-radius: 9999px;
-        height: 44px; padding: 0 20px;
-        font-size: 14px; font-weight: 800; letter-spacing: 0;
-        border: none; cursor: pointer;
-        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      }
-      .pin-sheet .pin-nav .btn .material-symbols-outlined { font-size: 18px; }
-      .pin-sheet .pin-nav .btn-back {
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        color: var(--fg-bright);
-        flex: 0 0 auto; min-width: 96px;
-      }
-      .pin-sheet .pin-nav .btn-next {
-        background: var(--blue);
-        color: #FFFFFF;
-        flex: 1;
-        box-shadow: 0 10px 24px -10px rgba(29, 78, 216, 0.55);
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .pin-stage-inner { animation: none; }
-        .pin-pulse::after { animation: none; }
-      }
-
-      /* ─── Persona pick (onboarding step right after Intro / Welcome) ───
+      /* ─── Persona pick (onboarding) ───────────────────────────────────
          A horizontal, swipeable, scroll-snap carousel of selectable
-         persona cards (same idiom as .intro-tile, but multi-select). The
-         footer CTA stays inert until at least one persona is chosen, then
-         it "lights up" into the same loud blue as .intro-cta. */
+         persona cards. The footer CTA stays inert until at least one
+         persona is chosen, then lights up blue. */
       .persona-carousel {
         margin: 0 -20px;
         overflow-x: auto;
@@ -5591,8 +5153,7 @@
         width: max-content;
         padding: 4px 0 4px 20px;
       }
-      /* Same footprint as .intro-tile (216 × 128) so the two carousels are
-         the same height and the CTA below lands on an identical Y. */
+      /* 216 × 128 card footprint — keeps the CTA below on a stable Y. */
       .persona-card {
         position: relative;
         width: 216px;
@@ -6110,7 +5671,6 @@
         <h1>PWA v1</h1>
         <ul class="section-list">
           <li><span class="idx">DS</span>Design System</li>
-          <li><span class="idx">0</span>Intro / Welcome</li>
           <li style="display:none;"><span class="idx">0b</span>Pick Your Personas</li>
           <li><span class="idx">1a</span>Your Code (Empty)</li>
           <li><span class="idx">1b</span>Your Code (Home)</li>
@@ -6170,7 +5730,7 @@
                                 card in Scan History
       -->
       <div class="pair-rail-hint">
-        <span>Design system + 12 frames · dark + light side-by-side</span>
+        <span>Design system + 11 frames · dark + light side-by-side</span>
         <span class="arrows">Scroll <i data-lucide="arrow-right" style="width:14px;height:14px;"></i></span>
       </div>
       <div class="pair-rail-frame">
@@ -6447,133 +6007,6 @@
         </div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ─── 0. INTRO / WELCOME — landing screen, no codes yet ──────────────── -->
-<!--   The far-left frame: the first thing a fresh user sees. A value-prop
-       headline, a 2×2 grid of "what you can do" tiles, a blue CTA directly
-       beneath the grid, and a full-width card that walks them through
-       pinning the PWA to their home screen.
-       No data-code / data-picker hooks, so the subscribers skip it and
-       the cloner still mints a .theme-light twin. -->
-<section class="screen-pair">
-  <h3 class="screen-pair-label">0 · Intro / Welcome</h3>
-  <div class="pair-row">
-<div class="phone-wrap">
-  <div class="phone-label">Dark</div>
-  <div class="phone">
-    <div class="island"></div>
-    <div class="glow-l"></div>
-    <div class="glow-r"></div>
-    <div class="status-bar"><span>9:41</span>
-      <span class="right">
-        <span class="bars"><span></span><span></span><span></span><span></span></span>
-        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
-        <span class="battery"><i></i></span>
-      </span>
-    </div>
-    <div class="screen">
-      <div class="scroll">
-        <div class="px stack" style="padding-top:8px;">
-          <div class="intro-brand">
-            <img class="wise-logo-vertical" src="assets/WISEcode-logo-vertical.svg" alt="WISEcode" />
-          </div>
-          <div class="intro-hero">
-            <h1>Eat to <span class="accent">your</span> code, not the average.</h1>
-            <p>“Healthy” isn’t one-size-fits-all. WISEcode turns what <em>you</em> care about into a personal scoring code, then grades every food against it — so the right choice is the obvious one.</p>
-          </div>
-
-          <div class="intro-carousel" aria-label="What you can do with WISEcode">
-            <div class="intro-carousel-track">
-              <!-- Set A · the six feature cards -->
-              <div class="intro-tile">
-                <span class="tile-ico"><span class="material-symbols-outlined">tune</span></span>
-                <div class="tile-title">Define your standard</div>
-                <div class="tile-sub">Choose the factors that matter to you and weight them — your values become the score.</div>
-              </div>
-              <div class="intro-tile">
-                <span class="tile-ico"><span class="material-symbols-outlined">grid_view</span></span>
-                <div class="tile-title">See what truly fits</div>
-                <div class="tile-sub">Foods ranked by your code, not a generic average — so top matches are right for you.</div>
-              </div>
-              <div class="intro-tile">
-                <span class="tile-ico"><span class="material-symbols-outlined">qr_code_scanner</span></span>
-                <div class="tile-title">Decide in the aisle</div>
-                <div class="tile-sub">Scan any barcode for an instant verdict against your standard — no label-reading required.</div>
-              </div>
-              <div class="intro-tile">
-                <span class="tile-ico"><span class="material-symbols-outlined">chat_bubble</span></span>
-                <div class="tile-title">Understand the why</div>
-                <div class="tile-sub">Ask WISE AI why a food scores the way it does, and refine your code as you learn.</div>
-              </div>
-              <div class="intro-tile">
-                <span class="tile-ico"><span class="material-symbols-outlined">autorenew</span></span>
-                <div class="tile-title">Refine as you go</div>
-                <div class="tile-sub">Nudge your weights whenever your priorities shift — every food re-ranks instantly.</div>
-              </div>
-              <div class="intro-tile">
-                <span class="tile-ico"><span class="material-symbols-outlined">verified</span></span>
-                <div class="tile-title">Grounded in real data</div>
-                <div class="tile-sub">Scores draw on comprehensive nutrition facts, so your standard stays honest.</div>
-              </div>
-              <!-- Set B · exact duplicate for the seamless marquee loop (aria-hidden) -->
-              <div class="intro-tile" aria-hidden="true">
-                <span class="tile-ico"><span class="material-symbols-outlined">tune</span></span>
-                <div class="tile-title">Define your standard</div>
-                <div class="tile-sub">Choose the factors that matter to you and weight them — your values become the score.</div>
-              </div>
-              <div class="intro-tile" aria-hidden="true">
-                <span class="tile-ico"><span class="material-symbols-outlined">grid_view</span></span>
-                <div class="tile-title">See what truly fits</div>
-                <div class="tile-sub">Foods ranked by your code, not a generic average — so top matches are right for you.</div>
-              </div>
-              <div class="intro-tile" aria-hidden="true">
-                <span class="tile-ico"><span class="material-symbols-outlined">qr_code_scanner</span></span>
-                <div class="tile-title">Decide in the aisle</div>
-                <div class="tile-sub">Scan any barcode for an instant verdict against your standard — no label-reading required.</div>
-              </div>
-              <div class="intro-tile" aria-hidden="true">
-                <span class="tile-ico"><span class="material-symbols-outlined">chat_bubble</span></span>
-                <div class="tile-title">Understand the why</div>
-                <div class="tile-sub">Ask WISE AI why a food scores the way it does, and refine your code as you learn.</div>
-              </div>
-              <div class="intro-tile" aria-hidden="true">
-                <span class="tile-ico"><span class="material-symbols-outlined">autorenew</span></span>
-                <div class="tile-title">Refine as you go</div>
-                <div class="tile-sub">Nudge your weights whenever your priorities shift — every food re-ranks instantly.</div>
-              </div>
-              <div class="intro-tile" aria-hidden="true">
-                <span class="tile-ico"><span class="material-symbols-outlined">verified</span></span>
-                <div class="tile-title">Grounded in real data</div>
-                <div class="tile-sub">Scores draw on comprehensive nutrition facts, so your standard stays honest.</div>
-              </div>
-            </div>
-          </div>
-
-          <button type="button" class="intro-cta">
-            <span class="material-symbols-outlined">arrow_forward</span>
-            Build my code
-          </button>
-
-          <div class="intro-pin" data-action="pin-walkthrough" role="button" tabindex="0" aria-label="Walk me through pinning WISEcode to my home screen">
-            <span class="pin-ico"><span class="material-symbols-outlined">add_to_home_screen</span></span>
-            <div class="pin-copy">
-              <div class="pin-title">Pin it to your home screen</div>
-              <ul class="pin-steps">
-                <li><span class="material-symbols-outlined">ios_share</span>Tap the Share icon in your browser bar.</li>
-                <li><span class="material-symbols-outlined">add_box</span>Choose “Add to Home Screen.”</li>
-                <li><span class="material-symbols-outlined">touch_app</span>Launch it like any other app — full screen, no browser chrome.</li>
-              </ul>
-              <span class="pin-hint">Show me how<span class="material-symbols-outlined">chevron_right</span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="phone-caption">First-run welcome: the WISEcode wordmark, a purpose-led headline and value prop (personalized scoring vs. one-size-fits-all), a 2×2 grid framing the why behind each capability (define your standard, see what fits, decide in the aisle, understand the why), a blue CTA directly beneath the grid, and a full-width card explaining how to pin the PWA to the device home screen.</div>
-</div>
   </div>
 </section>
 
@@ -8457,7 +7890,7 @@ HIDDEN -->
       //
       // The catch: the catalog is a horizontal scroll-snap carousel and the
       // donuts only live on the Your Code + Product Detail frames, several
-      // screens to the right of the opening Intro frame. A naive replay from
+      // screens to the right of the Design System frame. A naive replay from
       // this pinned header button would re-animate every pie entirely
       // off-screen — looking, from the reader's seat, like nothing happened.
       // So unless a populated donut is already in view, we first scroll the
@@ -8611,7 +8044,7 @@ HIDDEN -->
         }
 
         // The recoloured donut / verdict / tile screens sit several frames
-        // to the right of the opening Design System + Intro frames, so a
+        // to the right of the opening Design System frame, so a
         // toggle from the pinned header otherwise looks like a no-op. When
         // turning the preview ON, slide the first populated donut frame into
         // view so the change is actually visible.
@@ -8795,83 +8228,9 @@ HIDDEN -->
         });
       })();
 
-      // ─── Intro feature carousel · gentle native-scroll marquee ───────
-      // Each .intro-carousel drifts by nudging its own scrollLeft every
-      // frame and wrapping at one card-set's width (1368px). Set A and
-      // Set B are pixel-identical, so subtracting a full set is visually
-      // invisible — the loop never jumps. Because the motion is real
-      // native scroll, pointer-over / touch pauses the drift and lets
-      // you grab and pan the cards yourself; it resumes a beat after you
-      // let go. Skipped entirely under prefers-reduced-motion.
-      (function () {
-        var SET_WIDTH = 1368; // 6 × (216px card + 12px margin)
-        var SPEED = 26; // px per second — calm, readable drift
-        var reduce =
-          window.matchMedia &&
-          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-        document.querySelectorAll(".intro-carousel").forEach(function (el) {
-          var paused = false;
-          var resumeTimer = null;
-          var last = null;
-
-          function hold() {
-            paused = true;
-            if (resumeTimer) {
-              clearTimeout(resumeTimer);
-              resumeTimer = null;
-            }
-          }
-          function releaseSoon() {
-            if (resumeTimer) clearTimeout(resumeTimer);
-            resumeTimer = setTimeout(function () {
-              paused = false;
-              last = null;
-            }, 1400);
-          }
-
-          el.addEventListener("pointerenter", hold);
-          el.addEventListener("pointerleave", releaseSoon);
-          el.addEventListener("pointerdown", hold);
-          el.addEventListener("pointerup", releaseSoon);
-          el.addEventListener("touchstart", hold, { passive: true });
-          el.addEventListener("touchend", releaseSoon, { passive: true });
-
-          // Keep any scroll position (drift or hand-panned) inside one set.
-          el.addEventListener("scroll", function () {
-            if (el.scrollLeft >= SET_WIDTH) el.scrollLeft -= SET_WIDTH;
-          });
-
-          if (reduce) return;
-
-          // Drive an internal float accumulator and write it to scrollLeft
-          // each frame. Reading scrollLeft back would round to an integer,
-          // so sub-pixel-per-frame drift (SPEED/60 px) would vanish and the
-          // marquee would sit still — the accumulator keeps the motion.
-          var pos = el.scrollLeft;
-          function tick(now) {
-            if (last == null) last = now;
-            var dt = (now - last) / 1000;
-            last = now;
-            if (paused) {
-              pos = el.scrollLeft; // track hand-panning while held
-            } else {
-              pos += SPEED * dt;
-              if (pos >= SET_WIDTH) pos -= SET_WIDTH;
-              el.scrollLeft = pos;
-            }
-            requestAnimationFrame(tick);
-          }
-          requestAnimationFrame(tick);
-        });
-      })();
-
       // ─── Persona picker carousel · manual scroll only ────────────────
-      // Unlike the intro feature marquee, the onboarding persona carousel
-      // does NOT auto-scroll: it's a plain hand-swipeable row of the ten
-      // cards (overflow-x on .persona-carousel). No drift, no duplicated
-      // set — so there's no risk of selecting a clone, and the row stays
-      // put until the user pans it themselves.
+      // Plain hand-swipeable row of persona cards (overflow-x on
+      // .persona-carousel). No auto-scroll drift or duplicated set.
 
       // ─── Shared code state (single source of truth) ─────────────────
       // Every screen that mentions "codes" reads and writes through this
@@ -9886,173 +9245,6 @@ HIDDEN -->
           if (overlay) overlay.remove();
         }
 
-        // ─── "Add to Home Screen" walkthrough sheet ─────────────────────
-        // Tapping the Pin card on the Intro screen opens a guided, multi-
-        // step bottom sheet. Each step renders a faux-iOS illustration of
-        // the real install gesture plus a short instruction; Back / Next
-        // page through them and the final step swaps Next for "Got it".
-        // State (the current step index) lives on the overlay element so
-        // the dark + cloned light twin each track their own progress.
-        var PIN_STEPS = [
-          {
-            count: "Step 1 of 4",
-            title: "Open the Share menu",
-            body: "In your browser, tap the Share icon — the square with an arrow pointing up. On iPhone it sits in the bottom bar; on Android it\u2019s in the \u22EE menu.",
-            illo: function () {
-              return ''
-                + '<div class="pin-browser">'
-                +   '<span class="pin-tool"><span class="material-symbols-outlined">chevron_left</span></span>'
-                +   '<span class="pin-tool"><span class="material-symbols-outlined">chevron_right</span></span>'
-                +   '<span class="pin-url">wisecode.app</span>'
-                +   '<span class="pin-tool is-target pin-pulse"><span class="material-symbols-outlined">ios_share</span></span>'
-                +   '<span class="pin-tool"><span class="material-symbols-outlined">tab</span></span>'
-                + '</div>'
-                + '<div class="pin-browser-caption">Tap the highlighted Share icon</div>';
-            }
-          },
-          {
-            count: "Step 2 of 4",
-            title: "Choose \u201CAdd to Home Screen\u201D",
-            body: "Scroll the share sheet until you see \u201CAdd to Home Screen,\u201D then tap it. It sits alongside the other actions like Bookmark and Find on Page.",
-            illo: function () {
-              return ''
-                + '<div class="pin-share">'
-                +   '<div class="pin-share-row is-muted">Copy<span class="material-symbols-outlined">content_copy</span></div>'
-                +   '<div class="pin-share-row is-muted">Add Bookmark<span class="material-symbols-outlined">bookmark_add</span></div>'
-                +   '<div class="pin-share-row is-target pin-pulse">Add to Home Screen<span class="material-symbols-outlined">add_to_home_screen</span></div>'
-                +   '<div class="pin-share-row is-muted">Find on Page<span class="material-symbols-outlined">search</span></div>'
-                + '</div>';
-            }
-          },
-          {
-            count: "Step 3 of 4",
-            title: "Confirm and add",
-            body: "A preview pops up with the WISEcode icon and name. Keep the name as-is (or tweak it), then tap \u201CAdd\u201D in the top corner.",
-            illo: function () {
-              return ''
-                + '<div class="pin-dialog">'
-                +   '<div class="pin-dialog-bar">'
-                +     '<span class="pin-cancel">Cancel</span>'
-                +     '<span>Add to Home Screen</span>'
-                +     '<span class="pin-add pin-pulse">Add</span>'
-                +   '</div>'
-                +   '<div class="pin-dialog-body">'
-                +     '<span class="pin-app-icon"><span class="pin-bug"></span></span>'
-                +     '<div class="pin-name-field">'
-                +       '<div class="pin-name">WISEcode</div>'
-                +       '<div class="pin-name-url">https://wisecode.app</div>'
-                +     '</div>'
-                +   '</div>'
-                + '</div>';
-            }
-          },
-          {
-            count: "Step 4 of 4",
-            title: "You\u2019re all set",
-            body: "WISEcode now lives on your home screen. Launch it like any other app — full screen, no browser bar, ready whenever you\u2019re deciding what to eat.",
-            illo: function () {
-              var blanks = '';
-              for (var i = 0; i < 7; i++) {
-                blanks += '<div class="pin-app"><div class="pin-tile"></div><div class="pin-app-label">\u00A0</div></div>';
-              }
-              return ''
-                + '<div class="pin-home">'
-                +   '<div class="pin-app is-new pin-pulse"><div class="pin-tile"><span class="pin-bug"></span></div><div class="pin-app-label">WISEcode</div></div>'
-                +   blanks
-                + '</div>';
-            }
-          }
-        ];
-
-        function renderPinStep(phoneWrap, overlay) {
-          var i = overlay._pinStep || 0;
-          var total = PIN_STEPS.length;
-          var step = PIN_STEPS[i];
-          var isLast = i === total - 1;
-
-          var stage = overlay.querySelector(".pin-stage");
-          if (stage) {
-            stage.innerHTML = '<div class="pin-stage-inner">' + step.illo() + '</div>';
-          }
-          var count = overlay.querySelector(".pin-step-count");
-          if (count) count.textContent = step.count;
-          var h2 = overlay.querySelector(".pin-copy-block h2");
-          if (h2) h2.textContent = step.title;
-          var p = overlay.querySelector(".pin-copy-block p");
-          if (p) p.textContent = step.body;
-
-          var rail = overlay.querySelector(".pin-rail");
-          if (rail) {
-            var segs = rail.querySelectorAll("span");
-            segs.forEach(function (seg, idx) {
-              seg.classList.toggle("is-on", idx <= i);
-            });
-          }
-
-          var backBtn = overlay.querySelector('[data-action="pin-back"]');
-          if (backBtn) backBtn.style.display = i === 0 ? "none" : "";
-
-          var nextBtn = overlay.querySelector('[data-action="pin-next"]');
-          if (nextBtn) {
-            nextBtn.innerHTML = isLast
-              ? 'Got it<span class="material-symbols-outlined">check</span>'
-              : 'Next<span class="material-symbols-outlined">arrow_forward</span>';
-          }
-        }
-
-        function openPinWalkthrough(phoneWrap) {
-          if (!phoneWrap) return;
-          if (phoneWrap.querySelector(".pin-overlay")) return;
-
-          var overlay = document.createElement("div");
-          overlay.className = "pin-overlay";
-          overlay._pinStep = 0;
-          overlay.innerHTML = ''
-            + '<div class="pin-sheet" role="dialog" aria-modal="true" aria-labelledby="pin-sheet-title">'
-            +   '<div class="handle" aria-hidden="true"></div>'
-            +   '<div class="pin-sheet-top">'
-            +     '<span class="pin-step-count"></span>'
-            +     '<button type="button" class="pin-x" data-action="pin-close" aria-label="Close walkthrough"><span class="material-symbols-outlined">close</span></button>'
-            +   '</div>'
-            +   '<div class="pin-stage"></div>'
-            +   '<div class="pin-copy-block"><h2 id="pin-sheet-title"></h2><p></p></div>'
-            +   '<div class="pin-rail"><span></span><span></span><span></span><span></span></div>'
-            +   '<div class="pin-nav">'
-            +     '<button type="button" class="btn btn-back" data-action="pin-back"><span class="material-symbols-outlined">arrow_back</span>Back</button>'
-            +     '<button type="button" class="btn btn-next" data-action="pin-next"></button>'
-            +   '</div>'
-            + '</div>';
-
-          overlay.addEventListener("click", function (e) {
-            if (e.target === overlay) {
-              e.preventDefault();
-              closePinWalkthrough(phoneWrap);
-            }
-          });
-
-          var screen = phoneWrap.querySelector(".screen");
-          if (screen) screen.appendChild(overlay);
-          renderPinStep(phoneWrap, overlay);
-        }
-
-        function closePinWalkthrough(phoneWrap) {
-          var overlay = phoneWrap.querySelector(".pin-overlay");
-          if (overlay) overlay.remove();
-        }
-
-        function stepPinWalkthrough(phoneWrap, dir) {
-          var overlay = phoneWrap.querySelector(".pin-overlay");
-          if (!overlay) return;
-          var next = (overlay._pinStep || 0) + dir;
-          if (next < 0) return;
-          if (next >= PIN_STEPS.length) {
-            closePinWalkthrough(phoneWrap);
-            return;
-          }
-          overlay._pinStep = next;
-          renderPinStep(phoneWrap, overlay);
-        }
-
         // ─── Rename bottom-sheet ────────────────────────────────────────
         // Tapping Rename on the code pie-card slides up a sheet with a
         // single text input pre-filled with the code's current name.
@@ -10775,6 +9967,8 @@ HIDDEN -->
         // Two contexts:
         //   - opts.context === "code" (default): code is already in
         //     the user's code. Header shows live weight%. No Add CTA.
+        //     Browse filter toggles only when opts.rebalance (opened
+        //     from a Browse priority chip).
         //   - opts.context === "picker": code is being previewed from
         //     the picker. Header shows the category only. A primary
         //     "Add to my code" CTA appears at the end of the body so
@@ -10839,11 +10033,12 @@ HIDDEN -->
 
           var composerPlaceholder = W.escapeHtml("Message WISE AI about " + meta.name + "\u2026");
 
-          // "How this code is used in Browse" controls, shown above the
-          // description: a single-select Code / Filter / Both segmented
-          // control + a single-select minimum-score tier row. Defaults
-          // mirror the design reference (Filter active, no tier picked).
-          var cdModeHtml = ''
+          // Code / Filter / Both + minimum-score tier controls — only when
+          // the sheet is opened from a Browse priority chip (not from Your
+          // Code Home slot rows or pie slices).
+          var showBrowseFilters = !!opts.rebalance;
+          var cdModeHtml = showBrowseFilters
+            ? (''
             + '<div class="cd-mode">'
             +   '<div class="cd-mode-seg" role="group" aria-label="How this code is used in Browse">'
             +     '<button type="button" class="cd-seg-opt" data-action="cd-mode" data-mode="code" aria-pressed="false">Code</button>'
@@ -10857,7 +10052,8 @@ HIDDEN -->
             +     '<button type="button" class="cd-score-chip" data-action="cd-score" data-tier="good" aria-pressed="false">Good</button>'
             +     '<button type="button" class="cd-score-chip" data-action="cd-score" data-tier="excellent" aria-pressed="false">Excellent</button>'
             +   '</div>'
-            + '</div>';
+            + '</div>')
+            : '';
 
           var overlay = document.createElement("div");
           overlay.className = "code-detail-overlay";
@@ -11411,32 +10607,6 @@ HIDDEN -->
             return;
           }
 
-          // Pin-to-home walkthrough lives on the Intro screen, which is
-          // not a [data-code] phone — resolve the phone generically.
-          if (action === "pin-walkthrough") {
-            ev.preventDefault();
-            openPinWalkthrough(target.closest(".phone-wrap"));
-            return;
-          }
-
-          if (action === "pin-close") {
-            ev.preventDefault();
-            closePinWalkthrough(target.closest(".phone-wrap"));
-            return;
-          }
-
-          if (action === "pin-next") {
-            ev.preventDefault();
-            stepPinWalkthrough(target.closest(".phone-wrap"), 1);
-            return;
-          }
-
-          if (action === "pin-back") {
-            ev.preventDefault();
-            stepPinWalkthrough(target.closest(".phone-wrap"), -1);
-            return;
-          }
-
           if (action === "rebalance-open") {
             // Allowed on any .phone-wrap (not just [data-code] phones) so
             // the Browse priorities header opens the same sheet as Screen 1.
@@ -11499,19 +10669,6 @@ HIDDEN -->
             ev.preventDefault();
             return;
           }
-        });
-
-        // Keyboard activation for the Intro pin card (role="button"):
-        // Enter / Space opens the Add-to-Home-Screen walkthrough, matching
-        // the native behaviour of the page's other role="button" targets.
-        document.addEventListener("keydown", function (ev) {
-          if (ev.key !== "Enter" && ev.key !== " ") return;
-          var card = ev.target.closest && ev.target.closest('.intro-pin[data-action="pin-walkthrough"]');
-          if (!card) return;
-          var pinPhone = card.closest(".phone-wrap");
-          if (!pinPhone) return;
-          ev.preventDefault();
-          openPinWalkthrough(pinPhone);
         });
 
         // Slider input handler — dragging a row's percentage slider in
@@ -12731,43 +11888,7 @@ HIDDEN -->
           );
         }
 
-        var SHEET_SCREENS = [
-          {
-            label: "S1 · Pick a Code · sheet",
-            source: "1b · Your Code",
-            open: openPicker,
-            caption:
-              "The Pick-a-code bottom sheet riding over the filled Your Code home: search, group-by-category / A–Z toggle, then the catalog. The page dims behind the scrim; tapping a row pushes its slot detail onto the stack.",
-          },
-          {
-            label: "S2 · Code Detail · sheet",
-            source: "1b · Your Code",
-            open: clickSel('.pie-svg [data-action="code-detail"]'),
-            caption:
-              "Tapping a pie slice on Your Code slides up the per-code detail sheet — description, an inline rebalance hand-off, and chat-starter chips that grow the sheet into a WISE AI conversation about that code.",
-          },
-          {
-            label: "S7 · Food Detail · sheet",
-            source: "4c · Scan History",
-            open: clickSel('.scan-history-card[data-action="food-detail"]'),
-            caption:
-              "Tapping a scan-history card opens the food-detail sheet: product hero with image / brand / WISEscore, a Details accordion with per-code health bars + totals, then an AI Insights card with chat-starter chips.",
-          },
-          {
-            label: "S9 · WISE AI Chat · sheet",
-            source: "1b · Your Code",
-            open: clickSel('[data-action="open-chat"]'),
-            caption:
-              "The floating WISEcode brand bug in any primary header opens a standalone WISE AI chat overlay — the same avatar + tinted-bubble rhythm as the Chat tab, surfaced as a sheet over the page you were on.",
-          },
-          {
-            label: "S10 · Pin to Home · sheet",
-            source: "0 · Intro",
-            open: clickSel('[data-action="pin-walkthrough"]'),
-            caption:
-              "The Intro screen's Pin card opens a guided, multi-step Add-to-Home-Screen walkthrough: each step renders a faux-iOS illustration of the real install gesture with Back / Next paging through them.",
-          },
-        ];
+        var SHEET_SCREENS = [];
 
         function setLabel(wrap, txt) {
           var l = wrap.querySelector(".phone-label");
@@ -12788,6 +11909,7 @@ HIDDEN -->
         }
 
         function build() {
+          if (!SHEET_SCREENS.length) return;
           var rail = document.querySelector(".pair-rail");
           if (!rail || rail.querySelector(".rail-divider")) return;
 
