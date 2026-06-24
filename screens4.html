@@ -1134,15 +1134,6 @@
         line-height: 1;
         letter-spacing: -0.04em;
       }
-      .pie-center .num .num-pct {
-        font-size: 0.4em;
-        font-weight: 800;
-        line-height: 0;
-        letter-spacing: 0;
-        vertical-align: super;
-        margin-left: 1px;
-        color: var(--fg-muted);
-      }
       .pie-center .lbl {
         color: var(--fg-muted);
         font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
@@ -2436,6 +2427,32 @@
         display: flex; flex-direction: column;
         gap: 0;
       }
+      /* On the Product Detail screen and the Browse food-detail sheet the
+         hero card pins to the top of its scroll area, so the product name +
+         WISEscore stay anchored while the Details / AI Insights / About tail
+         scroll beneath it. Scan History reuses .food-hero-card for its list
+         items, so it's excluded there — those rows must scroll normally. */
+      .food-hero-card:not(.scan-history-card) {
+        position: sticky;
+        top: 56px; /* clear the absolute status-bar overlay on full screens */
+        z-index: 2;
+        background: var(--card);
+      }
+      /* The bottom sheet already starts below the status bar, so its hero
+         pins flush to the top of the sheet's own scroll area. */
+      .food-detail-sheet .food-hero-card {
+        top: 0;
+      }
+      /* When the Details accordion is open the card grows taller than the
+         viewport. A sticky element that exceeds the viewport height pins in
+         a way that leaves the content below it unreachable — the sticky card
+         eats all the visible space and scroll is effectively blocked.
+         Drop sticky the moment the accordion opens so the expanded card
+         scrolls normally; the compact card re-sticks when it collapses. */
+      .food-hero-card.is-details-open:not(.scan-history-card) {
+        position: relative;
+        top: 0;
+      }
       .food-hero-main {
         display: flex;
         flex-direction: row;
@@ -2595,35 +2612,30 @@
         letter-spacing: 0;
       }
       .contrib-row .contrib-code-bar { margin-top: 0; }
-      .contrib-row .contrib-code-bar .seg-track {
-        background: var(--surface-2);
-        opacity: 0.9;
+      /* The colored fill grows in from the left when the Details panel
+         opens, settling over the always-visible light track (a faint tint
+         of the fill hue, set inline per-code). Staggered per row so the
+         bars cascade rather than snapping in together. */
+      .contrib-row .contrib-code-bar .seg:first-child {
+        transform: scaleX(0);
+        transform-origin: left center;
       }
-
-      /* Footer line under the contribution table — "Total Contribution"
-         on the left, "Other Factors" + info glyph on the right. Sits in a
-         slimmer typographic ramp so it doesn't compete with the donut. */
-      .contrib-summary {
-        display: flex; align-items: center; justify-content: space-between;
-        gap: 12px;
-        margin-top: 6px;
-        padding-top: 12px;
-        border-top: 1px solid var(--line-subtle);
-        color: var(--fg-muted);
-        font-size: 11px; font-weight: 500;
+      .food-hero-card.is-details-open .contrib-row .contrib-code-bar .seg:first-child {
+        animation: contrib-fill 620ms cubic-bezier(.16, 1, .3, 1) forwards;
       }
-      .contrib-summary b {
-        color: var(--fg);
-        font-weight: 700;
-        font-variant-numeric: tabular-nums;
+      .food-hero-card.is-details-open .contrib-row:nth-child(1) .contrib-code-bar .seg:first-child { animation-delay: 40ms; }
+      .food-hero-card.is-details-open .contrib-row:nth-child(2) .contrib-code-bar .seg:first-child { animation-delay: 100ms; }
+      .food-hero-card.is-details-open .contrib-row:nth-child(3) .contrib-code-bar .seg:first-child { animation-delay: 160ms; }
+      .food-hero-card.is-details-open .contrib-row:nth-child(4) .contrib-code-bar .seg:first-child { animation-delay: 220ms; }
+      .food-hero-card.is-details-open .contrib-row:nth-child(5) .contrib-code-bar .seg:first-child { animation-delay: 280ms; }
+      .food-hero-card.is-details-open .contrib-row:nth-child(6) .contrib-code-bar .seg:first-child { animation-delay: 340ms; }
+      @keyframes contrib-fill {
+        from { transform: scaleX(0); }
+        to   { transform: scaleX(1); }
       }
-      .contrib-summary .info {
-        display: inline-flex; align-items: center;
-        color: var(--fg-faint);
-        margin-left: 4px;
-      }
-      .contrib-summary .info .material-symbols-outlined {
-        font-size: 14px;
+      @media (prefers-reduced-motion: reduce) {
+        .contrib-row .contrib-code-bar .seg:first-child { transform: scaleX(1); }
+        .food-hero-card.is-details-open .contrib-row .contrib-code-bar .seg:first-child { animation: none; }
       }
 
       /* "ABOUT THIS SCORE" card — chevron-tipped tappable row that links
@@ -2690,6 +2702,114 @@
       }
       .last-scanned .material-symbols-outlined {
         font-size: 14px;
+      }
+
+      /* ─── Better Alternatives card rail ─────────────────────────────────
+         Horizontal scroll rail of portrait food cards below the AI
+         Insights card on Food Detail. Each card stacks a thumb area
+         (with an absolute WISEscore badge) over name + brand text.
+         The rail bleeds edge-to-edge past the container padding so
+         partial cards are visible as a scroll cue. */
+      .alt-cards-section {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px 14px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .alt-cards-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .alt-cards-ovl {
+        color: var(--fg-muted);
+        font-size: 10px; font-weight: 800;
+        letter-spacing: 0.14em; text-transform: uppercase;
+      }
+      .alt-cards-see-all {
+        background: none;
+        border: none;
+        padding: 0;
+        color: var(--blue);
+        font: inherit;
+        font-size: 11px; font-weight: 700;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .alt-cards-rail {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        scrollbar-width: none; -ms-overflow-style: none;
+        /* Extend flush to container edges; last card's right edge is
+           padding-right so it doesn't clip against the border-radius. */
+        margin: 0 -14px;
+        padding: 0 14px 2px;
+      }
+      .alt-cards-rail::-webkit-scrollbar { display: none; }
+      .alt-card {
+        flex: 0 0 auto;
+        width: 112px;
+        background: var(--surface-1, var(--slot-bg));
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        text-align: left;
+        -webkit-tap-highlight-color: transparent;
+        transition: transform 100ms ease, border-color 120ms ease;
+      }
+      @media (hover: hover) {
+        .alt-card:hover { border-color: var(--line-strong); }
+      }
+      .alt-card:active { transform: scale(0.97); }
+      .alt-card-thumb {
+        width: 100%;
+        height: 78px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .alt-card-badge {
+        position: absolute;
+        top: 5px; right: 5px;
+        color: #fff;
+        font-size: 10px; font-weight: 800;
+        border-radius: 999px;
+        padding: 2px 6px;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
+        line-height: 1.45;
+      }
+      .alt-card-body {
+        padding: 8px 8px 9px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+      .alt-card-name {
+        color: var(--fg-bright);
+        font-size: 11px; font-weight: 700;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+      .alt-card-brand {
+        color: var(--fg-faint);
+        font-size: 10px; font-weight: 500;
+        margin-top: 1px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       /* Scan screen — large live-camera viewport. Fills the column with a
@@ -3714,10 +3834,10 @@
       /* ─── Rebalance bottom sheet ───────────────────────────────────────
          Slides up from the bottom of the Your Code (Home / Filled) phone
          when the user taps Rebalance. Lists every filled slot as a row
-         with a slot-colored slider; dragging any slider runs the same
-         proportional-rebalance algorithm as the live PWA
-         (lib/composite.ts → applyWeightChange) so the visible integers
-         always sum to 100. The dark + light twins each mount their own
+         with a slot-colored slider; each slider is an independent 1–10
+         importance rating and never moves the others. The donut centre
+         shows the live sum of those ratings out of 100 (10 codes × 10).
+         The dark + light twins each mount their own
          overlay; the W.subscribe wiring further down repaints every
          open sheet on state change so a drag in dark also moves the
          sliders in the light twin. Same scrim + handle + rc-slide
@@ -3803,9 +3923,9 @@
          left-swipe-to-remove gesture slides horizontally, revealing the
          rose .rb-swipe-bg underneath. The inner card has two halves: the
          top strip (.rb-drag) is the reorder grab handle (rank badge +
-         code identity + live percentage + swap), and the bottom half is a
-         slot-colored range slider that fine-tunes that code's percentage
-         (proportional rebalance, total stays 100). The gestures are kept
+         code identity + live 1–10 rating + swap), and the bottom half is a
+         slot-colored range slider that fine-tunes that code's 1–10 rating
+         (independent — the other rows don't move). The gestures are kept
          apart: pressing the strip and moving locks to reorder (vertical)
          or remove (left); the slider keeps its native touch behaviour. */
       .rebalance-sheet .rb-row {
@@ -3953,8 +4073,8 @@
          The track inherits the slot's hue on the filled side and the
          inner-well navy on the empty side; the thumb is a white circle
          with a slot-colored stroke. Dragging it fine-tunes this code's
-         weight while the others rebalance proportionally so the total
-         holds at 100. Native touch-action so it still drags on touch
+         1–10 rating independently — the other rows keep their ratings.
+         Native touch-action so it still drags on touch
          (the reorder handle is the strip above, not this slider). */
       .rebalance-sheet .rb-slider {
         -webkit-appearance: none;
@@ -5999,6 +6119,7 @@
           <li><span class="idx">4c</span>Scan History</li>
           <li><span class="idx">5</span>Chat</li>
           <li><span class="idx">6</span>Food Detail</li>
+          <li><span class="idx">6b</span>Food Detail (Low Score)</li>
           <li><span class="idx">7</span>Settings</li>
         </ul>
         <button type="button" class="replay-all" data-action="replay-all" aria-label="Replay all donut animations">
@@ -6606,7 +6727,7 @@
                    data-id="empty" data-size="280" data-stroke="88"
                    data-slices='[]' aria-hidden="true"></svg>
               <div class="pie-center">
-                <div class="num" style="font-size:46px;"><span data-pie-num-val>0</span><sup class="num-pct">%</sup></div>
+                <div class="num" style="font-size:46px;"><span data-pie-num-val>0</span></div>
                 <div class="lbl">OF 100</div>
               </div>
             </div>
@@ -6671,10 +6792,10 @@
             <div class="pie-wrap" style="width:300px;height:300px;">
               <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
                    data-id="home" data-size="280" data-stroke="88"
-                   data-slices='[{"value":20,"c":"#188443","icon":"sparkles"},{"value":15,"c":"#D8610C","icon":"award"},{"value":12,"c":"#CA371F","icon":"heart-pulse"},{"value":11,"c":"#0A6630","icon":"gauge"},{"value":10,"c":"#FFC434","icon":"dumbbell"},{"value":8,"c":"#CA371F","icon":"leaf"},{"value":8,"c":"#D8610C","icon":"salad"},{"value":6,"c":"#0A6630","icon":"brain"},{"value":5,"c":"#FFC434","icon":"zap"},{"value":5,"c":"#0A6630","icon":"infinity"}]'
+                   data-slices='[{"value":10,"c":"#188443","icon":"sparkles"},{"value":8,"c":"#D8610C","icon":"award"},{"value":6,"c":"#CA371F","icon":"heart-pulse"},{"value":6,"c":"#0A6630","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#CA371F","icon":"leaf"},{"value":4,"c":"#D8610C","icon":"salad"},{"value":3,"c":"#0A6630","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#0A6630","icon":"infinity"}]'
                    aria-hidden="true"></svg>
               <div class="pie-center">
-                <div class="num" style="font-size:46px;"><span data-pie-num-val>100</span><sup class="num-pct">%</sup></div>
+                <div class="num" style="font-size:46px;"><span data-pie-num-val>51</span></div>
                 <div class="lbl">OF 100</div>
               </div>
             </div>
@@ -6885,12 +7006,6 @@
                     </div>
                   </div>
                 </div>
-              </div>
-            </section>
-
-            <section class="scan-history-group">
-              <h2 class="scan-history-group-title">Yesterday</h2>
-              <div class="scan-history-group-cards">
                 <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Divina Kalamata Olives Pitted" data-row-score="98">
                   <div class="food-hero-main">
                     <div class="product-thumb">
@@ -6908,11 +7023,28 @@
                     </div>
                   </div>
                 </div>
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open GAEA Organic Olives Pitted" data-row-score="89">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <img src="assets/browse/gaea-green.jpg" alt="" loading="lazy" />
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">GAEA Organic Olives Pitted</div>
+                        <div class="product-brand">Gaea</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">89</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </section>
 
             <section class="scan-history-group">
-              <h2 class="scan-history-group-title">This week</h2>
+              <h2 class="scan-history-group-title">Yesterday</h2>
               <div class="scan-history-group-cards">
                 <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Divina Organic Pitted Green Olives" data-row-score="95">
                   <div class="food-hero-main">
@@ -6926,6 +7058,97 @@
                       </div>
                       <div class="fd-wisescore">
                         <div class="score"><span class="num">95</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Castelvetrano Olives Pitted" data-row-score="93">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <img src="assets/browse/divina-castelvetrano.jpg" alt="" loading="lazy" />
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">Castelvetrano Olives Pitted</div>
+                        <div class="product-brand">Divina</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">93</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="scan-history-group">
+              <h2 class="scan-history-group-title">This week</h2>
+              <div class="scan-history-group-cards">
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Castelvetrano Organic Olives Pitted" data-row-score="91">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <img src="assets/browse/divina-castelvetrano-organic.jpg" alt="" loading="lazy" />
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">Castelvetrano Organic Olives Pitted</div>
+                        <div class="product-brand">Divina</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">91</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Divina Kalamata Olives Pitted" data-row-score="98">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <img src="assets/browse/divina-kalamata.jpg" alt="" loading="lazy" />
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">Divina Kalamata Olives Pitted</div>
+                        <div class="product-brand">Divina</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">98</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Divina Organic Pitted Green Olives" data-row-score="95">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <img src="assets/browse/divina-green.jpg" alt="" loading="lazy" />
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">Divina Organic Pitted Green Olives</div>
+                        <div class="product-brand">Divina</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">95</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open GAEA Organic Olives Pitted" data-row-score="89">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <img src="assets/browse/gaea-green.jpg" alt="" loading="lazy" />
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">GAEA Organic Olives Pitted</div>
+                        <div class="product-brand">Gaea</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">89</span></div>
                         <div class="lbl">WISEscore</div>
                       </div>
                     </div>
@@ -6949,6 +7172,29 @@
                       </div>
                       <div class="fd-wisescore">
                         <div class="score"><span class="num">93</span></div>
+                        <div class="lbl">WISEscore</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="card pad-l scan-history-card food-hero-card" data-action="food-detail" role="button" tabindex="0" aria-label="Open Wild Atlantic Salmon Fillet" data-row-score="94">
+                  <div class="food-hero-main">
+                    <div class="product-thumb">
+                      <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
+                        <rect x="0" y="0" width="80" height="80" fill="#0F0F12"/>
+                        <text x="40" y="14" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="6.5" font-weight="800" fill="#F4F2F6" letter-spacing="0.04em">VitalChoice</text>
+                        <text x="40" y="22" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="4" font-weight="700" fill="#9C99A6" letter-spacing="0.18em">WILD SALMON</text>
+                        <rect x="8" y="30" width="64" height="40" rx="3" fill="#1A1A22"/>
+                        <path d="M12 50 L68 38 L68 64 L12 66 Z" fill="#E2613A"/>
+                      </svg>
+                    </div>
+                    <div class="food-hero-body">
+                      <div class="food-hero-info">
+                        <div class="product-name">Wild Atlantic Salmon Fillet</div>
+                        <div class="product-brand">Vital Choice</div>
+                      </div>
+                      <div class="fd-wisescore">
+                        <div class="score"><span class="num">94</span></div>
                         <div class="lbl">WISEscore</div>
                       </div>
                     </div>
@@ -7224,14 +7470,6 @@ HIDDEN -->
             <div class="fd-details-panel">
               <div class="fd-details-panel-inner">
                 <div class="contrib-list" data-product-detail-contrib></div>
-                <div class="contrib-summary" data-product-detail-summary>
-                  <span>Total Contribution: <b>90/100</b></span>
-                  <span>Other Factors: <b>4/100</b>
-                    <span class="info" aria-label="What are other factors?">
-                      <span class="material-symbols-outlined">info</span>
-                    </span>
-                  </span>
-                </div>
               </div>
             </div>
           </div>
@@ -7248,14 +7486,78 @@ HIDDEN -->
             </div>
           </div>
 
-          <!-- ─── About this score — link to the scoring explainer ─── -->
-          <button class="about-card" type="button" aria-label="About this score">
-            <div class="copy">
-              <div class="ovl">ABOUT THIS SCORE</div>
-              <div class="body">Your code's score is a weighted total of 5 factors. Learn how we calculate your results.</div>
+          <!-- ─── Better Alternatives — peer fish / seafood picks ─── -->
+          <div class="alt-cards-section">
+            <div class="alt-cards-hdr">
+              <span class="alt-cards-ovl">Better Alternatives</span>
+              <button type="button" class="alt-cards-see-all">See all</button>
             </div>
-            <span class="chev"><span class="material-symbols-outlined">chevron_right</span></span>
-          </button>
+            <div class="alt-cards-rail">
+              <!-- Copper River Sockeye Salmon -->
+              <button type="button" class="alt-card">
+                <div class="alt-card-thumb" style="background:linear-gradient(160deg,#0F0F12 0%,#2A1810 100%);">
+                  <svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">
+                    <path d="M6 30 Q20 18 34 21 Q46 24 54 30 Q46 36 34 39 Q20 42 6 30Z" fill="#C8501A" opacity="0.9"/>
+                    <path d="M8 27 Q22 22 38 25" stroke="#F09070" stroke-width="1" fill="none" opacity="0.5"/>
+                    <path d="M8 33 Q22 30 38 33" stroke="#F09070" stroke-width="1" fill="none" opacity="0.4"/>
+                    <circle cx="46" cy="29" r="2.2" fill="#0F0F12" opacity="0.7"/>
+                  </svg>
+                  <div class="alt-card-badge" style="background:#188443;">96</div>
+                </div>
+                <div class="alt-card-body">
+                  <div class="alt-card-name">Copper River Sockeye Salmon</div>
+                  <div class="alt-card-brand">Copper River</div>
+                </div>
+              </button>
+              <!-- Rainbow Trout -->
+              <button type="button" class="alt-card">
+                <div class="alt-card-thumb" style="background:linear-gradient(160deg,#0A1412 0%,#0D2018 100%);">
+                  <svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">
+                    <path d="M8 30 Q21 20 33 23 Q44 26 52 30 Q44 34 33 37 Q21 40 8 30Z" fill="#3A9E74" opacity="0.85"/>
+                    <path d="M10 27 Q24 23 40 26" stroke="#70D4A8" stroke-width="1" fill="none" opacity="0.45"/>
+                    <path d="M10 33 Q24 31 40 34" stroke="#70D4A8" stroke-width="1" fill="none" opacity="0.35"/>
+                    <circle cx="44" cy="29" r="2" fill="#0A1412" opacity="0.7"/>
+                  </svg>
+                  <div class="alt-card-badge" style="background:#188443;">90</div>
+                </div>
+                <div class="alt-card-body">
+                  <div class="alt-card-name">Fresh Rainbow Trout Fillet</div>
+                  <div class="alt-card-brand">Whole Foods</div>
+                </div>
+              </button>
+              <!-- Pacific Albacore Tuna -->
+              <button type="button" class="alt-card">
+                <div class="alt-card-thumb" style="background:linear-gradient(160deg,#111420 0%,#181E30 100%);">
+                  <svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">
+                    <rect x="10" y="21" width="40" height="18" rx="5" fill="#B89A6A" opacity="0.85"/>
+                    <path d="M10 27 Q30 24 50 28" stroke="#D4B880" stroke-width="1" fill="none" opacity="0.5"/>
+                    <path d="M10 33 Q30 32 50 34" stroke="#D4B880" stroke-width="1" fill="none" opacity="0.4"/>
+                    <rect x="46" y="21" width="4" height="18" rx="2" fill="#8A7050" opacity="0.6"/>
+                  </svg>
+                  <div class="alt-card-badge" style="background:#188443;">87</div>
+                </div>
+                <div class="alt-card-body">
+                  <div class="alt-card-name">Pacific Albacore Tuna No Salt</div>
+                  <div class="alt-card-brand">Safe Catch</div>
+                </div>
+              </button>
+              <!-- Sardines -->
+              <button type="button" class="alt-card">
+                <div class="alt-card-thumb" style="background:linear-gradient(160deg,#0F1820 0%,#162030 100%);">
+                  <svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">
+                    <rect x="8" y="24" width="44" height="12" rx="4" fill="#2A6A9A" opacity="0.8"/>
+                    <text x="30" y="33" text-anchor="middle" font-family="system-ui,sans-serif" font-size="6" font-weight="700" fill="#90C8E8" letter-spacing="0.08em">SARDINES</text>
+                    <rect x="8" y="24" width="6" height="12" rx="3" fill="#1E5A8A" opacity="0.8"/>
+                  </svg>
+                  <div class="alt-card-badge" style="background:#188443;">91</div>
+                </div>
+                <div class="alt-card-body">
+                  <div class="alt-card-name">Wild Sardines in Olive Oil</div>
+                  <div class="alt-card-brand">Wild Planet</div>
+                </div>
+              </button>
+            </div>
+          </div>
 
           <div class="last-scanned">
             <span class="material-symbols-outlined">history</span>
@@ -7275,6 +7577,257 @@ HIDDEN -->
     </div>
   </div>
   <div class="phone-caption">Tap a scan-history card in History (or land a barcode hit in Scan) to drill into the per-food detail: hero card with product image / brand and WISEscore, a Details link that expands the per-code score breakdown (health bars + totals), then AI Insights with chat-starter chips.</div>
+</div>
+  </div>
+</section>
+
+<!-- ─── 6b. FOOD DETAIL — low-scoring food, Better Alternatives prominent ── -->
+<!--   Same Product Detail layout but the featured food is Doritos Nacho
+       Cheese (WISEscore 24 — ultra-processed, high sodium, refined oils,
+       artificial flavors). The low score and the AI synopsis naturally lead
+       the user to the Better Alternatives card rail, which shows genuinely
+       better snack options ranked by their code. -->
+<section class="screen-pair">
+  <h3 class="screen-pair-label">6b · Food Detail (Low Score)</h3>
+  <div class="pair-row">
+<div class="phone-wrap">
+  <div class="phone-label">Dark</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr scr-hdr-nav">
+          <button type="button" class="scr-back" aria-label="Back">
+            <span class="material-symbols-outlined">arrow_back</span>
+          </button>
+          <h1>Product Detail</h1>
+        </div>
+
+        <div class="px stack">
+          <!-- ─── Product hero ─── -->
+          <div class="card pad-l food-hero-card">
+            <div class="food-hero-main">
+              <!-- Doritos Nacho Cheese packaging illustration:
+                   bold red diagonal chevron on dark charcoal. -->
+              <div class="product-thumb">
+                <svg viewBox="0 0 80 80" width="80" height="80" aria-hidden="true">
+                  <!-- bag background -->
+                  <rect x="0" y="0" width="80" height="80" rx="8" fill="#1A0A06"/>
+                  <!-- fiery diagonal stripe -->
+                  <polygon points="0,52 80,18 80,38 0,72" fill="#C8320A" opacity="0.95"/>
+                  <polygon points="0,58 80,26 80,30 0,62" fill="#E84A18" opacity="0.55"/>
+                  <!-- brand wordmark area -->
+                  <text x="40" y="16" text-anchor="middle"
+                        font-family="DM Sans, system-ui, sans-serif"
+                        font-size="8" font-weight="900"
+                        fill="#FF6830" letter-spacing="0.06em">DORITOS</text>
+                  <!-- "NACHO CHEESE" label -->
+                  <text x="40" y="76" text-anchor="middle"
+                        font-family="DM Sans, system-ui, sans-serif"
+                        font-size="4.5" font-weight="700"
+                        fill="#F4A030" letter-spacing="0.12em">NACHO CHEESE</text>
+                  <!-- triangle chip shape -->
+                  <polygon points="32,42 48,42 40,54" fill="#F4A030" opacity="0.8"/>
+                  <polygon points="34,44 46,44 40,52" fill="#FFD080" opacity="0.35"/>
+                </svg>
+              </div>
+              <div class="food-hero-body">
+                <div class="food-hero-info">
+                  <div class="product-name">Nacho Cheese Tortilla Chips</div>
+                  <div class="product-brand">Doritos · Frito-Lay</div>
+                </div>
+                <div class="fd-wisescore">
+                  <div class="score">
+                    <!-- Score colored risk-red for a bad food -->
+                    <span class="num" style="color:#CA371F;">24</span>
+                  </div>
+                  <div class="lbl">WISEscore</div>
+                </div>
+              </div>
+            </div>
+            <!-- Details accordion — static health bars for demo -->
+            <button type="button" class="fd-details-toggle" data-action="fd-details-toggle" aria-expanded="false">
+              <span>Details</span>
+              <span class="material-symbols-outlined">expand_more</span>
+            </button>
+            <div class="fd-details-panel">
+              <div class="fd-details-panel-inner">
+                <div class="contrib-list">
+                  <!-- Omega-3 / Anti-inflammatory: low score -->
+                  <div class="contrib-row">
+                    <div class="contrib-row-head">
+                      <span class="ico" style="color:#188443;"><span class="material-symbols-outlined">auto_awesome</span></span>
+                      <div class="nm">Anti-inflammatory</div>
+                      <div class="code-score"><span class="n">18</span></div>
+                    </div>
+                    <div class="health-bar contrib-code-bar">
+                      <div class="seg" style="flex:18;background:#188443;"></div>
+                      <div class="seg seg-track" style="flex:82;background:color-mix(in srgb,#188443 16%,transparent);"></div>
+                    </div>
+                  </div>
+                  <!-- Metabolic health: very low -->
+                  <div class="contrib-row">
+                    <div class="contrib-row-head">
+                      <span class="ico" style="color:#D8610C;"><span class="material-symbols-outlined">workspace_premium</span></span>
+                      <div class="nm">Metabolic Health</div>
+                      <div class="code-score"><span class="n">12</span></div>
+                    </div>
+                    <div class="health-bar contrib-code-bar">
+                      <div class="seg" style="flex:12;background:#D8610C;"></div>
+                      <div class="seg seg-track" style="flex:88;background:color-mix(in srgb,#D8610C 16%,transparent);"></div>
+                    </div>
+                  </div>
+                  <!-- Heart health: low -->
+                  <div class="contrib-row">
+                    <div class="contrib-row-head">
+                      <span class="ico" style="color:#CA371F;"><span class="material-symbols-outlined">monitor_heart</span></span>
+                      <div class="nm">Heart Health</div>
+                      <div class="code-score"><span class="n">22</span></div>
+                    </div>
+                    <div class="health-bar contrib-code-bar">
+                      <div class="seg" style="flex:22;background:#CA371F;"></div>
+                      <div class="seg seg-track" style="flex:78;background:color-mix(in srgb,#CA371F 16%,transparent);"></div>
+                    </div>
+                  </div>
+                  <!-- Gut microbiome: low -->
+                  <div class="contrib-row">
+                    <div class="contrib-row-head">
+                      <span class="ico" style="color:#0A6630;"><span class="material-symbols-outlined">speed</span></span>
+                      <div class="nm">Gut Microbiome</div>
+                      <div class="code-score"><span class="n">30</span></div>
+                    </div>
+                    <div class="health-bar contrib-code-bar">
+                      <div class="seg" style="flex:30;background:#0A6630;"></div>
+                      <div class="seg seg-track" style="flex:70;background:color-mix(in srgb,#0A6630 16%,transparent);"></div>
+                    </div>
+                  </div>
+                  <!-- Fitness performance: low -->
+                  <div class="contrib-row">
+                    <div class="contrib-row-head">
+                      <span class="ico" style="color:#FFC434;"><span class="material-symbols-outlined">fitness_center</span></span>
+                      <div class="nm">Fitness & Recovery</div>
+                      <div class="code-score"><span class="n">26</span></div>
+                    </div>
+                    <div class="health-bar contrib-code-bar">
+                      <div class="seg" style="flex:26;background:#FFC434;"></div>
+                      <div class="seg seg-track" style="flex:74;background:color-mix(in srgb,#FFC434 16%,transparent);"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─── AI Insights ─── -->
+          <div class="fd-ai-card">
+            <div class="fd-ai-label">AI Insights</div>
+            <p class="fd-ai-synopsis">Ultra-processed with refined corn, industrial seed oils, and artificial flavors — this chip ranks in the bottom tier for every code in your mix. Very low fiber, no meaningful protein or micronutrients.</p>
+            <div class="fd-ai-intents">
+              <button type="button" class="intent-chip" data-intent>Why this score?</button>
+              <button type="button" class="intent-chip" data-intent>What holds it back?</button>
+              <button type="button" class="intent-chip" data-intent>Find better options</button>
+              <button type="button" class="intent-chip" data-intent>Compare similar foods</button>
+            </div>
+          </div>
+
+          <!-- ─── Better Alternatives — snack upgrades ─── -->
+          <div class="alt-cards-section">
+            <div class="alt-cards-hdr">
+              <span class="alt-cards-ovl">Better Alternatives</span>
+              <button type="button" class="alt-cards-see-all">See all</button>
+            </div>
+            <div class="alt-cards-rail">
+              <!-- Siete Grain-Free Chips -->
+              <button type="button" class="alt-card">
+                <div class="alt-card-thumb" style="background:linear-gradient(160deg,#1A1206 0%,#2A1C08 100%);">
+                  <svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">
+                    <polygon points="30,14 46,42 14,42" fill="#E8A830" opacity="0.9"/>
+                    <polygon points="30,18 43,40 17,40" fill="#F4C860" opacity="0.45"/>
+                    <text x="30" y="34" text-anchor="middle" font-family="system-ui,sans-serif" font-size="5" font-weight="800" fill="#1A1206" opacity="0.7">SIETE</text>
+                  </svg>
+                  <div class="alt-card-badge" style="background:#D8610C;">72</div>
+                </div>
+                <div class="alt-card-body">
+                  <div class="alt-card-name">Grain-Free Tortilla Chips</div>
+                  <div class="alt-card-brand">Siete</div>
+                </div>
+              </button>
+              <!-- Jackson's Sweet Potato Chips -->
+              <button type="button" class="alt-card">
+                <div class="alt-card-thumb" style="background:linear-gradient(160deg,#1A0E06 0%,#281408 100%);">
+                  <svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">
+                    <ellipse cx="30" cy="30" rx="18" ry="12" fill="#C86820" opacity="0.85"/>
+                    <ellipse cx="30" cy="30" rx="14" ry="8" fill="#E08840" opacity="0.5"/>
+                    <ellipse cx="22" cy="27" rx="10" ry="7" fill="#B05810" opacity="0.7" transform="rotate(-15,22,27)"/>
+                  </svg>
+                  <div class="alt-card-badge" style="background:#D8610C;">68</div>
+                </div>
+                <div class="alt-card-body">
+                  <div class="alt-card-name">Sweet Potato Chips, Avocado Oil</div>
+                  <div class="alt-card-brand">Jackson's</div>
+                </div>
+              </button>
+              <!-- Simple Mills Crackers -->
+              <button type="button" class="alt-card">
+                <div class="alt-card-thumb" style="background:linear-gradient(160deg,#141008 0%,#201A0C 100%);">
+                  <svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">
+                    <rect x="12" y="20" width="16" height="14" rx="3" fill="#C8A458" opacity="0.85"/>
+                    <rect x="32" y="20" width="16" height="14" rx="3" fill="#C8A458" opacity="0.85"/>
+                    <rect x="12" y="38" width="16" height="14" rx="3" fill="#C8A458" opacity="0.75"/>
+                    <rect x="32" y="38" width="16" height="14" rx="3" fill="#C8A458" opacity="0.75"/>
+                  </svg>
+                  <div class="alt-card-badge" style="background:#D8610C;">79</div>
+                </div>
+                <div class="alt-card-body">
+                  <div class="alt-card-name">Almond Flour Crackers, Farmhouse</div>
+                  <div class="alt-card-brand">Simple Mills</div>
+                </div>
+              </button>
+              <!-- Chomps Beef Stick -->
+              <button type="button" class="alt-card">
+                <div class="alt-card-thumb" style="background:linear-gradient(160deg,#0E1008 0%,#1A1A0C 100%);">
+                  <svg viewBox="0 0 60 60" width="60" height="60" aria-hidden="true">
+                    <rect x="22" y="12" width="16" height="36" rx="8" fill="#5A3A20" opacity="0.9"/>
+                    <rect x="24" y="14" width="12" height="32" rx="6" fill="#7A5030" opacity="0.6"/>
+                    <text x="30" y="33" text-anchor="middle" font-family="system-ui,sans-serif" font-size="4.5" font-weight="800" fill="#C8A070" letter-spacing="0.05em">BEEF</text>
+                  </svg>
+                  <div class="alt-card-badge" style="background:#188443;">88</div>
+                </div>
+                <div class="alt-card-body">
+                  <div class="alt-card-name">Grass-Fed Beef Stick, Original</div>
+                  <div class="alt-card-brand">Chomps</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <div class="last-scanned">
+            <span class="material-symbols-outlined">history</span>
+            Last scanned today at 9:41 AM
+          </div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Food Detail for a low-scoring ultra-processed snack (Doritos Nacho Cheese, WISEscore 24). Every per-code health bar reads near-empty, the AI synopsis explains why, and the Better Alternatives rail surfaces genuinely better snack options ranked by the user's live code.</div>
 </div>
   </div>
 </section>
@@ -7710,7 +8263,7 @@ HIDDEN -->
               if (pctShare >= 10) {
                 var pct = document.createElement("span");
                 pct.className = "pct";
-                pct.textContent = Math.round(slot.v) + "%";
+                pct.textContent = Math.round(slot.v);
                 tag.appendChild(pct);
               }
 
@@ -8332,8 +8885,8 @@ HIDDEN -->
       // Mirrors the slice in store/slices/preferences-slice.ts and the
       // helpers in lib/composite.ts:
       //   • MAX_SLOTS = 10 — hard ceiling, same as the real app
-      //   • addCode    → push, then autoEqualize so weights sum to 100
-      //   • removeCode → strip, then autoEqualize the rest
+      //   • addCode    → push at the default 1–10 weight; others untouched
+      //   • removeCode → strip the slot; the rest keep their weights
       //   • resetCode → restore the authored ten-code starting mix
       //
       // The module also carries the per-codeId scoring table used by
@@ -8380,16 +8933,16 @@ HIDDEN -->
         // what's already in the DOM. The Reset sheet restores this
         // mix instead of falling back to an even split.
         var INITIAL_SLOTS = [
-          { codeId: "clean_label",       weight: 20 },
-          { codeId: "overall_quality",   weight: 15 },
-          { codeId: "heart_health",      weight: 12 },
-          { codeId: "performance_score", weight: 11 },
-          { codeId: "muscle_health",     weight: 10 },
-          { codeId: "gut_health",        weight: 8 },
-          { codeId: "nutrient_density",  weight: 8 },
-          { codeId: "brain_health",      weight: 6 },
-          { codeId: "energy_stamina",    weight: 5 },
-          { codeId: "longevity_score",   weight: 5 }
+          { codeId: "clean_label",       weight: 10 },
+          { codeId: "overall_quality",   weight: 8 },
+          { codeId: "heart_health",      weight: 6 },
+          { codeId: "performance_score", weight: 6 },
+          { codeId: "muscle_health",     weight: 5 },
+          { codeId: "gut_health",        weight: 4 },
+          { codeId: "nutrient_density",  weight: 4 },
+          { codeId: "brain_health",      weight: 3 },
+          { codeId: "energy_stamina",    weight: 3 },
+          { codeId: "longevity_score",   weight: 2 }
         ];
 
         // Per-code copy that hydrates the bottom-sheet opened when the
@@ -8558,7 +9111,8 @@ HIDDEN -->
 
         // Per-code "how does THIS food (Wild Atlantic Salmon Fillet)
         // score against THIS code", 0..100. Drives the Product Detail
-        // contribution math: contribution_i = weight_i × slotScore_i / 100.
+        // contribution math: contribution_i = weight_i × slotScore_i / Σweight
+        // (a weight-share average, so it stays 0..100 on the 1–10 scale).
         // Codes the user picks that aren't in the table fall back to
         // PRODUCT_SCORE_FALLBACK so the donut never blanks out, and
         // the composite stays in a sensible band.
@@ -8595,8 +9149,8 @@ HIDDEN -->
         // sheet reads as a returning user's library on first open. The
         // first entry mirrors INITIAL_SLOTS / the "In Harmony" headline
         // so the code currently on screen shows as the active saved code.
-        // Each entry is { id, name, slots:[{codeId, weight}] } with
-        // weights summing to 100.
+        // Each entry is { id, name, slots:[{codeId, weight}] } with each
+        // weight an independent 1–10 importance rating.
         var SAVED_CODES = [
           {
             id: "saved_in_harmony",
@@ -8609,24 +9163,24 @@ HIDDEN -->
             id: "saved_peak_performance",
             name: "Peak Performance",
             slots: [
-              { codeId: "performance_score", weight: 22 },
-              { codeId: "muscle_health",     weight: 20 },
-              { codeId: "energy_stamina",    weight: 16 },
-              { codeId: "recovery_support",  weight: 14 },
-              { codeId: "nutrient_density",  weight: 12 },
-              { codeId: "heart_health",      weight: 9 },
-              { codeId: "clean_label",       weight: 7 }
+              { codeId: "performance_score", weight: 10 },
+              { codeId: "muscle_health",     weight: 9 },
+              { codeId: "energy_stamina",    weight: 7 },
+              { codeId: "recovery_support",  weight: 6 },
+              { codeId: "nutrient_density",  weight: 5 },
+              { codeId: "heart_health",      weight: 4 },
+              { codeId: "clean_label",       weight: 3 }
             ]
           },
           {
             id: "saved_clean_simple",
             name: "Clean & Simple",
             slots: [
-              { codeId: "clean_label",        weight: 26 },
-              { codeId: "additive_free",      weight: 22 },
-              { codeId: "ingredient_quality", weight: 20 },
-              { codeId: "nutrient_density",   weight: 16 },
-              { codeId: "overall_quality",    weight: 16 }
+              { codeId: "clean_label",        weight: 10 },
+              { codeId: "additive_free",      weight: 8 },
+              { codeId: "ingredient_quality", weight: 8 },
+              { codeId: "nutrient_density",   weight: 6 },
+              { codeId: "overall_quality",    weight: 6 }
             ]
           }
         ];
@@ -8641,14 +9195,22 @@ HIDDEN -->
         };
         var subscribers = [];
 
+        // Default importance for a freshly-added code on the 1–10 scale.
+        var DEFAULT_WEIGHT = 5;
+        var MIN_WEIGHT = 1;
+        var MAX_WEIGHT = 10;
+
+        // Sliders are independent 1–10 ratings now, so adding or removing a
+        // code never disturbs the others' weights. This just strips empty
+        // slots and clamps any stray weights into the 1–10 band.
         function autoEqualize(slots) {
-          var filled = slots.filter(function (s) { return s.codeId; });
-          if (filled.length === 0) return [];
-          var base = Math.floor(100 / filled.length);
-          var rem  = 100 - base * filled.length;
-          return filled.map(function (s, i) {
-            return { codeId: s.codeId, weight: base + (i === 0 ? rem : 0) };
-          });
+          return slots
+            .filter(function (s) { return s.codeId; })
+            .map(function (s) {
+              var w = s.weight == null ? DEFAULT_WEIGHT : s.weight;
+              w = Math.max(MIN_WEIGHT, Math.min(MAX_WEIGHT, Math.round(w)));
+              return { codeId: s.codeId, weight: w };
+            });
         }
 
         function filledSignature(slots) {
@@ -8681,7 +9243,7 @@ HIDDEN -->
           if (state.slots.some(function (s) { return s.codeId === codeId; })) return;
           if (filledSignature(state.slots) >= MAX_SLOTS) return;
           var next = state.slots.slice();
-          next.push({ codeId: codeId, weight: 0 });
+          next.push({ codeId: codeId, weight: DEFAULT_WEIGHT });
           state.slots = autoEqualize(next);
           notify();
         }
@@ -8697,7 +9259,7 @@ HIDDEN -->
         // its current weight (and slot position) untouched. Used by the
         // rebalance sheet's per-row "swap" affordance: the user trades a
         // code out for a different one without disturbing the rest of the
-        // mix, so the total stays at 100 and no autoEqualize is needed.
+        // mix; the swapped-in code inherits the old slot's 1–10 rating.
         // No-ops if the new code is unknown, identical to the old one, or
         // already present in another slot (we never duplicate a code).
         function swapCode(oldCodeId, newCodeId) {
@@ -8727,17 +9289,9 @@ HIDDEN -->
           notify();
         }
 
-        // Apply a weight change to one filled slot, redistributing across
-        // the OTHER filled slots so the visible integers still sum to 100.
-        // Mirrors lib/composite.ts → applyWeightChange so the rebalance
-        // sheet here behaves identically to the live PWA's drag flow:
-        //   • delta = newWeight - oldWeight
-        //   • if delta > 0 and others sum to 0, reject (nothing to take)
-        //   • if delta > otherTotal, zero everyone else and pin this slot
-        //     to oldWeight + otherTotal
-        //   • otherwise reduce others proportionally; even-split fallback
-        //     when decreasing while others are all zero
-        //   • normalize rounding so the integer sum returns to exactly 100
+        // Set one slot's importance on the independent 1–10 scale. Sliders
+        // no longer rebalance against each other — each code carries its own
+        // 1–10 rating and the donut centre shows the live sum out of 100.
         function setSlotWeight(codeId, newWeight) {
           var idx = -1;
           for (var i = 0; i < state.slots.length; i++) {
@@ -8745,57 +9299,13 @@ HIDDEN -->
           }
           if (idx < 0) return;
 
-          var filledCount = state.slots.length;
-          if (filledCount <= 1) return; // single slot locked at 100%
-
-          newWeight = Math.max(0, Math.min(100, Math.round(newWeight)));
-          var oldWeight = state.slots[idx].weight;
-          var delta = newWeight - oldWeight;
-          if (delta === 0) return;
+          newWeight = Math.max(MIN_WEIGHT, Math.min(MAX_WEIGHT, Math.round(newWeight)));
+          if (newWeight === state.slots[idx].weight) return;
 
           var next = state.slots.map(function (s) {
             return { codeId: s.codeId, weight: s.weight };
           });
-
-          var otherTotal = 0;
-          for (var j = 0; j < next.length; j++) {
-            if (j !== idx) otherTotal += next[j].weight;
-          }
-          if (otherTotal === 0 && delta > 0) return; // nothing to take from
-
-          var actualNewWeight;
-          if (delta > otherTotal) {
-            // Can't take more than others have. Zero them and pin this slot.
-            actualNewWeight = oldWeight + otherTotal;
-            for (var k = 0; k < next.length; k++) {
-              if (k !== idx) next[k].weight = 0;
-            }
-          } else {
-            // Proportional reduction. Even split when otherTotal === 0 and delta < 0.
-            actualNewWeight = newWeight;
-            var othersCount = next.length - 1;
-            for (var m = 0; m < next.length; m++) {
-              if (m === idx) continue;
-              var prop = otherTotal > 0 ? next[m].weight / otherTotal : 1 / othersCount;
-              next[m].weight = Math.max(0, Math.round(next[m].weight - delta * prop));
-            }
-          }
-          next[idx].weight = Math.round(actualNewWeight);
-
-          // Rounding fix: make integer sum exactly 100 by tweaking the
-          // biggest other slot. Mirrors the drift-fix in the prototype.
-          var total = next.reduce(function (a, s) { return a + s.weight; }, 0);
-          if (total !== 100) {
-            var biggestI = -1;
-            for (var n = 0; n < next.length; n++) {
-              if (n === idx) continue;
-              if (biggestI < 0 || next[n].weight > next[biggestI].weight) biggestI = n;
-            }
-            if (biggestI >= 0) {
-              next[biggestI].weight = Math.max(0, next[biggestI].weight + (100 - total));
-            }
-          }
-
+          next[idx].weight = newWeight;
           state.slots = next;
           notify();
         }
@@ -8805,7 +9315,7 @@ HIDDEN -->
         // rebuild the slot array in that order while keeping each code's
         // current weight attached to it — reordering is purely positional
         // (rank), so the per-row sliders the user already tuned survive
-        // the move and the total stays at 100. Fans out to every
+        // the move with their 1–10 ratings intact. Fans out to every
         // subscriber. No-ops unless the id set matches the current slots.
         function reorderCodes(orderedIds) {
           if (!orderedIds || orderedIds.length !== state.slots.length) return;
@@ -8864,7 +9374,7 @@ HIDDEN -->
             var weak = weaknesses.slice().sort(function (a, b) { return b.weight - a.weight; })[0];
             return subject + " is a strong fit for your " + strongNames
               + " priorities — it scores well where you care most. It carries less for "
-              + weak.name + " (" + weak.score + "/100) where you weight " + weak.weight + "%.";
+              + weak.name + " (" + weak.score + "/100), which you rate " + weak.weight + " out of 10.";
           }
           if (strengths.length) {
             var top = nameList(
@@ -8877,7 +9387,7 @@ HIDDEN -->
           if (weaknesses.length) {
             var w = weaknesses.slice().sort(function (a, b) { return b.weight - a.weight; })[0];
             return subject + " is a mixed read against your code — watch " + w.name
-              + " (" + w.score + "/100) where you have " + w.weight + "% allocated.";
+              + " (" + w.score + "/100), which you rate " + w.weight + " out of 10.";
           }
           return subject + " lands in a solid middle band across your weighted codes — balanced, not dominant in any one slot.";
         }
@@ -9258,7 +9768,7 @@ HIDDEN -->
           slots = resolveSlots(phoneWrap, slots);
           var filled = slots.filter(function (s) { return s.codeId; });
           var weightSum = filled.reduce(function (a, s) { return a + s.weight; }, 0);
-          var inHarmony = filled.length > 0 && weightSum === 100;
+          var inHarmony = filled.length > 0;
 
           var countEl = phoneWrap.querySelector("[data-code-count]");
           if (countEl) {
@@ -9660,10 +10170,13 @@ HIDDEN -->
         // the row thumbnail — each segment's height is its slot weight.
         function savedThumb(slots) {
           var html = "";
+          var total = slots.reduce(function (a, s) {
+            return a + (W.CODE_CATALOG[s.codeId] ? s.weight : 0);
+          }, 0) || 1;
           slots.forEach(function (s) {
             var meta = W.CODE_CATALOG[s.codeId];
             if (!meta) return;
-            html += '<span class="seg" style="height:' + s.weight + '%;background:' + meta.color + ';"></span>';
+            html += '<span class="seg" style="height:' + (s.weight / total * 100) + '%;background:' + meta.color + ';"></span>';
           });
           return '<span class="saved-thumb" aria-hidden="true">' + html + '</span>';
         }
@@ -9836,7 +10349,7 @@ HIDDEN -->
             +   '<div class="sheet-head">'
             +     '<div class="sheet-title">'
             +       '<h2 id="delete-sheet-title">Remove this code?</h2>'
-            +       '<p>This drops \u201C' + W.escapeHtml(meta.name) + '\u201D from your Personal Code and re-balances the remaining codes to total 100. You can add it back anytime.</p>'
+            +       '<p>This drops \u201C' + W.escapeHtml(meta.name) + '\u201D from your Personal Code. Your other priorities keep their ratings. You can add it back anytime.</p>'
             +     '</div>'
             +     '<button type="button" class="sheet-close" data-action="delete-cancel" aria-label="Close">'
             +       '<span class="material-symbols-outlined">close</span>'
@@ -9958,7 +10471,7 @@ HIDDEN -->
               +           '<div class="rb-cat">' + W.escapeHtml(meta.category) + '</div>'
               +         '</div>'
               +       '</div>'
-              +       '<span class="rb-pct"><b data-rebalance-pct>' + s.weight + '</b><small>%</small></span>'
+              +       '<span class="rb-pct"><b data-rebalance-pct>' + s.weight + '</b></span>'
               +       '<button type="button" class="rb-swap" data-action="rb-swap" '
               +         'data-code-id="' + s.codeId + '" '
               +         'aria-label="Swap out ' + W.escapeHtml(meta.name) + '" '
@@ -9966,9 +10479,9 @@ HIDDEN -->
               +         '<span class="material-symbols-outlined">swap_horiz</span>'
               +       '</button>'
               +     '</div>'
-              +     '<input type="range" min="0" max="100" value="' + s.weight + '" '
+              +     '<input type="range" min="1" max="10" value="' + s.weight + '" '
               +       'class="rb-slider" '
-              +       'style="--rb-track-c:' + meta.color + '; --rb-fill:' + s.weight + '%;" '
+              +       'style="--rb-track-c:' + meta.color + '; --rb-fill:' + (((s.weight - 1) / 9) * 100) + '%;" '
               +       'data-rebalance-input '
               +       'aria-label="Adjust weight for ' + W.escapeHtml(meta.name) + '" />'
               +   '</div>'
@@ -9998,13 +10511,13 @@ HIDDEN -->
             var slider = row.querySelector("[data-rebalance-input]");
             if (slider) {
               if (s.codeId !== skipCodeId) slider.value = s.weight;
-              slider.style.setProperty("--rb-fill", s.weight + "%");
+              slider.style.setProperty("--rb-fill", (((s.weight - 1) / 9) * 100) + "%");
             }
           });
           var totalEl = overlay.querySelector("[data-rebalance-total]");
           if (totalEl) totalEl.textContent = String(total);
           var sheet = overlay.querySelector(".rebalance-sheet");
-          if (sheet) sheet.classList.toggle("is-balanced", total === 100);
+          if (sheet) sheet.classList.toggle("is-balanced", total >= 100);
         }
 
         // ─── Drag-to-reorder controller ─────────────────────────────────
@@ -10066,7 +10579,24 @@ HIDDEN -->
               beginRebalanceDrag(overlay, rowsEl, row, downEvt);
             }
           }
-          function onUp() { cleanup(); }
+          function onUp(e) {
+            cleanup();
+            // A press on the code's name/icon strip with no decisive
+            // movement reads as a plain tap → open that code's detail
+            // sheet. Reorder + swipe-to-remove have already handed off
+            // (decided) by the time we get here, and the swap button /
+            // slider live outside .rb-drag, so they keep their own
+            // behaviour. Scoped to the inline Home surface so the
+            // rebalance bottom-sheet's rows aren't hijacked.
+            if (decided) return;
+            if (!e || e.type !== "pointerup") return;
+            if (!(overlay.hasAttribute && overlay.hasAttribute("data-rb-inline"))) return;
+            var codeId = row.getAttribute("data-rebalance-code");
+            var phoneWrap = overlay.closest && overlay.closest(".phone-wrap");
+            if (codeId && phoneWrap && window.CODE_DETAIL_SHEET) {
+              window.CODE_DETAIL_SHEET.open(phoneWrap, codeId, { context: "code" });
+            }
+          }
 
           try { row.setPointerCapture(downEvt.pointerId); } catch (err) {}
           row.addEventListener("pointermove", onMove);
@@ -10077,7 +10607,7 @@ HIDDEN -->
         // Swipe-to-remove: the visible card (.rb-row-inner) tracks the
         // finger leftward, fading in the rose backdrop. Released past the
         // threshold it flings off and drops the code (W.removeCode → the
-        // rest re-balance to 100 and every screen repaints); short of it,
+        // rest keep their ratings and every screen repaints); short of it,
         // the card springs back. We hold overlay._dragging while the
         // gesture runs so an incidental notify never rebuilds the row
         // out from under the finger.
@@ -10285,7 +10815,7 @@ HIDDEN -->
           var metaHtml = inCode
             ? ('<span class="cd-cat">' + W.escapeHtml(meta.category) + '</span>'
                + '<span class="cd-dot" aria-hidden="true">\u00b7</span>'
-               + '<span class="cd-pct"><b>' + weight + '</b>%</span>')
+               + '<span class="cd-pct"><b>' + weight + '</b></span>')
             : ('<span class="cd-cat">' + W.escapeHtml(meta.category) + '</span>');
 
           var addCtaHtml = showAddCta
@@ -11008,7 +11538,7 @@ HIDDEN -->
           })[0];
           if (actualSlot && parseInt(slider.value, 10) !== actualSlot.weight) {
             slider.value = actualSlot.weight;
-            slider.style.setProperty("--rb-fill", actualSlot.weight + "%");
+            slider.style.setProperty("--rb-fill", (((actualSlot.weight - 1) / 9) * 100) + "%");
           }
           overlay._dragCodeId = null;
         });
@@ -11019,20 +11549,17 @@ HIDDEN -->
         // static Screen 2 one and any open dynamic modal — are kept
         // in sync by the PICKER module's own subscriber further up.)
         //
-        // The first invocation — fired synchronously inside
-        // WISE_CODES.subscribe with the initial slot config — plays
-        // the bounce-in pie entrance: each slice grows into its
-        // resting span one-by-one with a back-easing snap. All
-        // subsequent notify() calls (add / remove / reset, twin
-        // sync) repaint statically so live weight changes stay
-        // tight and responsive.
-        var firstCodePaint = true;
+        // Boot and every later change repaint statically. The bounce-in
+        // pie entrance is deferred to the IntersectionObserver below so
+        // each code donut animates the first time it actually scrolls
+        // into view — this catalog stacks many screens, so firing the
+        // entrance synchronously at boot would play it entirely
+        // off-screen, and the reader would only ever see the resting
+        // chart by the time they reach Your Code.
         WISE_CODES.subscribe(function (state) {
-          var paintOpts = firstCodePaint ? { animate: true } : undefined;
           document.querySelectorAll(".phone-wrap[data-code]").forEach(function (wrap) {
-            renderCodeWrap(wrap, state.slots, paintOpts);
+            renderCodeWrap(wrap, state.slots);
           });
-          firstCodePaint = false;
 
           // Any open rebalance sheet (on a code phone or the Browse
           // phone) syncs to the new state. We distinguish two cases:
@@ -11063,6 +11590,41 @@ HIDDEN -->
             }
           });
         });
+
+        // ─── Donut entrance on scroll-into-view ──────────────────────
+        // Replays each code donut's bounce-in the first time it enters
+        // the viewport (covering both the dark wrap and its cloned light
+        // twin). The static boot paint above leaves data-slices current,
+        // so this just re-runs the same renderer with { animate: true }.
+        // One shot per donut; reduced-motion / no-IO leave the resting
+        // chart in place. Tap-to-replay and Replay-all still work as
+        // before for re-triggering.
+        (function () {
+          var reduce = window.matchMedia
+            && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          if (reduce || !("IntersectionObserver" in window)) return;
+          if (typeof renderPieSvg !== "function") return;
+
+          var pies = Array.prototype.slice.call(
+            document.querySelectorAll(".phone-wrap[data-code] .pie-svg")
+          );
+          if (!pies.length) return;
+
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (!entry.isIntersecting) return;
+              var svg = entry.target;
+              io.unobserve(svg);
+              if (svg._pieEntered) return;
+              svg._pieEntered = true;
+              var slices = svg.getAttribute("data-slices");
+              if (!slices || slices === "[]") return; // empty state — nothing to play
+              renderPieSvg(svg, { animate: true });
+            });
+          }, { threshold: 0.35 });
+
+          pies.forEach(function (svg) { io.observe(svg); });
+        })();
       })();
 
       // ─── Browse (Screen 3) — priority chips + food-row bars ──────────
@@ -11089,7 +11651,7 @@ HIDDEN -->
               +   '<span class="ico" style="background:' + meta.color + ';">'
               +     '<span class="material-symbols-outlined">' + meta.icon + '</span>'
               +   '</span>'
-              +   '<span class="pct">' + s.weight + '%</span>'
+              +   '<span class="pct">' + s.weight + '</span>'
               +   '<span class="nm">' + W.escapeHtml(meta.name) + '</span>'
               + '</button>';
           }).join("");
@@ -11474,12 +12036,11 @@ HIDDEN -->
           +     '<div class="nm">' + W.escapeHtml(meta.name) + '</div>'
           +     '<div class="code-score">'
           +       '<span class="n">' + score + '</span>'
-          +       '<span class="of">/100</span>'
           +     '</div>'
           +   '</div>'
           +   '<div class="health-bar contrib-code-bar">'
           +     '<div class="seg" style="flex:' + score + ';background:' + meta.color + ';"></div>'
-          +     '<div class="seg seg-track" style="flex:' + rest + ';"></div>'
+          +     '<div class="seg seg-track" style="flex:' + rest + ';background:color-mix(in srgb, ' + meta.color + ' 16%, transparent);"></div>'
           +   '</div>'
           + '</div>';
       }
@@ -11489,11 +12050,12 @@ HIDDEN -->
 
         function renderProductDetail(phoneWrap, slots, opts) {
           var filled = slots.filter(function (s) { return s.codeId && s.weight > 0; });
+          var weightTotal = filled.reduce(function (a, s) { return a + s.weight; }, 0) || 1;
 
           var contribEntries = filled.map(function (s) {
             var meta = W.CODE_CATALOG[s.codeId];
             var codeScore = W.productScore(s.codeId);
-            var raw = s.weight * codeScore / 100;
+            var raw = s.weight * codeScore / weightTotal;
             return {
               codeId: s.codeId,
               meta: meta,
@@ -11523,18 +12085,6 @@ HIDDEN -->
               return contribCodeRowHtml(W, e.meta, e.codeScore);
             }).join("");
           }
-
-          // Totals row.
-          var summaryEl = phoneWrap.querySelector("[data-product-detail-summary]");
-          if (summaryEl) {
-            summaryEl.innerHTML = ''
-              + '<span>Total Contribution: <b>' + totalContribution + '/100</b></span>'
-              + '<span>Other Factors: <b>' + W.OTHER_FACTORS + '/100</b>'
-              +   '<span class="info" aria-label="What are other factors?">'
-              +     '<span class="material-symbols-outlined">info</span>'
-              +   '</span>'
-              + '</span>';
-          }
         }
 
         // Same first-fire trick as the code subscriber: play the
@@ -11562,7 +12112,7 @@ HIDDEN -->
       // The score math reuses WISE_CODES.productScore as the per-code
       // reference performance, then scales every per-slot score by
       //
-      //   scale = (rowScore − OTHER_FACTORS) / Σ(weight_i × ref_i / 100)
+      //   scale = (rowScore − OTHER_FACTORS) / Σ(weight_i × ref_i / Σweight)
       //
       // so the contributions sum to the row's displayed composite
       // (98, 95, 93, …) instead of the salmon's 90. The shape across
@@ -11587,7 +12137,6 @@ HIDDEN -->
           opts = opts || {};
           var scoreAttr = opts.scoreAttr || "data-food-detail-score";
           var contribAttr = opts.contribAttr || "data-food-detail-contrib";
-          var summaryAttr = opts.summaryAttr || "data-food-detail-summary";
           var score = opts.score != null ? opts.score : "";
           return ''
             + '<div class="card pad-l food-hero-card">'
@@ -11611,7 +12160,6 @@ HIDDEN -->
             +   '<div class="fd-details-panel">'
             +     '<div class="fd-details-panel-inner">'
             +       '<div class="contrib-list" ' + contribAttr + '></div>'
-            +       '<div class="contrib-summary" ' + summaryAttr + '></div>'
             +     '</div>'
             +   '</div>'
             + '</div>';
@@ -11636,12 +12184,13 @@ HIDDEN -->
           var rowScore = parseFloat(scrollEl.getAttribute("data-row-score")) || 0;
           var slots = W.getSlots();
           var filled = slots.filter(function (s) { return s.codeId && s.weight > 0; });
+          var weightTotal = filled.reduce(function (a, s) { return a + s.weight; }, 0) || 1;
 
           // Reference total = what the salmon table would yield
           // against the current code. Used as the denominator
           // for the per-row scaling factor.
           var refTotal = filled.reduce(function (acc, s) {
-            return acc + s.weight * W.productScore(s.codeId) / 100;
+            return acc + s.weight * W.productScore(s.codeId) / weightTotal;
           }, 0);
           var targetTotal = Math.max(0, rowScore - W.OTHER_FACTORS);
           var scale = refTotal > 0 ? targetTotal / refTotal : 0;
@@ -11649,7 +12198,7 @@ HIDDEN -->
           var contribEntries = filled.map(function (s) {
             var base = W.productScore(s.codeId);
             var scaled = Math.max(0, Math.min(100, base * scale));
-            var raw = s.weight * scaled / 100;
+            var raw = s.weight * scaled / weightTotal;
             return {
               codeId: s.codeId,
               meta: W.CODE_CATALOG[s.codeId],
@@ -11672,17 +12221,6 @@ HIDDEN -->
               if (!e.meta) return "";
               return contribCodeRowHtml(W, e.meta, e.codeScore);
             }).join("");
-          }
-
-          var summaryEl = scrollEl.querySelector("[data-food-detail-summary]");
-          if (summaryEl) {
-            summaryEl.innerHTML = ''
-              + '<span>Total Contribution: <b>' + totalContribution + '/100</b></span>'
-              + '<span>Other Factors: <b>' + W.OTHER_FACTORS + '/100</b>'
-              +   '<span class="info" aria-label="What are other factors?">'
-              +     '<span class="material-symbols-outlined">info</span>'
-              +   '</span>'
-              + '</span>';
           }
 
           var synopsisEl = scrollEl.querySelector("[data-food-ai-synopsis]");
