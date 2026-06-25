@@ -772,6 +772,31 @@
       @media (prefers-reduced-motion: reduce) {
         .wise-bug-label { animation: none; }
       }
+      /* Filter control — replaces the AI-Insights bug on Your Code (Home).
+         Circular icon button in the headline's top-right slot, neutral
+         surface with a faint ring, matching the picker's icon buttons. */
+      .scr-hdr-filter {
+        flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 38px; height: 38px;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        background: var(--surface-2);
+        color: var(--fg-bright);
+        cursor: pointer;
+        transition: border-color .14s ease, background .14s ease, transform .14s ease;
+      }
+      .scr-hdr-filter .material-symbols-outlined { font-size: 20px; }
+      @media (hover: hover) {
+        .scr-hdr-filter:hover { border-color: var(--line-strong); }
+      }
+      .scr-hdr-filter:active { transform: scale(0.94); }
+      .scr-hdr-filter:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
+      }
+
       /* Full wordmark is authored dark — invert on the dark phone canvas. */
       .phone-wrap:not(.theme-light) .wise-logo-vertical {
         filter: brightness(0) invert(0.96);
@@ -2887,6 +2912,130 @@
         box-shadow: 0 8px 20px color-mix(in srgb, var(--blue) 32%, transparent);
       }
       .cta-scan i { width: 18px; height: 18px; }
+
+      /* Frozen-frame badge shown on the post-scan (4d) viewfinder — a
+         centered barcode glyph standing in for the captured read. */
+      .scan-cam-captured {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        color: rgba(255,255,255,0.92);
+      }
+      .scan-cam-captured .material-symbols-outlined { font-size: 72px; }
+
+      /* ─── Saved-to-history sheet (Screen 4d) ─────────────────────────
+         A bottom sheet drawn already-open over the dimmed scan screen.
+         Reuses the picker scrim idiom (absolute, flex-end, blurred scrim)
+         and the rounded-top sheet surface; holds a success confirmation,
+         the install nudge card, and a primary "View history" CTA. */
+      .save-sheet-overlay {
+        position: absolute; inset: 0; z-index: 40;
+        background: var(--scrim-strong);
+        backdrop-filter: blur(10px);
+        display: flex; align-items: flex-end;
+      }
+      .save-sheet {
+        position: relative;
+        width: 100%;
+        max-height: calc(100% - 64px);
+        background: var(--sheet-bg);
+        border-top: 1px solid var(--line);
+        border-radius: 22px 22px 0 0;
+        box-shadow: var(--shadow-sheet);
+        display: flex; flex-direction: column;
+        gap: 16px;
+        padding: 10px 16px 20px;
+        overflow-y: auto;
+      }
+      .save-sheet .cp-handle {
+        width: 38px; height: 4px; border-radius: 999px;
+        background: var(--line-strong);
+        opacity: 0.5;
+        align-self: center;
+        margin: 2px 0 2px;
+        flex-shrink: 0;
+      }
+      .save-sheet-confirm {
+        display: flex; align-items: flex-start; gap: 12px;
+      }
+      .save-sheet-check {
+        flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        background: var(--emerald);
+        color: #FFFFFF;
+        box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--emerald) 70%, transparent);
+      }
+      .save-sheet-check .material-symbols-outlined { font-size: 22px; font-weight: 700; }
+      .save-sheet-confirm-copy { min-width: 0; }
+      .save-sheet-title {
+        color: var(--fg-bright);
+        font-size: 18px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.2;
+      }
+      .save-sheet-sub {
+        margin-top: 4px;
+        color: var(--fg-muted);
+        font-size: 13px; font-weight: 500; line-height: 1.5;
+      }
+
+      /* Install nudge card — icon tile left, steps + "Show me how" right.
+         Mirrors the "Pin it to your home screen" reference card. */
+      .install-card {
+        display: flex; gap: 14px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 16px;
+      }
+      .install-ico {
+        flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 44px; height: 44px;
+        border-radius: 13px;
+        background: color-mix(in srgb, var(--blue) 16%, transparent);
+        color: var(--blue);
+      }
+      .install-ico .material-symbols-outlined { font-size: 24px; }
+      .install-body { flex: 1; min-width: 0; }
+      .install-title {
+        color: var(--fg-bright);
+        font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
+      }
+      .install-steps {
+        list-style: none; margin: 10px 0 0; padding: 0;
+        display: flex; flex-direction: column; gap: 8px;
+      }
+      .install-steps li {
+        display: flex; align-items: flex-start; gap: 9px;
+        color: var(--fg-muted);
+        font-size: 12.5px; font-weight: 500; line-height: 1.4;
+      }
+      .install-steps li .material-symbols-outlined {
+        flex-shrink: 0;
+        font-size: 18px; color: var(--fg-faint);
+        margin-top: 1px;
+      }
+      .install-how {
+        display: inline-flex; align-items: center; gap: 2px;
+        margin-top: 12px;
+        border: none; background: transparent; padding: 0;
+        color: var(--blue);
+        font-family: inherit; font-size: 13px; font-weight: 800; letter-spacing: -0.01em;
+        cursor: pointer;
+      }
+      .install-how .material-symbols-outlined { font-size: 18px; }
+      .save-sheet-cta {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        width: 100%; min-height: 52px;
+        border: none; border-radius: 9999px;
+        font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
+        background: var(--blue); color: #FFFFFF;
+        cursor: pointer;
+        box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--blue) 60%, transparent);
+        transition: transform .14s ease;
+      }
+      .save-sheet-cta:active { transform: scale(.99); }
+      .save-sheet-cta .material-symbols-outlined { font-size: 20px; }
 
       /* ─── Fresh Find — package photo capture (Steps 1–2) ─────────────
          Two-step in-aisle flow when barcode scan isn't enough: photograph
@@ -5036,6 +5185,82 @@
         color: var(--fg-faint);
       }
 
+      /* ─── App-icon board ──────────────────────────────────────────────
+         The installable PWA / App Store icon as it lands on a device home
+         screen: an iOS-squircle tile (≈22.4% corner radius) carrying the
+         WISEcode owl, shown in the Light, Dark, and Tinted appearance
+         variants iOS 18 renders, plus on light/dark home-screen swatches.
+         The owl is masked from WISEcode-bug.svg and recolored per variant. */
+      .app-icon-row {
+        display: flex; flex-wrap: wrap; gap: 28px;
+        align-items: flex-start;
+      }
+      .app-icon-cell {
+        display: flex; flex-direction: column; align-items: center; gap: 9px;
+      }
+      .app-icon {
+        position: relative;
+        width: 112px; height: 112px;
+        border-radius: 25px; /* ~22.4% squircle radius */
+        display: flex; align-items: center; justify-content: center;
+        overflow: hidden;
+        box-shadow: 0 12px 28px -10px rgba(0,0,0,0.5),
+                    inset 0 1px 0 rgba(255,255,255,0.18);
+      }
+      /* Subtle top-down sheen so the tile reads as a glossy app icon. */
+      .app-icon::after {
+        content: "";
+        position: absolute; inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 52%);
+        pointer-events: none;
+      }
+      .app-icon-bug {
+        position: relative; z-index: 1;
+        display: block;
+        width: 64px;
+        aspect-ratio: 193 / 100;
+        -webkit-mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
+        mask: url("assets/WISEcode-bug.svg") center / contain no-repeat;
+      }
+      /* Light (default) — royal-blue gradient tile, white owl. */
+      .app-icon-light {
+        background: linear-gradient(155deg, #3B82F6 0%, #1D4ED8 60%, #1E3A8A 100%);
+      }
+      .app-icon-light .app-icon-bug { background-color: #FFFFFF; }
+      /* Dark — near-black tile, brand-blue owl. */
+      .app-icon-dark {
+        background: linear-gradient(155deg, #14262E 0%, #0A2330 55%, #05141C 100%);
+        box-shadow: 0 12px 28px -10px rgba(0,0,0,0.7),
+                    inset 0 0 0 1px rgba(255,255,255,0.08);
+      }
+      .app-icon-dark .app-icon-bug { background-color: #60A5FA; }
+      /* Tinted (monochrome) — graphite tile, light-grey owl. */
+      .app-icon-tinted {
+        background: linear-gradient(155deg, #3A3F4A 0%, #23272F 60%, #15181E 100%);
+      }
+      .app-icon-tinted .app-icon-bug { background-color: #D7DBE3; }
+      .app-icon-name {
+        color: var(--fg-bright);
+        font-size: 13px; font-weight: 600; letter-spacing: -0.01em;
+      }
+      .app-icon-variant {
+        color: var(--fg-faint);
+        font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      }
+      /* Home-screen swatch — the icon sitting on a wallpaper-like field. */
+      .app-springboard-grid {
+        display: flex; justify-content: center;
+        padding: 22px 16px 18px;
+        border-radius: 16px;
+      }
+      .app-springboard-dark .app-springboard-grid {
+        background: radial-gradient(120% 100% at 30% 0%, #1b3a4d 0%, #0a1822 60%, #050d14 100%);
+      }
+      .app-springboard-light .app-springboard-grid {
+        background: radial-gradient(120% 100% at 30% 0%, #dfeafc 0%, #c7d6ef 60%, #aebfe0 100%);
+      }
+      .app-springboard-light .app-icon-name { color: #1b2030; }
+
       /* Accessibility — WCAG contrast audit */
       .ds-a11y-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
       .ds-a11y-col {
@@ -5238,6 +5463,41 @@
         font-size: 11px; font-weight: 500; line-height: 1.5;
       }
       .auth-legal a { color: var(--fg-muted); text-decoration: underline; }
+      /* ─── Social sign-in ─────────────────────────────────────────────
+         "or continue with" rule + provider buttons. The divider is a
+         centred label with hairlines either side; the buttons are neutral
+         surface pills sized to sit side-by-side at the auth-card width. */
+      .auth-social { display: flex; flex-direction: column; gap: 12px; }
+      .auth-or {
+        display: flex; align-items: center; gap: 12px;
+        color: var(--fg-faint);
+        font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .auth-or::before, .auth-or::after {
+        content: ""; flex: 1; height: 1px; background: var(--line);
+      }
+      .auth-social-row { display: flex; gap: 10px; }
+      .auth-social-btn {
+        flex: 1; min-width: 0;
+        display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+        min-height: 48px;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        color: var(--fg-bright);
+        font-family: inherit; font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+        cursor: pointer;
+        transition: border-color .14s ease, background .14s ease, transform .14s ease;
+      }
+      @media (hover: hover) {
+        .auth-social-btn:hover { border-color: var(--line-strong); }
+      }
+      .auth-social-btn:active { transform: scale(.99); }
+      .auth-social-ico { width: 20px; height: 20px; flex-shrink: 0; display: block; }
+      /* Apple glyph is a single path — paint it in the current text ink so
+         it tracks the active theme. Google keeps its multi-color logo. */
+      .auth-social-ico-apple { fill: var(--fg-bright); }
       /* Mode-driven visibility — the attribute on .auth-card decides which
          per-mode bits (name field, forgot link, CTA + switch copy) show. */
       [data-auth-mode="signin"] [data-auth-only="signup"],
@@ -5783,11 +6043,13 @@
         <h1>PWA v1</h1>
         <ul class="section-list">
           <li><span class="idx">DS</span>Design System</li>
+          <li><span class="idx">Icon</span>App Icon</li>
           <li style="display:none;"><span class="idx">0b</span>Pick Your Personas</li>
           <li><span class="idx">1a</span>Your Code (Empty)</li>
           <li><span class="idx">1b</span>Your Code (Home)</li>
           <li><span class="idx">2</span>Add Code (Pick)</li>
           <li><span class="idx">4</span>Scan (Find a Food)</li>
+          <li><span class="idx">4d</span>Scan · Saved</li>
           <li><span class="idx">4c</span>Scan History</li>
           <li><span class="idx">5</span>Chat</li>
           <li><span class="idx">6</span>Food Detail</li>
@@ -6122,6 +6384,75 @@
   </div>
 </section>
 
+<!-- ─── ICON. APP ICON — the home-screen / App Store icon ───────────────
+       Sits in the rail right after the Design System board (same flat
+       board chrome, no device bezel, no dark/light clone). Shows the
+       installable PWA / App Store icon as it appears on a device home
+       screen — the iOS-squircle app tile with the WISEcode owl, in the
+       Light, Dark, and Tinted appearance variants iOS 18 renders. -->
+<section class="screen-pair ds-pair icon-pair">
+  <h3 class="screen-pair-label">Icon · App Icon</h3>
+  <div class="ds-board">
+    <div class="ds-board-hd">
+      <div class="eyebrow">Brand</div>
+      <h2>App Icon</h2>
+      <p>The home-screen / App Store icon for the installed PWA — the WISEcode owl on the iOS-squircle tile, in the Light, Dark, and Tinted appearances iOS renders.</p>
+    </div>
+
+    <div class="ds-section">
+      <h3><span class="material-symbols-outlined">apps</span>Home-screen icon · appearances</h3>
+      <div class="app-icon-row">
+        <!-- Light (default) appearance -->
+        <div class="app-icon-cell">
+          <div class="app-icon app-icon-light">
+            <span class="app-icon-bug"></span>
+          </div>
+          <span class="app-icon-name">WISEcode</span>
+          <span class="app-icon-variant">Light</span>
+        </div>
+        <!-- Dark appearance -->
+        <div class="app-icon-cell">
+          <div class="app-icon app-icon-dark">
+            <span class="app-icon-bug"></span>
+          </div>
+          <span class="app-icon-name">WISEcode</span>
+          <span class="app-icon-variant">Dark</span>
+        </div>
+        <!-- Tinted (monochrome) appearance -->
+        <div class="app-icon-cell">
+          <div class="app-icon app-icon-tinted">
+            <span class="app-icon-bug"></span>
+          </div>
+          <span class="app-icon-name">WISEcode</span>
+          <span class="app-icon-variant">Tinted</span>
+        </div>
+      </div>
+
+      <!-- The same icon shown on a real home-screen swatch, light + dark. -->
+      <div class="ds-theme-row" style="margin-top:18px;">
+        <div class="ds-theme-panel app-springboard app-springboard-dark">
+          <span class="ds-theme-tag"><span class="material-symbols-outlined">dark_mode</span>On a dark home screen</span>
+          <div class="app-springboard-grid">
+            <div class="app-icon-cell">
+              <div class="app-icon app-icon-dark"><span class="app-icon-bug"></span></div>
+              <span class="app-icon-name">WISEcode</span>
+            </div>
+          </div>
+        </div>
+        <div class="ds-theme-panel theme-light app-springboard app-springboard-light">
+          <span class="ds-theme-tag"><span class="material-symbols-outlined">light_mode</span>On a light home screen</span>
+          <div class="app-springboard-grid">
+            <div class="app-icon-cell">
+              <div class="app-icon app-icon-light"><span class="app-icon-bug"></span></div>
+              <span class="app-icon-name">WISEcode</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ─── 0a. SIGN IN / CREATE ACCOUNT — Intro gate before onboarding ────
        Presentation-only (no data-code / data-picker hooks), so the code
        subscribers skip it and the cloner still mints a .theme-light twin.
@@ -6156,13 +6487,13 @@
           <div class="intro-hero" style="min-height:auto;">
             <div class="kicker">Welcome</div>
             <h1>Your food, graded the way <span class="accent">you</span> would.</h1>
-            <p>Sign in to pick up your WISEcode, or create an account to start grading every food to your priorities.</p>
+            <p>Create an account to start grading every food to your priorities, or sign in to pick up your WISEcode.</p>
           </div>
 
-          <div class="auth-card" data-auth data-auth-mode="signin">
-            <div class="auth-seg" role="tablist" aria-label="Sign in or create account">
-              <button type="button" class="auth-seg-opt seg-signin" data-action="auth-mode" data-mode="signin" role="tab">Sign in</button>
+          <div class="auth-card" data-auth data-auth-mode="signup">
+            <div class="auth-seg" role="tablist" aria-label="Create account or sign in">
               <button type="button" class="auth-seg-opt seg-signup" data-action="auth-mode" data-mode="signup" role="tab">Create account</button>
+              <button type="button" class="auth-seg-opt seg-signin" data-action="auth-mode" data-mode="signin" role="tab">Sign in</button>
             </div>
 
             <div class="auth-fields">
@@ -6192,6 +6523,29 @@
               <span class="material-symbols-outlined">arrow_forward</span>
             </button>
 
+            <!-- Social sign-in — quick auth providers under an "or" rule.
+                 Each is a presentational button (provider glyph + label). -->
+            <div class="auth-social">
+              <div class="auth-or"><span>or continue with</span></div>
+              <div class="auth-social-row">
+                <button type="button" class="auth-social-btn" aria-label="Continue with Google">
+                  <svg class="auth-social-ico" viewBox="0 0 48 48" aria-hidden="true">
+                    <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                    <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                    <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                  </svg>
+                  Google
+                </button>
+                <button type="button" class="auth-social-btn" aria-label="Continue with Apple">
+                  <svg class="auth-social-ico auth-social-ico-apple" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M16.37 1.43c.06.93-.31 1.84-.92 2.5-.65.71-1.71 1.26-2.74 1.18-.08-.9.35-1.84.93-2.43.65-.69 1.78-1.2 2.73-1.25zM19.5 17.2c-.5 1.16-.74 1.68-1.39 2.71-.9 1.43-2.18 3.21-3.76 3.22-1.4.01-1.76-.91-3.66-.9-1.9.01-2.29.92-3.69.91-1.58-.01-2.79-1.62-3.7-3.05C.97 16.06.69 11.4 2.27 8.92c1.12-1.77 2.89-2.81 4.55-2.81 1.69 0 2.75.93 4.15.93 1.36 0 2.18-.93 4.14-.93 1.48 0 3.05.81 4.17 2.2-3.66 2.01-3.07 7.24.22 8.89z"/>
+                  </svg>
+                  Apple
+                </button>
+              </div>
+            </div>
+
             <div class="auth-switch">
               <span data-auth-only="signin">New to WISEcode? <a data-action="auth-mode" data-mode="signup">Create an account</a></span>
               <span data-auth-only="signup">Already have an account? <a data-action="auth-mode" data-mode="signin">Sign in</a></span>
@@ -6203,7 +6557,7 @@
       </div>
     </div>
   </div>
-  <div class="phone-caption">Intro gate: one card toggles between Sign in and Create account via the segmented switch. Create account adds a name field; sign in shows a "Forgot password?" link. Email + password are shared, with a tap-to-reveal eye on the password. The CTA and footer copy swap to match the active mode.</div>
+  <div class="phone-caption">Intro gate: one card toggles between Create account (default) and Sign in via the segmented switch. Create account adds a name field; sign in shows a "Forgot password?" link. Email + password are shared, with a tap-to-reveal eye on the password. Below the primary CTA, an "or continue with" rule offers Google / Apple social sign-in. The CTA and footer copy swap to match the active mode.</div>
 </div>
   </div>
 </section>
@@ -6381,9 +6735,7 @@
         <div class="tab-pill">
           <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -6433,21 +6785,22 @@
             <div class="status-sub">This is how WISEcoach weights your priorities &mdash; drag to reorder, or tap a code to fine-tune it and chat with WISE AI.</div>
           </section>
 
+          <!-- Compose-with-AI sits above the slot list (and its "Add a
+               code" tile) so the AI route is the first affordance under
+               the donut, ahead of manual code wrangling. -->
+          <button type="button" class="cc-btn" data-action="open-chat">Compose with AI</button>
+
           <!-- Rebalance rows render inline here (drag to reorder, swap,
                remove, slider to fine-tune) — the renderSlotList renderer
                replaces this on first paint from WISE_CODES.getSlots(). -->
           <div class="stack-sm" data-code-list></div>
-
-          <button type="button" class="cc-btn" data-action="open-chat">Compose with AI</button>
         </div>
       </div>
       <nav class="tab-bar">
         <div class="tab-pill">
           <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -6526,7 +6879,7 @@
 <section class="screen-pair">
   <h3 class="screen-pair-label">4 · Scan (Find a Food)</h3>
   <div class="pair-row">
-<div class="phone-wrap">
+<div class="phone-wrap" data-no-ai>
   <div class="phone-label">Dark</div>
   <div class="phone">
     <div class="island"></div>
@@ -6564,24 +6917,112 @@
               <span class="scan-cam-prompt-sub">Tap to allow camera access and start scanning</span>
             </button>
           </div>
-
-          <div class="scan-actions">
-            <button class="cta-scan"><span class="material-symbols-outlined">barcode</span>Scan a barcode</button>
-          </div>
         </div>
       </div>
       <nav class="tab-bar">
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab active"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
   </div>
-  <div class="phone-caption">A real device camera fills the screen via getUserMedia (rear-facing where available); tapping the viewport requests permission and starts the live feed, with corner brackets framing the barcode. The dismiss button anchors to the bottom, within thumb reach above the tab bar.</div>
+  <div class="phone-caption">A real device camera fills the screen via getUserMedia (rear-facing where available); tapping the viewport requests permission and starts the live feed, with corner brackets framing the barcode. The whole viewport is the scan surface — no separate "Scan a barcode" button.</div>
+</div>
+  </div>
+</section>
+
+<!-- ─── 4d. SCAN · SAVED — post-scan confirmation sheet ─────────────────
+       The Scan screen the instant after a successful barcode read. The
+       live "Scan a barcode" CTA is gone (the scan already landed); a
+       bottom sheet has popped open over the dimmed viewport confirming
+       the food was saved to History, then nudges the user to pin the PWA
+       to their home screen with the same instruction card shown in both
+       themes. Authored statically (sheet drawn open) so the dark source +
+       its cloned light twin both render it without any JS. -->
+<section class="screen-pair">
+  <h3 class="screen-pair-label">4d · Scan · Saved to History</h3>
+  <div class="pair-row">
+<div class="phone-wrap" data-no-ai>
+  <div class="phone-label">Dark</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll" style="display:flex;flex-direction:column;">
+        <div class="scr-hdr">
+          <div>
+            <h1>Find a food</h1>
+          </div>
+        </div>
+
+        <div class="px stack" style="flex:1;display:flex;flex-direction:column;">
+          <!-- Frozen viewfinder — the frame that landed the scan. No
+               data-scan-cam hook, so the camera script leaves it static. -->
+          <div class="scan-cam is-live">
+            <div class="scan-cam-frame" aria-hidden="true">
+              <span class="vf-tl"></span><span class="vf-tr"></span>
+              <span class="vf-bl"></span><span class="vf-br"></span>
+            </div>
+            <div class="scan-cam-captured" aria-hidden="true">
+              <span class="material-symbols-outlined">barcode</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Saved-to-history sheet, popped open over the scan screen. -->
+      <div class="save-sheet-overlay">
+        <div class="save-sheet">
+          <div class="cp-handle" aria-hidden="true"></div>
+
+          <div class="save-sheet-confirm">
+            <span class="save-sheet-check"><span class="material-symbols-outlined">check</span></span>
+            <div class="save-sheet-confirm-copy">
+              <div class="save-sheet-title">Saved to your history</div>
+              <div class="save-sheet-sub">Nice scan — this food is in your History tab so you can find it again anytime.</div>
+            </div>
+          </div>
+
+          <!-- Install nudge — mirrors the "Pin it to your home screen"
+               card: icon tile on the left, steps + "Show me how" on the
+               right. -->
+          <div class="install-card">
+            <span class="install-ico"><span class="material-symbols-outlined">open_in_new</span></span>
+            <div class="install-body">
+              <div class="install-title">Pin it to your home screen</div>
+              <ul class="install-steps">
+                <li><span class="material-symbols-outlined">ios_share</span><span>Tap the Share icon in your browser bar.</span></li>
+                <li><span class="material-symbols-outlined">add_box</span><span>Choose &ldquo;Add to Home Screen.&rdquo;</span></li>
+                <li><span class="material-symbols-outlined">touch_app</span><span>Launch it like any other app &mdash; full screen, no browser chrome.</span></li>
+              </ul>
+              <button type="button" class="install-how">Show me how <span class="material-symbols-outlined">chevron_right</span></button>
+            </div>
+          </div>
+
+          <button type="button" class="save-sheet-cta">View history<span class="material-symbols-outlined">arrow_forward</span></button>
+        </div>
+      </div>
+
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
+          <a class="tab active"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">The moment after a barcode lands: the "Scan a barcode" CTA is gone and a bottom sheet has popped open confirming the food was saved to History. Below the confirmation, an install card — the same "Pin it to your home screen" steps in both themes — nudges the user to add the PWA to their home screen. "View history" jumps to the History tab.</div>
 </div>
   </div>
 </section>
@@ -6840,9 +7281,7 @@
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab active"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+          <a class="tab active"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -7018,7 +7457,6 @@ HIDDEN -->
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
-          <a class="tab active violet"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
@@ -7200,9 +7638,7 @@ HIDDEN -->
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -7451,9 +7887,7 @@ HIDDEN -->
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -7575,9 +8009,7 @@ HIDDEN -->
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
           <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">chat_bubble</span><span>CHAT</span></a>
-          <a class="tab active"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab active"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
         </div>
       </nav>
     </div>
@@ -8433,19 +8865,37 @@ HIDDEN -->
           '<span class="wise-bug-label" data-action="open-chat">AI Insights</span>' +
           '</span>';
 
-        function wrapHeadlineBlock(parent, block) {
+        // Your Code (Home / Filled) swaps the AI-Insights bug for a filter
+        // control in the same top-right slot — the screen is about
+        // building/tuning the code, so a filter reads truer than a chat
+        // shortcut there.
+        var filterHtml =
+          '<button type="button" class="scr-hdr-filter" aria-label="Filter your codes">' +
+          '<span class="material-symbols-outlined">filter_list</span>' +
+          '</button>';
+
+        function wrapHeadlineBlock(parent, block, trailHtml) {
           if (!block || parent.querySelector(".scr-hdr-headline")) return;
           var row = document.createElement("div");
           row.className = "scr-hdr-headline";
           parent.insertBefore(row, block);
           row.appendChild(block);
-          row.insertAdjacentHTML("beforeend", bugHtml);
+          row.insertAdjacentHTML("beforeend", trailHtml);
         }
 
         document.querySelectorAll(".scr-hdr").forEach(function (hdr) {
           var directH1 = hdr.querySelector(":scope > h1");
           var textBlock = directH1 || hdr.querySelector(":scope > div");
-          wrapHeadlineBlock(hdr, textBlock);
+          var wrap = hdr.closest(".phone-wrap");
+          // The AI-Insights bug is hidden on every screen. Only Your Code
+          // (Home / Filled) still carries a top-right affordance — the
+          // filter control — so it's the lone screen that gets a trail.
+          var isHomeFilled =
+            wrap &&
+            wrap.hasAttribute("data-code") &&
+            !wrap.hasAttribute("data-code-empty");
+          if (!isHomeFilled) return;
+          wrapHeadlineBlock(hdr, textBlock, filterHtml);
         });
       })();
 
