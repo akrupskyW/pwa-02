@@ -5131,6 +5131,118 @@
         font-size: 13px; font-weight: 500; line-height: 1.5;
       }
 
+      /* ─── Auth (sign in / create account) ──────────────────────────────
+         Intro gate shown before onboarding. A single card hosts both
+         modes; data-auth-mode on the card drives which fields and labels
+         render, so the only JS needed is flipping that attribute (plus the
+         password reveal). One card per phone keeps the dark source and its
+         cloned light twin independent — same pattern as the rename sheet. */
+      .auth-card {
+        margin-top: 4px;
+        background: var(--card);
+        border: 1px solid var(--card-border);
+        border-radius: 22px;
+        padding: 16px;
+        box-shadow: var(--shadow-card-soft);
+        display: flex; flex-direction: column; gap: 14px;
+      }
+      .auth-seg {
+        display: flex;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 3px;
+        gap: 2px;
+      }
+      .auth-seg-opt {
+        flex: 1;
+        border: none;
+        background: transparent;
+        border-radius: 999px;
+        padding: 10px 12px;
+        font-family: inherit;
+        font-size: 13px; font-weight: 800; letter-spacing: -0.01em;
+        color: var(--fg-faint);
+        cursor: pointer;
+        transition: background .18s ease, color .18s ease;
+      }
+      [data-auth-mode="signin"] .seg-signin,
+      [data-auth-mode="signup"] .seg-signup {
+        background: var(--blue);
+        color: #FFFFFF;
+        box-shadow: 0 8px 18px -10px color-mix(in srgb, var(--blue) 60%, transparent);
+      }
+      .auth-fields { display: flex; flex-direction: column; gap: 10px; }
+      .auth-field {
+        display: flex; align-items: center; gap: 10px;
+        min-height: 50px;
+        background: var(--surface-2);
+        border: 1px solid var(--line-subtle);
+        border-radius: 14px;
+        padding: 0 14px;
+        transition: border-color .14s ease, box-shadow .14s ease;
+      }
+      .auth-field:focus-within {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 18%, transparent);
+      }
+      .auth-field .auth-ico { color: var(--fg-faint); font-size: 20px; flex-shrink: 0; }
+      .auth-field input {
+        flex: 1; min-width: 0;
+        background: transparent; border: none; outline: none;
+        color: var(--fg-bright);
+        font-family: inherit;
+        font-size: 14px; font-weight: 500;
+        padding: 0;
+      }
+      .auth-field input::placeholder { color: var(--fg-faint); }
+      .auth-eye {
+        border: none; background: transparent; padding: 4px;
+        color: var(--fg-faint); cursor: pointer;
+        display: inline-flex; align-items: center;
+      }
+      .auth-eye .material-symbols-outlined { font-size: 20px; }
+      .auth-eye .eye-off { display: none; }
+      .auth-field.is-revealed .auth-eye .eye-on { display: none; }
+      .auth-field.is-revealed .auth-eye .eye-off { display: inline-flex; }
+      .auth-forgot {
+        align-self: flex-end;
+        border: none; background: transparent; padding: 0;
+        margin-top: -4px;
+        color: var(--blue);
+        font-family: inherit; font-size: 12.5px; font-weight: 700;
+        cursor: pointer;
+      }
+      .auth-cta {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        width: 100%; min-height: 52px;
+        border: none; border-radius: 9999px;
+        font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
+        background: var(--blue); color: #FFFFFF;
+        cursor: pointer;
+        box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--blue) 60%, transparent);
+        transition: transform .14s ease;
+      }
+      .auth-cta:active { transform: scale(.99); }
+      .auth-cta .material-symbols-outlined { font-size: 20px; }
+      .auth-switch {
+        text-align: center;
+        color: var(--fg-muted);
+        font-size: 12.5px; font-weight: 500;
+      }
+      .auth-switch a { color: var(--blue); font-weight: 700; cursor: pointer; }
+      .auth-legal {
+        margin: 4px 6px 0;
+        text-align: center;
+        color: var(--fg-faint);
+        font-size: 11px; font-weight: 500; line-height: 1.5;
+      }
+      .auth-legal a { color: var(--fg-muted); text-decoration: underline; }
+      /* Mode-driven visibility — the attribute on .auth-card decides which
+         per-mode bits (name field, forgot link, CTA + switch copy) show. */
+      [data-auth-mode="signin"] [data-auth-only="signup"],
+      [data-auth-mode="signup"] [data-auth-only="signin"] { display: none; }
+
       /* ─── Persona pick (onboarding) ───────────────────────────────────
          A horizontal, swipeable, scroll-snap carousel of selectable
          persona cards. The footer CTA stays inert until at least one
@@ -6007,6 +6119,92 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ─── 0a. SIGN IN / CREATE ACCOUNT — Intro gate before onboarding ────
+       Presentation-only (no data-code / data-picker hooks), so the code
+       subscribers skip it and the cloner still mints a .theme-light twin.
+       A single .auth-card flips between "signin" and "create" via the
+       segmented switch (data-action="auth-mode"); the data-auth-mode
+       attribute on the card drives field/label visibility purely in CSS.
+       The password field's eye toggles input type (data-action="auth-eye").
+       One card per phone keeps the dark source + cloned light twin from
+       cross-talking. -->
+<section class="screen-pair">
+  <h3 class="screen-pair-label">0a · Sign In / Create Account</h3>
+  <div class="pair-row">
+<div class="phone-wrap">
+  <div class="phone-label">Dark</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="px stack" style="padding-top:10px;">
+          <div class="intro-brand">
+            <img class="wise-logo-vertical" src="assets/WISEcode-logo-vertical.svg" alt="WISEcode" />
+          </div>
+          <div class="intro-hero" style="min-height:auto;">
+            <div class="kicker">Welcome</div>
+            <h1>Your food, graded the way <span class="accent">you</span> would.</h1>
+            <p>Sign in to pick up your WISEcode, or create an account to start grading every food to your priorities.</p>
+          </div>
+
+          <div class="auth-card" data-auth data-auth-mode="signin">
+            <div class="auth-seg" role="tablist" aria-label="Sign in or create account">
+              <button type="button" class="auth-seg-opt seg-signin" data-action="auth-mode" data-mode="signin" role="tab">Sign in</button>
+              <button type="button" class="auth-seg-opt seg-signup" data-action="auth-mode" data-mode="signup" role="tab">Create account</button>
+            </div>
+
+            <div class="auth-fields">
+              <label class="auth-field" data-auth-only="signup">
+                <span class="material-symbols-outlined auth-ico">person</span>
+                <input type="text" name="name" autocomplete="name" placeholder="Full name" aria-label="Full name" />
+              </label>
+              <label class="auth-field">
+                <span class="material-symbols-outlined auth-ico">mail</span>
+                <input type="email" name="email" autocomplete="email" placeholder="Email address" aria-label="Email address" />
+              </label>
+              <label class="auth-field">
+                <span class="material-symbols-outlined auth-ico">lock</span>
+                <input type="password" name="password" autocomplete="current-password" placeholder="Password" aria-label="Password" />
+                <button type="button" class="auth-eye" data-action="auth-eye" aria-label="Show password">
+                  <span class="material-symbols-outlined eye-on">visibility</span>
+                  <span class="material-symbols-outlined eye-off">visibility_off</span>
+                </button>
+              </label>
+            </div>
+
+            <button type="button" class="auth-forgot" data-auth-only="signin">Forgot password?</button>
+
+            <button type="button" class="auth-cta">
+              <span data-auth-only="signin">Sign in</span>
+              <span data-auth-only="signup">Create account</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+
+            <div class="auth-switch">
+              <span data-auth-only="signin">New to WISEcode? <a data-action="auth-mode" data-mode="signup">Create an account</a></span>
+              <span data-auth-only="signup">Already have an account? <a data-action="auth-mode" data-mode="signin">Sign in</a></span>
+            </div>
+          </div>
+
+          <p class="auth-legal">By continuing you agree to our <a>Terms</a> &amp; <a>Privacy Policy</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="phone-caption">Intro gate: one card toggles between Sign in and Create account via the segmented switch. Create account adds a name field; sign in shows a "Forgot password?" link. Email + password are shared, with a tap-to-reveal eye on the password. The CTA and footer copy swap to match the active mode.</div>
+</div>
   </div>
 </section>
 
@@ -8118,6 +8316,29 @@ HIDDEN -->
           row.insertBefore(light, dark);
         });
       })();
+
+      // ─── Auth screen — mode switch + password reveal ─────────────────
+      // Scoped to the closest [data-auth] card so the dark source and its
+      // cloned light twin toggle independently. Switching modes is just an
+      // attribute flip; the visibility of the name field, forgot link, and
+      // per-mode copy is handled in CSS off data-auth-mode.
+      document.addEventListener("click", function (ev) {
+        var modeBtn = ev.target.closest && ev.target.closest('[data-action="auth-mode"]');
+        if (modeBtn) {
+          var card = modeBtn.closest("[data-auth]");
+          if (card) card.setAttribute("data-auth-mode", modeBtn.getAttribute("data-mode"));
+          return;
+        }
+        var eye = ev.target.closest && ev.target.closest('[data-action="auth-eye"]');
+        if (eye) {
+          var field = eye.closest(".auth-field");
+          if (!field) return;
+          var input = field.querySelector("input");
+          var revealed = field.classList.toggle("is-revealed");
+          if (input) input.type = revealed ? "text" : "password";
+          eye.setAttribute("aria-label", revealed ? "Hide password" : "Show password");
+        }
+      });
 
       // ─── Product Detail — Details accordion toggle ───────────────────
       // Global delegate so Screen 6 and the Browse food-detail sheet both
