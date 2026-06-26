@@ -6689,7 +6689,6 @@
             </div>
           </div>
           <div class="intro-hero" style="min-height:auto;">
-            <div class="kicker">Welcome</div>
             <h1>Your food, graded the way <span class="accent">you</span> would.</h1>
             <p>Create an account to start grading every food to your priorities, or sign in to pick up your WISEcode.</p>
           </div>
@@ -12217,9 +12216,10 @@ HIDDEN -->
           return ''
             + '<div class="pick-row' + (selected ? ' is-selected' : '') + '"'
             +      ' data-hf-ing-opt data-value="' + W.escapeHtml(name) + '"'
-            +      ' role="button" tabindex="0">'
+            +      ' role="checkbox" aria-checked="' + (selected ? 'true' : 'false') + '" tabindex="0">'
             +   '<span class="ico is-neutral"><span class="material-symbols-outlined">nutrition</span></span>'
             +   '<div class="nm">' + W.escapeHtml(name) + '</div>'
+            +   '<span class="pick-check"><span class="material-symbols-outlined">check</span></span>'
             + '</div>';
         }
 
