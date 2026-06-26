@@ -6238,7 +6238,6 @@
           <li><span class="idx">1d</span>Your Code (Filter · Ingredients)</li>
           <li><span class="idx">2</span>Add Code (Pick)</li>
           <li><span class="idx">4</span>Scan (Find a Food)</li>
-          <li><span class="idx">4d</span>Scan · Saved</li>
           <li><span class="idx">4c</span>Scan History</li>
           <li><span class="idx">5</span>Chat</li>
           <li><span class="idx">6</span>Food Detail</li>
@@ -6937,6 +6936,34 @@
           </div>
         </div>
       </div>
+
+      <!-- Install-nudge sheet, popped open over the empty code screen. -->
+      <div class="save-sheet-overlay">
+        <div class="save-sheet">
+          <div class="cp-handle" aria-hidden="true"></div>
+
+          <!-- Install nudge — mirrors the "Pin it to your home screen"
+               card: icon tile on the left, steps on the right. -->
+          <div class="install-card">
+            <span class="install-ico" aria-hidden="true">
+              <span class="app-icon app-icon-light">
+                <span class="app-icon-bug"></span>
+              </span>
+            </span>
+            <div class="install-body">
+              <div class="install-title">Pin it to your home screen</div>
+              <ul class="install-steps">
+                <li><span class="material-symbols-outlined">ios_share</span><span>Tap the Share icon in your browser bar.</span></li>
+                <li><span class="material-symbols-outlined">add_box</span><span>Choose &ldquo;Add to Home Screen.&rdquo;</span></li>
+                <li><span class="material-symbols-outlined">touch_app</span><span>Launch it like any other app &mdash; full screen, no browser chrome.</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <button type="button" class="save-sheet-cta">Show me how<span class="material-symbols-outlined">arrow_forward</span></button>
+        </div>
+      </div>
+
       <nav class="tab-bar">
         <div class="tab-pill">
           <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
@@ -7256,104 +7283,6 @@
     </div>
   </div>
   <div class="phone-caption">A real device camera fills the screen via getUserMedia (rear-facing where available); tapping the viewport requests permission and starts the live feed, with corner brackets framing the barcode. The whole viewport is the scan surface — no separate "Scan a barcode" button.</div>
-</div>
-  </div>
-</section>
-
-<!-- ─── 4d. SCAN · SAVED — post-scan confirmation sheet ─────────────────
-       The Scan screen the instant after a successful barcode read. The
-       live "Scan a barcode" CTA is gone (the scan already landed); a
-       bottom sheet has popped open over the dimmed viewport confirming
-       the food was saved to History, then nudges the user to pin the PWA
-       to their home screen with the same instruction card shown in both
-       themes. Authored statically (sheet drawn open) so the dark source +
-       its cloned light twin both render it without any JS. -->
-<section class="screen-pair">
-  <h3 class="screen-pair-label">4d · Scan · Saved to History</h3>
-  <div class="pair-row">
-<div class="phone-wrap" data-no-ai>
-  <div class="phone-label">Dark</div>
-  <div class="phone">
-    <div class="island"></div>
-    <div class="glow-l"></div>
-    <div class="glow-r"></div>
-    <div class="status-bar"><span>9:41</span>
-      <span class="right">
-        <span class="bars"><span></span><span></span><span></span><span></span></span>
-        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
-        <span class="battery"><i></i></span>
-      </span>
-    </div>
-    <div class="screen">
-      <div class="scroll" style="display:flex;flex-direction:column;">
-        <div class="scr-hdr">
-          <div>
-            <h1>Find a food</h1>
-          </div>
-        </div>
-
-        <div class="px stack" style="flex:1;display:flex;flex-direction:column;">
-          <!-- Frozen viewfinder — the frame that landed the scan. No
-               data-scan-cam hook, so the camera script leaves it static. -->
-          <div class="scan-cam is-live">
-            <div class="scan-cam-frame" aria-hidden="true">
-              <span class="vf-tl"></span><span class="vf-tr"></span>
-              <span class="vf-bl"></span><span class="vf-br"></span>
-            </div>
-            <div class="scan-cam-captured" aria-hidden="true">
-              <span class="material-symbols-outlined">barcode</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Saved-to-history sheet, popped open over the scan screen. -->
-      <div class="save-sheet-overlay">
-        <div class="save-sheet">
-          <div class="cp-handle" aria-hidden="true"></div>
-
-          <div class="save-sheet-confirm">
-            <span class="save-sheet-check"><span class="material-symbols-outlined">check</span></span>
-            <div class="save-sheet-confirm-copy">
-              <div class="save-sheet-title">Saved to your history</div>
-              <div class="save-sheet-sub">Nice scan — this food is in your History tab so you can find it again anytime.</div>
-            </div>
-          </div>
-
-          <!-- Install nudge — mirrors the "Pin it to your home screen"
-               card: icon tile on the left, steps + "Show me how" on the
-               right. -->
-          <div class="install-card">
-            <span class="install-ico" aria-hidden="true">
-              <span class="app-icon app-icon-light">
-                <span class="app-icon-bug"></span>
-              </span>
-            </span>
-            <div class="install-body">
-              <div class="install-title">Pin it to your home screen</div>
-              <ul class="install-steps">
-                <li><span class="material-symbols-outlined">ios_share</span><span>Tap the Share icon in your browser bar.</span></li>
-                <li><span class="material-symbols-outlined">add_box</span><span>Choose &ldquo;Add to Home Screen.&rdquo;</span></li>
-                <li><span class="material-symbols-outlined">touch_app</span><span>Launch it like any other app &mdash; full screen, no browser chrome.</span></li>
-              </ul>
-              <button type="button" class="install-how">Show me how <span class="material-symbols-outlined">chevron_right</span></button>
-            </div>
-          </div>
-
-          <button type="button" class="save-sheet-cta">View history<span class="material-symbols-outlined">arrow_forward</span></button>
-        </div>
-      </div>
-
-      <nav class="tab-bar">
-        <div class="tab-pill">
-          <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
-          <a class="tab active"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
-          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
-        </div>
-      </nav>
-    </div>
-  </div>
-  <div class="phone-caption">The moment after a barcode lands: the "Scan a barcode" CTA is gone and a bottom sheet has popped open confirming the food was saved to History. Below the confirmation, an install card — the same "Pin it to your home screen" steps in both themes — nudges the user to add the PWA to their home screen. "View history" jumps to the History tab.</div>
 </div>
   </div>
 </section>
@@ -8204,6 +8133,24 @@ HIDDEN -->
           </div>
         </div>
       </div>
+
+      <!-- Saved-to-history sheet, popped open over the food detail. -->
+      <div class="save-sheet-overlay">
+        <div class="save-sheet">
+          <div class="cp-handle" aria-hidden="true"></div>
+
+          <div class="save-sheet-confirm">
+            <span class="save-sheet-check"><span class="material-symbols-outlined">check</span></span>
+            <div class="save-sheet-confirm-copy">
+              <div class="save-sheet-title">Saved to your history</div>
+              <div class="save-sheet-sub">Nice scan — this food is in your History tab so you can find it again anytime.</div>
+            </div>
+          </div>
+
+          <button type="button" class="save-sheet-cta">Create account<span class="material-symbols-outlined">arrow_forward</span></button>
+        </div>
+      </div>
+
       <nav class="tab-bar">
         <div class="tab-pill">
           <a class="tab"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
