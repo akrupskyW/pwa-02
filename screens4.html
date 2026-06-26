@@ -35,6 +35,7 @@
         --gold: #FFC434;       /* signal-yellow */
         --cyan: #3B82F6;       /* signal-sky */
         --blue: #1D4ED8;       /* wise-nonupf-blue */
+        --blue-ink: var(--blue); /* links, outline borders, ghost icons — white in dark phones */
 
         --score-excellent: #4FE89B;  /* signal-green-strong (dark) — excellent tier fill */
         --score-good: #52CC7A;       /* signal-green-mid — good tier (60-80) medium green */
@@ -282,7 +283,7 @@
         text-align: center;
       }
       .stage > header .eyebrow {
-        color: var(--blue);
+        color: var(--blue-ink);
         font-size: 12px;
         font-weight: 800;
         letter-spacing: 0.22em;
@@ -333,16 +334,16 @@
       @media (hover: hover) {
         .stage > header .section-list li:hover {
           background: var(--surface-3, var(--surface-2));
-          border-color: var(--blue);
+          border-color: var(--blue-ink);
           color: var(--fg);
         }
       }
       .stage > header .section-list li:focus-visible {
-        outline: 2px solid var(--blue);
+        outline: 2px solid var(--blue-ink);
         outline-offset: 2px;
       }
       .stage > header .section-list li .idx {
-        color: var(--blue);
+        color: var(--blue-ink);
         font-weight: 800;
       }
       /* Replay control under the section labels — re-runs every donut's
@@ -690,6 +691,22 @@
         width: auto;
         height: 26px;
       }
+      /* WISEcoach header lockup — owl bug + horizontal wordmark. */
+      .wise-logo-coach {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .wise-logo-coach-bug {
+        display: block;
+        width: auto;
+        height: 26px;
+      }
+      .wise-logo-coach-wordmark {
+        display: block;
+        width: auto;
+        height: 19px;
+      }
       /* Brand bug — painted in brand blue via a mask so it matches in both
          themes, sized small and vertically centered against the headline.
          Doubles as the tap target that opens the WISE AI chat overlay, so
@@ -717,7 +734,7 @@
       }
       .wise-bug:active { transform: scale(0.94); }
       .wise-bug:focus-visible {
-        outline: 2px solid var(--blue);
+        outline: 2px solid var(--blue-ink);
         outline-offset: 3px;
         border-radius: 3px;
       }
@@ -755,7 +772,7 @@
         line-height: 1;
         cursor: pointer;
         white-space: nowrap;
-        color: var(--blue);
+        color: var(--blue-ink);
         animation: wise-bug-label-pulse 6s ease-in-out infinite;
         transition: opacity 140ms ease;
       }
@@ -793,20 +810,27 @@
       }
       .scr-hdr-filter:active { transform: scale(0.94); }
       .scr-hdr-filter:focus-visible {
-        outline: 2px solid var(--blue);
+        outline: 2px solid var(--blue-ink);
         outline-offset: 2px;
       }
 
       /* Full wordmark is authored dark — invert on the dark phone canvas. */
-      .phone-wrap:not(.theme-light) .wise-logo-vertical {
+      .phone-wrap:not(.theme-light) .wise-logo-vertical,
+      .phone-wrap:not(.theme-light) .wise-logo-coach-bug,
+      .phone-wrap:not(.theme-light) .wise-logo-coach-wordmark {
         filter: brightness(0) invert(0.96);
+      }
+      /* Ghost affordances (links, outline pills, toggles) read white on
+         the dark phone canvas; solid blue fills (--blue) stay for CTAs. */
+      .phone-wrap:not(.theme-light) {
+        --blue-ink: var(--fg-bright);
       }
       .intro-brand {
         padding: 0 2px 10px;
       }
       .scr-hdr .ovl {
         font-size: 11px; font-weight: 800; letter-spacing: 0.16em;
-        color: var(--blue);
+        color: var(--blue-ink);
       }
       .scr-hdr .ovl.violet { color: var(--violet); }
       .scr-hdr .ovl .dot {
@@ -820,9 +844,11 @@
         font-size: 24px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1;
       }
       /* Drill-down screens (Product Detail, etc.) — back affordance left
-         of the headline; the WISEcode bug still floats right via
-         .scr-hdr-headline. */
-      .scr-hdr-nav { gap: 4px; }
+         of the headline; optional .scr-hdr-headline trail floats right. */
+      .scr-hdr-nav {
+        justify-content: flex-start;
+        gap: 4px;
+      }
       .scr-hdr-nav .scr-hdr-headline { flex: 1; min-width: 0; }
       .scr-back {
         flex-shrink: 0;
@@ -1674,9 +1700,9 @@
         font-size: 14px; font-weight: 700;
         cursor: pointer;
       }
-      .slot-add .material-symbols-outlined { color: var(--blue); font-size: 18px; }
+      .slot-add .material-symbols-outlined { color: var(--blue-ink); font-size: 18px; }
       @media (hover: hover) {
-        .slot-add:hover { border-color: color-mix(in srgb, var(--blue) 50%, var(--line)); }
+        .slot-add:hover { border-color: color-mix(in srgb, var(--blue-ink) 50%, var(--line)); }
       }
 
       /* ─── AI-compose empty-state button (Screen 1a) ─────────────────
@@ -1686,7 +1712,9 @@
          entry as the header brand bug). The button and its "or" divider
          live outside [data-code-list] so renderSlotList never wipes them,
          and both hide the moment the code gains a slot. */
-      .cc-btn {
+      .cc-btn,
+      .auth-cta,
+      .save-sheet-cta {
         display: inline-flex; align-items: center; justify-content: center;
         width: 100%;
         background: var(--blue);
@@ -1694,11 +1722,18 @@
         border: none;
         border-radius: 999px;
         padding: 14px 16px;
+        font-family: inherit;
         font-size: 14px; font-weight: 800;
         cursor: pointer;
         box-shadow: 0 8px 20px color-mix(in srgb, var(--blue) 30%, transparent);
       }
-      .cc-btn:active { transform: scale(.99); }
+      .auth-cta,
+      .save-sheet-cta { gap: 8px; }
+      .cc-btn:active,
+      .auth-cta:active,
+      .save-sheet-cta:active { transform: scale(.99); }
+      .auth-cta .material-symbols-outlined,
+      .save-sheet-cta .material-symbols-outlined { font-size: 20px; }
 
       /* "or" divider between the compose button and the manual add tile. */
       .code-compose-or {
@@ -1821,7 +1856,7 @@
         border-color: var(--line-strong);
         color: var(--fg-bright);
       }
-      .code-picker-card .cp-search .material-symbols-outlined { font-size: 22px; flex-shrink: 0; color: var(--blue); opacity: 0.85; }
+      .code-picker-card .cp-search .material-symbols-outlined { font-size: 22px; flex-shrink: 0; color: var(--blue-ink); opacity: 0.85; }
       .code-picker-card .cp-search input {
         flex: 1; min-width: 0;
         background: transparent; border: none; outline: none;
@@ -1861,7 +1896,7 @@
       .code-picker-card .cp-sort-btn.is-active {
         background: var(--surface-2);
         border-color: var(--line-strong);
-        color: var(--blue);
+        color: var(--blue-ink);
       }
       .code-picker-card .cp-sort-btn .material-symbols-outlined { font-size: 22px; }
 
@@ -1921,7 +1956,7 @@
         background: transparent;
         border: none;
         padding: 0;
-        color: var(--blue);
+        color: var(--blue-ink);
         font: inherit;
         font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
         cursor: pointer;
@@ -2040,15 +2075,15 @@
       .filter-chip .fc-count[hidden] { display: none; }
       @media (hover: hover) {
         .filter-chip:hover {
-          border-color: color-mix(in srgb, var(--blue) 50%, var(--line));
+          border-color: color-mix(in srgb, var(--blue-ink) 50%, var(--line));
         }
       }
       /* Active = at least one option selected. */
       .filter-chip-wrap.is-active .filter-chip {
-        border-color: color-mix(in srgb, var(--blue) 55%, var(--line));
-        background: color-mix(in srgb, var(--blue) 12%, var(--card));
+        border-color: color-mix(in srgb, var(--blue-ink) 55%, var(--line));
+        background: color-mix(in srgb, var(--blue-ink) 12%, var(--card));
       }
-      .filter-chip-wrap.is-active .filter-chip .fc-lead { color: var(--blue); }
+      .filter-chip-wrap.is-active .filter-chip .fc-lead { color: var(--blue-ink); }
 
       /* Filter sheet — the EXACT same bottom sheet as "Pick a code":
          it reuses the .code-picker-card chrome (drag handle, head,
@@ -2082,8 +2117,8 @@
         transition: opacity 120ms ease, transform 120ms ease;
       }
       .code-picker-card .pick-row.is-selected {
-        border-color: color-mix(in srgb, var(--blue) 55%, var(--line));
-        background: color-mix(in srgb, var(--blue) 10%, var(--card));
+        border-color: color-mix(in srgb, var(--blue-ink) 55%, var(--line));
+        background: color-mix(in srgb, var(--blue-ink) 10%, var(--card));
       }
       .code-picker-card .pick-row.is-selected .pick-check {
         background: var(--blue);
@@ -2098,6 +2133,175 @@
         background: var(--surface-2);
         color: var(--fg-muted);
         border: 1px solid var(--line);
+      }
+
+      /* ─── Home filter sheet (Your Code · filter button) ─────────────
+         Same .code-picker-card chrome as Pick a Code, plus a top tab
+         (Ingredients / Code values), then search + sort + a scrolling
+         catalog. On the Code values tab each row expands inline (tap)
+         to reveal the Code / Filter / Both segmented control and
+         Present / None segmented toggles — no checkbox, no code-detail
+         sheet. Lives on its own overlay so the shared PICKER and Browse
+         filter handlers leave it alone. */
+      .home-filter-overlay {
+        position: absolute; inset: 0; z-index: 40;
+        background: var(--scrim-strong);
+        backdrop-filter: blur(10px);
+        animation: cp-fade 160ms ease-out;
+        display: flex; align-items: flex-end;
+      }
+      .home-filter-overlay.home-filter-static,
+      .home-filter-overlay.home-filter-static .home-filter-card {
+        animation: none;
+      }
+      .home-filter-card {
+        /* Identical footprint to the code picker — fills the phone. */
+        max-height: calc(100% - 64px);
+      }
+      .home-filter-card .hf-top {
+        flex-shrink: 0;
+        margin-bottom: 12px;
+      }
+      /* Tab row — same segmented vocabulary as .cd-mode-seg. */
+      .home-filter-card .cd-mode {
+        display: flex; flex-direction: column; gap: 10px;
+        margin-bottom: 0;
+      }
+      .home-filter-card .cd-mode-seg {
+        display: flex;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px;
+        gap: 4px;
+      }
+      .home-filter-card .cd-seg-opt {
+        flex: 1;
+        border: none;
+        background: transparent;
+        color: var(--fg-muted);
+        border-radius: 999px;
+        padding: 10px 8px;
+        font-size: 12px; font-weight: 800; letter-spacing: -0.005em;
+        cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center;
+        gap: 5px;
+        min-width: 0;
+      }
+      .home-filter-card .cd-seg-opt .material-symbols-outlined {
+        font-size: 16px;
+        line-height: 1;
+        flex-shrink: 0;
+      }
+      .home-filter-card .cd-seg-opt[aria-pressed="true"] {
+        background: var(--card-elev);
+        color: var(--blue-ink);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.30);
+      }
+      .home-filter-card .cd-seg-opt[aria-pressed="true"] .material-symbols-outlined {
+        font-variation-settings: "FILL" 1;
+      }
+      .theme-light .home-filter-card .cd-mode-seg { background: var(--track); }
+      .theme-light .home-filter-card .cd-seg-opt[aria-pressed="true"] {
+        background: #FFFFFF;
+        box-shadow: 0 1px 3px rgba(15, 10, 31, 0.14);
+      }
+      /* Expandable code row — one card shell; the header row stays put
+         while the filter body slides open beneath it. */
+      .home-filter-card .hf-code-item {
+        --hf-accent: var(--blue-ink);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--card);
+        margin-bottom: 6px;
+        overflow: hidden;
+        transition: border-color 240ms cubic-bezier(.2,.85,.25,1),
+                    box-shadow 240ms cubic-bezier(.2,.85,.25,1);
+      }
+      .home-filter-card .hf-code-item:last-child { margin-bottom: 0; }
+      .home-filter-card .hf-code-item.has-filter {
+        border-color: color-mix(in srgb, var(--hf-accent) 40%, var(--line));
+      }
+      .home-filter-card .hf-code-item.is-expanded {
+        border-color: color-mix(in srgb, var(--hf-accent) 55%, var(--line));
+        box-shadow: var(--shadow-card);
+      }
+      .home-filter-card .hf-code-row {
+        width: 100%;
+        text-align: left;
+        font-family: inherit;
+        border: none;
+        background: transparent;
+        padding: 10px 14px;
+        display: flex; align-items: center; gap: 10px;
+        cursor: pointer;
+        transition: background 140ms ease;
+      }
+      @media (hover: hover) {
+        .home-filter-card .hf-code-row:hover { background: var(--surface-2); }
+      }
+      /* One circular icon treatment — identical in collapsed + expanded. */
+      .home-filter-card .hf-code-item .ico {
+        flex-shrink: 0;
+        width: 32px; height: 32px;
+        border-radius: 50%;
+        display: inline-flex; align-items: center; justify-content: center;
+        color: #FFFFFF;
+      }
+      .home-filter-card .hf-code-item .ico .material-symbols-outlined {
+        font-size: 18px;
+        color: inherit;
+      }
+      .home-filter-card .hf-code-label {
+        flex: 1; min-width: 0;
+        display: flex; flex-direction: column; align-items: flex-start;
+      }
+      .home-filter-card .hf-code-label .nm {
+        color: var(--fg-bright);
+        font-size: 14px; font-weight: 700; letter-spacing: -0.01em;
+        line-height: 1.2;
+      }
+      .home-filter-card .hf-code-row .chev {
+        flex-shrink: 0;
+        color: var(--fg-faint);
+        display: inline-flex; align-items: center; justify-content: center;
+      }
+      .home-filter-card .hf-code-row .chev .material-symbols-outlined {
+        font-size: 18px;
+        transition: transform 280ms cubic-bezier(.2,.85,.25,1);
+      }
+      .home-filter-card .hf-code-item.is-expanded .hf-code-row .chev .material-symbols-outlined {
+        transform: rotate(180deg);
+      }
+      /* Accordion body — grid 0fr→1fr for a smooth height tween. */
+      .home-filter-card .hf-expand-body {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 280ms cubic-bezier(.2,.85,.25,1);
+      }
+      .home-filter-card .hf-code-item.is-expanded .hf-expand-body {
+        grid-template-rows: 1fr;
+      }
+      .home-filter-card .hf-expand-inner {
+        overflow: hidden;
+        min-height: 0;
+        padding: 0 14px;
+        transition: padding 280ms cubic-bezier(.2,.85,.25,1);
+      }
+      .home-filter-card .hf-code-item.is-expanded .hf-expand-inner {
+        padding-bottom: 14px;
+      }
+      .home-filter-card .hf-expand-inner .cd-mode {
+        margin-bottom: 0;
+        padding-top: 2px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .home-filter-card .hf-code-item,
+        .home-filter-card .hf-expand-body,
+        .home-filter-card .hf-expand-inner,
+        .home-filter-card .hf-code-row .chev .material-symbols-outlined {
+          transition: none;
+        }
       }
 
       /* Color-divided health bar painted beneath each food row on Browse.
@@ -2161,7 +2365,7 @@
         background: transparent;
         border: none;
         padding: 0;
-        color: var(--blue);
+        color: var(--blue-ink);
         font: inherit;
         font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
         cursor: pointer;
@@ -2383,7 +2587,6 @@
                               code-detail bottom sheet)
            4. About card    — link to the score-math explainer
 
-         Plus a centered "Last scanned at …" timestamp above the tab bar.
          Every surface uses var(--card)/var(--line) so the same markup
          renders correctly in both themes. */
 
@@ -2494,7 +2697,7 @@
         border: none;
         border-top: 1px solid var(--line);
         background: transparent;
-        color: var(--blue);
+        color: var(--blue-ink);
         font: inherit;
         font-size: 13px; font-weight: 700; letter-spacing: -0.01em;
         cursor: pointer;
@@ -2692,19 +2895,6 @@
       }
       .fd-ai-card .intent-chip { cursor: pointer; }
 
-      /* Centered "Last scanned today at 9:41 AM" timestamp above the tab
-         bar. history glyph + label, both in the faint text tier so it
-         reads as ambient metadata. */
-      .last-scanned {
-        display: flex; align-items: center; justify-content: center; gap: 6px;
-        color: var(--fg-faint);
-        font-size: 11px; font-weight: 500;
-        padding: 4px 0 2px;
-      }
-      .last-scanned .material-symbols-outlined {
-        font-size: 14px;
-      }
-
       /* ─── Better Alternatives card rail ─────────────────────────────────
          Horizontal scroll rail of portrait food cards below the AI
          Insights card on Food Detail. Each card stacks a thumb area
@@ -2734,7 +2924,7 @@
         background: none;
         border: none;
         padding: 0;
-        color: var(--blue);
+        color: var(--blue-ink);
         font: inherit;
         font-size: 11px; font-weight: 700;
         cursor: pointer;
@@ -2992,8 +3182,8 @@
         display: inline-flex; align-items: center; justify-content: center;
         width: 44px; height: 44px;
         border-radius: 13px;
-        background: color-mix(in srgb, var(--blue) 16%, transparent);
-        color: var(--blue);
+        background: color-mix(in srgb, var(--blue-ink) 16%, transparent);
+        color: var(--blue-ink);
       }
       .install-ico .material-symbols-outlined { font-size: 24px; }
       .install-body { flex: 1; min-width: 0; }
@@ -3019,23 +3209,11 @@
         display: inline-flex; align-items: center; gap: 2px;
         margin-top: 12px;
         border: none; background: transparent; padding: 0;
-        color: var(--blue);
+        color: var(--blue-ink);
         font-family: inherit; font-size: 13px; font-weight: 800; letter-spacing: -0.01em;
         cursor: pointer;
       }
       .install-how .material-symbols-outlined { font-size: 18px; }
-      .save-sheet-cta {
-        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-        width: 100%; min-height: 52px;
-        border: none; border-radius: 9999px;
-        font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
-        background: var(--blue); color: #FFFFFF;
-        cursor: pointer;
-        box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--blue) 60%, transparent);
-        transition: transform .14s ease;
-      }
-      .save-sheet-cta:active { transform: scale(.99); }
-      .save-sheet-cta .material-symbols-outlined { font-size: 20px; }
 
       /* ─── Fresh Find — package photo capture (Steps 1–2) ─────────────
          Two-step in-aisle flow when barcode scan isn't enough: photograph
@@ -3515,7 +3693,7 @@
       .intent-chip {
         display: inline-flex; align-items: center; gap: 6px;
         background: transparent;
-        border: 1px solid color-mix(in srgb, var(--blue) 55%, var(--line));
+        border: 1px solid color-mix(in srgb, var(--blue-ink) 55%, var(--line));
         color: var(--fg-bright);
         border-radius: 999px;
         padding: 9px 14px;
@@ -3526,13 +3704,13 @@
       }
       @media (hover: hover) {
         .intent-chip:hover {
-          border-color: var(--blue);
-          background: color-mix(in srgb, var(--blue) 10%, transparent);
+          border-color: var(--blue-ink);
+          background: color-mix(in srgb, var(--blue-ink) 10%, transparent);
         }
       }
       .intent-chip .material-symbols-outlined {
         font-size: 14px;
-        color: var(--blue);
+        color: var(--blue-ink);
       }
 
       /* ─── Chat composer (bottom input) ──────────────────────────────
@@ -3566,7 +3744,7 @@
       }
       .composer-input::placeholder { color: var(--fg-faint); }
       .composer-input:focus {
-        border-color: color-mix(in srgb, var(--blue) 55%, var(--line));
+        border-color: color-mix(in srgb, var(--blue-ink) 55%, var(--line));
       }
       .composer-send {
         flex-shrink: 0;
@@ -4419,15 +4597,15 @@
          chat starter; tapping it swaps this sheet for the rebalance
          bottom sheet. */
       .code-detail-sheet .cd-rebalance-chip {
-        color: var(--blue);
-        border-color: color-mix(in srgb, var(--blue) 40%, var(--line));
-        background: color-mix(in srgb, var(--blue) 8%, var(--card));
+        color: var(--blue-ink);
+        border-color: color-mix(in srgb, var(--blue-ink) 40%, var(--line));
+        background: color-mix(in srgb, var(--blue-ink) 8%, var(--card));
       }
-      .code-detail-sheet .cd-rebalance-chip .material-symbols-outlined { color: var(--blue); }
+      .code-detail-sheet .cd-rebalance-chip .material-symbols-outlined { color: var(--blue-ink); }
       @media (hover: hover) {
         .code-detail-sheet .cd-rebalance-chip:hover {
-          border-color: color-mix(in srgb, var(--blue) 60%, var(--line));
-          background: color-mix(in srgb, var(--blue) 14%, var(--card));
+          border-color: color-mix(in srgb, var(--blue-ink) 60%, var(--line));
+          background: color-mix(in srgb, var(--blue-ink) 14%, var(--card));
         }
       }
       /* Close pinned to the top-right corner so the hero can center
@@ -4512,7 +4690,7 @@
       }
       .code-detail-sheet .cd-seg-opt[aria-pressed="true"] {
         background: var(--card-elev);
-        color: var(--blue);
+        color: var(--blue-ink);
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.30);
       }
       /* Light twin: white track collapses contrast, so darken the track
@@ -4546,7 +4724,7 @@
       }
       .code-detail-sheet .cd-score-chip[aria-pressed="true"] {
         background: var(--card-elev);
-        color: var(--blue);
+        color: var(--blue-ink);
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.30);
       }
       .theme-light .code-detail-sheet .cd-score-row { background: var(--track); }
@@ -4663,7 +4841,7 @@
          taps a food row. The sheet hosts the same per-food breakdown
          that the standalone Product Detail screen shows — contribution
          donut, hero card (thumb + name + brand + UPC), AI Insights
-         card, "About this score" link, last-scanned timestamp — only
+         card, "About this score" link — only
          compressed into a near-full-height sheet over the food list,
          so the user keeps their place in Browse instead of pushing a
          full screen. Same scrim + handle + rc-slide animation as the
@@ -4831,14 +5009,14 @@
       .legend p { color: var(--fg-muted); font-size: 13px; line-height: 1.6; margin: 0; }
 
       /* ─── Horizontal carousel of dark/light pairs ────────────────────
-         Each .screen-pair is one scroll-snap card containing the same
-         phone rendered twice — dark (the document default) and light
-         (.theme-light on the wrap re-points every CSS var to the light
-         palette just for that subtree). The light twin is created at
-         runtime by a small clone script so we keep one source of truth
-         for each screen's markup. Users scroll horizontally to flip
-         between the six screens, dark/light always visible side-by-side
-         within the focused card. */
+         Each .screen-pair is one card containing the same phone rendered
+         twice — dark (the document default) and light (.theme-light on
+         the wrap re-points every CSS var to the light palette just for
+         that subtree). The light twin is created at runtime by a small
+         clone script so we keep one source of truth for each screen's
+         markup. Users scroll horizontally to flip between the six
+         screens, dark/light always visible side-by-side within the
+         focused card. Free scroll — no snap-to-center. */
       .pair-rail-hint {
         margin: 24px auto 8px;
         max-width: 1480px;
@@ -4888,7 +5066,6 @@
         overflow-x: auto;
         overflow-y: hidden;
         overscroll-behavior-x: contain;
-        scroll-snap-type: x mandatory;
         scroll-padding-inline: 64px;
         padding: 12px 64px 32px;
         -webkit-overflow-scrolling: touch;
@@ -4906,7 +5083,6 @@
       .pair-rail::-webkit-scrollbar-track { background: transparent; }
 
       .screen-pair {
-        scroll-snap-align: center;
         flex-shrink: 0;
         display: flex;
         flex-direction: column;
@@ -4949,7 +5125,6 @@
           transparent 100%
         );
         border-radius: 999px;
-        scroll-snap-align: center;
       }
       .rail-divider .rail-divider-label {
         position: absolute;
@@ -4987,7 +5162,7 @@
         overflow: hidden;
       }
       .ds-board-hd .eyebrow {
-        color: var(--blue);
+        color: var(--blue-ink);
         font-size: 11px; font-weight: 800;
         letter-spacing: 0.2em; text-transform: uppercase;
       }
@@ -5010,7 +5185,7 @@
         letter-spacing: 0.16em; text-transform: uppercase;
       }
       .ds-section > h3 .material-symbols-outlined {
-        font-size: 18px; color: var(--blue);
+        font-size: 18px; color: var(--blue-ink);
       }
       .ds-section > h3::after {
         content: ""; flex: 1; height: 1px; background: var(--line);
@@ -5109,7 +5284,7 @@
          colour-safe column is never flagged active but always renders
          its swatches in full regular colour (no dimming). */
       .ds-cvd-col.is-safe { opacity: 1; }
-      .ds-cvd-col.is-standard { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue); }
+      .ds-cvd-col.is-standard { border-color: var(--blue-ink); box-shadow: 0 0 0 1px var(--blue); }
       /* CVD on → drop the standard column's active emphasis */
       [data-cvd="safe"] .ds-cvd-col.is-standard { opacity: 0.5; border-color: var(--line); box-shadow: none; }
       [data-cvd="safe"] .ds-cvd-col.is-safe { opacity: 1; }
@@ -5130,7 +5305,7 @@
         margin-top: 10px;
         color: var(--fg-muted); font-size: 11px; line-height: 1.45;
       }
-      .ds-cvd-note .material-symbols-outlined { font-size: 14px; vertical-align: -2px; color: var(--blue); }
+      .ds-cvd-note .material-symbols-outlined { font-size: 14px; vertical-align: -2px; color: var(--blue-ink); }
       @media (max-width: 760px) { .ds-cvd-compare { grid-template-columns: 1fr; } }
 
       /* Typography */
@@ -5260,6 +5435,31 @@
         background: radial-gradient(120% 100% at 30% 0%, #dfeafc 0%, #c7d6ef 60%, #aebfe0 100%);
       }
       .app-springboard-light .app-icon-name { color: #1b2030; }
+      /* Download chips under each tile — SVG / PNG / ICO exports. */
+      .app-icon-dl {
+        display: flex; gap: 6px; margin-top: 3px;
+      }
+      .app-icon-dl a {
+        font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--fg-faint);
+        text-decoration: none;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 3px 7px;
+        cursor: pointer;
+        transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+      }
+      .app-icon-dl a:hover {
+        color: var(--fg-bright);
+        border-color: var(--fg-faint);
+        background: rgba(255,255,255,0.04);
+      }
+      .app-favicon-note {
+        color: var(--fg-faint);
+        font-size: 12px; line-height: 1.5;
+        margin: 0 0 14px; max-width: 62ch;
+      }
 
       /* Accessibility — WCAG contrast audit */
       .ds-a11y-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -5308,7 +5508,7 @@
         padding: 13px 14px;
       }
       .ds-note .material-symbols-outlined {
-        font-size: 20px; color: var(--blue); flex-shrink: 0; margin-top: 1px;
+        font-size: 20px; color: var(--blue-ink); flex-shrink: 0; margin-top: 1px;
       }
       .ds-note .nt-title { color: var(--fg-bright); font-size: 12px; font-weight: 800; letter-spacing: -0.005em; }
       .ds-note .nt-body { margin-top: 3px; color: var(--fg-muted); font-size: 11px; line-height: 1.45; }
@@ -5340,7 +5540,7 @@
       }
       .intro-hero .kicker {
         font-size: 11px; font-weight: 800; letter-spacing: 0.16em;
-        color: var(--blue);
+        color: var(--blue-ink);
         text-transform: uppercase;
       }
       .intro-hero h1 {
@@ -5408,8 +5608,8 @@
         transition: border-color .14s ease, box-shadow .14s ease;
       }
       .auth-field:focus-within {
-        border-color: var(--blue);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 18%, transparent);
+        border-color: var(--blue-ink);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue-ink) 18%, transparent);
       }
       .auth-field .auth-ico { color: var(--fg-faint); font-size: 20px; flex-shrink: 0; }
       .auth-field input {
@@ -5434,28 +5634,16 @@
         align-self: flex-end;
         border: none; background: transparent; padding: 0;
         margin-top: -4px;
-        color: var(--blue);
+        color: var(--blue-ink);
         font-family: inherit; font-size: 12.5px; font-weight: 700;
         cursor: pointer;
       }
-      .auth-cta {
-        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-        width: 100%; min-height: 52px;
-        border: none; border-radius: 9999px;
-        font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
-        background: var(--blue); color: #FFFFFF;
-        cursor: pointer;
-        box-shadow: 0 12px 28px -10px color-mix(in srgb, var(--blue) 60%, transparent);
-        transition: transform .14s ease;
-      }
-      .auth-cta:active { transform: scale(.99); }
-      .auth-cta .material-symbols-outlined { font-size: 20px; }
       .auth-switch {
         text-align: center;
         color: var(--fg-muted);
         font-size: 12.5px; font-weight: 500;
       }
-      .auth-switch a { color: var(--blue); font-weight: 700; cursor: pointer; }
+      .auth-switch a { color: var(--blue-ink); font-weight: 700; cursor: pointer; }
       .auth-legal {
         margin: 4px 6px 0;
         text-align: center;
@@ -5606,9 +5794,9 @@
       /* Constant 1px border (matches the intro tile); the selected ring is an
          inset shadow so selecting never nudges the card's size or neighbours. */
       .persona-card.is-sel {
-        border-color: var(--blue);
-        background: color-mix(in srgb, var(--blue) 10%, var(--card));
-        box-shadow: inset 0 0 0 1px var(--blue), 0 10px 26px -12px rgba(29, 78, 216, 0.55);
+        border-color: var(--blue-ink);
+        background: color-mix(in srgb, var(--blue-ink) 10%, var(--card));
+        box-shadow: inset 0 0 0 1px var(--blue-ink), 0 10px 26px -12px rgba(29, 78, 216, 0.55);
       }
       .persona-card.is-sel .pc-pick {
         color: #FFFFFF; background: var(--blue); border-color: var(--blue);
@@ -5662,7 +5850,7 @@
         cursor: pointer;
         transition: color .2s ease;
       }
-      .persona-skip:hover { color: var(--blue); }
+      .persona-skip:hover { color: var(--blue-ink); }
 
       /* ─── Settings screen ─────────────────────────────────────────────
          Reached from the new far-right SETTINGS tab. Grouped list cards
@@ -5682,7 +5870,7 @@
         color: #7CB4FF;
         text-transform: uppercase;
       }
-      .theme-light .set-section > .set-label { color: var(--blue); }
+      .theme-light .set-section > .set-label { color: var(--blue-ink); }
       .set-group {
         background: var(--card);
         border: 1px solid var(--line-subtle);
@@ -5730,21 +5918,23 @@
       .set-row .set-chev .material-symbols-outlined { font-size: 22px; }
       .set-row .set-trail-btn {
         flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
         border: none;
         border-radius: 999px;
-        padding: 8px 18px;
+        padding: 14px 16px;
         font-family: inherit;
-        font-size: 12.5px; font-weight: 800; letter-spacing: -0.005em;
+        font-size: 14px; font-weight: 800;
         cursor: pointer;
       }
       .set-row .set-trail-btn.solid {
         background: var(--blue); color: #FFFFFF;
-        box-shadow: 0 8px 18px -8px rgba(29,78,216,0.45);
+        box-shadow: 0 8px 20px color-mix(in srgb, var(--blue) 30%, transparent);
       }
       .set-row .set-trail-btn.ghost {
         background: var(--surface-2);
         border: 1px solid var(--line);
         color: var(--fg-bright);
+        padding: 13px 15px; /* 1px border — same outer height as .cc-btn */
       }
       /* Rows that carry a wide control (segmented switch or pill button)
          wrap it onto its own line below the copy instead of squeezing the
@@ -5935,8 +6125,8 @@
         border: 1px solid var(--line);
       }
       .saved-row.is-current {
-        border-color: color-mix(in srgb, var(--blue) 60%, transparent);
-        background: color-mix(in srgb, var(--blue) 10%, var(--card));
+        border-color: color-mix(in srgb, var(--blue-ink) 60%, transparent);
+        background: color-mix(in srgb, var(--blue-ink) 10%, var(--card));
       }
       .saved-thumb {
         flex-shrink: 0;
@@ -5957,8 +6147,8 @@
         flex-shrink: 0;
         font-size: 9px; font-weight: 800; letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: var(--blue);
-        background: color-mix(in srgb, var(--blue) 16%, transparent);
+        color: var(--blue-ink);
+        background: color-mix(in srgb, var(--blue-ink) 16%, transparent);
         border-radius: 999px;
         padding: 2px 7px;
       }
@@ -5987,7 +6177,7 @@
         opacity: 0.5; cursor: default;
       }
       @media (hover: hover) {
-        .saved-load:not([disabled]):hover { border-color: var(--blue); color: var(--blue); }
+        .saved-load:not([disabled]):hover { border-color: var(--blue-ink); color: var(--blue-ink); }
       }
       .saved-foot {
         margin-top: 14px;
@@ -6047,6 +6237,8 @@
           <li style="display:none;"><span class="idx">0b</span>Pick Your Personas</li>
           <li><span class="idx">1a</span>Your Code (Empty)</li>
           <li><span class="idx">1b</span>Your Code (Home)</li>
+          <li><span class="idx">1c</span>Your Code (Filter · Codes)</li>
+          <li><span class="idx">1d</span>Your Code (Filter · Ingredients)</li>
           <li><span class="idx">2</span>Add Code (Pick)</li>
           <li><span class="idx">4</span>Scan (Find a Food)</li>
           <li><span class="idx">4d</span>Scan · Saved</li>
@@ -6409,6 +6601,10 @@
           </div>
           <span class="app-icon-name">WISEcode</span>
           <span class="app-icon-variant">Light</span>
+          <div class="app-icon-dl" data-icon="light" data-icon-label="WISEcode-icon-light">
+            <a data-fmt="svg" download>SVG</a>
+            <a data-fmt="png" download>PNG</a>
+          </div>
         </div>
         <!-- Dark appearance -->
         <div class="app-icon-cell">
@@ -6417,6 +6613,10 @@
           </div>
           <span class="app-icon-name">WISEcode</span>
           <span class="app-icon-variant">Dark</span>
+          <div class="app-icon-dl" data-icon="dark" data-icon-label="WISEcode-icon-dark">
+            <a data-fmt="svg" download>SVG</a>
+            <a data-fmt="png" download>PNG</a>
+          </div>
         </div>
         <!-- Tinted (monochrome) appearance -->
         <div class="app-icon-cell">
@@ -6425,27 +6625,28 @@
           </div>
           <span class="app-icon-name">WISEcode</span>
           <span class="app-icon-variant">Tinted</span>
-        </div>
-      </div>
-
-      <!-- The same icon shown on a real home-screen swatch, light + dark. -->
-      <div class="ds-theme-row" style="margin-top:18px;">
-        <div class="ds-theme-panel app-springboard app-springboard-dark">
-          <span class="ds-theme-tag"><span class="material-symbols-outlined">dark_mode</span>On a dark home screen</span>
-          <div class="app-springboard-grid">
-            <div class="app-icon-cell">
-              <div class="app-icon app-icon-dark"><span class="app-icon-bug"></span></div>
-              <span class="app-icon-name">WISEcode</span>
-            </div>
+          <div class="app-icon-dl" data-icon="tinted" data-icon-label="WISEcode-icon-tinted">
+            <a data-fmt="svg" download>SVG</a>
+            <a data-fmt="png" download>PNG</a>
           </div>
         </div>
-        <div class="ds-theme-panel theme-light app-springboard app-springboard-light">
-          <span class="ds-theme-tag"><span class="material-symbols-outlined">light_mode</span>On a light home screen</span>
-          <div class="app-springboard-grid">
-            <div class="app-icon-cell">
-              <div class="app-icon app-icon-light"><span class="app-icon-bug"></span></div>
-              <span class="app-icon-name">WISEcode</span>
-            </div>
+      </div>
+    </div>
+
+    <div class="ds-section">
+      <h3><span class="material-symbols-outlined">tab</span>Favicon</h3>
+      <p class="app-favicon-note">The browser-tab and bookmark mark — a single square icon, edge-to-edge, with no light / dark variants.</p>
+      <div class="app-icon-row">
+        <div class="app-icon-cell">
+          <div class="app-icon app-icon-light">
+            <span class="app-icon-bug"></span>
+          </div>
+          <span class="app-icon-name">WISEcode</span>
+          <span class="app-icon-variant">Favicon</span>
+          <div class="app-icon-dl" data-icon="favicon" data-icon-label="favicon">
+            <a data-fmt="ico" download>ICO</a>
+            <a data-fmt="png" download>PNG</a>
+            <a data-fmt="svg" download>SVG</a>
           </div>
         </div>
       </div>
@@ -6482,7 +6683,10 @@
       <div class="scroll">
         <div class="px stack" style="padding-top:10px;">
           <div class="intro-brand">
-            <img class="wise-logo-vertical" src="assets/WISEcode-logo-vertical.svg" alt="WISEcode" />
+            <div class="wise-logo-coach" role="img" aria-label="WISEcoach">
+              <img class="wise-logo-coach-bug" src="assets/WISEcode-bug.svg" alt="" aria-hidden="true" />
+              <img class="wise-logo-coach-wordmark" src="assets/WISEcoach-logo-dark.svg" alt="" aria-hidden="true" />
+            </div>
           </div>
           <div class="intro-hero" style="min-height:auto;">
             <div class="kicker">Welcome</div>
@@ -6588,7 +6792,10 @@
       <div class="scroll">
         <div class="px stack" style="padding-top:8px;">
           <div class="intro-brand">
-            <img class="wise-logo-vertical" src="assets/WISEcode-logo-vertical.svg" alt="WISEcode" />
+            <div class="wise-logo-coach" role="img" aria-label="WISEcoach">
+              <img class="wise-logo-coach-bug" src="assets/WISEcode-bug.svg" alt="" aria-hidden="true" />
+              <img class="wise-logo-coach-wordmark" src="assets/WISEcoach-logo-dark.svg" alt="" aria-hidden="true" />
+            </div>
           </div>
           <div class="intro-hero">
             <h1>Which of these sounds like <span class="accent">you</span>?</h1>
@@ -6701,7 +6908,10 @@
       <div class="scroll">
         <div class="scr-hdr">
           <div class="intro-brand" style="padding:0;">
-            <img class="wise-logo-vertical" src="assets/WISEcode-logo-vertical.svg" alt="WISEcoach" />
+            <div class="wise-logo-coach" role="img" aria-label="WISEcoach">
+              <img class="wise-logo-coach-bug" src="assets/WISEcode-bug.svg" alt="" aria-hidden="true" />
+              <img class="wise-logo-coach-wordmark" src="assets/WISEcoach-logo-dark.svg" alt="" aria-hidden="true" />
+            </div>
           </div>
         </div>
 
@@ -6766,7 +6976,10 @@
       <div class="scroll">
         <div class="scr-hdr">
           <div class="intro-brand" style="padding:0;">
-            <img class="wise-logo-vertical" src="assets/WISEcode-logo-vertical.svg" alt="WISEcoach" />
+            <div class="wise-logo-coach" role="img" aria-label="WISEcoach">
+              <img class="wise-logo-coach-bug" src="assets/WISEcode-bug.svg" alt="" aria-hidden="true" />
+              <img class="wise-logo-coach-wordmark" src="assets/WISEcoach-logo-dark.svg" alt="" aria-hidden="true" />
+            </div>
           </div>
         </div>
 
@@ -6806,6 +7019,124 @@
     </div>
   </div>
   <div class="phone-caption">Personal Code in its filled, in-harmony state: donut chart visualises every slot's weight, the list under it lets the user fine-tune. The WISEcoach wordmark heads the screen. Tap a row to read the code's description and start a chat with WISE AI about it.</div>
+</div>
+  </div>
+</section>
+
+<!-- ─── 1c. YOUR CODE (FILTER · CODES) — sheet fully open ────────────── -->
+<section class="screen-pair">
+  <h3 class="screen-pair-label">1c · Your Code (Filter · Codes)</h3>
+  <div class="pair-row">
+<div class="phone-wrap" data-code data-home-filter-demo="codes">
+  <div class="phone-label">Dark</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div class="intro-brand" style="padding:0;">
+            <div class="wise-logo-coach" role="img" aria-label="WISEcoach">
+              <img class="wise-logo-coach-bug" src="assets/WISEcode-bug.svg" alt="" aria-hidden="true" />
+              <img class="wise-logo-coach-wordmark" src="assets/WISEcoach-logo-dark.svg" alt="" aria-hidden="true" />
+            </div>
+          </div>
+        </div>
+        <div class="px stack">
+          <section class="pie-card">
+            <div class="pie-wrap" style="width:300px;height:300px;">
+              <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
+                   data-id="home-filter-codes" data-size="280" data-stroke="88"
+                   data-slices='[{"value":10,"c":"#188443","icon":"sparkles"},{"value":8,"c":"#D8610C","icon":"award"},{"value":6,"c":"#CA371F","icon":"heart-pulse"},{"value":6,"c":"#0A6630","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#CA371F","icon":"leaf"},{"value":4,"c":"#D8610C","icon":"salad"},{"value":3,"c":"#0A6630","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#0A6630","icon":"infinity"}]'
+                   aria-hidden="true"></svg>
+              <div class="pie-center">
+                <div class="num" style="font-size:46px;"><span data-pie-num-val>51</span></div>
+                <div class="lbl">OF 100</div>
+              </div>
+            </div>
+            <div class="status-sub">This is how WISEcoach weights your priorities &mdash; drag to reorder, or tap a code to fine-tune it and chat with WISE AI.</div>
+          </section>
+          <button type="button" class="cc-btn" data-action="open-chat">Compose with AI</button>
+          <div class="stack-sm" data-code-list></div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Filter sheet fully expanded on the Code values tab with Artificial Colors expanded inline — tap any other code row to swap the open panel; Code / Filter / Both and Present / None configure that code's filter without opening a separate sheet.</div>
+</div>
+  </div>
+</section>
+
+<!-- ─── 1d. YOUR CODE (FILTER · INGREDIENTS) — sheet fully open ──────── -->
+<section class="screen-pair">
+  <h3 class="screen-pair-label">1d · Your Code (Filter · Ingredients)</h3>
+  <div class="pair-row">
+<div class="phone-wrap" data-code data-home-filter-demo="ingredients">
+  <div class="phone-label">Dark</div>
+  <div class="phone">
+    <div class="island"></div>
+    <div class="glow-l"></div>
+    <div class="glow-r"></div>
+    <div class="status-bar"><span>9:41</span>
+      <span class="right">
+        <span class="bars"><span></span><span></span><span></span><span></span></span>
+        <span class="material-symbols-outlined icon" style="font-size:16px;color:var(--status-fg);">wifi</span>
+        <span class="battery"><i></i></span>
+      </span>
+    </div>
+    <div class="screen">
+      <div class="scroll">
+        <div class="scr-hdr">
+          <div class="intro-brand" style="padding:0;">
+            <div class="wise-logo-coach" role="img" aria-label="WISEcoach">
+              <img class="wise-logo-coach-bug" src="assets/WISEcode-bug.svg" alt="" aria-hidden="true" />
+              <img class="wise-logo-coach-wordmark" src="assets/WISEcoach-logo-dark.svg" alt="" aria-hidden="true" />
+            </div>
+          </div>
+        </div>
+        <div class="px stack">
+          <section class="pie-card">
+            <div class="pie-wrap" style="width:300px;height:300px;">
+              <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
+                   data-id="home-filter-ing" data-size="280" data-stroke="88"
+                   data-slices='[{"value":10,"c":"#188443","icon":"sparkles"},{"value":8,"c":"#D8610C","icon":"award"},{"value":6,"c":"#CA371F","icon":"heart-pulse"},{"value":6,"c":"#0A6630","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#CA371F","icon":"leaf"},{"value":4,"c":"#D8610C","icon":"salad"},{"value":3,"c":"#0A6630","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#0A6630","icon":"infinity"}]'
+                   aria-hidden="true"></svg>
+              <div class="pie-center">
+                <div class="num" style="font-size:46px;"><span data-pie-num-val>51</span></div>
+                <div class="lbl">OF 100</div>
+              </div>
+            </div>
+            <div class="status-sub">This is how WISEcoach weights your priorities &mdash; drag to reorder, or tap a code to fine-tune it and chat with WISE AI.</div>
+          </section>
+          <button type="button" class="cc-btn" data-action="open-chat">Compose with AI</button>
+          <div class="stack-sm" data-code-list></div>
+        </div>
+      </div>
+      <nav class="tab-bar">
+        <div class="tab-pill">
+          <a class="tab active"><span class="material-symbols-outlined icon">home</span><span>HOME</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">qr_code_scanner</span><span>SCAN</span></a>
+          <a class="tab"><span class="material-symbols-outlined icon">history</span><span>HISTORY</span></a>          <a class="tab"><span class="material-symbols-outlined icon">account_circle</span><span>SETTINGS</span></a>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <div class="phone-caption">Same filter sheet on the Ingredients tab — tap a row to toggle it active (no checkbox); search narrows the flat A–Z list.</div>
 </div>
   </div>
 </section>
@@ -7495,7 +7826,7 @@ HIDDEN -->
 
         <div class="px stack">
           <!-- ─── Product hero — thumb + name + brand + WISEscore + Details accordion ─── -->
-          <div class="card pad-l food-hero-card">
+          <div class="card pad-l food-hero-card is-details-open">
             <div class="food-hero-main">
               <div class="product-thumb">
                 <!-- Vital Choice "WILD SALMON" packaging illustration. Black
@@ -7532,7 +7863,7 @@ HIDDEN -->
                 </div>
               </div>
             </div>
-            <button type="button" class="fd-details-toggle" data-action="fd-details-toggle" aria-expanded="false">
+            <button type="button" class="fd-details-toggle" data-action="fd-details-toggle" aria-expanded="true">
               <span>Details</span>
               <span class="material-symbols-outlined">expand_more</span>
             </button>
@@ -7626,11 +7957,6 @@ HIDDEN -->
                 </div>
               </button>
             </div>
-          </div>
-
-          <div class="last-scanned">
-            <span class="material-symbols-outlined">history</span>
-            Last scanned today at 9:41 AM
           </div>
         </div>
       </div>
@@ -7875,11 +8201,6 @@ HIDDEN -->
                 </div>
               </button>
             </div>
-          </div>
-
-          <div class="last-scanned">
-            <span class="material-symbols-outlined">history</span>
-            Last scanned today at 9:41 AM
           </div>
         </div>
       </div>
@@ -8518,7 +8839,7 @@ HIDDEN -->
       // across both the dark wrap and its cloned light twin, since they all
       // carry the same .pie-svg class.
       //
-      // The catch: the catalog is a horizontal scroll-snap carousel and the
+      // The catch: the catalog is a horizontal scroll carousel and the
       // donuts only live on the Your Code + Product Detail frames, several
       // screens to the right of the Design System frame. A naive replay from
       // this pinned header button would re-animate every pie entirely
@@ -8870,7 +9191,7 @@ HIDDEN -->
         // building/tuning the code, so a filter reads truer than a chat
         // shortcut there.
         var filterHtml =
-          '<button type="button" class="scr-hdr-filter" aria-label="Filter your codes">' +
+          '<button type="button" class="scr-hdr-filter" data-action="open-home-filter" aria-label="Filter your codes">' +
           '<span class="material-symbols-outlined">filter_list</span>' +
           '</button>';
 
@@ -8947,7 +9268,8 @@ HIDDEN -->
           recovery_support:   { name: "Recovery Support",     category: "Performance Health", color: "#FFC434", icon: "bedtime" },
           performance_score:  { name: "Performance Score",    category: "Performance Health", color: "#0A6630", icon: "speed" },
           overall_quality:    { name: "Overall Quality",      category: "Overall",            color: "#D8610C", icon: "workspace_premium" },
-          longevity_score:    { name: "Longevity Score",      category: "Overall",            color: "#0A6630", icon: "all_inclusive" }
+          longevity_score:    { name: "Longevity Score",      category: "Overall",            color: "#0A6630", icon: "all_inclusive" },
+          artificial_color:   { name: "Artificial Colors",    category: "Avoid Ingredients",  color: "#CA371F", icon: "palette" }
         };
 
         var CATEGORY_ORDER = [
@@ -8955,6 +9277,7 @@ HIDDEN -->
           "Clean & Natural",
           "Quality & Content",
           "Performance Health",
+          "Avoid Ingredients",
           "Overall"
         ];
 
@@ -11761,6 +12084,406 @@ HIDDEN -->
         });
       })();
 
+      // ─── Your Code (Home) — filter bottom sheet ──────────────────────
+      // The filter icon in the Your Code headline opens the same
+      // .code-picker-card chrome as Pick a Code, plus a top tab row
+      // (Ingredients / Code values), then search + sort + a scrolling
+      // catalog. On Code values, tapping a row expands it inline to
+      // show the Code / Filter / Both + Present / None controls — no
+      // checkbox and no code-detail sheet. Screens 1c / 1d mount this
+      // sheet fully open at boot via [data-home-filter-demo].
+      (function () {
+        var W = WISE_CODES;
+
+        var INGREDIENTS = [
+          "Almonds", "Cane Sugar", "Citric Acid", "Cocoa", "Coconut Oil",
+          "Garlic", "Honey", "Natural Flavors", "Oats", "Olive Oil",
+          "Palm Oil", "Sea Salt", "Soy Lecithin", "Vinegar", "Whole Grain"
+        ];
+
+        function getState(wrap) {
+          if (!wrap._homeFilter) {
+            wrap._homeFilter = {
+              tab: "codes",
+              query: "",
+              sort: "category",
+              filters: {},
+              expandedCodeId: null,
+              ingredientSel: {}
+            };
+          }
+          return wrap._homeFilter;
+        }
+
+        function segOpt(action, codeId, dataKey, dataVal, icon, label, pressed) {
+          return ''
+            + '<button type="button" class="cd-seg-opt" data-action="' + action + '"'
+            +      ' data-code-id="' + codeId + '" data-' + dataKey + '="' + dataVal + '"'
+            +      ' aria-pressed="' + (pressed ? "true" : "false") + '">'
+            +   '<span class="material-symbols-outlined">' + icon + '</span>'
+            +   '<span>' + label + '</span>'
+            + '</button>';
+        }
+
+        function buildFilterControls(codeId, cfg) {
+          var mode = cfg.mode || "filter";
+          var presence = cfg.presence || "none";
+          return ''
+            + '<div class="cd-mode">'
+            +   '<div class="cd-mode-seg" role="group" aria-label="How this code is used">'
+            +     segOpt("hf-mode", codeId, "mode", "code", "donut_large", "Code", mode === "code")
+            +     segOpt("hf-mode", codeId, "mode", "filter", "filter_list", "Filter", mode === "filter")
+            +     segOpt("hf-mode", codeId, "mode", "both", "layers", "Both", mode === "both")
+            +   '</div>'
+            +   '<div class="cd-mode-seg" role="group" aria-label="Presence">'
+            +     segOpt("hf-presence", codeId, "presence", "present", "check_circle", "Present", presence === "present")
+            +     segOpt("hf-presence", codeId, "presence", "none", "block", "None", presence === "none")
+            +   '</div>'
+            + '</div>';
+        }
+
+        function syncItemFilterState(item, cfg) {
+          if (!item || !cfg) return;
+          var inner = item.querySelector(".hf-expand-inner");
+          if (inner) inner.innerHTML = buildFilterControls(item.getAttribute("data-code-id"), cfg);
+        }
+
+        function collapseItem(item) {
+          if (!item) return;
+          item.classList.remove("is-expanded");
+          var btn = item.querySelector(".hf-code-row");
+          if (btn) btn.setAttribute("aria-expanded", "false");
+        }
+
+        function expandItem(item, cfg) {
+          if (!item) return;
+          syncItemFilterState(item, cfg);
+          item.classList.add("is-expanded");
+          var btn = item.querySelector(".hf-code-row");
+          if (btn) btn.setAttribute("aria-expanded", "true");
+        }
+
+        function setExpanded(overlay, state, codeId) {
+          var prevId = state.expandedCodeId;
+          if (prevId && prevId !== codeId) {
+            collapseItem(overlay.querySelector('[data-hf-code-item][data-code-id="' + prevId + '"]'));
+          }
+          state.expandedCodeId = codeId || null;
+          if (codeId) {
+            if (!state.filters[codeId]) {
+              state.filters[codeId] = { mode: "filter", presence: "none" };
+            }
+            var item = overlay.querySelector('[data-hf-code-item][data-code-id="' + codeId + '"]');
+            if (item) {
+              item.classList.add("has-filter");
+              expandItem(item, state.filters[codeId]);
+            }
+          } else if (prevId) {
+            collapseItem(overlay.querySelector('[data-hf-code-item][data-code-id="' + prevId + '"]'));
+          }
+        }
+
+        function buildCodeItem(entry, state) {
+          var id = entry.id;
+          var meta = entry.meta;
+          var expanded = state.expandedCodeId === id;
+          var hasFilter = !!state.filters[id];
+          var cfg = state.filters[id] || { mode: "filter", presence: "none" };
+
+          return ''
+            + '<div class="hf-code-item'
+            +      (expanded ? ' is-expanded' : '')
+            +      (hasFilter ? ' has-filter' : '')
+            +      '" data-hf-code-item data-code-id="' + id + '"'
+            +      ' style="--hf-accent:' + meta.color + ';">'
+            +   '<button type="button" class="hf-code-row" data-action="hf-code-toggle" data-code-id="' + id + '"'
+            +           ' aria-expanded="' + (expanded ? 'true' : 'false') + '" aria-label="' + W.escapeHtml(meta.name) + '">'
+            +     '<span class="ico" style="background:' + meta.color + ';">'
+            +       '<span class="material-symbols-outlined">' + meta.icon + '</span>'
+            +     '</span>'
+            +     '<span class="hf-code-label">'
+            +       '<span class="nm">' + W.escapeHtml(meta.name) + '</span>'
+            +     '</span>'
+            +     '<span class="chev" aria-hidden="true"><span class="material-symbols-outlined">expand_more</span></span>'
+            +   '</button>'
+            +   '<div class="hf-expand-body">'
+            +     '<div class="hf-expand-inner">' + buildFilterControls(id, cfg) + '</div>'
+            +   '</div>'
+            + '</div>';
+        }
+
+        function buildIngredientRow(name, sel) {
+          var selected = !!sel[name];
+          return ''
+            + '<div class="pick-row' + (selected ? ' is-selected' : '') + '"'
+            +      ' data-hf-ing-opt data-value="' + W.escapeHtml(name) + '"'
+            +      ' role="button" tabindex="0">'
+            +   '<span class="ico is-neutral"><span class="material-symbols-outlined">nutrition</span></span>'
+            +   '<div class="nm">' + W.escapeHtml(name) + '</div>'
+            + '</div>';
+        }
+
+        function renderList(overlay, state) {
+          var scroll = overlay.querySelector("[data-home-filter-scroll]");
+          if (!scroll) return;
+          var q = state.query.trim().toLowerCase();
+          var html = "";
+
+          if (state.tab === "ingredients") {
+            var items = INGREDIENTS.slice();
+            if (q) {
+              items = items.filter(function (name) {
+                return name.toLowerCase().indexOf(q) !== -1;
+              });
+            }
+            if (!items.length) {
+              html = '<div class="cp-empty">No matches for <b>' + W.escapeHtml(state.query) + '</b>.</div>';
+            } else {
+              items.sort(function (a, b) { return a.localeCompare(b); });
+              html = items.map(function (name) {
+                return buildIngredientRow(name, state.ingredientSel);
+              }).join("");
+            }
+          } else {
+            var entries = Object.keys(W.CODE_CATALOG).map(function (id) {
+              return { id: id, meta: W.CODE_CATALOG[id] };
+            });
+            if (q) {
+              entries = entries.filter(function (e) {
+                return e.meta.name.toLowerCase().indexOf(q) !== -1
+                    || e.meta.category.toLowerCase().indexOf(q) !== -1;
+              });
+            }
+            if (!entries.length) {
+              html = '<div class="cp-empty">No matches for <b>' + W.escapeHtml(state.query) + '</b>.</div>';
+            } else if (state.sort === "category") {
+              var byCat = {};
+              entries.forEach(function (e) {
+                (byCat[e.meta.category] = byCat[e.meta.category] || []).push(e);
+              });
+              html = W.CATEGORY_ORDER
+                .filter(function (cat) { return byCat[cat] && byCat[cat].length; })
+                .map(function (cat) {
+                  var rows = byCat[cat]
+                    .slice()
+                    .sort(function (a, b) { return a.meta.name.localeCompare(b.meta.name); })
+                    .map(function (e) { return buildCodeItem(e, state); })
+                    .join("");
+                  return '<div class="pick-cat">' + W.escapeHtml(cat) + '</div>' + rows;
+                }).join("");
+            } else {
+              entries.sort(function (a, b) { return a.meta.name.localeCompare(b.meta.name); });
+              html = entries.map(function (e) { return buildCodeItem(e, state); }).join("");
+            }
+          }
+
+          scroll.innerHTML = html;
+        }
+
+        function renderChrome(overlay, state) {
+          overlay.querySelectorAll("[data-action=\"hf-tab\"]").forEach(function (btn) {
+            var on = btn.getAttribute("data-tab") === state.tab;
+            btn.setAttribute("aria-pressed", on ? "true" : "false");
+          });
+
+          var sortWrap = overlay.querySelector("[data-hf-sort-wrap]");
+          if (sortWrap) sortWrap.hidden = state.tab !== "codes";
+
+          var searchInput = overlay.querySelector("[data-home-filter-search]");
+          if (searchInput && searchInput !== document.activeElement) {
+            searchInput.placeholder = state.tab === "ingredients"
+              ? "Search ingredients"
+              : "Search codes (e.g. sugar, protein)";
+          }
+
+          renderList(overlay, state);
+        }
+
+        function buildShell() {
+          return ''
+            + '<div class="code-picker-card home-filter-card" role="dialog" aria-modal="true" aria-label="Filter your code">'
+            +   '<div class="cp-handle" aria-hidden="true"></div>'
+            +   '<div class="cp-head">'
+            +     '<h1>Filter</h1>'
+            +     '<button class="cp-close" type="button" data-action="home-filter-close" aria-label="Close filter">'
+            +       '<span class="material-symbols-outlined">close</span>'
+            +     '</button>'
+            +   '</div>'
+            +   '<div class="hf-top">'
+            +     '<div class="cd-mode">'
+            +       '<div class="cd-mode-seg" role="group" aria-label="Filter type">'
+            +         '<button type="button" class="cd-seg-opt" data-action="hf-tab" data-tab="ingredients" aria-pressed="false">Ingredients</button>'
+            +         '<button type="button" class="cd-seg-opt" data-action="hf-tab" data-tab="codes" aria-pressed="true">Codes</button>'
+            +       '</div>'
+            +     '</div>'
+            +   '</div>'
+            +   '<div class="cp-toolbar">'
+            +     '<label class="cp-search">'
+            +       '<span class="material-symbols-outlined">search</span>'
+            +       '<input type="text" placeholder="Search codes (e.g. sugar, protein)" aria-label="Search" data-home-filter-search />'
+            +     '</label>'
+            +     '<div class="cp-sort" data-hf-sort-wrap role="group" aria-label="Sort codes">'
+            +       '<button type="button" class="cp-sort-btn is-active" data-hf-sort="category" aria-label="Group by category" aria-pressed="true" title="Group by category">'
+            +         '<span class="material-symbols-outlined">category</span>'
+            +       '</button>'
+            +       '<button type="button" class="cp-sort-btn" data-hf-sort="alpha" aria-label="Sort alphabetically" aria-pressed="false" title="Sort A\u2013Z">'
+            +         '<span class="material-symbols-outlined">sort_by_alpha</span>'
+            +       '</button>'
+            +     '</div>'
+            +   '</div>'
+            +   '<div class="cp-scroll" data-home-filter-scroll></div>'
+            + '</div>';
+        }
+
+        function closeHomeFilter(phoneWrap) {
+          var overlay = phoneWrap.querySelector(".home-filter-overlay:not(.home-filter-static)");
+          if (overlay) overlay.remove();
+        }
+
+        function openHomeFilter(phoneWrap, opts) {
+          opts = opts || {};
+          var existing = phoneWrap.querySelector(".home-filter-overlay");
+          if (existing) return;
+
+          var state = getState(phoneWrap);
+          if (opts.tab) state.tab = opts.tab;
+          if (opts.expandedCodeId) state.expandedCodeId = opts.expandedCodeId;
+          if (opts.seed) {
+            Object.keys(opts.seed).forEach(function (id) {
+              state.filters[id] = opts.seed[id];
+            });
+          }
+
+          var overlay = document.createElement("div");
+          overlay.className = "home-filter-overlay";
+          if (opts.staticDemo) overlay.classList.add("home-filter-static");
+          overlay.innerHTML = buildShell();
+          overlay._phoneWrap = phoneWrap;
+
+          overlay.addEventListener("click", function (ev) {
+            var t = ev.target;
+            if (!(t instanceof Element)) return;
+
+            if (t === overlay) { ev.preventDefault(); closeHomeFilter(phoneWrap); return; }
+            if (t.closest("[data-action=\"home-filter-close\"]")) { closeHomeFilter(phoneWrap); return; }
+
+            var tabBtn = t.closest("[data-action=\"hf-tab\"]");
+            if (tabBtn) {
+              state.tab = tabBtn.getAttribute("data-tab");
+              state.query = "";
+              state.expandedCodeId = null;
+              var input = overlay.querySelector("[data-home-filter-search]");
+              if (input) input.value = "";
+              renderChrome(overlay, state);
+              return;
+            }
+
+            var sortBtn = t.closest("[data-hf-sort]");
+            if (sortBtn) {
+              state.sort = sortBtn.getAttribute("data-hf-sort");
+              overlay.querySelectorAll("[data-hf-sort]").forEach(function (b) {
+                var on = b === sortBtn;
+                b.classList.toggle("is-active", on);
+                b.setAttribute("aria-pressed", on ? "true" : "false");
+              });
+              renderList(overlay, state);
+              return;
+            }
+
+            var toggleBtn = t.closest("[data-action=\"hf-code-toggle\"]");
+            if (toggleBtn) {
+              ev.preventDefault();
+              var toggleId = toggleBtn.getAttribute("data-code-id");
+              if (state.expandedCodeId === toggleId) {
+                setExpanded(overlay, state, null);
+              } else {
+                setExpanded(overlay, state, toggleId);
+              }
+              return;
+            }
+
+            var modeBtn = t.closest("[data-action=\"hf-mode\"]");
+            if (modeBtn) {
+              ev.preventDefault();
+              var codeId = modeBtn.getAttribute("data-code-id");
+              if (!state.filters[codeId]) {
+                state.filters[codeId] = { mode: "filter", presence: "none" };
+              }
+              state.filters[codeId].mode = modeBtn.getAttribute("data-mode");
+              var seg = modeBtn.closest(".cd-mode-seg");
+              if (seg) {
+                seg.querySelectorAll(".cd-seg-opt").forEach(function (b) {
+                  b.setAttribute("aria-pressed", b === modeBtn ? "true" : "false");
+                });
+              }
+              return;
+            }
+
+            var presBtn = t.closest("[data-action=\"hf-presence\"]");
+            if (presBtn) {
+              ev.preventDefault();
+              var presCodeId = presBtn.getAttribute("data-code-id");
+              var presVal = presBtn.getAttribute("data-presence");
+              if (!state.filters[presCodeId]) {
+                state.filters[presCodeId] = { mode: "filter", presence: "none" };
+              }
+              state.filters[presCodeId].presence = presVal;
+              var seg = presBtn.closest(".cd-mode-seg");
+              if (seg) {
+                seg.querySelectorAll(".cd-seg-opt").forEach(function (b) {
+                  b.setAttribute("aria-pressed", b === presBtn ? "true" : "false");
+                });
+              }
+              return;
+            }
+
+            var ingRow = t.closest("[data-hf-ing-opt]");
+            if (ingRow) {
+              var ingVal = ingRow.getAttribute("data-value");
+              if (state.ingredientSel[ingVal]) delete state.ingredientSel[ingVal];
+              else state.ingredientSel[ingVal] = true;
+              renderList(overlay, state);
+            }
+          });
+
+          overlay.addEventListener("input", function (ev) {
+            var input = ev.target.closest("[data-home-filter-search]");
+            if (!input) return;
+            state.query = input.value;
+            renderList(overlay, state);
+          });
+
+          var screen = phoneWrap.querySelector(".screen");
+          if (screen) screen.appendChild(overlay);
+          renderChrome(overlay, state);
+        }
+
+        window.HOME_FILTER = {
+          open: openHomeFilter,
+          close: closeHomeFilter
+        };
+
+        document.addEventListener("click", function (ev) {
+          var target = ev.target.closest("[data-action=\"open-home-filter\"]");
+          if (!target) return;
+          var phoneWrap = target.closest(".phone-wrap");
+          if (!phoneWrap) return;
+          ev.preventDefault();
+          openHomeFilter(phoneWrap);
+        });
+
+        // Screens 1c / 1d — mount the filter sheet fully open at boot.
+        document.querySelectorAll("[data-home-filter-demo]").forEach(function (wrap) {
+          var tab = wrap.getAttribute("data-home-filter-demo");
+          var opts = { tab: tab, staticDemo: true };
+          if (tab === "codes") {
+            opts.expandedCodeId = "artificial_color";
+            opts.seed = { artificial_color: { mode: "filter", presence: "none" } };
+          }
+          openHomeFilter(wrap, opts);
+        });
+      })();
+
       // ─── Browse — health-bar reveal animation ────────────────────────
       // The broken-up health bars wipe in left→right and snap into place.
       // They are ALWAYS rendered fully (no clip by default) — the reveal is
@@ -11933,7 +12656,7 @@ HIDDEN -->
       // that mirrors the standalone Product Detail screen (Screen 6),
       // only re-skinned for the row the user just tapped: same
       // contribution donut, hero card (thumb + name + brand + UPC),
-      // AI Insights card, About / last-scanned tail. Hosted over the
+      // AI Insights card, About tail. Hosted over the
       // Browse phone so the user keeps their place in the food list
       // instead of pushing a full screen.
       //
@@ -12118,10 +12841,6 @@ HIDDEN -->
             +       '</div>'
             +       '<span class="chev"><span class="material-symbols-outlined">chevron_right</span></span>'
             +     '</button>'
-            +     '<div class="last-scanned">'
-            +       '<span class="material-symbols-outlined">history</span>'
-            +       'Last scanned today at 9:41 AM'
-            +     '</div>'
             +   '</div>'
             + '</div>';
 
@@ -12762,6 +13481,157 @@ HIDDEN -->
         }
 
         poll();
+      })();
+    </script>
+
+    <!-- ─── App-icon / favicon downloads ─────────────────────────────────
+         The on-screen tiles are rounded squircles, but the downloadable
+         assets are built fresh as edge-to-edge, perfectly-square SVGs
+         (no border-radius) — iOS / Android / browsers apply their own
+         masking, so the source art must be a full-bleed square. PNG and
+         ICO are rasterized from those SVGs on demand. -->
+    <script>
+      (function () {
+        // Owl glyph from assets/WISEcode-bug.svg (viewBox 0 0 193 100).
+        // Fills are dropped so the parent <g> recolors per variant; the
+        // evenodd paths keep their rule so the eye cut-outs render.
+        var OWL = [
+          { d: "M10.9834 35.6522C10.9834 35.6522 3.30615 47.7494 3.30615 58.0481C3.30615 81.1921 20.324 99.6409 43.3405 99.9915C51.5363 100.052 60.4175 99.9915 67.533 92.6894C41.5052 92.6894 25.589 73.777 25.589 58.0481C25.589 58.0481 25.2144 45.6894 30.832 35.9526L10.9834 35.6522Z" },
+          { d: "M83.8241 14.7368C90.9396 14.7368 94.8008 22.7337 96.3699 29.2111H96.5571C98.1262 22.7337 101.987 14.7368 109.103 14.7368H170.521C175.169 14.7368 175.169 12.8643 175.169 7.32269C175.169 2.80876 178.108 0 182.131 0H189.384V14.7368C189.384 27.7131 182.131 28.5339 174.794 28.5339L160.347 28.583H118.091C113.597 28.583 113.335 29.2111 111.537 33.7051C110.051 37.4206 96.5571 73.0277 96.5571 73.0277H96.3699C96.3699 73.0277 82.8761 37.4206 81.3899 33.7051C79.5923 29.2111 79.3301 28.583 74.8361 28.583H32.5803L18.133 28.5339C10.7965 28.5339 3.54341 27.7131 3.54341 14.7368V0H10.7965C14.5415 0 17.7585 3.37051 17.7585 7.32269C17.7585 12.8643 17.7585 14.7368 22.406 14.7368H83.8241Z" },
+          { er: true, d: "M71.8001 35.9523C74.4284 35.9523 74.6161 37.2826 75.1793 38.6953L87.9434 71.5913C82.9358 80.6013 74.4289 85.7609 63.9558 85.7609C48.1132 85.7608 33.2662 72.7999 33.2663 54.6695C33.2664 48.2288 34.5088 40.1469 39.2583 35.9523H71.8001ZM63.486 44.5345C58.3905 44.5345 54.2598 48.6005 54.2598 54.0781C54.2598 59.5557 58.3905 63.6217 63.486 63.6217C68.5814 63.6216 72.7122 59.5556 72.7122 54.0781C72.7122 48.6005 68.5814 44.5346 63.486 44.5345Z" },
+          { d: "M181.756 35.6522C181.756 35.6522 189.433 47.7494 189.433 58.0481C189.433 81.1921 172.416 99.6409 149.399 99.9915C141.203 100.052 132.322 99.9915 125.206 92.6894C151.234 92.6894 167.151 73.777 167.151 58.0481C167.151 58.0481 167.525 45.6894 161.908 35.9526L181.756 35.6522Z" },
+          { er: true, d: "M120.94 35.9523C118.311 35.9523 118.124 37.2826 117.56 38.6953L104.796 71.5913C109.804 80.6013 118.311 85.7609 128.784 85.7609C144.626 85.7608 159.473 72.7999 159.473 54.6695C159.473 48.2288 158.231 40.1469 153.481 35.9523H120.94ZM129.254 44.5345C134.349 44.5345 138.48 48.6005 138.48 54.0781C138.48 59.5557 134.349 63.6217 129.254 63.6217C124.158 63.6216 120.027 59.5556 120.027 54.0781C120.027 48.6005 124.158 44.5346 129.254 44.5345Z" }
+        ];
+        var OWL_VB = { w: 193, h: 100 };
+
+        var VARIANTS = {
+          light:   { stops: [["0", "#3B82F6"], ["0.6", "#1D4ED8"], ["1", "#1E3A8A"]], owl: "#FFFFFF" },
+          dark:    { stops: [["0", "#14262E"], ["0.55", "#0A2330"], ["1", "#05141C"]], owl: "#60A5FA" },
+          tinted:  { stops: [["0", "#3A3F4A"], ["0.6", "#23272F"], ["1", "#15181E"]], owl: "#D7DBE3" },
+          favicon: { stops: [["0", "#3B82F6"], ["0.6", "#1D4ED8"], ["1", "#1E3A8A"]], owl: "#FFFFFF" }
+        };
+
+        var SIZE = 1024;
+
+        // 155deg CSS gradient → userSpaceOnUse endpoints across the square.
+        var a = (155 * Math.PI) / 180;
+        var dx = Math.sin(a), dy = -Math.cos(a);
+        var half = (Math.abs(dx) + Math.abs(dy)) / 2;
+        var GRAD = {
+          x1: ((0.5 - dx * half) * SIZE).toFixed(2),
+          y1: ((0.5 - dy * half) * SIZE).toFixed(2),
+          x2: ((0.5 + dx * half) * SIZE).toFixed(2),
+          y2: ((0.5 + dy * half) * SIZE).toFixed(2)
+        };
+
+        // Owl sized to ~57% tile width (matches the 64/112 on-screen ratio).
+        var owlW = (SIZE * 64) / 112;
+        var scale = owlW / OWL_VB.w;
+        var tx = (SIZE - owlW) / 2;
+        var ty = (SIZE - OWL_VB.h * scale) / 2;
+
+        function svgFor(key) {
+          var v = VARIANTS[key];
+          var stops = v.stops
+            .map(function (s) {
+              return '<stop offset="' + s[0] + '" stop-color="' + s[1] + '"/>';
+            })
+            .join("");
+          var paths = OWL.map(function (p) {
+            return (
+              "<path" +
+              (p.er ? ' fill-rule="evenodd" clip-rule="evenodd"' : "") +
+              ' d="' + p.d + '"/>'
+            );
+          }).join("");
+          return (
+            '<svg xmlns="http://www.w3.org/2000/svg" width="' + SIZE + '" height="' + SIZE +
+            '" viewBox="0 0 ' + SIZE + " " + SIZE + '">' +
+            '<defs><linearGradient id="g" gradientUnits="userSpaceOnUse" x1="' + GRAD.x1 +
+            '" y1="' + GRAD.y1 + '" x2="' + GRAD.x2 + '" y2="' + GRAD.y2 + '">' + stops +
+            "</linearGradient></defs>" +
+            '<rect width="' + SIZE + '" height="' + SIZE + '" fill="url(#g)"/>' +
+            '<g fill="' + v.owl + '" transform="translate(' + tx.toFixed(2) + "," + ty.toFixed(2) +
+            ") scale(" + scale.toFixed(5) + ')">' + paths + "</g></svg>"
+          );
+        }
+
+        function svgUrl(str) {
+          return URL.createObjectURL(new Blob([str], { type: "image/svg+xml" }));
+        }
+
+        function rasterize(svgStr, px) {
+          return new Promise(function (resolve) {
+            var url = svgUrl(svgStr);
+            var img = new Image();
+            img.onload = function () {
+              var c = document.createElement("canvas");
+              c.width = px;
+              c.height = px;
+              c.getContext("2d").drawImage(img, 0, 0, px, px);
+              URL.revokeObjectURL(url);
+              c.toBlob(function (b) {
+                resolve(b);
+              }, "image/png");
+            };
+            img.src = url;
+          });
+        }
+
+        // Wrap a PNG into a single-image .ico container.
+        function pngToIco(pngBlob, size) {
+          return pngBlob.arrayBuffer().then(function (buf) {
+            var png = new Uint8Array(buf);
+            var out = new Uint8Array(22 + png.length);
+            var dv = new DataView(out.buffer);
+            dv.setUint16(0, 0, true); // reserved
+            dv.setUint16(2, 1, true); // type: icon
+            dv.setUint16(4, 1, true); // image count
+            out[6] = size >= 256 ? 0 : size; // width
+            out[7] = size >= 256 ? 0 : size; // height
+            dv.setUint16(10, 1, true); // color planes
+            dv.setUint16(12, 32, true); // bits per pixel
+            dv.setUint32(14, png.length, true); // image data size
+            dv.setUint32(18, 22, true); // image data offset
+            out.set(png, 22);
+            return new Blob([out], { type: "image/x-icon" });
+          });
+        }
+
+        function wire(linkEl, blob, name) {
+          linkEl.href = URL.createObjectURL(blob);
+          linkEl.setAttribute("download", name);
+        }
+
+        var boxes = document.querySelectorAll(".app-icon-dl");
+        Array.prototype.forEach.call(boxes, function (box) {
+          var key = box.getAttribute("data-icon");
+          var label = box.getAttribute("data-icon-label") || "WISEcode-" + key;
+          if (!VARIANTS[key]) return;
+          var svgStr = svgFor(key);
+
+          var svgA = box.querySelector('a[data-fmt="svg"]');
+          if (svgA) wire(svgA, new Blob([svgStr], { type: "image/svg+xml" }), label + ".svg");
+
+          var pngPx = key === "favicon" ? 256 : SIZE;
+          var pngA = box.querySelector('a[data-fmt="png"]');
+          if (pngA) {
+            rasterize(svgStr, pngPx).then(function (b) {
+              wire(pngA, b, label + "-" + pngPx + ".png");
+            });
+          }
+
+          var icoA = box.querySelector('a[data-fmt="ico"]');
+          if (icoA) {
+            rasterize(svgStr, 32)
+              .then(function (b) {
+                return pngToIco(b, 32);
+              })
+              .then(function (ico) {
+                wire(icoA, ico, label + ".ico");
+              });
+          }
+        });
       })();
     </script>
   </body>
