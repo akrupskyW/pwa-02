@@ -47,7 +47,7 @@ export const SlotCard = ({ slot, slotIdx, allCodes, onOpenPicker, compact }: Pro
 
   return (
     <div
-      className="range-slot rounded-m group w-full p-3.5"
+      className="range-slot rounded-m group w-full px-3.5 pt-5 pb-5"
       style={{
         background: "var(--color-card)",
         border: "1px solid var(--color-line)",
@@ -98,7 +98,7 @@ export const SlotCard = ({ slot, slotIdx, allCodes, onOpenPicker, compact }: Pro
         </button>
       </div>
 
-      <div className="mt-3">
+      <div className="mt-5 mb-1">
         <input
           type="range"
           min={0}

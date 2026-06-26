@@ -946,7 +946,7 @@
         background: var(--slot-bg);
         border: 1px solid var(--line);
         border-radius: 18px;
-        padding: 14px;
+        padding: 20px 14px;
       }
       .slot-row { display: flex; align-items: center; gap: 12px; }
       .slot-icon {
@@ -984,8 +984,8 @@
         height: 8px;
         background: var(--track-subtle);
         border-radius: 999px;
-        margin-top: 16px;
-        margin-bottom: 4px;
+        margin-top: 22px;
+        margin-bottom: 8px;
       }
       .slot-fill {
         position: absolute; left: 0; top: 0; bottom: 0;
@@ -994,7 +994,7 @@
       }
       .slot-thumb {
         position: absolute; top: 50%;
-        width: 18px; height: 18px; border-radius: 50%;
+        width: 24px; height: 24px; border-radius: 50%;
         background: var(--fg-bright);
         border: 2px solid var(--thumb-stroke); /* per-slot c2 set inline by JS at end of body */
         transform: translate(-50%, -50%);
@@ -4250,8 +4250,8 @@
       .rebalance-sheet .rb-row-inner {
         position: relative;
         z-index: 1;
-        display: flex; flex-direction: column; gap: 10px;
-        padding: 12px 14px 14px;
+        display: flex; flex-direction: column; gap: 16px;
+        padding: 18px 14px 20px;
         background: var(--card);
         border: 1px solid var(--line);
         border-radius: 16px;
@@ -4387,7 +4387,7 @@
       .rebalance-sheet .rb-slider::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
-        width: 18px; height: 18px;
+        width: 24px; height: 24px;
         border-radius: 50%;
         background: var(--fg-bright);
         border: 2px solid var(--rb-track-c, var(--violet));
@@ -4396,7 +4396,7 @@
         margin-top: 0;
       }
       .rebalance-sheet .rb-slider::-moz-range-thumb {
-        width: 18px; height: 18px;
+        width: 24px; height: 24px;
         border-radius: 50%;
         background: var(--fg-bright);
         border: 2px solid var(--rb-track-c, var(--violet));
