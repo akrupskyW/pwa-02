@@ -9,8 +9,8 @@ const manifest = (): MetadataRoute.Manifest => ({
   scope: "/",
   display: "standalone",
   orientation: "portrait",
-  background_color: "#05080f",
-  theme_color: "#05080f",
+  background_color: "#fbf6ed",
+  theme_color: "#fbf6ed",
   categories: ["health", "food", "lifestyle"],
   icons: [
     {

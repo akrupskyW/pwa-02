@@ -166,7 +166,7 @@ const ViewfinderCorners = () => {
   // Four L-shaped corners around a central viewfinder box. Pure decoration;
   // the decoder reads the entire frame.
   const cornerCls =
-    "absolute w-10 h-10 border-accent-emerald/90 [box-shadow:0_0_12px_rgba(52,229,166,0.3)]";
+    "absolute w-10 h-10 border-accent-emerald/90 [box-shadow:0_0_12px_rgba(50,169,102,0.25)]";
   return (
     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
       <div className="relative aspect-[5/3] w-[70%]">

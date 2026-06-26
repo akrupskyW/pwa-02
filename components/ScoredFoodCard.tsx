@@ -53,7 +53,7 @@ export const ScoredFoodCard = ({ composite }: { composite: number | null }) => {
           background:
             "linear-gradient(135deg, var(--color-card-elevated) 0%, var(--color-card) 100%)",
           border: "1px solid var(--color-line)",
-          boxShadow: "0 12px 32px -8px rgba(52,229,166,0.22)",
+          boxShadow: "0 12px 32px -8px rgba(50,169,102,0.18)",
         }}
       >
         <div className="flex items-center gap-3.5">
@@ -64,7 +64,7 @@ export const ScoredFoodCard = ({ composite }: { composite: number | null }) => {
                 ? undefined
                 : topId
                   ? { background: `linear-gradient(135deg, ${topId.c1} 0%, ${topId.c2} 100%)` }
-                  : { background: "linear-gradient(135deg, #5DCFFF, #7C7CFB)" }
+                  : { background: "linear-gradient(135deg, #587896, #25507C)" }
             }
           >
             {food.imageUrl ? (
@@ -130,7 +130,7 @@ export const ScoredFoodCard = ({ composite }: { composite: number | null }) => {
                 key={slot.expressionId as string}
                 className="rounded-m space-y-2 p-3"
                 style={{
-                  background: "rgba(15,23,41,0.9)",
+                  background: "var(--color-card)",
                   border: "1px solid var(--color-line)",
                 }}
               >

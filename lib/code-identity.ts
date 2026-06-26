@@ -20,11 +20,11 @@ export interface CodeIdentity {
   icon: string;
 }
 
-const VITAL: CodeIdentity = { c1: "#FF5E92", c2: "#FF9A2A", icon: "heart-pulse" };
-const CLEAN: CodeIdentity = { c1: "#34E5A6", c2: "#22D3C5", icon: "sparkles" };
-const PLANT: CodeIdentity = { c1: "#7C7CFB", c2: "#C44CD4", icon: "leaf" };
-const MACRO: CodeIdentity = { c1: "#F5C14E", c2: "#FF9A2A", icon: "dumbbell" };
-const HYDRO: CodeIdentity = { c1: "#5DCFFF", c2: "#3B82F6", icon: "droplets" };
+const VITAL: CodeIdentity = { c1: "#DC3038", c2: "#D27326", icon: "heart-pulse" };
+const CLEAN: CodeIdentity = { c1: "#32A966", c2: "#245E3B", icon: "sparkles" };
+const PLANT: CodeIdentity = { c1: "#25507C", c2: "#587896", icon: "leaf" };
+const MACRO: CodeIdentity = { c1: "#FFC434", c2: "#C28E34", icon: "dumbbell" };
+const HYDRO: CodeIdentity = { c1: "#587896", c2: "#25507C", icon: "droplets" };
 
 // Per-code overrides. Codes not listed fall back to the category default.
 const CODE_OVERRIDES: Readonly<Record<string, CodeIdentity>> = {
@@ -36,8 +36,8 @@ const CODE_OVERRIDES: Readonly<Record<string, CodeIdentity>> = {
   anti_inflammatory: { ...VITAL, icon: "flame" },
 
   // Composite Scores
-  wise_score: { c1: "#F5C14E", c2: "#34E5A6", icon: "crown" },
-  thrive_score: { c1: "#34E5A6", c2: "#5DCFFF", icon: "sparkles" },
+  wise_score: { c1: "#FFC434", c2: "#32A966", icon: "crown" },
+  thrive_score: { c1: "#32A966", c2: "#587896", icon: "sparkles" },
 
   // Overall Quality
   iq_score: { ...CLEAN, icon: "brain" },
@@ -98,7 +98,7 @@ const CODE_OVERRIDES: Readonly<Record<string, CodeIdentity>> = {
 };
 
 const CATEGORY_DEFAULT: Readonly<Record<PwaCategory, CodeIdentity>> = {
-  "Composite Scores": { c1: "#F5C14E", c2: "#34E5A6", icon: "crown" },
+  "Composite Scores": { c1: "#FFC434", c2: "#32A966", icon: "crown" },
   "Health Outcomes": VITAL,
   "Overall Quality": CLEAN,
   "Nutrient Focus": MACRO,

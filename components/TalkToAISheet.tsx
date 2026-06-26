@@ -101,7 +101,7 @@ export const TalkToAISheet = ({ onClose }: Props) => {
             "linear-gradient(180deg, var(--color-card-elevated) 0%, var(--color-card) 100%)",
           border: "1px solid var(--color-line)",
           borderBottom: "none",
-          boxShadow: "0 -20px 60px -10px rgba(0,0,0,0.66)",
+          boxShadow: "0 -20px 60px -10px rgba(15,10,31,0.22)",
         }}
       >
         {/* Grabber. */}

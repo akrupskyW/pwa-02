@@ -43,7 +43,7 @@ export const BottomTabBar = () => {
     >
       <div
         className="rounded-pill border-line shadow-tab-pill flex h-[62px] items-stretch gap-0 border p-1"
-        style={{ backgroundColor: "rgba(13,20,34,0.92)" }}
+        style={{ backgroundColor: "var(--color-surface-glass)" }}
       >
         {TABS.map((tab) => {
           const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
@@ -69,7 +69,7 @@ const TabItem = ({ tab, active }: { tab: Tab; active: boolean }) => {
           ? {
               background:
                 "linear-gradient(135deg, var(--color-surface-3) 0%, var(--color-card-elevated) 100%)",
-              boxShadow: `0 0 0 1px rgba(${accentVar === "--color-accent-emerald" ? "52,229,166" : "124,124,251"},0.35)`,
+              boxShadow: `0 0 0 1px rgba(${accentVar === "--color-accent-emerald" ? "50,169,102" : "37,80,124"},0.35)`,
             }
           : undefined
       }

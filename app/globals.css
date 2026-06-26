@@ -10,58 +10,58 @@
 @source "../lib";
 
 @theme {
-  /* Mirrors the variables in PersonalizedNutrition.pen (see DESIGN.md §1).
+  /* Brand palette — warm linen canvas, coastal blues, UI score tiers.
      Tailwind 4 maps these into utility classes (e.g. `bg-surface-2`,
      `text-ink-muted`, `rounded-m`, `shadow-bezel`). */
-  --color-background: #05080f;
-  --color-background-deep: #02040a;
+  --color-background: #fbf6ed;
+  --color-background-deep: #e4e5e6;
 
-  --color-surface: #0e1626;
-  --color-surface-2: #141e33;
-  --color-surface-3: #1b2742;
-  --color-surface-glass: rgba(26, 36, 64, 0.8);
+  --color-surface: #ffffff;
+  --color-surface-2: #ffffff;
+  --color-surface-3: #e4e5e6;
+  --color-surface-glass: rgba(254, 254, 254, 0.88);
 
-  --color-card: #111a2e;
-  --color-card-elevated: #172238;
+  --color-card: #ffffff;
+  --color-card-elevated: #ffffff;
 
-  --color-line: #1f2c47;
-  --color-line-subtle: #14203a;
-  --color-line-strong: #2a3a5e;
+  --color-line: #e4e5e6;
+  --color-line-subtle: #e2eef7;
+  --color-line-strong: #808080;
 
-  --color-track: #1b2440;
-  --color-track-subtle: #0f1729;
+  --color-track: #e4e5e6;
+  --color-track-subtle: #fbf6ed;
 
-  --color-ink: #f5f7fa;
-  --color-ink-bright: #ffffff;
-  --color-ink-muted: #8794a8;
-  --color-ink-faint: #5a6478;
-  --color-ink-soft: #0a1020;
+  --color-ink: #000000;
+  --color-ink-bright: #000000;
+  --color-ink-muted: #404040;
+  --color-ink-faint: #808080;
+  --color-ink-soft: #ffffff;
 
-  --color-accent-gold: #f5c14e;
-  --color-accent-amber: #ff9a2a;
-  --color-accent-emerald: #34e5a6;
-  --color-accent-teal: #22d3c5;
-  --color-accent-rose: #ff5e92;
-  --color-accent-magenta: #c44cd4;
-  --color-accent-cyan: #5dcfff;
-  --color-accent-violet: #7c7cfb;
-  --color-accent-blue: #3b82f6;
+  --color-accent-gold: #ffc434;
+  --color-accent-amber: #d27326;
+  --color-accent-emerald: #32a966;
+  --color-accent-teal: #245e3b;
+  --color-accent-rose: #dc3038;
+  --color-accent-magenta: #831f23;
+  --color-accent-cyan: #587896;
+  --color-accent-violet: #25507c;
+  --color-accent-blue: #25507c;
 
-  --color-score-excellent: #34e5a6;
-  --color-score-good: #22d3c5;
-  --color-score-fair: #f5c14e;
-  --color-score-low: #ff9a2a;
-  --color-score-poor: #ff5e92;
+  --color-score-excellent: #32a966;
+  --color-score-good: #245e3b;
+  --color-score-fair: #ffc434;
+  --color-score-low: #d27326;
+  --color-score-poor: #dc3038;
 
   /* Legacy aliases — keep existing class references compiling while
      components are migrated. New code should use the tokens above. */
-  --color-stage-900: #05080f;
-  --color-stage-800: #0e1626;
-  --color-stage-700: #141e33;
-  --color-screen-bg: #05080f;
-  --color-screen-card: #111a2e;
-  --color-screen-subtle: #8794a8;
-  --color-screen-line: #1f2c47;
+  --color-stage-900: #fbf6ed;
+  --color-stage-800: #ffffff;
+  --color-stage-700: #e4e5e6;
+  --color-screen-bg: #fbf6ed;
+  --color-screen-card: #ffffff;
+  --color-screen-subtle: #404040;
+  --color-screen-line: #e4e5e6;
 
   --radius-xs: 8px;
   --radius-s: 12px;
@@ -76,17 +76,17 @@
   --font-display: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Colored shadows used on hero cards in DESIGN.md §1. */
+  /* Colored shadows used on hero cards. */
   --shadow-card-emerald:
-    0 12px 32px -8px rgba(52, 229, 166, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+    0 12px 32px -8px rgba(50, 169, 102, 0.18), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
   --shadow-card-violet:
-    0 12px 32px -8px rgba(124, 124, 251, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+    0 12px 32px -8px rgba(37, 80, 124, 0.16), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
   --shadow-card-rose:
-    0 12px 32px -8px rgba(255, 94, 146, 0.22), inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+    0 12px 32px -8px rgba(220, 48, 56, 0.16), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
   --shadow-tab-pill:
-    0 12px 32px -6px rgba(0, 0, 0, 0.66), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
-  --shadow-cta-emerald: 0 10px 28px -6px rgba(52, 229, 166, 0.53);
-  --shadow-bezel: 0 30px 60px -10px rgba(0, 0, 0, 0.66), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    0 10px 28px -6px rgba(15, 10, 31, 0.12), inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+  --shadow-cta-emerald: 0 10px 28px -6px rgba(50, 169, 102, 0.35);
+  --shadow-bezel: 0 30px 60px -12px rgba(15, 10, 31, 0.22), inset 0 0 0 1px rgba(15, 10, 31, 0.04);
 
   --animate-pulse-dot: pulse-dot 2.4s ease-in-out infinite;
 }
@@ -108,10 +108,10 @@
 @utility bg-score-arc {
   background-image: conic-gradient(
     from -90deg,
-    #34e5a6 0deg,
-    #22d3c5 144deg,
-    #5dcfff 270deg,
-    #7c7cfb 360deg
+    #32a966 0deg,
+    #245e3b 144deg,
+    #587896 270deg,
+    #25507c 360deg
   );
 }
 
@@ -207,7 +207,7 @@ body {
       var(--color-track-subtle) var(--range-pct),
       var(--color-track-subtle) 100%
     );
-    box-shadow: 0 0 14px -2px rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 14px -2px rgba(15, 10, 31, 0.06);
   }
   .range-slot input[type="range"]::-moz-range-track {
     height: 8px;
@@ -229,7 +229,7 @@ body {
     border-radius: 9999px;
     background: var(--color-ink);
     border: 2px solid var(--range-c2);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.66);
+    box-shadow: 0 2px 6px rgba(15, 10, 31, 0.18);
     margin-top: -5px;
     transition: transform 120ms ease;
   }
@@ -242,6 +242,6 @@ body {
     border-radius: 9999px;
     background: var(--color-ink);
     border: 2px solid var(--range-c2);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.66);
+    box-shadow: 0 2px 6px rgba(15, 10, 31, 0.18);
   }
 }

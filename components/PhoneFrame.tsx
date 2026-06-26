@@ -29,14 +29,14 @@ export const PhoneFrame = ({ label, children }: Props) => {
           aria-hidden
           className="pointer-events-none absolute -top-40 -left-24 z-0 h-[420px] w-[420px] rounded-full opacity-70 blur-3xl"
           style={{
-            background: "radial-gradient(closest-side, rgba(52,229,166,0.30), transparent 70%)",
+            background: "radial-gradient(closest-side, rgba(50,169,102,0.20), transparent 70%)",
           }}
         />
         <div
           aria-hidden
           className="pointer-events-none absolute -top-32 -right-24 z-0 h-[360px] w-[360px] rounded-full opacity-70 blur-3xl"
           style={{
-            background: "radial-gradient(closest-side, rgba(93,207,255,0.30), transparent 70%)",
+            background: "radial-gradient(closest-side, rgba(88,120,150,0.20), transparent 70%)",
           }}
         />
 

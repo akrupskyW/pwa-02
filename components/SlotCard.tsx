@@ -49,7 +49,7 @@ export const SlotCard = ({ slot, slotIdx, allCodes, onOpenPicker, compact }: Pro
     <div
       className="range-slot rounded-m group w-full p-3.5"
       style={{
-        background: "rgba(15,23,41,0.9)",
+        background: "var(--color-card)",
         border: "1px solid var(--color-line)",
         // Wire the gradient + percent into the .range-slot CSS so the slider
         // track renders the code's identity gradient.

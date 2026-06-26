@@ -348,8 +348,8 @@ const FeaturedCard = ({ food, slots, allCodes, isCurrent, onClick }: RowProps) =
       className="w-full space-y-3 rounded-l p-4 text-left transition"
       style={{
         background: "linear-gradient(135deg, var(--color-surface-2) 0%, var(--color-card) 100%)",
-        border: `1px solid ${isCurrent ? "rgba(52,229,166,0.55)" : "rgba(52,229,166,0.35)"}`,
-        boxShadow: "0 12px 32px -8px rgba(52,229,166,0.22)",
+        border: `1px solid ${isCurrent ? "rgba(50,169,102,0.55)" : "rgba(50,169,102,0.35)"}`,
+        boxShadow: "0 12px 32px -8px rgba(50,169,102,0.18)",
       }}
     >
       <div className="flex items-center gap-3.5">
@@ -360,7 +360,7 @@ const FeaturedCard = ({ food, slots, allCodes, isCurrent, onClick }: RowProps) =
               ? undefined
               : topId
                 ? { background: `linear-gradient(135deg, ${topId.c1} 0%, ${topId.c2} 100%)` }
-                : { background: "linear-gradient(135deg, #34E5A6, #22D3C5)" }
+                : { background: "linear-gradient(135deg, #32A966, #245E3B)" }
           }
         >
           {food.imageUrl ? (
@@ -407,9 +407,9 @@ const MiniRing = ({ value }: { value: number }) => {
       <svg viewBox="0 0 64 64" width={64} height={64} aria-hidden>
         <defs>
           <linearGradient id="featured-ring" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#34E5A6" />
-            <stop offset="50%" stopColor="#22D3C5" />
-            <stop offset="100%" stopColor="#5DCFFF" />
+            <stop offset="0%" stopColor="#32A966" />
+            <stop offset="50%" stopColor="#245E3B" />
+            <stop offset="100%" stopColor="#587896" />
           </linearGradient>
         </defs>
         <circle cx={32} cy={32} r={r} fill="none" stroke="var(--color-track)" strokeWidth={6} />
@@ -502,7 +502,7 @@ const FoodRow = ({ food, slots, allCodes, isCurrent, onClick }: RowProps) => {
               ? undefined
               : topId
                 ? { background: `linear-gradient(135deg, ${topId.c1} 0%, ${topId.c2} 100%)` }
-                : { background: "linear-gradient(135deg, #22D3C5, #5DCFFF)" }
+                : { background: "linear-gradient(135deg, #245E3B, #587896)" }
           }
         >
           {food.imageUrl ? (

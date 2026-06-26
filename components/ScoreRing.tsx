@@ -61,7 +61,7 @@ export const ScoreRing = ({
           aria-hidden
           className="rounded-pill pointer-events-none absolute inset-0 opacity-70 blur-2xl"
           style={{
-            background: "radial-gradient(closest-side, rgba(52,229,166,0.45), transparent 75%)",
+            background: "radial-gradient(closest-side, rgba(50,169,102,0.35), transparent 75%)",
           }}
         />
       )}
@@ -74,14 +74,14 @@ export const ScoreRing = ({
       >
         <defs>
           <linearGradient id={GRADIENT_ID} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#34E5A6" />
-            <stop offset="40%" stopColor="#22D3C5" />
-            <stop offset="75%" stopColor="#5DCFFF" />
-            <stop offset="100%" stopColor="#7C7CFB" />
+            <stop offset="0%" stopColor="#32A966" />
+            <stop offset="40%" stopColor="#245E3B" />
+            <stop offset="75%" stopColor="#587896" />
+            <stop offset="100%" stopColor="#25507C" />
           </linearGradient>
           <radialGradient id={HALO_ID}>
-            <stop offset="0%" stopColor="#34E5A6" stopOpacity="0.55" />
-            <stop offset="80%" stopColor="#05080F" stopOpacity="0" />
+            <stop offset="0%" stopColor="#32A966" stopOpacity="0.55" />
+            <stop offset="80%" stopColor="#FBF6ED" stopOpacity="0" />
           </radialGradient>
         </defs>
 
@@ -115,11 +115,11 @@ export const ScoreRing = ({
               cx={tipX}
               cy={tipY}
               r={thickness * 0.7}
-              fill="#34E5A6"
+              fill="#32A966"
               opacity={0.35}
               filter="blur(6px)"
             />
-            <circle cx={tipX} cy={tipY} r={thickness * 0.55} fill="#34E5A6" />
+            <circle cx={tipX} cy={tipY} r={thickness * 0.55} fill="#32A966" />
           </>
         )}
       </svg>

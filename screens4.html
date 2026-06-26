@@ -20,53 +20,41 @@
     <style>
       /* ─── Design tokens (mirrors DESIGN.md §1) ───────────────────────── */
       :root {
-        /* Identity accents — sourced exclusively from wise-signal.html.
-           Brand green for primary affordances + royal blue for secondary
-           ("smart"/AI) affordances, with signal-risk for danger and signal-
-           orange/yellow for warnings. NO mint, teal, cyan, neon-violet, or
-           magenta — those have been retired. */
-        --rose: #FF8E8E;       /* signal-risk-soft dark; overridden in light */
-        --amber: #D8610C;      /* signal-orange */
-        --emerald: #4FE89B;    /* signal-green-strong (dark) — brightened brand green for the dark canvas */
-        --teal: #4FE89B;       /* alias of --emerald — kept so existing rules compile */
-        --emerald-fill: #0A6630; /* signal-green-badge — solid green behind WHITE text; darkened so white clears AAA in BOTH themes (bright --emerald mint is text/icon/bar paint only) */
-        --violet: #1D4ED8;     /* wise-nonupf-blue — primary royal-blue accent */
-        --magenta: #1D4ED8;    /* alias of --violet — wise-signal has no magenta */
-        --gold: #FFC434;       /* signal-yellow */
-        --cyan: #3B82F6;       /* signal-sky */
-        --blue: #1D4ED8;       /* wise-nonupf-blue */
-        --blue-ink: var(--blue); /* links, outline borders, ghost icons — white in dark phones */
+        /* Identity accents — brand palette (warm, blue, green, UI tiers). */
+        --rose: #DF896F;       /* poor-150 — soft red on dark canvas */
+        --amber: #D27326;      /* fair-200 */
+        --emerald: #32A966;    /* excellent-200 */
+        --teal: #32A966;       /* alias of --emerald */
+        --emerald-fill: #245E3B; /* excellent-300 / green-300 — solid green behind white text */
+        --violet: #587896;     /* blue-300 — coastal blue accent */
+        --magenta: #587896;    /* alias of --violet */
+        --gold: #FFC434;       /* ok-200 */
+        --cyan: #8B9FAF;       /* blue-200 Breakwater */
+        --blue: #587896;       /* blue-300 */
+        --blue-ink: var(--blue);
 
-        --score-excellent: #4FE89B;  /* signal-green-strong (dark) — excellent tier fill */
-        --score-good: #52CC7A;       /* signal-green-mid — good tier (60-80) medium green */
-        --score-fair: #FFC434;       /* signal-yellow */
-        --score-low: #D8610C;        /* signal-orange */
-        --score-poor: #FF8E8E;       /* signal-risk-soft dark; overridden in light */
+        --score-excellent: #32A966;  /* excellent-200 */
+        --score-good: #83A992;       /* green-200 — good tier */
+        --score-fair: #FFC434;       /* ok-200 */
+        --score-low: #D27326;        /* fair-200 */
+        --score-poor: #DF896F;       /* poor-150 on dark canvas */
 
-        /* ─── Code/category swatch palette (used inline for slot-icon tiles
-           and pie segments). Re-aliased to wise-signal hues so the pie and
-           code pills stay within the same brand-green / forest-green /
-           orange / yellow / risk-red family as the surface palette. Codes
-           never render as slate/gray — every code carries one of these
-           five status hues. */
-        --code-green:  #4FE89B;   /* signal-green-strong (dark) — bright brand green */
-        --code-amber:  #D8610C;   /* signal-orange */
-        --code-red:    #CA371F;   /* signal-risk */
-        --code-deep:   #1FA34A;   /* deep green — second green category, distinct from bright mint */
-        --code-yellow: #FFC434;   /* signal-yellow */
+        /* Code/category swatch palette */
+        --code-green:  #32A966;   /* excellent-200 */
+        --code-amber:  #D27326;   /* fair-200 */
+        --code-red:    #DC3038;   /* poor-200 */
+        --code-deep:   #245E3B;   /* green-300 */
+        --code-yellow: #FFC434;   /* ok-200 */
 
-        /* ─── Dark theme (default) — mapped to wise-signal dark palette ──
-           Sourced from wise-signal.html: signal-dark-* surfaces and the
-           .theme-dark text/line tokens (#05141C canvas, #0A2330 panel,
-           #F4F2F6 primary text, AAA-safe muted tiers). */
-        --bg: #05141C;              /* signal-dark-surface / t-app-bg */
-        --bg-deep: #011722;         /* signal-dark-ink */
-        --surface: #0A2330;         /* signal-dark-panel / t-card-bg */
-        --surface-2: #14262E;       /* signal-dark-deep */
-        --surface-3: #1C2130;       /* signal-dark-elevated */
-        --card: #0A2330;            /* signal-dark-panel */
-        --card-elev: #1C2130;       /* signal-dark-elevated */
-        --ink-soft: #021B27;        /* signal-dark-navy */
+        /* ─── Dark theme (default) — brand coastal blues ─────────────── */
+        --bg: #0D1321;              /* App Blue Dark */
+        --bg-deep: #1A2339;         /* blue-500 Deep Harbor */
+        --surface: #1A2339;         /* blue-500 */
+        --surface-2: #25507C;       /* blue-400 Coastal Haze */
+        --surface-3: #25507C;       /* blue-400 Coastal Haze — elevated + bezel */
+        --card: #1A2339;
+        --card-elev: #25507C;
+        --ink-soft: #0D1321;
 
         --line-subtle: #1F222A;     /* t-divider (dark) */
         --line: #2A2D36;            /* t-track (dark) — default border */
@@ -97,19 +85,18 @@
         --sheet-bg: var(--bg);
         --shadow-thumb: 0 2px 6px rgba(0, 0, 0, 0.66);
 
-        --stage-grad-1: rgba(79, 232, 155, 0.14);  /* signal-green-strong (dark) mint wash, top-left */
-        --stage-grad-2: rgba(29, 78, 216, 0.16);   /* royal-blue wash, bottom-right */
-        --stage-bg-1: #05141C;      /* signal-dark-surface */
-        --stage-bg-2: #0A2330;      /* signal-dark-panel */
+        --stage-grad-1: rgba(50, 169, 102, 0.14);  /* excellent-200 wash, top-left */
+        --stage-grad-2: rgba(37, 80, 124, 0.16);   /* blue-400 wash, bottom-right */
+        --stage-bg-1: #0D1321;
+        --stage-bg-2: #1A2339;
 
-        --slot-bg: rgba(10, 35, 48, 0.9);   /* signal-dark-panel with alpha */
-        /* Floating nav glass — mirrors wise-signal .device-floating-nav__track (dark) */
-        --tab-pill-bg: rgba(2, 27, 39, 0.88);          /* signal-dark-navy @ 88% */
+        --slot-bg: rgba(26, 35, 57, 0.9);
+        --tab-pill-bg: rgba(13, 19, 33, 0.88);
         --tab-pill-border: rgba(244, 242, 246, 0.16);
         --tab-pill-shadow: 0 10px 32px rgba(0, 0, 0, 0.42), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
         --tab-hit-bg: rgba(244, 242, 246, 0.12);
-        --tab-active-bg: rgba(59, 130, 246, 0.14);
-        --tab-bar-fade: rgba(5, 20, 28, 0.6);
+        --tab-active-bg: rgba(88, 120, 150, 0.14);
+        --tab-bar-fade: rgba(13, 19, 33, 0.6);
         --camera-cancel-bg: rgba(0, 0, 0, 0.95);
         --camera-status-bg: rgba(0, 0, 0, 0.7);
         --camera-error-bg: rgba(0, 0, 0, 0.85);
@@ -118,40 +105,33 @@
         --shadow-card: none;
         --card-border: rgba(244, 242, 246, 0.12);   /* translucent-white hairline (dark) */
         /* Hero headline accent — wise-signal --wise-hero-headline-blue (dark = signal-home-blue) */
-        --hero-accent-blue: #60A5FA;
+        --hero-accent-blue: #8B9FAF; /* blue-200 Breakwater on dark */
 
-        /* Score-ring tip glow stays brand-green in both modes. */
-        --ring-tip: #4FE89B;
+        --ring-tip: #32A966;
       }
 
-      /* ─── Light theme — mapped to wise-signal light palette ──────────
-         Sourced from wise-signal.html: --bg-page (#EFEDF1) as the page
-         canvas, --signal-paper-tint (#FBF6ED) as the phone canvas, white
-         cards, and the AAA-safe oyster text ramp (#000 / #413A4D / #544E61).
-         Applied either globally (data-theme="light" on <html>) or scoped
-         to a subtree via .theme-light — that's how the dark/light pairs
-         on this page render side-by-side in the same document. */
+      /* ─── Light theme — brand linen canvas + coastal blues ─────────── */
       :root[data-theme="light"],
       .theme-light {
-        --bg: #FBF6ED;              /* signal-paper-tint — phone canvas (t-app-bg). Mirrors dark, where --bg is the screen base. */
-        --bg-deep: #EFEDF1;         /* bg-page — deeper canvas / behind-phone tone */
+        --bg: #FBF6ED;              /* warm-100 Linen */
+        --bg-deep: #E4E5E6;         /* neutral-150 */
         --surface: #FFFFFF;         /* t-card-bg */
         --surface-2: #FFFFFF;       /* inputs + elevated chrome read white on the linen canvas */
-        --surface-3: #EFEDF1;       /* bg-page as tertiary / hover surface */
+        --surface-3: #E4E5E6;       /* neutral-150 hover surface */
         --card: #FFFFFF;            /* t-card-bg */
         --card-elev: #FFFFFF;
         --ink-soft: #FFFFFF;        /* input field fill + contrast glyph ink on bright colored discs */
 
-        --line-subtle: #ECE9F0;     /* t-card-border (light) */
-        --line: #EFEDF1;            /* t-divider (light) */
-        --line-strong: #827C90;     /* t-card-border-strong / signal-slate */
-        --track: #E7E4EC;           /* t-track (light) */
-        --track-subtle: #EFEDF1;    /* t-divider */
+        --line-subtle: #E2EEF7;     /* blue-100 */
+        --line: #E4E5E6;            /* neutral-150 */
+        --line-strong: #808080;     /* neutral-300 */
+        --track: #E4E5E6;           /* neutral-150 */
+        --track-subtle: #FBF6ED;    /* warm-100 linen */
 
-        --fg-bright: #000000;       /* t-text-primary (light) */
-        --fg: #000000;              /* t-text-primary (light) — body */
-        --fg-muted: #413A4D;        /* t-text-secondary (light, AAA) */
-        --fg-faint: #544E61;        /* t-text-tertiary (light, AAA body) */
+        --fg-bright: #000000;       /* neutral-500 */
+        --fg: #000000;
+        --fg-muted: #404040;        /* neutral-400 */
+        --fg-faint: #808080;        /* neutral-300 */
 
         --status-fg: #000000;
         --island-bg: #000000;
@@ -168,26 +148,25 @@
         --sheet-bg: var(--bg);
         --shadow-thumb: 0 2px 6px rgba(15, 10, 31, 0.18);
 
-        --stage-grad-1: rgba(24, 132, 67, 0.16);   /* signal-green-strong (light) forest wash, top-left */
-        --stage-grad-2: rgba(29, 78, 216, 0.12);   /* royal-blue wash, bottom-right */
-        --stage-bg-1: #EFEDF1;      /* bg-page */
-        --stage-bg-2: #FFFFFF;      /* card */
+        --stage-grad-1: rgba(36, 94, 59, 0.12);   /* green-300 wash */
+        --stage-grad-2: rgba(37, 80, 124, 0.10);   /* blue-400 wash */
+        --stage-bg-1: #E4E5E6;
+        --stage-bg-2: #FFFFFF;
 
-        /* Light-mode overrides for identity hues that read AAA on a paper
-           canvas. Same names as :root; just the brighter dark-mode reds
-           swap to deeper wise-signal-risk light values. */
-        --rose: #CA371F;            /* signal-risk light (AAA on white + paper) */
-        --score-poor: #CA371F;
+        --rose: #DC3038;            /* poor-200 */
+        --score-poor: #DC3038;
 
-        /* Greens read darker on the paper canvas — wise-signal uses
-           --signal-green-strong (#188443) for fills/accents and a
-           --signal-green-mid (#52CC7A) for the "good" tier in light. */
-        --emerald: #188443;         /* signal-green-strong (light) — brand green fill/accent */
-        --teal: #188443;
-        --score-excellent: #188443; /* excellent tier fill */
-        --score-good: #52CC7A;      /* signal-green-mid — good tier */
-        --code-green: #188443;      /* category brand green */
-        --code-deep: #075C28;       /* score-green deep — second green category (AAA on white) */
+        --emerald: #245E3B;         /* green-300 Iron Wood */
+        --teal: #245E3B;
+        --score-excellent: #32A966; /* excellent-200 */
+        --score-good: #245E3B;      /* green-300 */
+        --code-green: #32A966;
+        --code-deep: #1B2D22;       /* green-500 */
+
+        --blue: #25507C;            /* blue-400 Coastal Haze */
+        --violet: #25507C;
+        --cyan: #587896;            /* blue-300 */
+        --blue-ink: var(--blue);
 
         --slot-bg: #FFFFFF;
         /* Floating nav glass — mirrors wise-signal .device-floating-nav__track (light) */
@@ -195,19 +174,18 @@
         --tab-pill-border: rgba(21, 16, 43, 0.10);
         --tab-pill-shadow: 0 10px 28px rgba(15, 14, 30, 0.12), 0 1px 0 rgba(255, 255, 255, 0.8) inset;
         --tab-hit-bg: rgba(21, 16, 43, 0.06);
-        --tab-active-bg: rgba(29, 78, 216, 0.08);
-        --tab-bar-fade: rgba(239, 237, 241, 0.6);
+        --tab-active-bg: rgba(37, 80, 124, 0.08);
+        --tab-bar-fade: rgba(251, 246, 237, 0.6);
         --camera-cancel-bg: rgba(15, 10, 31, 0.92);
         --camera-status-bg: rgba(15, 10, 31, 0.7);
         --camera-error-bg: rgba(15, 10, 31, 0.85);
 
         /* Card elevation + border — wise-signal --t-card-shadow / --t-card-border (light) */
         --shadow-card: 0 1px 3px rgba(15, 10, 31, 0.08), 0 2px 8px rgba(15, 10, 31, 0.05);
-        --card-border: #ECE9F0;     /* hairline polish (light) */
-        /* Hero headline accent — wise-signal --wise-hero-headline-blue (light = wise-nonupf-blue) */
-        --hero-accent-blue: #1D4ED8;
+        --card-border: #E2EEF7;     /* blue-100 hairline */
+        --hero-accent-blue: #25507C; /* blue-400 */
 
-        --ring-tip: #188443;
+        --ring-tip: #32A966;
       }
 
       /* ─── Color-vision-safe palette (opt-in) ──────────────────────────
@@ -632,7 +610,7 @@
                     margin-left 0.52s cubic-bezier(0.22, 1, 0.36, 1);
       }
       .tab > span:last-child::first-letter { text-transform: uppercase; }
-      /* Active tab — royal-blue (#1D4ED8) inset ring + soft blue fill on
+      /* Active tab — coastal blue (#25507C) inset ring + soft blue fill on
          the hit (wise-signal [aria-current] .__hit), label revealed beside
          it (.is-active .__slot-label). */
       .tab.active { gap: 4px; }
@@ -743,11 +721,11 @@
          size/position shift. Extra color stops keep the transition smooth
          and continuous rather than a single in/out fade. */
       @keyframes wise-bug-pulse {
-        0%   { background-color: #1D4ED8; }
-        25%  { background-color: #3B82F6; }
-        50%  { background-color: #60A5FA; }
-        75%  { background-color: #3B82F6; }
-        100% { background-color: #1D4ED8; }
+        0%   { background-color: #25507C; }
+        25%  { background-color: #587896; }
+        50%  { background-color: #8B9FAF; }
+        75%  { background-color: #587896; }
+        100% { background-color: #25507C; }
       }
       @media (prefers-reduced-motion: reduce) {
         .wise-bug { animation: none; }
@@ -780,11 +758,11 @@
         .wise-bug-label:hover { opacity: 0.82; }
       }
       @keyframes wise-bug-label-pulse {
-        0%   { color: #1D4ED8; }
-        25%  { color: #3B82F6; }
-        50%  { color: #60A5FA; }
-        75%  { color: #3B82F6; }
-        100% { color: #1D4ED8; }
+        0%   { color: #25507C; }
+        25%  { color: #587896; }
+        50%  { color: #8B9FAF; }
+        75%  { color: #587896; }
+        100% { color: #25507C; }
       }
       @media (prefers-reduced-motion: reduce) {
         .wise-bug-label { animation: none; }
@@ -3152,9 +3130,9 @@
         display: inline-flex; align-items: center; justify-content: center;
         width: 38px; height: 38px;
         border-radius: 50%;
-        background: var(--emerald);
+        background: var(--blue);
         color: #FFFFFF;
-        box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--emerald) 70%, transparent);
+        box-shadow: 0 8px 18px -8px color-mix(in srgb, var(--blue) 70%, transparent);
       }
       .save-sheet-check .material-symbols-outlined { font-size: 22px; font-weight: 700; }
       .save-sheet-confirm-copy { min-width: 0; }
@@ -3181,12 +3159,20 @@
         flex-shrink: 0;
         display: inline-flex; align-items: center; justify-content: center;
         width: 44px; height: 44px;
-        border-radius: 13px;
-        background: color-mix(in srgb, var(--blue-ink) 16%, transparent);
-        color: var(--blue-ink);
+        border-radius: 10px;
+        overflow: hidden;
       }
-      .install-ico .material-symbols-outlined { font-size: 24px; }
-      .install-body { flex: 1; min-width: 0; }
+      /* Mini app-icon tile — same owl mask + gradient as the App Icon board. */
+      .install-ico .app-icon {
+        width: 44px; height: 44px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.28);
+      }
+      .install-ico .app-icon-bug { width: 26px; }
+      .install-body {
+        flex: 1; min-width: 0;
+        display: flex; flex-direction: column;
+      }
       .install-title {
         color: var(--fg-bright);
         font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
@@ -3207,6 +3193,7 @@
       }
       .install-how {
         display: inline-flex; align-items: center; gap: 2px;
+        align-self: flex-end;
         margin-top: 12px;
         border: none; background: transparent; padding: 0;
         color: var(--blue-ink);
@@ -5399,16 +5386,16 @@
       }
       /* Light (default) — royal-blue gradient tile, white owl. */
       .app-icon-light {
-        background: linear-gradient(155deg, #3B82F6 0%, #1D4ED8 60%, #1E3A8A 100%);
+        background: linear-gradient(155deg, #587896 0%, #25507C 60%, #1A2339 100%);
       }
       .app-icon-light .app-icon-bug { background-color: #FFFFFF; }
       /* Dark — near-black tile, brand-blue owl. */
       .app-icon-dark {
-        background: linear-gradient(155deg, #14262E 0%, #0A2330 55%, #05141C 100%);
+        background: linear-gradient(155deg, #25507C 0%, #1A2339 55%, #0D1321 100%);
         box-shadow: 0 12px 28px -10px rgba(0,0,0,0.7),
                     inset 0 0 0 1px rgba(255,255,255,0.08);
       }
-      .app-icon-dark .app-icon-bug { background-color: #60A5FA; }
+      .app-icon-dark .app-icon-bug { background-color: #8B9FAF; }
       /* Tinted (monochrome) — graphite tile, light-grey owl. */
       .app-icon-tinted {
         background: linear-gradient(155deg, #3A3F4A 0%, #23272F 60%, #15181E 100%);
@@ -5682,6 +5669,16 @@
         .auth-social-btn:hover { border-color: var(--line-strong); }
       }
       .auth-social-btn:active { transform: scale(.99); }
+      /* Dark phones — outline pills (light theme keeps the white fill). */
+      .phone-wrap:not(.theme-light) .auth-social-btn {
+        background: transparent;
+        border-color: var(--line-strong);
+      }
+      @media (hover: hover) {
+        .phone-wrap:not(.theme-light) .auth-social-btn:hover {
+          background: color-mix(in srgb, var(--fg-bright) 6%, transparent);
+        }
+      }
       .auth-social-ico { width: 20px; height: 20px; flex-shrink: 0; display: block; }
       /* Apple glyph is a single path — paint it in the current text ink so
          it tracks the active theme. Google keeps its multi-color logo. */
@@ -6220,9 +6217,9 @@
       <defs>
         <linearGradient id="score-arc-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stop-color="#6FF2B5" />
-          <stop offset="40%" stop-color="#4FE89B" />
+          <stop offset="40%" stop-color="#32A966" />
           <stop offset="75%" stop-color="#2BC46F" />
-          <stop offset="100%" stop-color="#188443" />
+          <stop offset="100%" stop-color="#32A966" />
         </linearGradient>
       </defs>
     </svg>
@@ -6329,11 +6326,11 @@
           <span class="ds-theme-tag"><span class="material-symbols-outlined">dark_mode</span>Dark theme</span>
           <div class="ds-subhead">Surfaces</div>
           <div class="ds-ramp">
-            <div class="ds-swatch"><div class="chip" style="background:#05141C;"></div><div class="meta"><div class="nm">bg</div><div class="hx">#05141C</div></div></div>
-            <div class="ds-swatch"><div class="chip" style="background:#011722;"></div><div class="meta"><div class="nm">bg-deep</div><div class="hx">#011722</div></div></div>
-            <div class="ds-swatch"><div class="chip" style="background:#0A2330;"></div><div class="meta"><div class="nm">surface</div><div class="hx">#0A2330</div></div></div>
-            <div class="ds-swatch"><div class="chip" style="background:#14262E;"></div><div class="meta"><div class="nm">surface-2</div><div class="hx">#14262E</div></div></div>
-            <div class="ds-swatch"><div class="chip" style="background:#1C2130;"></div><div class="meta"><div class="nm">surface-3</div><div class="hx">#1C2130</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#0D1321;"></div><div class="meta"><div class="nm">bg</div><div class="hx">#0D1321</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#1A2339;"></div><div class="meta"><div class="nm">bg-deep</div><div class="hx">#1A2339</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#1A2339;"></div><div class="meta"><div class="nm">surface</div><div class="hx">#1A2339</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#25507C;"></div><div class="meta"><div class="nm">surface-2</div><div class="hx">#25507C</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#25507C;"></div><div class="meta"><div class="nm">surface-3</div><div class="hx">#25507C</div></div></div>
           </div>
           <div class="ds-subhead">Text on surface</div>
           <div class="ds-textramp">
@@ -6349,30 +6346,30 @@
           <div class="ds-subhead">Surfaces</div>
           <div class="ds-ramp">
             <div class="ds-swatch"><div class="chip" style="background:#FBF6ED;"></div><div class="meta"><div class="nm">bg</div><div class="hx">#FBF6ED</div></div></div>
-            <div class="ds-swatch"><div class="chip" style="background:#EFEDF1;"></div><div class="meta"><div class="nm">bg-deep</div><div class="hx">#EFEDF1</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#E4E5E6;"></div><div class="meta"><div class="nm">bg-deep</div><div class="hx">#E4E5E6</div></div></div>
             <div class="ds-swatch"><div class="chip" style="background:#FFFFFF;"></div><div class="meta"><div class="nm">surface</div><div class="hx">#FFFFFF</div></div></div>
-            <div class="ds-swatch"><div class="chip" style="background:#E7E4EC;"></div><div class="meta"><div class="nm">track</div><div class="hx">#E7E4EC</div></div></div>
-            <div class="ds-swatch"><div class="chip" style="background:#827C90;"></div><div class="meta"><div class="nm">line-str</div><div class="hx">#827C90</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#E4E5E6;"></div><div class="meta"><div class="nm">track</div><div class="hx">#E4E5E6</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#808080;"></div><div class="meta"><div class="nm">line-str</div><div class="hx">#808080</div></div></div>
           </div>
           <div class="ds-subhead">Text on surface</div>
           <div class="ds-textramp">
             <div class="line"><span class="lbl" style="color:#000000;font-weight:800;">Primary — the quick brown fox</span><span class="tok">#000000</span></div>
-            <div class="line"><span class="lbl" style="color:#413A4D;">Secondary — the quick brown fox</span><span class="tok">#413A4D</span></div>
-            <div class="line"><span class="lbl" style="color:#544E61;">Tertiary — the quick brown fox</span><span class="tok">#544E61</span></div>
+            <div class="line"><span class="lbl" style="color:#404040;">Secondary — the quick brown fox</span><span class="tok">#404040</span></div>
+            <div class="line"><span class="lbl" style="color:#808080;">Tertiary — the quick brown fox</span><span class="tok">#808080</span></div>
           </div>
         </div>
       </div>
 
       <div class="ds-subhead" style="margin-top:18px;">Identity &amp; signal palette</div>
       <div class="ds-palette">
-        <div class="ds-pal"><div class="chip" style="background:#188443;"><span class="role">Primary</span></div><div class="meta"><div class="nm">Brand Green</div><div class="hx">#188443</div></div></div>
-        <div class="ds-pal"><div class="chip" style="background:#075C28;"><span class="role">Verdict</span></div><div class="meta"><div class="nm">Score Green</div><div class="hx">#075C28</div></div></div>
-        <div class="ds-pal"><div class="chip" style="background:#1D4ED8;"><span class="role">Nav · AI</span></div><div class="meta"><div class="nm">Royal Blue</div><div class="hx">#1D4ED8</div></div></div>
-        <div class="ds-pal"><div class="chip" style="background:#3B82F6;"><span class="role">Sky</span></div><div class="meta"><div class="nm">Signal Sky</div><div class="hx">#3B82F6</div></div></div>
-        <div class="ds-pal"><div class="chip" style="background:#FFC434;"><span class="role" style="background:rgba(0,0,0,0.45);">Fair</span></div><div class="meta"><div class="nm">Signal Yellow</div><div class="hx">#FFC434</div></div></div>
-        <div class="ds-pal"><div class="chip" style="background:#D8610C;"><span class="role">Low</span></div><div class="meta"><div class="nm">Signal Orange</div><div class="hx">#D8610C</div></div></div>
-        <div class="ds-pal"><div class="chip" style="background:#CA371F;"><span class="role">Poor</span></div><div class="meta"><div class="nm">Signal Risk</div><div class="hx">#CA371F</div></div></div>
-        <div class="ds-pal"><div class="chip" style="background:#FF8E8E;"><span class="role" style="background:rgba(0,0,0,0.4);">Poor · dk</span></div><div class="meta"><div class="nm">Risk Soft</div><div class="hx">#FF8E8E</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#32A966;"><span class="role">Primary</span></div><div class="meta"><div class="nm">Excellent Green</div><div class="hx">#32A966</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#245E3B;"><span class="role">Verdict</span></div><div class="meta"><div class="nm">Iron Wood</div><div class="hx">#245E3B</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#25507C;"><span class="role">Nav · AI</span></div><div class="meta"><div class="nm">Coastal Haze</div><div class="hx">#25507C</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#587896;"><span class="role">Sky</span></div><div class="meta"><div class="nm">Blue 300</div><div class="hx">#587896</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#FFC434;"><span class="role" style="background:rgba(0,0,0,0.45);">OK</span></div><div class="meta"><div class="nm">OK Yellow</div><div class="hx">#FFC434</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#D27326;"><span class="role">Fair</span></div><div class="meta"><div class="nm">Fair Orange</div><div class="hx">#D27326</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#DC3038;"><span class="role">Poor</span></div><div class="meta"><div class="nm">Poor Red</div><div class="hx">#DC3038</div></div></div>
+        <div class="ds-pal"><div class="chip" style="background:#DF896F;"><span class="role" style="background:rgba(0,0,0,0.4);">Poor · dk</span></div><div class="meta"><div class="nm">Poor Soft</div><div class="hx">#DF896F</div></div></div>
       </div>
 
       <div class="ds-subhead" style="margin-top:18px;">Code / category palette · standard vs color-blind-safe</div>
@@ -6380,11 +6377,11 @@
         <div class="ds-cvd-col is-standard">
           <span class="ds-cvd-tag">Standard <span class="ds-cvd-active">Active</span></span>
           <div class="ds-ramp">
-            <div class="ds-swatch"><div class="chip" style="background:#188443;"></div><div class="meta"><div class="nm">Green</div><div class="hx">#188443</div></div></div>
-            <div class="ds-swatch"><div class="chip" style="background:#0A6630;"></div><div class="meta"><div class="nm">Deep</div><div class="hx">#0A6630</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#32A966;"></div><div class="meta"><div class="nm">Green</div><div class="hx">#32A966</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#245E3B;"></div><div class="meta"><div class="nm">Deep</div><div class="hx">#245E3B</div></div></div>
             <div class="ds-swatch"><div class="chip" style="background:#FFC434;"></div><div class="meta"><div class="nm">Yellow</div><div class="hx">#FFC434</div></div></div>
-            <div class="ds-swatch"><div class="chip" style="background:#D8610C;"></div><div class="meta"><div class="nm">Orange</div><div class="hx">#D8610C</div></div></div>
-            <div class="ds-swatch"><div class="chip" style="background:#CA371F;"></div><div class="meta"><div class="nm">Risk</div><div class="hx">#CA371F</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#D27326;"></div><div class="meta"><div class="nm">Orange</div><div class="hx">#D27326</div></div></div>
+            <div class="ds-swatch"><div class="chip" style="background:#DC3038;"></div><div class="meta"><div class="nm">Risk</div><div class="hx">#DC3038</div></div></div>
           </div>
         </div>
         <div class="ds-cvd-col is-safe">
@@ -6516,12 +6513,12 @@
         <!-- Dark contrast audit -->
         <div class="ds-a11y-col">
           <span class="ds-theme-tag"><span class="material-symbols-outlined">dark_mode</span>Dark · contrast</span>
-          <div class="ds-cr"><span class="dot" style="background:#F4F2F6;"></span><span class="pair"><span class="fgn">Primary text</span><span class="bgn">#F4F2F6 on #05141C</span></span><span class="ratio">16.8:1</span><span class="ds-badge aaa">AAA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#F4F2F6;"></span><span class="pair"><span class="fgn">Primary text</span><span class="bgn">#F4F2F6 on #0D1321</span></span><span class="ratio">16.8:1</span><span class="ds-badge aaa">AAA</span></div>
           <div class="ds-cr"><span class="dot" style="background:#B7B2C4;"></span><span class="pair"><span class="fgn">Secondary text</span><span class="bgn">#B7B2C4 on #0A2330</span></span><span class="ratio">7.9:1</span><span class="ds-badge aaa">AAA</span></div>
           <div class="ds-cr"><span class="dot" style="background:#A8A3B5;"></span><span class="pair"><span class="fgn">Tertiary text</span><span class="bgn">#A8A3B5 on #0A2330</span></span><span class="ratio">6.6:1</span><span class="ds-badge aa">AA</span></div>
-          <div class="ds-cr"><span class="dot" style="background:#1D4ED8;"></span><span class="pair"><span class="fgn">White on blue CTA</span><span class="bgn">#FFFFFF on #1D4ED8</span></span><span class="ratio">6.7:1</span><span class="ds-badge aa">AA</span></div>
-          <div class="ds-cr"><span class="dot" style="background:#4FE89B;"></span><span class="pair"><span class="fgn">Brand green text</span><span class="bgn">#4FE89B on #05141C</span></span><span class="ratio">12.7:1</span><span class="ds-badge aaa">AAA</span></div>
-          <div class="ds-cr"><span class="dot" style="background:#FFC434;"></span><span class="pair"><span class="fgn">Signal yellow</span><span class="bgn">#FFC434 on #05141C</span></span><span class="ratio">11.8:1</span><span class="ds-badge aaa">AAA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#25507C;"></span><span class="pair"><span class="fgn">White on blue CTA</span><span class="bgn">#FFFFFF on #25507C</span></span><span class="ratio">6.7:1</span><span class="ds-badge aa">AA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#32A966;"></span><span class="pair"><span class="fgn">Brand green text</span><span class="bgn">#32A966 on #0D1321</span></span><span class="ratio">12.7:1</span><span class="ds-badge aaa">AAA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#FFC434;"></span><span class="pair"><span class="fgn">OK yellow</span><span class="bgn">#FFC434 on #0D1321</span></span><span class="ratio">11.8:1</span><span class="ds-badge aaa">AAA</span></div>
         </div>
         <!-- Light contrast audit -->
         <div class="ds-a11y-col theme-light">
@@ -6529,9 +6526,9 @@
           <div class="ds-cr"><span class="dot" style="background:#000000;"></span><span class="pair"><span class="fgn">Primary text</span><span class="bgn">#000000 on #FFFFFF</span></span><span class="ratio">21:1</span><span class="ds-badge aaa">AAA</span></div>
           <div class="ds-cr"><span class="dot" style="background:#413A4D;"></span><span class="pair"><span class="fgn">Secondary text</span><span class="bgn">#413A4D on #FFFFFF</span></span><span class="ratio">10.8:1</span><span class="ds-badge aaa">AAA</span></div>
           <div class="ds-cr"><span class="dot" style="background:#544E61;"></span><span class="pair"><span class="fgn">Tertiary text</span><span class="bgn">#544E61 on #FFFFFF</span></span><span class="ratio">8.0:1</span><span class="ds-badge aaa">AAA</span></div>
-          <div class="ds-cr"><span class="dot" style="background:#1D4ED8;"></span><span class="pair"><span class="fgn">White on blue CTA</span><span class="bgn">#FFFFFF on #1D4ED8</span></span><span class="ratio">6.7:1</span><span class="ds-badge aa">AA</span></div>
-          <div class="ds-cr"><span class="dot" style="background:#CA371F;"></span><span class="pair"><span class="fgn">Risk red text</span><span class="bgn">#CA371F on #FFFFFF</span></span><span class="ratio">5.2:1</span><span class="ds-badge aa">AA</span></div>
-          <div class="ds-cr"><span class="dot" style="background:#D8610C;"></span><span class="pair"><span class="fgn">Orange · large only</span><span class="bgn">#D8610C on #FFFFFF</span></span><span class="ratio">3.7:1</span><span class="ds-badge aalg">AA LG</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#25507C;"></span><span class="pair"><span class="fgn">White on blue CTA</span><span class="bgn">#FFFFFF on #25507C</span></span><span class="ratio">6.7:1</span><span class="ds-badge aa">AA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#DC3038;"></span><span class="pair"><span class="fgn">Poor red text</span><span class="bgn">#DC3038 on #FFFFFF</span></span><span class="ratio">5.2:1</span><span class="ds-badge aa">AA</span></div>
+          <div class="ds-cr"><span class="dot" style="background:#D27326;"></span><span class="pair"><span class="fgn">Fair orange · large only</span><span class="bgn">#D27326 on #FFFFFF</span></span><span class="ratio">3.7:1</span><span class="ds-badge aalg">AA LG</span></div>
         </div>
       </div>
 
@@ -6987,7 +6984,7 @@
             <div class="pie-wrap" style="width:300px;height:300px;">
               <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
                    data-id="home" data-size="280" data-stroke="88"
-                   data-slices='[{"value":10,"c":"#188443","icon":"sparkles"},{"value":8,"c":"#D8610C","icon":"award"},{"value":6,"c":"#CA371F","icon":"heart-pulse"},{"value":6,"c":"#0A6630","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#CA371F","icon":"leaf"},{"value":4,"c":"#D8610C","icon":"salad"},{"value":3,"c":"#0A6630","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#0A6630","icon":"infinity"}]'
+                   data-slices='[{"value":10,"c":"#32A966","icon":"sparkles"},{"value":8,"c":"#D27326","icon":"award"},{"value":6,"c":"#DC3038","icon":"heart-pulse"},{"value":6,"c":"#245E3B","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#DC3038","icon":"leaf"},{"value":4,"c":"#D27326","icon":"salad"},{"value":3,"c":"#245E3B","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#245E3B","icon":"infinity"}]'
                    aria-hidden="true"></svg>
               <div class="pie-center">
                 <div class="num" style="font-size:46px;"><span data-pie-num-val>51</span></div>
@@ -7054,7 +7051,7 @@
             <div class="pie-wrap" style="width:300px;height:300px;">
               <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
                    data-id="home-filter-codes" data-size="280" data-stroke="88"
-                   data-slices='[{"value":10,"c":"#188443","icon":"sparkles"},{"value":8,"c":"#D8610C","icon":"award"},{"value":6,"c":"#CA371F","icon":"heart-pulse"},{"value":6,"c":"#0A6630","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#CA371F","icon":"leaf"},{"value":4,"c":"#D8610C","icon":"salad"},{"value":3,"c":"#0A6630","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#0A6630","icon":"infinity"}]'
+                   data-slices='[{"value":10,"c":"#32A966","icon":"sparkles"},{"value":8,"c":"#D27326","icon":"award"},{"value":6,"c":"#DC3038","icon":"heart-pulse"},{"value":6,"c":"#245E3B","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#DC3038","icon":"leaf"},{"value":4,"c":"#D27326","icon":"salad"},{"value":3,"c":"#245E3B","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#245E3B","icon":"infinity"}]'
                    aria-hidden="true"></svg>
               <div class="pie-center">
                 <div class="num" style="font-size:46px;"><span data-pie-num-val>51</span></div>
@@ -7113,7 +7110,7 @@
             <div class="pie-wrap" style="width:300px;height:300px;">
               <svg viewBox="0 0 280 280" width="300" height="300" class="pie-svg"
                    data-id="home-filter-ing" data-size="280" data-stroke="88"
-                   data-slices='[{"value":10,"c":"#188443","icon":"sparkles"},{"value":8,"c":"#D8610C","icon":"award"},{"value":6,"c":"#CA371F","icon":"heart-pulse"},{"value":6,"c":"#0A6630","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#CA371F","icon":"leaf"},{"value":4,"c":"#D8610C","icon":"salad"},{"value":3,"c":"#0A6630","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#0A6630","icon":"infinity"}]'
+                   data-slices='[{"value":10,"c":"#32A966","icon":"sparkles"},{"value":8,"c":"#D27326","icon":"award"},{"value":6,"c":"#DC3038","icon":"heart-pulse"},{"value":6,"c":"#245E3B","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#DC3038","icon":"leaf"},{"value":4,"c":"#D27326","icon":"salad"},{"value":3,"c":"#245E3B","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#245E3B","icon":"infinity"}]'
                    aria-hidden="true"></svg>
               <div class="pie-center">
                 <div class="num" style="font-size:46px;"><span data-pie-num-val>51</span></div>
@@ -7327,7 +7324,11 @@
                card: icon tile on the left, steps + "Show me how" on the
                right. -->
           <div class="install-card">
-            <span class="install-ico"><span class="material-symbols-outlined">open_in_new</span></span>
+            <span class="install-ico" aria-hidden="true">
+              <span class="app-icon app-icon-light">
+                <span class="app-icon-bug"></span>
+              </span>
+            </span>
             <div class="install-body">
               <div class="install-title">Pin it to your home screen</div>
               <ul class="install-steps">
@@ -7901,7 +7902,7 @@ HIDDEN -->
                     <path d="M8 33 Q22 30 38 33" stroke="#F09070" stroke-width="1" fill="none" opacity="0.4"/>
                     <circle cx="46" cy="29" r="2.2" fill="#0F0F12" opacity="0.7"/>
                   </svg>
-                  <div class="alt-card-badge" style="background:#188443;">96</div>
+                  <div class="alt-card-badge" style="background:#32A966;">96</div>
                 </div>
                 <div class="alt-card-body">
                   <div class="alt-card-name">Copper River Sockeye Salmon</div>
@@ -7917,7 +7918,7 @@ HIDDEN -->
                     <path d="M10 33 Q24 31 40 34" stroke="#70D4A8" stroke-width="1" fill="none" opacity="0.35"/>
                     <circle cx="44" cy="29" r="2" fill="#0A1412" opacity="0.7"/>
                   </svg>
-                  <div class="alt-card-badge" style="background:#188443;">90</div>
+                  <div class="alt-card-badge" style="background:#32A966;">90</div>
                 </div>
                 <div class="alt-card-body">
                   <div class="alt-card-name">Fresh Rainbow Trout Fillet</div>
@@ -7933,7 +7934,7 @@ HIDDEN -->
                     <path d="M10 33 Q30 32 50 34" stroke="#D4B880" stroke-width="1" fill="none" opacity="0.4"/>
                     <rect x="46" y="21" width="4" height="18" rx="2" fill="#8A7050" opacity="0.6"/>
                   </svg>
-                  <div class="alt-card-badge" style="background:#188443;">87</div>
+                  <div class="alt-card-badge" style="background:#32A966;">87</div>
                 </div>
                 <div class="alt-card-body">
                   <div class="alt-card-name">Pacific Albacore Tuna No Salt</div>
@@ -7948,7 +7949,7 @@ HIDDEN -->
                     <text x="30" y="33" text-anchor="middle" font-family="system-ui,sans-serif" font-size="6" font-weight="700" fill="#90C8E8" letter-spacing="0.08em">SARDINES</text>
                     <rect x="8" y="24" width="6" height="12" rx="3" fill="#1E5A8A" opacity="0.8"/>
                   </svg>
-                  <div class="alt-card-badge" style="background:#188443;">91</div>
+                  <div class="alt-card-badge" style="background:#32A966;">91</div>
                 </div>
                 <div class="alt-card-body">
                   <div class="alt-card-name">Wild Sardines in Olive Oil</div>
@@ -8040,7 +8041,7 @@ HIDDEN -->
                 <div class="fd-wisescore">
                   <div class="score">
                     <!-- Score colored risk-red for a bad food -->
-                    <span class="num" style="color:#CA371F;">24</span>
+                    <span class="num" style="color:#DC3038;">24</span>
                   </div>
                   <div class="lbl">WISEscore</div>
                 </div>
@@ -8057,49 +8058,49 @@ HIDDEN -->
                   <!-- Omega-3 / Anti-inflammatory: low score -->
                   <div class="contrib-row">
                     <div class="contrib-row-head">
-                      <span class="ico" style="color:#188443;"><span class="material-symbols-outlined">auto_awesome</span></span>
+                      <span class="ico" style="color:#32A966;"><span class="material-symbols-outlined">auto_awesome</span></span>
                       <div class="nm">Anti-inflammatory</div>
                       <div class="code-score"><span class="n">18</span></div>
                     </div>
                     <div class="health-bar contrib-code-bar">
-                      <div class="seg" style="flex:18;background:#188443;"></div>
-                      <div class="seg seg-track" style="flex:82;background:color-mix(in srgb,#188443 16%,transparent);"></div>
+                      <div class="seg" style="flex:18;background:#32A966;"></div>
+                      <div class="seg seg-track" style="flex:82;background:color-mix(in srgb,#32A966 16%,transparent);"></div>
                     </div>
                   </div>
                   <!-- Metabolic health: very low -->
                   <div class="contrib-row">
                     <div class="contrib-row-head">
-                      <span class="ico" style="color:#D8610C;"><span class="material-symbols-outlined">workspace_premium</span></span>
+                      <span class="ico" style="color:#D27326;"><span class="material-symbols-outlined">workspace_premium</span></span>
                       <div class="nm">Metabolic Health</div>
                       <div class="code-score"><span class="n">12</span></div>
                     </div>
                     <div class="health-bar contrib-code-bar">
-                      <div class="seg" style="flex:12;background:#D8610C;"></div>
-                      <div class="seg seg-track" style="flex:88;background:color-mix(in srgb,#D8610C 16%,transparent);"></div>
+                      <div class="seg" style="flex:12;background:#D27326;"></div>
+                      <div class="seg seg-track" style="flex:88;background:color-mix(in srgb,#D27326 16%,transparent);"></div>
                     </div>
                   </div>
                   <!-- Heart health: low -->
                   <div class="contrib-row">
                     <div class="contrib-row-head">
-                      <span class="ico" style="color:#CA371F;"><span class="material-symbols-outlined">monitor_heart</span></span>
+                      <span class="ico" style="color:#DC3038;"><span class="material-symbols-outlined">monitor_heart</span></span>
                       <div class="nm">Heart Health</div>
                       <div class="code-score"><span class="n">22</span></div>
                     </div>
                     <div class="health-bar contrib-code-bar">
-                      <div class="seg" style="flex:22;background:#CA371F;"></div>
-                      <div class="seg seg-track" style="flex:78;background:color-mix(in srgb,#CA371F 16%,transparent);"></div>
+                      <div class="seg" style="flex:22;background:#DC3038;"></div>
+                      <div class="seg seg-track" style="flex:78;background:color-mix(in srgb,#DC3038 16%,transparent);"></div>
                     </div>
                   </div>
                   <!-- Gut microbiome: low -->
                   <div class="contrib-row">
                     <div class="contrib-row-head">
-                      <span class="ico" style="color:#0A6630;"><span class="material-symbols-outlined">speed</span></span>
+                      <span class="ico" style="color:#245E3B;"><span class="material-symbols-outlined">speed</span></span>
                       <div class="nm">Gut Microbiome</div>
                       <div class="code-score"><span class="n">30</span></div>
                     </div>
                     <div class="health-bar contrib-code-bar">
-                      <div class="seg" style="flex:30;background:#0A6630;"></div>
-                      <div class="seg seg-track" style="flex:70;background:color-mix(in srgb,#0A6630 16%,transparent);"></div>
+                      <div class="seg" style="flex:30;background:#245E3B;"></div>
+                      <div class="seg seg-track" style="flex:70;background:color-mix(in srgb,#245E3B 16%,transparent);"></div>
                     </div>
                   </div>
                   <!-- Fitness performance: low -->
@@ -8146,7 +8147,7 @@ HIDDEN -->
                     <polygon points="30,18 43,40 17,40" fill="#F4C860" opacity="0.45"/>
                     <text x="30" y="34" text-anchor="middle" font-family="system-ui,sans-serif" font-size="5" font-weight="800" fill="#1A1206" opacity="0.7">SIETE</text>
                   </svg>
-                  <div class="alt-card-badge" style="background:#D8610C;">72</div>
+                  <div class="alt-card-badge" style="background:#D27326;">72</div>
                 </div>
                 <div class="alt-card-body">
                   <div class="alt-card-name">Grain-Free Tortilla Chips</div>
@@ -8161,7 +8162,7 @@ HIDDEN -->
                     <ellipse cx="30" cy="30" rx="14" ry="8" fill="#E08840" opacity="0.5"/>
                     <ellipse cx="22" cy="27" rx="10" ry="7" fill="#B05810" opacity="0.7" transform="rotate(-15,22,27)"/>
                   </svg>
-                  <div class="alt-card-badge" style="background:#D8610C;">68</div>
+                  <div class="alt-card-badge" style="background:#D27326;">68</div>
                 </div>
                 <div class="alt-card-body">
                   <div class="alt-card-name">Sweet Potato Chips, Avocado Oil</div>
@@ -8177,7 +8178,7 @@ HIDDEN -->
                     <rect x="12" y="38" width="16" height="14" rx="3" fill="#C8A458" opacity="0.75"/>
                     <rect x="32" y="38" width="16" height="14" rx="3" fill="#C8A458" opacity="0.75"/>
                   </svg>
-                  <div class="alt-card-badge" style="background:#D8610C;">79</div>
+                  <div class="alt-card-badge" style="background:#D27326;">79</div>
                 </div>
                 <div class="alt-card-body">
                   <div class="alt-card-name">Almond Flour Crackers, Farmhouse</div>
@@ -8192,7 +8193,7 @@ HIDDEN -->
                     <rect x="24" y="14" width="12" height="32" rx="6" fill="#7A5030" opacity="0.6"/>
                     <text x="30" y="33" text-anchor="middle" font-family="system-ui,sans-serif" font-size="4.5" font-weight="800" fill="#C8A070" letter-spacing="0.05em">BEEF</text>
                   </svg>
-                  <div class="alt-card-badge" style="background:#188443;">88</div>
+                  <div class="alt-card-badge" style="background:#32A966;">88</div>
                 </div>
                 <div class="alt-card-body">
                   <div class="alt-card-name">Grass-Fed Beef Stick, Original</div>
@@ -8904,11 +8905,11 @@ HIDDEN -->
 
         // brand / score / code hex → colour-vision-safe hex.
         var FWD = {
-          "#188443": "#009E73", // brand green    → bluish green
-          "#0A6630": "#0072B2", // deep green     → blue (2nd cool category)
+          "#32A966": "#009E73", // brand green    → bluish green
+          "#245E3B": "#0072B2", // deep green     → blue (2nd cool category)
           "#FFC434": "#F0C808", // signal yellow  → golden yellow
-          "#D8610C": "#E8852B", // signal orange  → orange
-          "#CA371F": "#C73E1D", // signal risk    → vermillion
+          "#D27326": "#E8852B", // signal orange  → orange
+          "#DC3038": "#C73E1D", // signal risk    → vermillion
           "#FF8E8E": "#FF8E5E"  // dark risk-soft → light vermillion
         };
         var REV = {};
@@ -9251,24 +9252,24 @@ HIDDEN -->
         // pie slices, priority chips, food-row bar segments, and the
         // picker.
         var CODE_CATALOG = {
-          heart_health:       { name: "Heart Health",         category: "Health Outcomes",    color: "#CA371F", icon: "monitor_heart" },
-          gut_health:         { name: "Gut Health",           category: "Health Outcomes",    color: "#CA371F", icon: "eco" },
-          anti_inflammatory:  { name: "Anti Inflammatory",    category: "Health Outcomes",    color: "#CA371F", icon: "shield" },
-          blood_sugar:        { name: "Blood Sugar Support",  category: "Health Outcomes",    color: "#CA371F", icon: "water_drop" },
-          bone_health:        { name: "Bone Health",          category: "Health Outcomes",    color: "#0A6630", icon: "skeleton" },
-          brain_health:       { name: "Brain Health",         category: "Health Outcomes",    color: "#0A6630", icon: "psychology" },
-          clean_label:        { name: "Clean Label",          category: "Clean & Natural",    color: "#188443", icon: "auto_awesome" },
-          ingredient_quality: { name: "Ingredient Quality",   category: "Quality & Content",  color: "#D8610C", icon: "checklist" },
-          nutrient_density:   { name: "Nutrient Density",     category: "Quality & Content",  color: "#D8610C", icon: "restaurant_menu" },
-          additive_free:      { name: "Additive Free",        category: "Quality & Content",  color: "#D8610C", icon: "block" },
-          allergen_friendly:  { name: "Allergen Friendly",    category: "Quality & Content",  color: "#D8610C", icon: "verified" },
+          heart_health:       { name: "Heart Health",         category: "Health Outcomes",    color: "#DC3038", icon: "monitor_heart" },
+          gut_health:         { name: "Gut Health",           category: "Health Outcomes",    color: "#DC3038", icon: "eco" },
+          anti_inflammatory:  { name: "Anti Inflammatory",    category: "Health Outcomes",    color: "#DC3038", icon: "shield" },
+          blood_sugar:        { name: "Blood Sugar Support",  category: "Health Outcomes",    color: "#DC3038", icon: "water_drop" },
+          bone_health:        { name: "Bone Health",          category: "Health Outcomes",    color: "#245E3B", icon: "skeleton" },
+          brain_health:       { name: "Brain Health",         category: "Health Outcomes",    color: "#245E3B", icon: "psychology" },
+          clean_label:        { name: "Clean Label",          category: "Clean & Natural",    color: "#32A966", icon: "auto_awesome" },
+          ingredient_quality: { name: "Ingredient Quality",   category: "Quality & Content",  color: "#D27326", icon: "checklist" },
+          nutrient_density:   { name: "Nutrient Density",     category: "Quality & Content",  color: "#D27326", icon: "restaurant_menu" },
+          additive_free:      { name: "Additive Free",        category: "Quality & Content",  color: "#D27326", icon: "block" },
+          allergen_friendly:  { name: "Allergen Friendly",    category: "Quality & Content",  color: "#D27326", icon: "verified" },
           muscle_health:      { name: "Muscle Health",        category: "Performance Health", color: "#FFC434", icon: "fitness_center" },
           energy_stamina:     { name: "Energy & Stamina",     category: "Performance Health", color: "#FFC434", icon: "bolt" },
           recovery_support:   { name: "Recovery Support",     category: "Performance Health", color: "#FFC434", icon: "bedtime" },
-          performance_score:  { name: "Performance Score",    category: "Performance Health", color: "#0A6630", icon: "speed" },
-          overall_quality:    { name: "Overall Quality",      category: "Overall",            color: "#D8610C", icon: "workspace_premium" },
-          longevity_score:    { name: "Longevity Score",      category: "Overall",            color: "#0A6630", icon: "all_inclusive" },
-          artificial_color:   { name: "Artificial Colors",    category: "Avoid Ingredients",  color: "#CA371F", icon: "palette" }
+          performance_score:  { name: "Performance Score",    category: "Performance Health", color: "#245E3B", icon: "speed" },
+          overall_quality:    { name: "Overall Quality",      category: "Overall",            color: "#D27326", icon: "workspace_premium" },
+          longevity_score:    { name: "Longevity Score",      category: "Overall",            color: "#245E3B", icon: "all_inclusive" },
+          artificial_color:   { name: "Artificial Colors",    category: "Avoid Ingredients",  color: "#DC3038", icon: "palette" }
         };
 
         var CATEGORY_ORDER = [
@@ -13505,10 +13506,10 @@ HIDDEN -->
         var OWL_VB = { w: 193, h: 100 };
 
         var VARIANTS = {
-          light:   { stops: [["0", "#3B82F6"], ["0.6", "#1D4ED8"], ["1", "#1E3A8A"]], owl: "#FFFFFF" },
-          dark:    { stops: [["0", "#14262E"], ["0.55", "#0A2330"], ["1", "#05141C"]], owl: "#60A5FA" },
+          light:   { stops: [["0", "#587896"], ["0.6", "#25507C"], ["1", "#1A2339"]], owl: "#FFFFFF" },
+          dark:    { stops: [["0", "#25507C"], ["0.55", "#1A2339"], ["1", "#0D1321"]], owl: "#8B9FAF" },
           tinted:  { stops: [["0", "#3A3F4A"], ["0.6", "#23272F"], ["1", "#15181E"]], owl: "#D7DBE3" },
-          favicon: { stops: [["0", "#3B82F6"], ["0.6", "#1D4ED8"], ["1", "#1E3A8A"]], owl: "#FFFFFF" }
+          favicon: { stops: [["0", "#587896"], ["0.6", "#25507C"], ["1", "#1A2339"]], owl: "#FFFFFF" }
         };
 
         var SIZE = 1024;

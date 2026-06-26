@@ -31,8 +31,8 @@ export const AIEmptyHero = ({ onTalkToAI }: { onTalkToAI: () => void }) => {
       style={{
         background:
           "linear-gradient(135deg, var(--color-card-elevated) 0%, var(--color-card) 100%)",
-        border: "1px solid rgba(52,229,166,0.35)",
-        boxShadow: "0 12px 32px -8px rgba(52,229,166,0.22)",
+        border: "1px solid rgba(50,169,102,0.35)",
+        boxShadow: "0 12px 32px -8px rgba(50,169,102,0.18)",
       }}
     >
       <span
@@ -120,7 +120,7 @@ export const AITagRow = () => {
         disabled={refreshing}
         className="rounded-pill bg-ink-soft text-ink hover:bg-card-elevated inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-[0.06em] transition disabled:opacity-50"
         style={{
-          border: "1.2px dashed rgba(124,124,251,0.55)",
+          border: "1.2px dashed rgba(37,80,124,0.55)",
         }}
       >
         {refreshing ? (
@@ -151,7 +151,7 @@ export const AITagRow = () => {
         disabled={refreshing}
         className="rounded-pill bg-ink-soft text-ink hover:bg-card-elevated inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold tracking-[0.06em] transition disabled:opacity-50"
         style={{
-          border: "1.2px dashed rgba(124,124,251,0.55)",
+          border: "1.2px dashed rgba(37,80,124,0.55)",
         }}
       >
         {refreshing ? (
@@ -199,7 +199,7 @@ export const TalkToAIHeaderPill = ({ onClick }: { onClick: () => void }) => {
       onClick={onClick}
       className="rounded-pill bg-surface-2 hover:bg-surface-3 inline-flex items-center gap-1.5 px-3 py-1.5 transition"
       style={{
-        border: "1px solid rgba(124,124,251,0.45)",
+        border: "1px solid rgba(37,80,124,0.45)",
       }}
     >
       <Icon name="sparkles" size={12} strokeWidth={2.4} className="text-accent-violet" />
