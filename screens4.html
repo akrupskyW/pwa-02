@@ -1898,15 +1898,19 @@
       .code-picker-card .pick-cat:first-child { margin-top: 0; }
       .code-picker-card .pick-row { cursor: pointer; transition: background 120ms ease, border-color 120ms ease; }
       @media (hover: hover) {
-        .code-picker-card .pick-row:hover:not(.is-taken) {
+        .code-picker-card .pick-row:hover {
           background: var(--surface-2);
           border-color: var(--line-strong);
         }
       }
+      /* Codes already in the user's code stay fully active-looking and
+         clickable (tapping opens the detail sheet with a Remove CTA) —
+         the "In your code" label is the only thing that sets them apart. */
       .code-picker-card .pick-row.is-taken {
-        opacity: 0.45;
-        cursor: not-allowed;
+        opacity: 1;
+        cursor: pointer;
       }
+      .code-picker-card .pick-row.is-taken .chev { color: var(--fg-faint); }
       .code-picker-card .pick-row .taken-lbl {
         color: var(--fg-faint);
         font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
@@ -4786,6 +4790,31 @@
       }
       .code-detail-sheet .cd-add-btn .material-symbols-outlined { font-size: 18px; }
 
+      /* "Remove from my code" CTA — mounted whenever the code is already
+         in the user's code. Sits at the bottom of the cd-scroll as a
+         clearly destructive (risk-red), outlined pill so it never reads
+         as the primary action. */
+      .code-detail-sheet .cd-remove-btn {
+        flex-shrink: 0;
+        display: inline-flex; align-items: center; justify-content: center;
+        gap: 6px;
+        margin-top: 6px;
+        background: transparent;
+        color: var(--risk, #DC3038);
+        border: 1px solid color-mix(in srgb, var(--risk, #DC3038) 45%, transparent);
+        border-radius: 9999px;
+        padding: 12px 20px;
+        font-family: inherit;
+        font-size: 14px; font-weight: 800; letter-spacing: 0;
+        cursor: pointer;
+      }
+      @media (hover: hover) {
+        .code-detail-sheet .cd-remove-btn:hover {
+          background: color-mix(in srgb, var(--risk, #DC3038) 10%, transparent);
+        }
+      }
+      .code-detail-sheet .cd-remove-btn .material-symbols-outlined { font-size: 18px; }
+
       /* Chat pane that replaces the default body when the user taps a
          chat-starter chip. Lives in the same flex column as the head
          and cd-scroll; flex:1 lets the chat-log fill all available
@@ -6918,7 +6947,7 @@
                    data-slices='[]' aria-hidden="true"></svg>
               <div class="pie-center">
                 <div class="num" style="font-size:46px;"><span data-pie-num-val>0</span></div>
-                <div class="lbl">OF 100</div>
+                <div class="lbl">OF 10</div>
               </div>
             </div>
             <div class="status-sub">Tell us what matters about your food, and we&rsquo;ll set up your slots and priorities.</div>
@@ -7015,7 +7044,7 @@
                    data-slices='[]' aria-hidden="true"></svg>
               <div class="pie-center">
                 <div class="num" style="font-size:46px;"><span data-pie-num-val>0</span></div>
-                <div class="lbl">OF 100</div>
+                <div class="lbl">OF 10</div>
               </div>
             </div>
             <div class="status-sub">Tell us what matters about your food, and we&rsquo;ll set up your slots and priorities.</div>
@@ -7084,8 +7113,8 @@
                    data-slices='[{"value":10,"c":"#32A966","icon":"sparkles"},{"value":8,"c":"#D27326","icon":"award"},{"value":6,"c":"#DC3038","icon":"heart-pulse"},{"value":6,"c":"#245E3B","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#DC3038","icon":"leaf"},{"value":4,"c":"#D27326","icon":"salad"},{"value":3,"c":"#245E3B","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#245E3B","icon":"infinity"}]'
                    aria-hidden="true"></svg>
               <div class="pie-center">
-                <div class="num" style="font-size:46px;"><span data-pie-num-val>51</span></div>
-                <div class="lbl">OF 100</div>
+                <div class="num" style="font-size:46px;"><span data-pie-num-val>10</span></div>
+                <div class="lbl">OF 10</div>
               </div>
             </div>
             <div class="status-sub">This is how WISEcoach weights your priorities &mdash; drag to reorder, or tap a code to fine-tune it and chat with WISE AI.</div>
@@ -7151,8 +7180,8 @@
                    data-slices='[{"value":10,"c":"#32A966","icon":"sparkles"},{"value":8,"c":"#D27326","icon":"award"},{"value":6,"c":"#DC3038","icon":"heart-pulse"},{"value":6,"c":"#245E3B","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#DC3038","icon":"leaf"},{"value":4,"c":"#D27326","icon":"salad"},{"value":3,"c":"#245E3B","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#245E3B","icon":"infinity"}]'
                    aria-hidden="true"></svg>
               <div class="pie-center">
-                <div class="num" style="font-size:46px;"><span data-pie-num-val>51</span></div>
-                <div class="lbl">OF 100</div>
+                <div class="num" style="font-size:46px;"><span data-pie-num-val>10</span></div>
+                <div class="lbl">OF 10</div>
               </div>
             </div>
             <div class="status-sub">This is how WISEcoach weights your priorities &mdash; drag to reorder, or tap a code to fine-tune it and chat with WISE AI.</div>
@@ -7210,8 +7239,8 @@
                    data-slices='[{"value":10,"c":"#32A966","icon":"sparkles"},{"value":8,"c":"#D27326","icon":"award"},{"value":6,"c":"#DC3038","icon":"heart-pulse"},{"value":6,"c":"#245E3B","icon":"gauge"},{"value":5,"c":"#FFC434","icon":"dumbbell"},{"value":4,"c":"#DC3038","icon":"leaf"},{"value":4,"c":"#D27326","icon":"salad"},{"value":3,"c":"#245E3B","icon":"brain"},{"value":3,"c":"#FFC434","icon":"zap"},{"value":2,"c":"#245E3B","icon":"infinity"}]'
                    aria-hidden="true"></svg>
               <div class="pie-center">
-                <div class="num" style="font-size:46px;"><span data-pie-num-val>51</span></div>
-                <div class="lbl">OF 100</div>
+                <div class="num" style="font-size:46px;"><span data-pie-num-val>10</span></div>
+                <div class="lbl">OF 10</div>
               </div>
             </div>
             <div class="status-sub">This is how WISEcoach weights your priorities &mdash; drag to reorder, or tap a code to fine-tune it and chat with WISE AI.</div>
@@ -10128,7 +10157,7 @@ HIDDEN -->
             +   '</span>'
             +   '<div class="nm">' + W.escapeHtml(entry.meta.name) + '</div>'
             +   (taken
-                  ? '<span class="taken-lbl">In your code</span>'
+                  ? '<span class="taken-lbl">In your code</span><span class="chev"><span class="material-symbols-outlined">chevron_right</span></span>'
                   : '<span class="chev"><span class="material-symbols-outlined">chevron_right</span></span>')
             + '</div>';
         }
@@ -10413,7 +10442,7 @@ HIDDEN -->
 
           var pieNum = phoneWrap.querySelector(".pie-center .num [data-pie-num-val]")
                     || phoneWrap.querySelector(".pie-center .num");
-          if (pieNum) pieNum.textContent = String(weightSum);
+          if (pieNum) pieNum.textContent = String(filled.length);
 
           updateSavedLinkCounts();
         }
@@ -11272,6 +11301,16 @@ HIDDEN -->
                + '</button>')
             : '';
 
+          // Remove CTA — shown whenever the code is already in the user's
+          // code, so tapping a taken row in the picker (or any "code"-
+          // context open) gives a one-tap way to turn it off / remove it.
+          var removeCtaHtml = inCode
+            ? ('<button type="button" class="cd-remove-btn" data-action="code-detail-remove" data-code-id="' + codeId + '">'
+               +   '<span class="material-symbols-outlined">remove_circle_outline</span>'
+               +   'Remove from my code'
+               + '</button>')
+            : '';
+
           // Rebalance affordance — only when opened from a Browse
           // priority chip and the code is actually in the user's code.
           // Rendered as the lead chip in the "Chat with WISE AI" row
@@ -11329,6 +11368,7 @@ HIDDEN -->
             +   '<div class="cd-rule" aria-hidden="true"></div>'
             +   '<div class="cd-scroll">'
             +     addCtaHtml
+            +     removeCtaHtml
             +     (showRebalance ? '<div class="cd-intent-row">' + rebalanceChipHtml + '</div>' : '')
             +     cdModeHtml
             +     '<div class="cd-card">'
@@ -11552,6 +11592,7 @@ HIDDEN -->
                           || action === "code-detail-close"
                           || action === "code-detail-intent"
                           || action === "code-detail-add"
+                          || action === "code-detail-remove"
                           || action === "code-detail-rebalance";
           var phoneWrap = isCodeDetail
             ? target.closest(".phone-wrap")
@@ -11784,6 +11825,20 @@ HIDDEN -->
             ev.preventDefault();
             var intentText = target.getAttribute("data-intent-text") || target.textContent.trim();
             enterChatMode(phoneWrap, intentText);
+            return;
+          }
+
+          if (action === "code-detail-remove" && phoneWrap) {
+            var rmDetailId = target.getAttribute("data-code-id");
+            if (rmDetailId) {
+              ev.preventDefault();
+              // Turn the code off / drop it from the user's code, then
+              // close the detail sheet. The picker (and every other
+              // code-aware screen) re-renders off the shared state, so
+              // the row flips back to an available "Add" state.
+              W.removeCode(rmDetailId);
+              closeCodeDetail(phoneWrap);
+            }
             return;
           }
 
