@@ -325,7 +325,37 @@
       .spin { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: -3px; margin-right: 8px; }
       @keyframes spin { to { transform: rotate(360deg); } }
 
+      /* Off-screen render target used for computed-style measurement. */
       #stage { position: absolute; width: 1180px; height: 900px; left: -99999px; top: 0; border: 0; }
+
+      /* Floating live-preview shown when a finding is highlighted. */
+      :root { --pv-w: 390px; --pv-h: 720px; --pv-right: 12px; --pv-bottom: 12px; }
+      #stage.is-preview {
+        position: fixed; left: auto; top: auto;
+        right: var(--pv-right); bottom: var(--pv-bottom);
+        width: var(--pv-w); height: var(--pv-h);
+        border: 2px solid #5b9dff; border-radius: 12px;
+        z-index: 50; background: #000;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      }
+      #preview-close {
+        position: fixed; z-index: 51;
+        right: calc(var(--pv-right) + 8px);
+        bottom: calc(var(--pv-bottom) + var(--pv-h) - 40px);
+        width: 32px; height: 32px; border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: #12253f; color: #eaf1ff;
+        font-size: 16px; line-height: 1; font-family: inherit;
+        display: none; align-items: center; justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+        transition: background 0.14s ease, transform 0.1s ease;
+      }
+      #preview-close.is-shown { display: inline-flex; }
+      #preview-close:hover { background: #1c3a63; }
+      #preview-close:active { transform: scale(0.92); }
+      #preview-close:focus-visible { outline: 2px solid #5b9dff; outline-offset: 2px; }
+
       .foot { color: var(--ink-faint); font-size: 12px; margin: 30px 0 10px; }
       .foot b { color: var(--ink-muted); }
     </style>
@@ -372,6 +402,7 @@
     </main>
 
     <iframe id="stage" title="screens4.html render target" aria-hidden="true"></iframe>
+    <button id="preview-close" type="button" aria-label="Close preview" title="Close preview (Esc)">✕</button>
 
     <script>
       "use strict";
@@ -1215,8 +1246,8 @@
 
       let lastHighlight = null;
       function highlight(el) {
-        const stage = $("#stage");
-        stage.style.cssText = "position:fixed;right:12px;bottom:12px;width:390px;height:720px;left:auto;border:2px solid #5b9dff;border-radius:12px;z-index:50;background:#000;box-shadow:0 20px 60px rgba(0,0,0,.6);";
+        $("#stage").classList.add("is-preview");
+        $("#preview-close").classList.add("is-shown");
         try {
           if (lastHighlight) lastHighlight.style.outline = lastHighlight.dataset._prevOutline || "";
           el.dataset._prevOutline = el.style.outline;
@@ -1225,6 +1256,20 @@
           lastHighlight = el;
         } catch (e) {}
       }
+
+      function closePreview() {
+        $("#stage").classList.remove("is-preview");
+        $("#preview-close").classList.remove("is-shown");
+        try {
+          if (lastHighlight) lastHighlight.style.outline = lastHighlight.dataset._prevOutline || "";
+        } catch (e) {}
+        lastHighlight = null;
+      }
+
+      $("#preview-close").addEventListener("click", closePreview);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && $("#stage").classList.contains("is-preview")) closePreview();
+      });
 
       function buildFilters() {
         const bar = $("#filters");
