@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>screens4.html — WCAG 2.2 Accessibility Review</title>
+    <title>screens4.html — WCAG 2.2 Conformance Review</title>
     <style>
       /* ───────────────────────── Review-tool chrome ─────────────────────────
          Deliberately kept independent of screens4.html's design tokens so the
@@ -172,12 +172,17 @@
       .lvl {
         flex: none;
         font-size: 11px;
-        font-weight: 700;
+        font-weight: 800;
         border: 1px solid var(--line);
         border-radius: 6px;
-        padding: 2px 7px;
+        padding: 2px 8px;
         color: var(--ink-muted);
+        min-width: 34px;
+        text-align: center;
       }
+      .lvl.lvlA { color: #6fd08a; border-color: rgba(111, 208, 138, 0.4); }
+      .lvl.lvlAA { color: var(--accent); border-color: rgba(91, 157, 255, 0.4); }
+      .lvl.lvlAAA { color: var(--manual); border-color: rgba(154, 134, 224, 0.4); }
       .tag-new {
         flex: none;
         font-size: 10px;
@@ -210,6 +215,38 @@
       }
       .scope-note b { color: var(--ink); }
       .scope-note .n { color: var(--accent); font-weight: 800; }
+
+      .section-h { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-faint); margin: 4px 0 10px; font-weight: 700; }
+      .levels {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+      .level-card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 16px;
+      }
+      .level-card .hd { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+      .level-card .lv { font-size: 20px; font-weight: 800; letter-spacing: 0.02em; }
+      .level-card .lv-sub { font-size: 11.5px; color: var(--ink-faint); }
+      .level-card.a .lv { color: #6fd08a; }
+      .level-card.aa .lv { color: var(--accent); }
+      .level-card.aaa .lv { color: var(--manual); }
+      .level-card .lv-bar { height: 8px; border-radius: 5px; overflow: hidden; display: flex; border: 1px solid var(--line); margin-bottom: 10px; }
+      .level-card .lv-bar i { display: block; height: 100%; }
+      .level-card .lv-bar i.pass { background: var(--pass); }
+      .level-card .lv-bar i.fail { background: var(--fail); }
+      .level-card .lv-bar i.warn { background: var(--warn); }
+      .level-card .lv-bar i.manual { background: var(--manual); }
+      .level-card .lv-counts { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--ink-muted); }
+      .level-card .lv-counts b { font-variant-numeric: tabular-nums; }
+      .level-card .lv-counts .c-pass b { color: var(--pass); }
+      .level-card .lv-counts .c-fail b { color: var(--fail); }
+      .level-card .lv-counts .c-warn b { color: var(--warn); }
+      .level-card .lv-counts .c-manual b { color: var(--manual); }
       .count { flex: none; font-size: 12px; color: var(--ink-muted); font-variant-numeric: tabular-nums; }
 
       .crit-body { padding: 0 16px 16px; border-top: 1px solid var(--line); }
@@ -297,8 +334,8 @@
     <header class="app">
       <div class="title-row">
         <div>
-          <h1>WCAG&nbsp;2.2 Accessibility Review — <span class="target">screens4.html</span></h1>
-          <div class="sub" id="run-meta">Audits the app screens only (dark + light). Re-reads the target file live on every run.</div>
+          <h1>WCAG&nbsp;2.2 Conformance Review — <span class="target">screens4.html</span></h1>
+          <div class="sub" id="run-meta">Success criteria by level (A / AA / AAA). App screens only (dark + light). Re-reads the target file live on every run.</div>
         </div>
         <div class="spacer"></div>
         <button class="btn" id="rerun" type="button">Re-run audit</button>
@@ -311,19 +348,25 @@
         <div class="scope-note" id="scope-note"></div>
         <div class="summary" id="summary"></div>
         <div class="scorebar" id="scorebar" aria-hidden="true"></div>
+        <h2 class="section-h">Conformance by level</h2>
+        <div class="levels" id="level-summary"></div>
         <div class="toolbar" id="filters"></div>
+        <div class="toolbar" id="level-filters"></div>
         <div id="criteria"></div>
         <p class="foot">
-          <b>Scope &amp; honesty note.</b> This audit is scoped to the app
-          screens only (every dark + light phone frame). The catalog's own
-          header/titles, the per-frame caption tags, and the Design System &amp;
-          App Icon boards are intentionally excluded. It is an automated static
-          + rendered-DOM audit: it reliably catches machine-detectable failures
-          (missing names, labels, contrast, target size, structure). Criteria
-          marked <b>Manual</b> require human review, and <b>DOC</b> criteria
+          <b>Method &amp; conformance note.</b> This is a WCAG&nbsp;2.2 review
+          organized by success criterion and level (<b>A</b> / <b>AA</b> /
+          <b>AAA</b>). AA is the usual conformance target; AAA shortfalls are
+          shown as warnings, not failures. Contrast follows WCAG's split of
+          <b>text</b> (1.4.3, 4.5:1) vs <b>non-text</b> graphics including icon
+          glyphs (1.4.11, 3:1); text painted over SVG/canvas is deferred to
+          manual since its backing color isn't in the CSS. Scope is the app
+          screens only (every dark + light phone frame) — the catalog header,
+          caption tags, and Design System / App Icon boards are excluded.
+          Criteria marked <b>Manual</b> require human review; <b>DOC</b> criteria
           (language, viewport, focus CSS) are document-wide settings the screens
-          inherit. A "Pass" means no automated failures were found — not full
-          WCAG conformance.
+          inherit. A "Pass" means no automated failure at that level was found —
+          it is not a formal conformance claim.
         </p>
       </div>
     </main>
@@ -364,6 +407,70 @@
       };
 
       const inAriaHidden = (el) => !!el.closest('[aria-hidden="true"]');
+
+      // Icon-font glyphs (Material Symbols) are non-text content — WCAG grades
+      // them under 1.4.11 (3:1), not 1.4.3 (4.5:1). Detect them so the text
+      // contrast check doesn't over-grade them.
+      const isIconGlyph = (el) =>
+        /\bmaterial-symbols(-outlined)?\b|\bmaterial-icons\b/.test(el.getAttribute("class") || "");
+
+      // Visible text with icon-font ligatures and aria-hidden content stripped —
+      // so an icon glyph's ligature name ("visibility") isn't mistaken for a text label.
+      const visibleLabelText = (el) => {
+        const clone = el.cloneNode(true);
+        clone
+          .querySelectorAll('.material-symbols-outlined, .material-symbols, .material-icons, [aria-hidden="true"]')
+          .forEach((n) => n.remove());
+        return (clone.textContent || "").replace(/\s+/g, " ").trim();
+      };
+
+      // Text/icons painted over an <svg>/<canvas> layer (e.g. a label on a
+      // colored pie arc) can't have their true background read from CSS — the
+      // resolver would wrongly fall through to the page background. Detect the
+      // overlay pattern so we can defer to manual review instead of false-failing.
+      const overPaintedLayer = (el, win) => {
+        // Walk up from the element. As soon as we find a real solid background
+        // color, the text sits on CSS-resolvable paint → NOT an overlay. Only if
+        // we first reach an absolutely/fixed-positioned node that sits directly
+        // alongside an <svg>/<canvas> (the "label on a pie arc" pattern) do we
+        // treat it as painted over a vector layer we can't read.
+        let node = el;
+        while (node && node.nodeType === 1) {
+          const cs = win.getComputedStyle(node);
+          const col = parseColor(cs.backgroundColor);
+          if (col && col.a > 0) return false; // solid CSS background found first
+          const pos = cs.position;
+          if ((pos === "absolute" || pos === "fixed") && node.parentElement &&
+              node.parentElement.querySelector(":scope > svg, :scope > canvas"))
+            return true;
+          node = node.parentElement;
+        }
+        return false;
+      };
+
+      // Conventional 2-decimal rounding of a contrast ratio (matches how WCAG
+      // ratios are reported, so a 2.9985 doesn't spuriously fail a 3:1 gate).
+      const round2 = (n) => Math.round(n * 100) / 100;
+
+      // Shared contrast measurement for one element against its resolved bg.
+      const measureContrast = (el, win) => {
+        const cs = win.getComputedStyle(el);
+        const fg = parseColor(cs.color);
+        if (!fg) return null;
+        const bgInfo = resolveBg(el, win);
+        const fgFlat = fg.a < 1 ? blend(fg, bgInfo.color) : fg;
+        const size = parseFloat(cs.fontSize);
+        const bold = parseInt(cs.fontWeight, 10) >= 700;
+        return {
+          ratio: round2(contrastRatio(fgFlat, bgInfo.color)),
+          size,
+          bold,
+          large: size >= 24 || (size >= 18.66 && bold),
+          bg: bgInfo.color,
+          uncertain: bgInfo.uncertain,
+          fgCss: cs.color,
+        };
+      };
 
       // Simplified accessible-name computation (heuristic, covers common cases).
       const accName = (el, doc) => {
@@ -648,18 +755,23 @@
         },
         {
           sc: "2.5.3", name: "Label in Name", level: "A", url: U + "label-in-name.html",
-          desc: "For controls with visible text, the accessible name must contain that visible text (so speech input works).",
-          how: "Compares visible text of labelled buttons/links against their aria-label.",
-          run(doc) {
+          desc: "For controls with a visible text label, the accessible name must contain that visible text (so speech input works).",
+          how: "Compares each control's visible text label (icon-font glyphs and aria-hidden content excluded) against its aria-label. Skips hidden controls and icon-only controls (no visible text label).",
+          run(doc, win, live) {
             const f = [];
             sqsa("button, a[href], [role='button'], [role='link']").forEach((el) => {
               if (inAriaHidden(el)) return;
-              const visible = (el.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+              if (live && win) { const r = el.getBoundingClientRect(); if (r.width < 1 || r.height < 1) return; }
               const aria = (el.getAttribute("aria-label") || "").trim().toLowerCase();
-              if (visible && aria && !aria.includes(visible))
+              if (!aria) return;
+              const visible = visibleLabelText(el).toLowerCase();
+              // No visible text label (icon-only) → 2.5.3 doesn't apply. Overly long
+              // visible text is descriptive content, not a label → skip to avoid noise.
+              if (!visible || visible.length > 40) return;
+              if (!aria.includes(visible))
                 f.push({
                   level: "warn",
-                  msg: 'Visible text "' + truncate(visible, 40) + '" is not contained in aria-label "' + truncate(aria, 40) + '".',
+                  msg: 'Visible label "' + truncate(visible, 40) + '" is not contained in aria-label "' + truncate(aria, 40) + '".',
                   el,
                 });
             });
@@ -722,54 +834,89 @@
         {
           sc: "1.4.3", name: "Contrast (Minimum)", level: "AA", url: U + "contrast-minimum.html", needsLive: true,
           desc: "Text must have a contrast ratio of at least 4.5:1 (3:1 for large text) against its background.",
-          how: "Uses rendered computed styles: measures each visible text node's color against its resolved background.",
+          how: "Uses rendered computed styles: measures each visible text run's color against its resolved background. Icon-font glyphs are excluded here (they are non-text — see 1.4.11); text painted over SVG/canvas layers is deferred to manual review since its true backing color isn't in the CSS.",
           run(doc, win, live) {
             if (!live) return { status: "manual", note: "Requires the rendered page. Run this review over a local http server (see setup note) to enable computed-style contrast testing." };
             const f = [];
-            let tested = 0, skipped = 0;
+            let tested = 0, skipped = 0, overlay = 0;
             const seen = new Set();
             outer: for (const root of SCOPE.roots) {
               const walker = doc.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
               let el = root; // include the root itself, then descend
               do {
                 if (f.length >= MAX_FINDINGS) break outer;
-                // element must have a direct, non-whitespace text node
                 const hasText = Array.from(el.childNodes).some((n) => n.nodeType === 3 && n.textContent.trim());
                 if (!hasText) continue;
+                if (isIconGlyph(el)) continue; // non-text → graded under 1.4.11
                 if (inAriaHidden(el) || !isVisible(el, win)) continue;
                 const rect = el.getBoundingClientRect();
                 if (rect.width < 1 || rect.height < 1) continue;
-                const cs = win.getComputedStyle(el);
-                const fg = parseColor(cs.color);
-                if (!fg) continue;
-                const bgInfo = resolveBg(el, win);
-                const fgFlat = fg.a < 1 ? blend(fg, bgInfo.color) : fg;
-                const ratio = contrastRatio(fgFlat, bgInfo.color);
-                const size = parseFloat(cs.fontSize);
-                const bold = parseInt(cs.fontWeight, 10) >= 700;
-                const large = size >= 24 || (size >= 18.66 && bold);
-                const min = large ? 3.0 : 4.5;
+                const m = measureContrast(el, win);
+                if (!m) continue;
+                const min = m.large ? 3.0 : 4.5;
                 tested++;
-                if (ratio < min) {
-                  if (bgInfo.uncertain) { skipped++; continue; } // over a gradient/image — can't be sure
-                  const key = cs.color + "|" + Math.round(bgInfo.color.r) + "," + Math.round(bgInfo.color.g) + "," + Math.round(bgInfo.color.b) + "|" + Math.round(size);
+                if (m.ratio < min) {
+                  if (overPaintedLayer(el, win)) { overlay++; continue; } // text on an SVG/canvas layer
+                  if (m.uncertain) { skipped++; continue; }               // over a gradient/image
+                  const key = m.fgCss + "|" + [m.bg.r, m.bg.g, m.bg.b].map((n) => Math.round(n)).join(",") + "|" + Math.round(m.size);
                   if (seen.has(key)) continue;
                   seen.add(key);
                   f.push({
                     level: "fail",
-                    msg: "Contrast " + ratio.toFixed(2) + ":1 (needs " + min + ":1). Text " + cs.color + " on ~rgb(" +
-                      [bgInfo.color.r, bgInfo.color.g, bgInfo.color.b].map((n) => Math.round(n)).join(",") + "), " +
-                      Math.round(size) + "px" + (bold ? " bold" : "") + ".",
+                    msg: "Contrast " + m.ratio.toFixed(2) + ":1 (needs " + min + ":1). Text " + m.fgCss + " on ~rgb(" +
+                      [m.bg.r, m.bg.g, m.bg.b].map((n) => Math.round(n)).join(",") + "), " +
+                      Math.round(m.size) + "px" + (m.bold ? " bold" : "") + ".",
                     el,
                   });
                 }
               } while ((el = walker.nextNode()));
             }
-            return {
-              status: f.length ? "fail" : "pass",
-              findings: f,
-              note: tested + " text elements measured" + (skipped ? "; " + skipped + " low-contrast over gradients/images skipped (verify manually)" : "") + (f.length >= MAX_FINDINGS ? "; showing first " + MAX_FINDINGS + " unique color pairs" : "") + ".",
-            };
+            const notes = [tested + " text runs measured"];
+            if (overlay) notes.push(overlay + " over SVG/canvas layers deferred to manual (1.4.3 note)");
+            if (skipped) notes.push(skipped + " over gradients/images skipped");
+            if (f.length >= MAX_FINDINGS) notes.push("showing first " + MAX_FINDINGS + " unique pairs");
+            return { status: f.length ? "fail" : "pass", findings: f, note: notes.join("; ") + "." };
+          },
+        },
+        {
+          sc: "1.4.11", name: "Non-text Contrast", level: "AA", url: U + "non-text-contrast.html", needsLive: true,
+          desc: "Meaningful graphics and UI components (including icon glyphs) need a contrast ratio of at least 3:1 against adjacent colors.",
+          how: "Measures each visible, non-decorative icon-font glyph's color against its resolved background at the 3:1 threshold. Decorative (aria-hidden) glyphs are exempt; glyphs over SVG/canvas layers are deferred to manual review.",
+          run(doc, win, live) {
+            if (!live) return { status: "manual", note: "Requires the rendered page — run over a local http server. Also verify chart arcs, focus rings, sliders, and input borders manually." };
+            const f = [];
+            let tested = 0, overlay = 0, skipped = 0;
+            const seen = new Set();
+            for (const root of SCOPE.roots) {
+              if (f.length >= MAX_FINDINGS) break;
+              root.querySelectorAll(".material-symbols-outlined, .material-symbols, .material-icons").forEach((el) => {
+                if (f.length >= MAX_FINDINGS) return;
+                if (inAriaHidden(el) || !isVisible(el, win)) return;
+                const rect = el.getBoundingClientRect();
+                if (rect.width < 1 || rect.height < 1) return;
+                const m = measureContrast(el, win);
+                if (!m) return;
+                tested++;
+                if (m.ratio < 3.0) {
+                  if (overPaintedLayer(el, win)) { overlay++; return; }
+                  if (m.uncertain) { skipped++; return; }
+                  const key = m.fgCss + "|" + [m.bg.r, m.bg.g, m.bg.b].map((n) => Math.round(n)).join(",");
+                  if (seen.has(key)) return;
+                  seen.add(key);
+                  f.push({
+                    level: "fail",
+                    msg: "Icon contrast " + m.ratio.toFixed(2) + ":1 (needs 3:1). Glyph " + m.fgCss + " on ~rgb(" +
+                      [m.bg.r, m.bg.g, m.bg.b].map((n) => Math.round(n)).join(",") + ").",
+                    el,
+                  });
+                }
+              });
+            }
+            const notes = [tested + " icon glyphs measured at 3:1"];
+            if (overlay) notes.push(overlay + " over SVG/canvas layers deferred to manual");
+            if (skipped) notes.push(skipped + " over gradients/images skipped");
+            notes.push("non-icon graphics (chart arcs, borders, focus rings) still need manual review");
+            return { status: f.length ? "fail" : "pass", findings: f, note: notes.join("; ") + "." };
           },
         },
         {
@@ -861,9 +1008,6 @@
         { sc: "1.4.1", name: "Use of Color", level: "A", url: U + "use-of-color.html", manual: true,
           desc: "Color must not be the only means of conveying information (e.g. score tiers, error states).",
           how: "Manual: verify every color-coded signal (score rings, tier chips) also has text/icon/pattern." },
-        { sc: "1.4.11", name: "Non-text Contrast", level: "AA", url: U + "non-text-contrast.html", manual: true,
-          desc: "UI components and meaningful graphics (icons, chart arcs, focus rings, borders) need 3:1 contrast.",
-          how: "Manual: check icon buttons, the ScoreRing arcs, sliders, and input borders against their backgrounds." },
         { sc: "2.4.11", name: "Focus Not Obscured (Minimum)", level: "AA", url: U + "focus-not-obscured-minimum.html", new22: true, manual: true,
           desc: "When an element has focus, it must not be entirely hidden by sticky headers, bottom sheets, or the tab bar.",
           how: "Manual: tab through screens with sticky chrome / open bottom sheets and confirm the focused control stays visible." },
@@ -885,6 +1029,62 @@
         { sc: "2.4.6", name: "Headings and Labels", level: "AA", url: U + "headings-and-labels.html", manual: true,
           desc: "Headings and labels must be descriptive of their content/purpose.",
           how: "Manual: confirm headings/labels are meaningful (automated empty-check is under 1.3.1)." },
+
+        // ── Level AAA criteria ─────────────────────────────────────────────
+        {
+          sc: "1.4.6", name: "Contrast (Enhanced)", level: "AAA", url: U + "contrast-enhanced.html", needsLive: true,
+          desc: "Enhanced target: text needs a contrast ratio of at least 7:1 (4.5:1 for large text).",
+          how: "Same rendered measurement as 1.4.3, at the stricter AAA thresholds. Icons and SVG-overlaid text are excluded as in 1.4.3.",
+          run(doc, win, live) {
+            if (!live) return { status: "manual", note: "Requires the rendered page — run over a local http server." };
+            const f = [];
+            let tested = 0;
+            const seen = new Set();
+            outer: for (const root of SCOPE.roots) {
+              const walker = doc.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+              let el = root;
+              do {
+                if (f.length >= MAX_FINDINGS) break outer;
+                const hasText = Array.from(el.childNodes).some((n) => n.nodeType === 3 && n.textContent.trim());
+                if (!hasText || isIconGlyph(el)) continue;
+                if (inAriaHidden(el) || !isVisible(el, win)) continue;
+                const rect = el.getBoundingClientRect();
+                if (rect.width < 1 || rect.height < 1) continue;
+                const m = measureContrast(el, win);
+                if (!m) continue;
+                const min = m.large ? 4.5 : 7.0;
+                tested++;
+                if (m.ratio < min) {
+                  if (overPaintedLayer(el, win) || m.uncertain) continue;
+                  const key = m.fgCss + "|" + [m.bg.r, m.bg.g, m.bg.b].map((n) => Math.round(n)).join(",") + "|" + Math.round(m.size);
+                  if (seen.has(key)) continue;
+                  seen.add(key);
+                  f.push({ level: "warn", msg: "Contrast " + m.ratio.toFixed(2) + ":1 (AAA needs " + min + ":1). Text " + m.fgCss + " on ~rgb(" + [m.bg.r, m.bg.g, m.bg.b].map((n) => Math.round(n)).join(",") + "), " + Math.round(m.size) + "px" + (m.bold ? " bold" : "") + ".", el });
+                }
+              } while ((el = walker.nextNode()));
+            }
+            // AAA shortfalls are reported as warnings (AA is the usual conformance bar).
+            return { status: f.length ? "warn" : "pass", findings: f, note: tested + " text runs measured at the 7:1 (AAA) threshold; " + f.length + " below (AAA is aspirational — AA is the conformance target)." };
+          },
+        },
+        { sc: "1.4.9", name: "Images of Text (No Exception)", level: "AAA", url: U + "images-of-text-no-exception.html", manual: true,
+          desc: "Text must be real text, never an image of text (except pure decoration / logotypes).",
+          how: "Manual: confirm score numbers, labels, and headings are live text (they are icon-font + DOM text here, not raster)." },
+        { sc: "2.2.3", name: "No Timing", level: "AAA", url: U + "no-timing.html", manual: true,
+          desc: "Timing is not an essential part of any activity (no time limits on interactions).",
+          how: "Manual: confirm nothing (e.g. the scan flow, toasts) forces a time limit on the user." },
+        { sc: "2.3.3", name: "Animation from Interactions", level: "AAA", url: U + "animation-from-interactions.html", manual: true,
+          desc: "Motion animation triggered by interaction can be disabled (respect prefers-reduced-motion).",
+          how: "Manual: the donut/replay and slide animations should honor prefers-reduced-motion." },
+        { sc: "2.4.12", name: "Focus Not Obscured (Enhanced)", level: "AAA", url: U + "focus-not-obscured-enhanced.html", new22: true, manual: true,
+          desc: "No part of a focused component is hidden by author-created content.",
+          how: "Manual: stricter version of 2.4.11 — the entire focused control must remain visible." },
+        { sc: "2.4.13", name: "Focus Appearance", level: "AAA", url: U + "focus-appearance.html", new22: true, manual: true,
+          desc: "The focus indicator must be large enough (≥ 2px perimeter) and have ≥ 3:1 contrast against unfocused state.",
+          how: "Manual: inspect the focus ring thickness and contrast on buttons, inputs, and tabs." },
+        { sc: "3.3.9", name: "Accessible Authentication (Enhanced)", level: "AAA", url: U + "accessible-authentication-enhanced.html", new22: true, manual: true,
+          desc: "No cognitive function test at all in authentication (stricter than 3.3.8).",
+          how: "Manual: if/when auth ships, avoid any memorization/transcription step without an alternative." },
       ];
 
       /* ─────────────────────── Rendering the report ─────────────────────── */
@@ -914,6 +1114,38 @@
           .map((k) => `<i class="${k}" style="width:${((counts[k] || 0) / total) * 100}%"></i>`)
           .join("");
 
+        // ── Per-level (A / AA / AAA) conformance summary ──
+        const levels = [
+          ["A", "a", "Level A · essential"],
+          ["AA", "aa", "Level AA · standard target"],
+          ["AAA", "aaa", "Level AAA · enhanced"],
+        ];
+        $("#level-summary").innerHTML = levels
+          .map(([lvl, cls, sub]) => {
+            const items = results.filter((r) => r.level === lvl);
+            const lc = { pass: 0, fail: 0, warn: 0, manual: 0 };
+            items.forEach((r) => (lc[r.status] = (lc[r.status] || 0) + 1));
+            const t = items.length || 1;
+            const bar = ["fail", "warn", "manual", "pass"]
+              .map((k) => (lc[k] ? `<i class="${k}" style="width:${(lc[k] / t) * 100}%"></i>` : ""))
+              .join("");
+            const counts = [
+              ["c-fail", lc.fail, "fail"],
+              ["c-warn", lc.warn, "warn"],
+              ["c-manual", lc.manual, "manual"],
+              ["c-pass", lc.pass, "pass"],
+            ]
+              .filter(([, n]) => n)
+              .map(([c, n, l]) => `<span class="${c}"><b>${n}</b> ${l}</span>`)
+              .join("");
+            return `<div class="level-card ${cls}">
+              <div class="hd"><span class="lv">${lvl}</span><span class="lv-sub">${sub} · ${items.length} criteria</span></div>
+              <div class="lv-bar">${bar}</div>
+              <div class="lv-counts">${counts || '<span>no criteria</span>'}</div>
+            </div>`;
+          })
+          .join("");
+
         const sorted = results.slice().sort((a, b) => statusRank[a.status] - statusRank[b.status] || a.sc.localeCompare(b.sc, undefined, { numeric: true }));
 
         $("#criteria").innerHTML = sorted
@@ -941,7 +1173,7 @@
                 </span>
                 ${r.new22 ? '<span class="tag-new">NEW 2.2</span>' : ""}
                 ${r.docLevel ? '<span class="tag-doc">DOC</span>' : ""}
-                <span class="lvl">${r.level}</span>
+                <span class="lvl ${r.level === "A" ? "lvlA" : r.level === "AA" ? "lvlAA" : r.level === "AAA" ? "lvlAAA" : ""}" title="WCAG 2.2 Level ${esc(r.level)}">${esc(r.level)}</span>
                 <span class="count">${(r.findings || []).length ? (r.findings || []).length + " issue" + ((r.findings || []).length === 1 ? "" : "s") : ""}</span>
               </summary>
               <div class="crit-body">
@@ -967,7 +1199,18 @@
         }
 
         buildFilters();
+        buildLevelFilters();
         $("#report").hidden = false;
+      }
+
+      // Combined status + level filtering.
+      const activeFilters = { status: "all", level: "all" };
+      function applyFilters() {
+        $("#criteria").querySelectorAll(".criterion").forEach((c) => {
+          const okStatus = activeFilters.status === "all" || c.dataset.status === activeFilters.status;
+          const okLevel = activeFilters.level === "all" || c.dataset.level === activeFilters.level;
+          c.style.display = okStatus && okLevel ? "" : "none";
+        });
       }
 
       let lastHighlight = null;
@@ -998,10 +1241,28 @@
         bar.querySelectorAll(".chip").forEach((chip) => {
           chip.addEventListener("click", () => {
             bar.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", c === chip));
-            const f = chip.dataset.filter;
-            $("#criteria").querySelectorAll(".criterion").forEach((c) => {
-              c.style.display = f === "all" || c.dataset.status === f ? "" : "none";
-            });
+            activeFilters.status = chip.dataset.filter;
+            applyFilters();
+          });
+        });
+      }
+
+      function buildLevelFilters() {
+        const bar = $("#level-filters");
+        const filters = [
+          ["all", "All levels"],
+          ["A", "Level A"],
+          ["AA", "Level AA"],
+          ["AAA", "Level AAA"],
+        ];
+        bar.innerHTML = filters
+          .map(([id, label], i) => `<button class="chip lvl-chip" data-level="${id}" aria-pressed="${i === 0}">${label}</button>`)
+          .join("");
+        bar.querySelectorAll(".chip").forEach((chip) => {
+          chip.addEventListener("click", () => {
+            bar.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", c === chip));
+            activeFilters.level = chip.dataset.level;
+            applyFilters();
           });
         });
       }

@@ -50,10 +50,10 @@
         --bg: #0D1321;              /* App Blue Dark */
         --bg-deep: #1A2339;         /* blue-500 Deep Harbor */
         --surface: #1A2339;         /* blue-500 */
-        --surface-2: #25507C;       /* blue-400 Coastal Haze */
-        --surface-3: #25507C;       /* blue-400 Coastal Haze — elevated + bezel */
+        --surface-2: #1A3B5C;       /* blue-400 Coastal Haze — deepened for WCAG 2.2 AA (muted/secondary text ≥4.5:1 on elevated chrome) */
+        --surface-3: #1A3B5C;       /* blue-400 Coastal Haze — elevated + bezel */
         --card: #1A2339;
-        --card-elev: #25507C;
+        --card-elev: #1A3B5C;
         --ink-soft: #0D1321;
 
         --line-subtle: #1F222A;     /* t-divider (dark) */
@@ -131,7 +131,7 @@
         --fg-bright: #000000;       /* neutral-500 */
         --fg: #000000;
         --fg-muted: #404040;        /* neutral-400 */
-        --fg-faint: #808080;        /* neutral-300 */
+        --fg-faint: #6E6E6E;        /* neutral-300 → darkened for WCAG 2.2 AA (4.5:1 tertiary text on white/linen) */
 
         --status-fg: #000000;
         --island-bg: #000000;
@@ -2953,7 +2953,7 @@
       .alt-card-badge {
         position: absolute;
         top: 5px; right: 5px;
-        color: #fff;
+        color: #0D1321; /* dark ink — WCAG 2.2 AA (≥4.5:1 on the bright score-tier chip fills; white text failed) */
         font-size: 10px; font-weight: 800;
         border-radius: 999px;
         padding: 2px 6px;
@@ -6236,6 +6236,28 @@
         transition: color 140ms ease;
       }
       .saved-hint.is-ok { color: var(--emerald); }
+
+      /* ─── WCAG 2.2 · 1.4.11 Non-text Contrast — tier-icon remediation ───
+         The score-tier hexes are fixed (not theme-aware), so a few icon/fill
+         pairings fell below the 3:1 threshold for meaningful graphics. These
+         rules restore ≥3:1 without disturbing the tier palette elsewhere:
+           • Gold (#FFC434) is too light to carry a white glyph or to read as a
+             thin glyph on white — use dark ink on gold discs, and a deep
+             goldenrod for gold glyphs on the light canvas.
+           • Deep green (#245E3B) is too dark to read as a glyph on the dark
+             canvas — lift it to excellent-200 green there. */
+      [style*="background:#FFC434"] .material-symbols-outlined,
+      [style*="background: #FFC434"] .material-symbols-outlined {
+        color: #0D1321 !important; /* dark ink on gold disc → ~11.8:1 */
+      }
+      .theme-light [style*="color:#FFC434"] .material-symbols-outlined,
+      .theme-light [style*="color: #FFC434"] .material-symbols-outlined {
+        color: #A6791C !important; /* deep goldenrod glyph on white → ~3.9:1 */
+      }
+      .phone-wrap:not(.theme-light) [style*="color:#245E3B"] .material-symbols-outlined,
+      .phone-wrap:not(.theme-light) [style*="color: #245E3B"] .material-symbols-outlined {
+        color: #32A966 !important; /* excellent-200 green glyph on the dark canvas → ~5:1 */
+      }
     </style>
   </head>
   <body>
